@@ -23,6 +23,9 @@ TransitScope now integrates Malaysia's Official Open API server-side. Successful
 - Rapid Penang: `https://api.data.gov.my/gtfs-realtime/vehicle-position/prasarana?category=rapid-bus-penang`
 - The official documentation warns that Rapid KL Rail does not yet have stable realtime feeds. TransitScope therefore treats it as STATIC station information only.
 - The official documentation notes legacy Rapid Penang route/trip ID mismatches. TransitScope retains the published ID if a static match is unavailable.
+- Rapid Rail KL uses the `category` field in the published `routes.txt` feed to distinguish MRT, LRT and KL Monorail. It does not rely on `route_type` alone because those services share the same base GTFS route type in the published feed.
+- “Next scheduled departure” comes from a published GTFS `stop_times.txt` value for the currently valid GTFS calendar service. It is a timetable time, not a live arrival prediction.
+- When a selected live bus trip has an associated published `shape_id`, TransitScope draws its GTFS `shapes.txt` geometry on the map. Missing shapes remain unavailable rather than inferred.
 
 ## Adapter contract
 
