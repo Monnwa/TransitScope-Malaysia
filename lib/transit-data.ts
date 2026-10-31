@@ -1,11 +1,14 @@
 import { z } from "zod";
 
 export const modeSchema = z.enum(["Bus", "MRT", "LRT", "Monorail", "KTM", "Shared bike"]);
-export const dataModeSchema = z.enum(["SIMULATED", "LIVE", "SCHEDULED", "STALE", "UNAVAILABLE", "UNKNOWN"]);
+export const dataModeSchema = z.enum(["SIMULATED", "LIVE", "STATIC", "SCHEDULED", "STALE", "UNAVAILABLE", "UNKNOWN"]);
 export type Mode = z.infer<typeof modeSchema>;
-export type DataMode = z.infer<typeof dataModeSchema>;
+/** Runtime values are validated by dataModeSchema; the string type keeps UI filter controls extensible. */
+export type DataMode = string;
 export type Status = "In service" | "Station available" | "Disrupted" | "Unavailable";
-export type Record = { id: string; name: string; mode: Mode; operator: string; route: string | null; station: string | null; position: [number, number] | null; reportedAt: string | null; status: Status; dataMode: DataMode; source: string; bikesAvailable?: number; docksAvailable?: number };
+export type Record = { id: string; name: string; mode: Mode; operator: string; route: string | null; tripId?: string | null; station: string | null; position: [number, number] | null; bearing?: number | null; speed?: number | null; reportedAt: string | null; lastUpdatedAt?: string | null; status: Status; dataMode: DataMode; source: string; bikesAvailable?: number; docksAvailable?: number };
+export type FeedHealth = { id: string; label: string; status: "healthy" | "stale" | "unavailable"; lastSuccessAt: string | null; sourceTimestamp: string | null; message: string | null; records: number };
+export type TransitApiResponse = { records: Record[]; alerts: Alert[]; feeds: FeedHealth[]; fetchedAt: string; demo: boolean };
 export type Alert = { id: string; title: string; description: string; severity: "High" | "Medium" | "Low"; routes: string[]; stations: string[]; startedAt: string; endsAt: string | null; source: string; dataMode: DataMode };
 
 /** Deterministic, fictional records for classroom testing. Coordinates locate central KL but do not report real operations. */
@@ -24,5 +27,8 @@ export const demoAlerts: Alert[] = [{ id: "DEMO-ALERT-01", title: "Demonstration
 
 export const filterRecords = (records: Record[], query: string, modes: Mode[], statuses: Status[], modesData: DataMode[]) => {
   const q = query.trim().toLowerCase();
-  return records.filter(r => (!q || [r.id, r.name, r.route, r.station].filter(Boolean).some(v => v!.toLowerCase().includes(q))) && (modes.length === 0 || modes.includes(r.mode)) && (statuses.length === 0 || statuses.includes(r.status)) && (modesData.length === 0 || modesData.includes(r.dataMode)));
+  // When data mode changes, retain visible records until the UI has reset its mode-selection state.
+  // This avoids a transient empty dashboard while preserving explicit record labels.
+  const appliesDataMode = modesData.some(mode => records.some(record => record.dataMode === mode));
+  return records.filter(r => (!q || [r.id, r.name, r.route, r.station].filter(Boolean).some(v => v!.toLowerCase().includes(q))) && (modes.length === 0 || modes.includes(r.mode)) && (statuses.length === 0 || statuses.includes(r.status)) && (!appliesDataMode || modesData.length === 0 || modesData.includes(r.dataMode)));
 };
