@@ -39,7 +39,8 @@ const malaysiaServiceDate = () => {
   const year = value("year"), month = value("month"), day = value("day");
   return { iso: `${year}-${month}-${day}`, key: `${year}${month}${day}` };
 };
-const mapMode = (routeType: string | undefined, fallback: Mode, category?: string): Mode => {
+export const mapMode = (routeType: string | undefined, fallback: Mode, category?: string): Mode => {
+  if (fallback === "KTM") return "KTM";
   const explicit = (category ?? "").toUpperCase();
   if (explicit === "MRT") return "MRT"; if (explicit === "LRT") return "LRT"; if (["MRL", "MONORAIL"].includes(explicit)) return "Monorail";
   return ({ "0": "LRT", "1": "MRT", "2": "KTM", "3": "Bus", "4": "Shared bike", "12": "Monorail" }[routeType ?? ""] as Mode | undefined) ?? fallback;
@@ -72,7 +73,13 @@ export function mergeMrtStations(rawStops: Record[]): Record[] {
 }
 const validPosition = (lat?: number | null, lon?: number | null) => typeof lat === "number" && typeof lon === "number" && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
 async function fetchBinary(url: string) { const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT); try { const response = await fetch(url, { signal: controller.signal, cache: "no-store" }); if (!response.ok) throw new Error(`Upstream returned HTTP ${response.status}`); return new Uint8Array(await response.arrayBuffer()); } finally { clearTimeout(timer); } }
+const staticRequests = new Map<string, Promise<StaticFeed>>();
 async function staticFeed(source: typeof staticSources[number]) {
+  const existing = staticRequests.get(source.id); if (existing) return existing;
+  const request = loadStaticFeed(source).finally(() => staticRequests.delete(source.id));
+  staticRequests.set(source.id, request); return request;
+}
+async function loadStaticFeed(source: typeof staticSources[number]) {
   const cached = staticCache.get(source.id); if (cached && cached.expiresAt > Date.now()) return cached.value;
   const zip = await JSZip.loadAsync(await fetchBinary(source.url));
   const read = async (file: string) => zip.file(file) ? csv(await zip.file(file)!.async("text")) : [];
@@ -108,7 +115,8 @@ async function realtimeFeed(feed: FeedConfig) {
   } catch (error) { const prior = healthMemory.get(feed.id); const health: FeedHealth = { id: feed.id, label: feed.label, status: prior ? "stale" : "unavailable", lastSuccessAt: prior?.lastSuccessAt ?? null, sourceTimestamp: prior?.sourceTimestamp ?? null, message: error instanceof Error ? error.message : "Unknown upstream error", records: prior?.records ?? 0 }; healthMemory.set(feed.id, health); return { records: [], health }; }
 }
 export async function getOfficialTransit() { const outcome = await Promise.all(feeds.map(realtimeFeed)); return { records: outcome.flatMap(x => x.records), feeds: outcome.map(x => x.health) }; }
-export async function getMrtStaticFeed() { return staticFeed(staticSources.find(source => source.id === "rapid-rail-kl")!); }
+export async function getRailStaticFeed(id: "rapid-rail-kl" | "ktmb") { return staticFeed(staticSources.find(source => source.id === id)!); }
+export async function getMrtStaticFeed() { return getRailStaticFeed("rapid-rail-kl"); }
 export async function getStaticTransit() {
   const stops: Record[] = [];
   const outcome = Promise.all(staticSources.map(source => staticFeed(source).then(feed => { stops.push(...feed.stops); }).catch(() => undefined)));
