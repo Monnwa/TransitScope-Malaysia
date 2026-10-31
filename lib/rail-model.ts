@@ -16,6 +16,7 @@ export function mergeRailStations(records: TransitRecord[]): TransitRecord[] {
     // Merge matching station names only within walking-distance station complexes.
     const existing = groups.find(group => normalized(group.name) === normalized(station.name) && group.position && station.position && Math.hypot(group.position[0] - station.position[0], group.position[1] - station.position[1]) < .008);
     if (!existing) { groups.push({ ...station, id: `rail:${station.id}`, railLines: [...(station.railLines ?? [])], lineNames: [...(station.lineNames ?? [])], modes: station.modes ?? [station.mode] }); continue; }
+    existing.stopRefs = [...new Set([...(existing.stopRefs ?? []), ...(station.stopRefs ?? [])])];
     existing.railLines = [...new Set([...existing.railLines!, ...(station.railLines ?? [])])];
     existing.lineNames = [...new Set([...existing.lineNames!, ...(station.lineNames ?? [])])];
     existing.modes = [...new Set([...existing.modes!, station.mode])];
