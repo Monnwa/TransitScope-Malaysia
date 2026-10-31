@@ -32,6 +32,13 @@ const csv = (value: string) => {
   const parse = (line: string) => { const cells: string[] = []; let cell = "", quoted = false; for (let i = 0; i < line.length; i++) { const char = line[i]; if (char === '"') { if (quoted && line[i + 1] === '"') { cell += '"'; i++; } else quoted = !quoted; } else if (char === "," && !quoted) { cells.push(cell); cell = ""; } else cell += char; } cells.push(cell); return cells; };
   const headers = parse(lines[0]); return lines.slice(1).filter(Boolean).map(line => Object.fromEntries(headers.map((h, i) => [h, parse(line)[i] ?? ""])));
 };
+/** Builds GTFS's YYYYMMDD service date without relying on locale-specific formatting. */
+const malaysiaServiceDate = () => {
+  const parts = new Intl.DateTimeFormat("en", { timeZone: "Asia/Kuala_Lumpur", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+  const value = (type: Intl.DateTimeFormatPartTypes) => parts.find(part => part.type === type)?.value ?? "";
+  const year = value("year"), month = value("month"), day = value("day");
+  return { iso: `${year}-${month}-${day}`, key: `${year}${month}${day}` };
+};
 const mapMode = (routeType: string | undefined, fallback: Mode, category?: string): Mode => {
   const explicit = (category ?? "").toUpperCase();
   if (explicit === "MRT") return "MRT"; if (explicit === "LRT") return "LRT"; if (["MRL", "MONORAIL"].includes(explicit)) return "Monorail";
@@ -50,8 +57,9 @@ async function staticFeed(source: typeof staticSources[number]) {
   for (const shape of shapeRows) { const lat = Number(shape.shape_pt_lat), lon = Number(shape.shape_pt_lon), sequence = Number(shape.shape_pt_sequence); if (shape.shape_id && validPosition(lat, lon)) { const group = shapePoints.get(shape.shape_id) ?? []; group.push([sequence, lat, lon]); shapePoints.set(shape.shape_id, group); } }
   const tripPaths = new Map<string, [number, number][]>(); for (const [tripId, trip] of trips) { if (trip.shapeId) { const path = shapePoints.get(trip.shapeId)?.sort((a, b) => a[0] - b[0]).map(([, lat, lon]) => [lat, lon] as [number, number]); if (path?.length) tripPaths.set(tripId, path); } }
   const stopById = new Map(stopRows.map(stop => [stop.stop_id, stop]));
-  const departureAt = (time: string) => { const [h = "0", m = "0", s = "0"] = time.split(":"); const now = new Date(); const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kuala_Lumpur", year: "numeric", month: "2-digit", day: "2-digit" }).format(now); const date = new Date(`${today}T00:00:00+08:00`); date.setHours(Number(h), Number(m), Number(s), 0); if (Number(h) >= 24) date.setDate(date.getDate() + Math.floor(Number(h) / 24)); return date; };
-  const now = new Date(); const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone: "Asia/Kuala_Lumpur" }).format(now).toLowerCase(); const dateKey = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kuala_Lumpur", year: "numeric", month: "2-digit", day: "2-digit" }).format(now).replaceAll("-", "");
+  const serviceDate = malaysiaServiceDate();
+  const departureAt = (time: string) => { const [h = "0", m = "0", s = "0"] = time.split(":"); const date = new Date(`${serviceDate.iso}T00:00:00+08:00`); date.setHours(Number(h), Number(m), Number(s), 0); if (Number(h) >= 24) date.setDate(date.getDate() + Math.floor(Number(h) / 24)); return date; };
+  const now = new Date(); const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone: "Asia/Kuala_Lumpur" }).format(now).toLowerCase(); const dateKey = serviceDate.key;
   const activeServices = new Set(calendarRows.filter(row => row[weekday] === "1" && (!row.start_date || row.start_date <= dateKey) && (!row.end_date || row.end_date >= dateKey)).map(row => row.service_id));
   const hasCalendar = calendarRows.length > 0; const stopService = new Map<string, Map<string, { routeId: string; tripId: string; next: Date | null }>>();
   for (const stopTime of stopTimeRows) { const trip = trips.get(stopTime.trip_id); if (!trip || !stopById.has(stopTime.stop_id) || (hasCalendar && trip.serviceId && !activeServices.has(trip.serviceId))) continue; const routeStops = stopService.get(stopTime.stop_id) ?? new Map(); const departure = stopTime.departure_time ? departureAt(stopTime.departure_time) : null; const earlier = routeStops.get(trip.routeId); if (!earlier || (departure && departure >= now && (!earlier.next || departure < earlier.next))) routeStops.set(trip.routeId, { routeId: trip.routeId, tripId: stopTime.trip_id, next: departure && departure >= now ? departure : earlier?.next ?? null }); stopService.set(stopTime.stop_id, routeStops); }
