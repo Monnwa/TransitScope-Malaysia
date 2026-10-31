@@ -1,0 +1,14 @@
+import { chromium } from "@playwright/test";
+import fs from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+const out = new URL("../presentation/evidence_screenshots/", import.meta.url);
+await fs.mkdir(out, { recursive: true });
+const browser = await chromium.launch({ headless: true });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
+await page.goto("http://127.0.0.1:3000", { waitUntil: "networkidle" });
+await page.screenshot({ path: fileURLToPath(new URL("dashboard-overview.png", out)), fullPage: false });
+await page.getByRole("button", { name: "Shared bike" }).click();
+await page.screenshot({ path: fileURLToPath(new URL("shared-bike-filter.png", out)), fullPage: false });
+await page.getByRole("button", { name: /Demonstration: stop access change/ }).click();
+await page.screenshot({ path: fileURLToPath(new URL("alert-detail.png", out)), fullPage: true });
+await browser.close();
