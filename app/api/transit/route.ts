@@ -7,6 +7,9 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   const demo = request.nextUrl.searchParams.get("mode") === "demo";
   if (demo) return NextResponse.json<TransitApiResponse>({ records: demoRecords, alerts: demoAlerts, feeds: [], fetchedAt: new Date().toISOString(), demo: true }, { headers: { "Cache-Control": "no-store" } });
-  const [{ records, feeds }, stops] = await Promise.all([getOfficialTransit(), getStaticTransit()]);
-  return NextResponse.json<TransitApiResponse>({ records: [...records, ...stops], alerts: [], feeds, fetchedAt: new Date().toISOString(), demo: false }, { headers: { "Cache-Control": "public, max-age=30, s-maxage=30, stale-while-revalidate=60" } });
+  if (request.nextUrl.searchParams.get("includeStatic") === "1") {
+    return NextResponse.json<TransitApiResponse>({ records: await getStaticTransit(), alerts: [], feeds: [], fetchedAt: new Date().toISOString(), demo: false }, { headers: { "Cache-Control": "public, max-age=30, s-maxage=30, stale-while-revalidate=60" } });
+  }
+  const { records, feeds } = await getOfficialTransit();
+  return NextResponse.json<TransitApiResponse>({ records, alerts: [], feeds, fetchedAt: new Date().toISOString(), demo: false }, { headers: { "Cache-Control": "public, max-age=30, s-maxage=30, stale-while-revalidate=60" } });
 }

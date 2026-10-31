@@ -6,6 +6,7 @@ const API_BASE = "https://api.data.gov.my";
 const REALTIME_TTL = 30_000;
 const STATIC_TTL = 24 * 60 * 60 * 1000;
 const REQUEST_TIMEOUT = 12_000;
+const STATIC_REQUEST_BUDGET = 8_000;
 type FeedConfig = { id: string; label: string; operator: string; url: string; staticId: "rapid-bus-kl" | "rapid-bus-mrtfeeder" | "rapid-bus-penang" | "rapid-rail-kl" | "ktmb"; mode: Mode };
 export const feeds: FeedConfig[] = [
   { id: "rapid-bus-kl", label: "Rapid KL Bus", operator: "Prasarana", url: `${API_BASE}/gtfs-realtime/vehicle-position/prasarana?category=rapid-bus-kl`, staticId: "rapid-bus-kl", mode: "Bus" },
@@ -60,12 +61,23 @@ async function staticFeed(source: typeof staticSources[number]) {
 async function realtimeFeed(feed: FeedConfig) {
   const cached = realtimeCache.get(feed.id); if (cached && cached.expiresAt > Date.now()) return cached.value;
   try {
-    const [bytes, staticData] = await Promise.all([fetchBinary(feed.url), staticFeed(staticSources.find(s => s.id === feed.staticId) ?? staticSources[0])]);
+    // Vehicle positions must remain available even when the substantially larger
+    // static GTFS archive is slow or unavailable in a serverless deployment.
+    const bytes = await fetchBinary(feed.url);
+    const cachedStatic = staticCache.get(feed.staticId);
+    const staticData = cachedStatic && cachedStatic.expiresAt > Date.now() ? cachedStatic.value : null;
     const decoded = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(bytes);
     const sourceTimestamp = decoded.header?.timestamp ? new Date(Number(decoded.header.timestamp) * 1000).toISOString() : null;
-    const records = decoded.entity.flatMap((entity: any) => { const vehicle = entity.vehicle; const position = vehicle?.position; const lat = position?.latitude, lon = position?.longitude; if (!vehicle || !validPosition(lat, lon)) return []; const tripId = vehicle.trip?.tripId ?? null; const trip = tripId ? staticData.trips.get(tripId) : undefined; const routeId = vehicle.trip?.routeId ?? trip?.routeId ?? null; const route = routeId ? staticData.routes.get(routeId) : undefined; const timestamp = vehicle.timestamp ? new Date(Number(vehicle.timestamp) * 1000).toISOString() : sourceTimestamp; return [{ id: vehicle.vehicle?.id || entity.id || `${feed.id}:${lat}:${lon}`, name: vehicle.vehicle?.label || vehicle.vehicle?.id || "Vehicle identifier unavailable", mode: route?.mode ?? feed.mode, operator: feed.operator, route: route?.name ?? routeId, routeId, tripId, station: null, position: [lat, lon] as [number, number], bearing: position.bearing ?? null, speed: position.speed ?? null, routePath: tripId ? staticData.tripPaths.get(tripId) ?? null : null, recordKind: "vehicle" as const, reportedAt: timestamp, lastUpdatedAt: new Date().toISOString(), status: "In service" as const, dataMode: "LIVE" as const, source: `Malaysia Open API GTFS-Realtime (${feed.label})` }]; });
+    const records = decoded.entity.flatMap((entity: any) => { const vehicle = entity.vehicle; const position = vehicle?.position; const lat = position?.latitude, lon = position?.longitude; if (!vehicle || !validPosition(lat, lon)) return []; const tripId = vehicle.trip?.tripId ?? null; const trip = tripId ? staticData?.trips.get(tripId) : undefined; const routeId = vehicle.trip?.routeId ?? trip?.routeId ?? null; const route = routeId ? staticData?.routes.get(routeId) : undefined; const timestamp = vehicle.timestamp ? new Date(Number(vehicle.timestamp) * 1000).toISOString() : sourceTimestamp; return [{ id: vehicle.vehicle?.id || entity.id || `${feed.id}:${lat}:${lon}`, name: vehicle.vehicle?.label || vehicle.vehicle?.id || "Vehicle identifier unavailable", mode: route?.mode ?? feed.mode, operator: feed.operator, route: route?.name ?? routeId, routeId, tripId, station: null, position: [lat, lon] as [number, number], bearing: position.bearing ?? null, speed: position.speed ?? null, routePath: tripId ? staticData?.tripPaths.get(tripId) ?? null : null, recordKind: "vehicle" as const, reportedAt: timestamp, lastUpdatedAt: new Date().toISOString(), status: "In service" as const, dataMode: "LIVE" as const, source: `Malaysia Open API GTFS-Realtime (${feed.label})` }]; });
     const health: FeedHealth = { id: feed.id, label: feed.label, status: "healthy", lastSuccessAt: new Date().toISOString(), sourceTimestamp, message: null, records: records.length }; healthMemory.set(feed.id, health); const value = { records, health }; realtimeCache.set(feed.id, { value, expiresAt: Date.now() + REALTIME_TTL, lastSuccessAt: health.lastSuccessAt! }); return value;
   } catch (error) { const prior = healthMemory.get(feed.id); const health: FeedHealth = { id: feed.id, label: feed.label, status: prior ? "stale" : "unavailable", lastSuccessAt: prior?.lastSuccessAt ?? null, sourceTimestamp: prior?.sourceTimestamp ?? null, message: error instanceof Error ? error.message : "Unknown upstream error", records: prior?.records ?? 0 }; healthMemory.set(feed.id, health); return { records: [], health }; }
 }
 export async function getOfficialTransit() { const outcome = await Promise.all(feeds.map(realtimeFeed)); return { records: outcome.flatMap(x => x.records), feeds: outcome.map(x => x.health) }; }
-export async function getStaticTransit() { const outcome = await Promise.allSettled(staticSources.map(staticFeed)); return outcome.flatMap(result => result.status === "fulfilled" ? result.value.stops : []); }
+export async function getStaticTransit() {
+  const outcome = Promise.allSettled(staticSources.map(staticFeed));
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    const settled = await Promise.race([outcome, new Promise<never>((_, reject) => { timer = setTimeout(() => reject(new Error("Static GTFS request exceeded its response budget")), STATIC_REQUEST_BUDGET); })]);
+    return settled.flatMap(result => result.status === "fulfilled" ? result.value.stops : []);
+  } catch { return []; } finally { if (timer) clearTimeout(timer); }
+}
