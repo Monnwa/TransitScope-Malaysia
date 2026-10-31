@@ -6,7 +6,7 @@ const API_BASE = "https://api.data.gov.my";
 const REALTIME_TTL = 30_000;
 const STATIC_TTL = 24 * 60 * 60 * 1000;
 const REQUEST_TIMEOUT = 12_000;
-const STATIC_REQUEST_BUDGET = 8_000;
+const STATIC_REQUEST_BUDGET = 15_000;
 type FeedConfig = { id: string; label: string; operator: string; url: string; staticId: "rapid-bus-kl" | "rapid-bus-mrtfeeder" | "rapid-bus-penang" | "rapid-rail-kl" | "ktmb"; mode: Mode };
 export const feeds: FeedConfig[] = [
   { id: "rapid-bus-kl", label: "Rapid KL Bus", operator: "Prasarana", url: `${API_BASE}/gtfs-realtime/vehicle-position/prasarana?category=rapid-bus-kl`, staticId: "rapid-bus-kl", mode: "Bus" },
@@ -74,10 +74,11 @@ async function realtimeFeed(feed: FeedConfig) {
 }
 export async function getOfficialTransit() { const outcome = await Promise.all(feeds.map(realtimeFeed)); return { records: outcome.flatMap(x => x.records), feeds: outcome.map(x => x.health) }; }
 export async function getStaticTransit() {
-  const outcome = Promise.allSettled(staticSources.map(staticFeed));
+  const stops: Record[] = [];
+  const outcome = Promise.all(staticSources.map(source => staticFeed(source).then(feed => { stops.push(...feed.stops); }).catch(() => undefined)));
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
-    const settled = await Promise.race([outcome, new Promise<never>((_, reject) => { timer = setTimeout(() => reject(new Error("Static GTFS request exceeded its response budget")), STATIC_REQUEST_BUDGET); })]);
-    return settled.flatMap(result => result.status === "fulfilled" ? result.value.stops : []);
-  } catch { return []; } finally { if (timer) clearTimeout(timer); }
+    await Promise.race([outcome, new Promise<void>(resolve => { timer = setTimeout(resolve, STATIC_REQUEST_BUDGET); })]);
+    return stops;
+  } finally { if (timer) clearTimeout(timer); }
 }
