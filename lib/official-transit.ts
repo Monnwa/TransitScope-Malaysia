@@ -1,6 +1,6 @@
 import GtfsRealtimeBindings from "gtfs-realtime-bindings";
 import JSZip from "jszip";
-import type { FeedHealth, Mode, Record } from "@/lib/transit-data";
+import type { FeedHealth, Mode, MrtLineId, Record } from "@/lib/transit-data";
 
 const API_BASE = "https://api.data.gov.my";
 const REALTIME_TTL = 30_000;
@@ -21,7 +21,7 @@ const staticSources = [
   { id: "rapid-rail-kl", url: `${API_BASE}/gtfs-static/prasarana?category=rapid-rail-kl`, operator: "Prasarana", defaultMode: "MRT" as Mode },
   { id: "ktmb", url: `${API_BASE}/gtfs-static/ktmb`, operator: "KTMB", defaultMode: "KTM" as Mode },
 ];
-type StaticFeed = { routes: Map<string, { name: string; mode: Mode }>; trips: Map<string, { routeId: string; shapeId: string | null; serviceId: string | null }>; stops: Record[]; tripPaths: Map<string, [number, number][]>; files: { agencies: number; stopTimes: number; calendar: number; shapes: number }; fetchedAt: string };
+type StaticFeed = { routes: Map<string, { name: string; mode: Mode; mrtLine?: MrtLineId }>; trips: Map<string, { routeId: string; shapeId: string | null; serviceId: string | null }>; stops: Record[]; tripPaths: Map<string, [number, number][]>; files: { agencies: number; stopTimes: number; calendar: number; shapes: number }; fetchedAt: string };
 type Timed<T> = { value: T; expiresAt: number; lastSuccessAt: string };
 const realtimeCache = new Map<string, Timed<{ records: Record[]; health: FeedHealth }>>();
 const staticCache = new Map<string, Timed<StaticFeed>>();
@@ -44,6 +44,32 @@ const mapMode = (routeType: string | undefined, fallback: Mode, category?: strin
   if (explicit === "MRT") return "MRT"; if (explicit === "LRT") return "LRT"; if (["MRL", "MONORAIL"].includes(explicit)) return "Monorail";
   return ({ "0": "LRT", "1": "MRT", "2": "KTM", "3": "Bus", "4": "Shared bike", "12": "Monorail" }[routeType ?? ""] as Mode | undefined) ?? fallback;
 };
+export const mrtLineFromCategory = (category?: string): MrtLineId | undefined => {
+  const value = (category ?? "").toUpperCase();
+  if (value === "KGL" || value.includes("KAJANG")) return "MRT1";
+  if (value === "PYL" || value.includes("PUTRAJAYA")) return "MRT2";
+  return undefined;
+};
+const mrtLineName = (lines: MrtLineId[]) => lines.map(line => line === "MRT1" ? "MRT Kajang Line (MRT1)" : "MRT Putrajaya Line (MRT2)").join(" · ");
+const isSharedMrtStation = (name: string) => /kwasa damansara|tun razak exchange|\btrx\b/i.test(name);
+export function mergeMrtStations(rawStops: Record[]): Record[] {
+  const stations = new Map<string, Record>(); const other: Record[] = [];
+  for (const input of rawStops) {
+    if (input.mode !== "MRT") { other.push(input); continue; }
+    const sharedKey = /kwasa damansara/i.test(input.name) ? "kwasadamansara" : /tun razak exchange|\btrx\b/i.test(input.name) ? "trx" : input.name.toLowerCase().replace(/[^a-z0-9]+/g, "");
+    const key = `${input.dataMode}:mrt:${sharedKey}`;
+    const existing = stations.get(key);
+    const lines = [...new Set([...(existing?.mrtLines ?? []), ...(input.mrtLines ?? [])])];
+    const shared = isSharedMrtStation(input.name);
+    const record = existing ?? { ...input, id: key };
+    record.mrtLines = shared ? ["MRT1", "MRT2"] : lines;
+    record.interchange = record.mrtLines.length > 1;
+    record.route = mrtLineName(record.mrtLines);
+    if (input.nextScheduledAt && (!record.nextScheduledAt || input.nextScheduledAt < record.nextScheduledAt)) record.nextScheduledAt = input.nextScheduledAt;
+    stations.set(key, record);
+  }
+  return [...other, ...stations.values()];
+}
 const validPosition = (lat?: number | null, lon?: number | null) => typeof lat === "number" && typeof lon === "number" && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
 async function fetchBinary(url: string) { const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT); try { const response = await fetch(url, { signal: controller.signal, cache: "no-store" }); if (!response.ok) throw new Error(`Upstream returned HTTP ${response.status}`); return new Uint8Array(await response.arrayBuffer()); } finally { clearTimeout(timer); } }
 async function staticFeed(source: typeof staticSources[number]) {
@@ -51,7 +77,7 @@ async function staticFeed(source: typeof staticSources[number]) {
   const zip = await JSZip.loadAsync(await fetchBinary(source.url));
   const read = async (file: string) => zip.file(file) ? csv(await zip.file(file)!.async("text")) : [];
   const [agencyRows, routeRows, tripRows, stopRows, stopTimeRows, calendarRows, shapeRows] = await Promise.all([read("agency.txt"), read("routes.txt"), read("trips.txt"), read("stops.txt"), read("stop_times.txt"), read("calendar.txt"), read("shapes.txt")]);
-  const routes = new Map(routeRows.map(route => [route.route_id, { name: route.route_short_name || route.route_long_name || route.route_id, mode: mapMode(route.route_type, source.defaultMode, route.category) }]));
+  const routes = new Map(routeRows.map(route => { const mrtLine = mrtLineFromCategory(route.route_id); return [route.route_id, { name: route.route_short_name || route.route_long_name || route.route_id, mode: mapMode(route.route_type, source.defaultMode, route.category), mrtLine }]; }));
   const trips = new Map(tripRows.map(trip => [trip.trip_id, { routeId: trip.route_id, shapeId: trip.shape_id || null, serviceId: trip.service_id || null }]));
   const shapePoints = new Map<string, [number, number, number][]>();
   for (const shape of shapeRows) { const lat = Number(shape.shape_pt_lat), lon = Number(shape.shape_pt_lon), sequence = Number(shape.shape_pt_sequence); if (shape.shape_id && validPosition(lat, lon)) { const group = shapePoints.get(shape.shape_id) ?? []; group.push([sequence, lat, lon]); shapePoints.set(shape.shape_id, group); } }
@@ -62,8 +88,9 @@ async function staticFeed(source: typeof staticSources[number]) {
   const now = new Date(); const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone: "Asia/Kuala_Lumpur" }).format(now).toLowerCase(); const dateKey = serviceDate.key;
   const activeServices = new Set(calendarRows.filter(row => row[weekday] === "1" && (!row.start_date || row.start_date <= dateKey) && (!row.end_date || row.end_date >= dateKey)).map(row => row.service_id));
   const hasCalendar = calendarRows.length > 0; const stopService = new Map<string, Map<string, { routeId: string; tripId: string; next: Date | null }>>();
-  for (const stopTime of stopTimeRows) { const trip = trips.get(stopTime.trip_id); if (!trip || !stopById.has(stopTime.stop_id) || (hasCalendar && trip.serviceId && !activeServices.has(trip.serviceId))) continue; const routeStops = stopService.get(stopTime.stop_id) ?? new Map(); const departure = stopTime.departure_time ? departureAt(stopTime.departure_time) : null; const earlier = routeStops.get(trip.routeId); if (!earlier || (departure && departure >= now && (!earlier.next || departure < earlier.next))) routeStops.set(trip.routeId, { routeId: trip.routeId, tripId: stopTime.trip_id, next: departure && departure >= now ? departure : earlier?.next ?? null }); stopService.set(stopTime.stop_id, routeStops); }
-  const stops: Record[] = []; for (const [stopId, services] of stopService) { const stop = stopById.get(stopId)!; const lat = Number(stop.stop_lat), lon = Number(stop.stop_lon); if (!validPosition(lat, lon)) continue; for (const service of services.values()) { const route = routes.get(service.routeId); if (!route) continue; stops.push({ id: `${source.id}:stop:${stopId}:${route.mode}:${service.routeId}`, name: stop.stop_name || stopId, mode: route.mode, operator: source.operator, route: route.name, routeId: service.routeId, tripId: service.tripId, station: stop.stop_name || stopId, position: [lat, lon], nextScheduledAt: service.next?.toISOString() ?? null, routePath: tripPaths.get(service.tripId) ?? null, recordKind: "stop", reportedAt: null, lastUpdatedAt: new Date().toISOString(), status: "Station available", dataMode: "STATIC", source: `Malaysia Open API GTFS Static (${source.id})` }); } }
+  for (const stopTime of stopTimeRows) { const trip = trips.get(stopTime.trip_id); if (!trip || !stopById.has(stopTime.stop_id)) continue; const routeStops = stopService.get(stopTime.stop_id) ?? new Map(); const inService = !hasCalendar || !trip.serviceId || activeServices.has(trip.serviceId); const departure = inService && stopTime.departure_time ? departureAt(stopTime.departure_time) : null; const earlier = routeStops.get(trip.routeId); if (!earlier || (departure && departure >= now && (!earlier.next || departure < earlier.next))) routeStops.set(trip.routeId, { routeId: trip.routeId, tripId: stopTime.trip_id, next: departure && departure >= now ? departure : earlier?.next ?? null }); stopService.set(stopTime.stop_id, routeStops); }
+  const rawStops: Record[] = []; for (const [stopId, services] of stopService) { const stop = stopById.get(stopId)!; const lat = Number(stop.stop_lat), lon = Number(stop.stop_lon); if (!validPosition(lat, lon)) continue; for (const service of services.values()) { const route = routes.get(service.routeId); if (!route) continue; const lines = route.mrtLine ? [route.mrtLine] : undefined; rawStops.push({ id: `${source.id}:stop:${stopId}:${route.mode}:${service.routeId}`, name: stop.stop_name || stopId, mode: route.mode, operator: source.operator, route: lines ? mrtLineName(lines) : route.name, routeId: service.routeId, tripId: service.tripId, station: stop.stop_name || stopId, position: [lat, lon], nextScheduledAt: service.next?.toISOString() ?? null, routePath: tripPaths.get(service.tripId) ?? null, recordKind: "stop", mrtLines: lines, interchange: lines ? isSharedMrtStation(stop.stop_name || stopId) : undefined, reportedAt: null, lastUpdatedAt: new Date().toISOString(), status: "Station available", dataMode: "STATIC", source: `Malaysia Open API GTFS Static (${source.id})` }); } }
+  const stops = mergeMrtStations(rawStops);
   const value = { routes, trips, stops: stops.slice(0, 700), tripPaths, files: { agencies: agencyRows.length, stopTimes: stopTimeRows.length, calendar: calendarRows.length, shapes: shapeRows.length }, fetchedAt: new Date().toISOString() }; staticCache.set(source.id, { value, expiresAt: Date.now() + STATIC_TTL, lastSuccessAt: value.fetchedAt }); return value;
 }
 async function realtimeFeed(feed: FeedConfig) {
@@ -81,6 +108,7 @@ async function realtimeFeed(feed: FeedConfig) {
   } catch (error) { const prior = healthMemory.get(feed.id); const health: FeedHealth = { id: feed.id, label: feed.label, status: prior ? "stale" : "unavailable", lastSuccessAt: prior?.lastSuccessAt ?? null, sourceTimestamp: prior?.sourceTimestamp ?? null, message: error instanceof Error ? error.message : "Unknown upstream error", records: prior?.records ?? 0 }; healthMemory.set(feed.id, health); return { records: [], health }; }
 }
 export async function getOfficialTransit() { const outcome = await Promise.all(feeds.map(realtimeFeed)); return { records: outcome.flatMap(x => x.records), feeds: outcome.map(x => x.health) }; }
+export async function getMrtStaticFeed() { return staticFeed(staticSources.find(source => source.id === "rapid-rail-kl")!); }
 export async function getStaticTransit() {
   const stops: Record[] = [];
   const outcome = Promise.all(staticSources.map(source => staticFeed(source).then(feed => { stops.push(...feed.stops); }).catch(() => undefined)));
