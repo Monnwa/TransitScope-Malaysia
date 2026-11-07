@@ -1,4 +1,6 @@
 import {expect,test} from "@playwright/test";
+// The existing synthetic API fixtures are dated 1 November; keep their clock deterministic.
+test.beforeEach(async({page})=>{await page.clock.install({time:new Date("2026-11-01T06:00:00Z")});});
 const empty={records:[],alerts:[],feeds:[],fetchedAt:"2026-11-01T06:00:00Z",demo:false};
 for(const mode of ["MRT","LRT","Monorail","KTM","Bus"]){
   test(`${mode} station selection displays official scheduled departures independently of live API`,async({page})=>{
@@ -30,5 +32,5 @@ test("frequency schedules never appear as precise LIVE ETA or exact departure ti
   await page.route("**/api/rail-network?*",route=>route.fulfill({json:{lines:[],stations:route.request().url().includes("ktmb")?[]:[station],available:true,source:"Fixture"}}));
   await page.route("**/api/alerts",route=>route.fulfill({json:{alerts:[],sources:[],retrievedAt:empty.fetchedAt}}));
   await page.route("**/api/departures?*",route=>route.fulfill({json:{status:"SCHEDULED",message:"Official frequency timetable; exact departure times are not published.",departures:[],frequencies:[{tripId:"fixture",routeName:"Fixture Line",destination:"Fixture terminus",start:"2026-11-01T06:00:00Z",end:"2026-11-01T10:00:00Z",headwaySeconds:300,source:"https://api.data.gov.my/gtfs-static/ktmb"}],sources:[],retrievedAt:empty.fetchedAt,liveEta:{available:false,reason:"No prediction source"}}}));
-  await page.goto("/");await page.locator(".rail-station").click();const panel=page.getByRole("region",{name:"Upcoming Departures"});await expect(panel).toContainText("every 5 min");await expect(panel.locator("tbody tr")).toHaveCount(0);await expect(panel).toContainText("LIVE ETA: UNAVAILABLE");
+  await page.goto("/");await page.locator(".rail-station").click();const panel=page.getByRole("region",{name:"Upcoming Departures"});await expect(panel).toContainText(/every 5 min/i);await expect(panel.locator("tbody tr")).toHaveCount(0);await expect(panel).toContainText("LIVE ETA: UNAVAILABLE");
 });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getTimetable } from "@/lib/official-transit";
-import { calculateDepartures } from "@/lib/scheduled-departures";
+import { calculateDepartures, malaysiaDate } from "@/lib/scheduled-departures";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -17,12 +17,13 @@ export async function GET(request: NextRequest) {
   if (!refs.length || refs.length > 20 || refs.some(ref => !valid.test(ref))) return NextResponse.json({ status: "UNAVAILABLE", message: "Provide 1–20 canonical GTFS stop IDs." }, { status: 400 });
   const now = Date.now(); const sources = [...new Set(refs.map(ref => ref.split(":")[0]))];
   const outcomes = await Promise.all(sources.map(async source => {
-    try { const table = await getTimetable(source); return { source, result: calculateDepartures(table, refs.filter(ref => ref.startsWith(source + ":")).map(ref => ref.slice(source.length + 1)), now), lastUpdated: table.updated, error: null }; }
-    catch { return { source, result: null, error: "Official timetable could not be retrieved.", lastUpdated: null }; }
+    try { const table = await getTimetable(source); const result = calculateDepartures(table, refs.filter(ref => ref.startsWith(source + ":")).map(ref => ref.slice(source.length + 1)), now); const dateKey = malaysiaDate(now).replaceAll("-", ""); const relevantServices = new Set(refs.filter(ref=>ref.startsWith(source+":" )).flatMap(ref=>table.byStop.get(ref.slice(source.length+1))??[]).map(row=>table.trips.get(row.trip_id)?.service_id)); const calendarCoversToday = table.calendars.some(row=>relevantServices.has(row.service_id)&&row.start_date<=dateKey&&row.end_date>=dateKey)||table.exceptions.some(row=>relevantServices.has(row.service_id)&&row.date===dateKey); return { source, result, calendarCoversToday, lastUpdated: table.updated, error: null }; }
+    catch { return { source, result: null, calendarCoversToday: false, error: "Official timetable could not be retrieved.", lastUpdated: null }; }
   }));
   const departures = outcomes.flatMap(item => item.result?.departures ?? []).sort((a, b) => a.scheduledTimestamp - b.scheduledTimestamp).slice(0, 10);
   const frequencies = outcomes.flatMap(item => item.result?.frequencies ?? []).slice(0, 10);
   const hasRecords = outcomes.some(item => item.result?.hasRecords);
   const validPeriod = departures.length > 0 || frequencies.length > 0 || outcomes.some(item=>item.result?.activeToday);
-  return NextResponse.json({ status: hasRecords && validPeriod ? "SCHEDULED" : "UNAVAILABLE", departures, frequencies, liveEta: { available: false, reason: "The official realtime API currently provides VehiclePosition only; no verified TripUpdate predictions are available." }, message: !hasRecords ? "Official timetable unavailable for this stop." : !validPeriod ? "No valid published service calendar for the current period; departures are unavailable." : outcomes.every(item => item.result?.noMoreToday) ? "No more scheduled departures today." : frequencies.length && !departures.length ? "Official frequency timetable; exact departure times are not published." : "Official published timetable — Asia/Kuala_Lumpur", sources: outcomes.map(({source,lastUpdated,error}) => ({source,lastUpdated,error})), retrievedAt: new Date(now).toISOString() }, { headers: { "Cache-Control": "no-store" } });
+  const emptyReason = !hasRecords || !validPeriod && !outcomes.some(item=>item.calendarCoversToday) ? "TIMETABLE_UNAVAILABLE" : outcomes.every(item=>item.result && item.calendarCoversToday && !item.result.activeToday && item.result.noMoreToday) ? "NO_SERVICE_TODAY" : outcomes.every(item=>item.result?.noMoreToday) ? "NO_MORE_TODAY" : null;
+  return NextResponse.json({ status: hasRecords && validPeriod ? "SCHEDULED" : "UNAVAILABLE", departures, frequencies, emptyReason, liveEta: { available: false, reason: "The official realtime API currently provides VehiclePosition only; no verified TripUpdate predictions are available." }, message: !hasRecords ? "Official timetable unavailable for this stop." : !validPeriod ? "No valid published service calendar for the current period; departures are unavailable." : outcomes.every(item => item.result?.noMoreToday) ? "No more scheduled departures today." : frequencies.length && !departures.length ? "Official frequency timetable; exact departure times are not published." : "Official published timetable — Asia/Kuala_Lumpur", sources: outcomes.map(({source,lastUpdated,error}) => ({source,lastUpdated,error})), retrievedAt: new Date(now).toISOString() }, { headers: { "Cache-Control": "no-store" } });
 }
