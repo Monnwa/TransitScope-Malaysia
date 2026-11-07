@@ -1,6 +1,10 @@
 "use client";
 import "leaflet/dist/leaflet.css";
 import "@/app/markers.css";
+import "@/app/estimated-trains.css";
+import EstimatedTrainControls from "./estimated-train-controls";
+import EstimatedTrainLayer from "./estimated-train-layer";
+import type { TrainMapFilters } from "@/lib/train-position-display";
 import L from "leaflet";
 import { Fragment, useEffect, useState } from "react";
 import { CircleMarker, MapContainer, Marker, Polyline, Popup, TileLayer, Tooltip, useMap } from "react-leaflet";
@@ -24,7 +28,7 @@ function SelectedVehicleFocus({record}:{record:Record|undefined}) {
   },[record?.id,map]);
   return null;
 }
-export default function TransitMap({ records, selected, onSelect, resetSignal, network, journey }: { records: Record[]; selected: string | null; onSelect: (record: Record) => void; resetSignal: number; network: ReturnType<typeof useRailNetwork>; journey?:BusMapJourney|null }) {
+export default function TransitMap({ records, selected, onSelect, resetSignal, network, journey,trainFilters,trainEnabled,onSelectTrain }: { records: Record[]; selected: string | null; onSelect: (record: Record) => void; resetSignal: number; network: ReturnType<typeof useRailNetwork>; journey?:BusMapJourney|null;trainFilters:TrainMapFilters;trainEnabled:boolean;onSelectTrain:()=>void }) {
   const [hidden, setHidden] = useState<string[]>([]), [highlighted, setHighlighted] = useState<string[]>([]);
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const selectedRecord = records.find(record => record.id === selected);
@@ -45,6 +49,7 @@ export default function TransitMap({ records, selected, onSelect, resetSignal, n
       {network.messages.length>0&&<><p role="status">Some train line information is temporarily unavailable.</p><details><summary>Technical information</summary>{network.messages.map(message=><p key={message}>{message}</p>)}</details></>}
       <button className="secondary" onClick={network.retry}>Reload train lines</button>
     </fieldset>
+    {trainEnabled&&<EstimatedTrainControls filters={trainFilters} hidden={hidden} availableLines={network.lines.filter(line=>line.geometryStatus==="available").map(line=>line.id)}/>}
     <div className="map-wrap" aria-label="Interactive transport map"><MapContainer center={[3.142, 101.699]} zoom={13} scrollWheelZoom className="map">
       <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/><Reset signal={resetSignal}/><SelectedVehicleFocus record={selectedRecord}/><JourneyMapNavigation journey={journey}/>
       {network.lines.filter(line => !hidden.includes(line.id)).flatMap(line => line.paths.map((path, index) => {
@@ -67,6 +72,7 @@ export default function TransitMap({ records, selected, onSelect, resetSignal, n
         const stationColours = (record.railLines ?? []).map(id => lineById.get(id)?.colour).filter(Boolean);
         return <CircleMarker key={record.id} center={record.position!} radius={record.interchange ? 8 : 6} className="rail-station" pane="markerPane" pathOptions={{ color: stationColours[0] ?? colours[record.mode], fillColor: record.interchange ? stationColours[1] ?? "#fff" : "#fff", weight: 3, fillOpacity: dimmed ? .3 : 1, opacity: dimmed ? .3 : 1 }} eventHandlers={{ click: () => selectStation(record) }}><Tooltip>{passengerName(record.name)}</Tooltip>{popup}</CircleMarker>;
       })}
+      <EstimatedTrainLayer filters={trainFilters} hidden={hidden} availableLines={network.lines.filter(line=>line.geometryStatus==="available").map(line=>line.id)} highlighted={highlighted} onSelect={onSelectTrain} onHighlight={id=>setHighlighted([id])}/>
       {userPosition && <Marker position={userPosition} icon={L.divIcon({ className: "transport-icon user-icon", html: '<span></span>', iconSize: [22, 22], iconAnchor: [11, 11] })}><Popup>Your current location</Popup></Marker>}
     </MapContainer><div className="map-legend" aria-label="Map legend"><span>Train lines and stations</span><span>◉ Interchange</span><span>🚌 Bus / 🚆 Train</span><span>● Your location</span><span>○ Station / stop</span>{gpsActive&&<span className="map-progress-key">{locationLabel(gps!.source)}{segments?" · Grey: route behind · Blue: route ahead":""}</span>}</div></div>
   </section>;

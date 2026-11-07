@@ -5,8 +5,8 @@ import type { ValidAdherence } from "@/lib/timetable-adherence";
 // Presentation only: internal enum values, calculations and API fields stay intact.
 export const sentenceCase=(value:string)=>value?value.charAt(0).toUpperCase()+value.slice(1).toLowerCase().replaceAll("_"," "):"";
 export const timingLabel=(result:ValidAdherence)=>result.status==="ON_TIME"?"On time":`${result.differenceMinutes} min ${result.status==="EARLY"?"early":"late"}`;
-export const informationLabel=(mode:string)=>({LIVE:"Vehicle location",STATIC:"Timetable",SCHEDULED:"Scheduled",SIMULATED:"Demo data",UNAVAILABLE:"Unavailable"})[mode as "LIVE"]??sentenceCase(mode);
-export const filterLabel=(mode:string)=>mode==="LIVE"?"Vehicle locations":mode==="STATIC"?"Stops & timetables":informationLabel(mode);
+export const informationLabel=(mode:string)=>({LIVE:"Vehicle location",STATIC:"Timetable",ESTIMATED:"Estimated",SCHEDULED:"Scheduled",SIMULATED:"Demo data",UNAVAILABLE:"Unavailable"})[mode as "LIVE"]??sentenceCase(mode);
+export const filterLabel=(mode:string)=>mode==="LIVE"?"Vehicle locations":mode==="STATIC"?"Stops & timetables":mode==="ESTIMATED"?"Estimated trains":informationLabel(mode);
 export const locationLabel=(source:VehicleProgress["source"])=>({GPS_INFERRED:"Current bus location",APPROXIMATE:"Approximate bus location",PROGRESS_UNKNOWN:"Location unavailable",LIVE_PROGRESS:"Current bus location",STALE:"Location update delayed"})[source];
 export const stopStatusLabel=(status:string)=>({PASSED:"Passed",DEPARTED:"Passed",CURRENT:"Current location",UPCOMING:"Upcoming",UNKNOWN:"Status unavailable"})[status as "PASSED"]??"Status unavailable";
 export const publicRouteCode=(value:string|null|undefined)=>value&&/^(?:[A-Za-z]{1,3})?\d{1,4}[A-Za-z]?$/.test(value)?value:null;
