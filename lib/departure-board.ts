@@ -1,12 +1,16 @@
 import type { ScheduledDeparture, FrequencyWindow } from "@/lib/scheduled-departures";
+import type { TrainArrival } from "@/lib/train-arrivals";
 export type DeparturePayload = {
   status: string; message: string; departures: ScheduledDeparture[]; frequencies: FrequencyWindow[]; retrievedAt: string;
+  trainArrivals?: TrainArrival[]; arrivalFrequencyCoverage?: string[];
   emptyReason?: "NO_MORE_TODAY" | "NO_SERVICE_TODAY" | "TIMETABLE_UNAVAILABLE" | null;
   liveEta: { available: boolean; reason: string; predictions?: { tripId: string; estimatedDeparture: string; source: string; verified: boolean }[] };
   sources: { source: string; lastUpdated: string | null; error: string | null }[];
 };
 export const malaysiaDay = (value: string | number) => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kuala_Lumpur", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value));
 export const boardTime = (value: string) => new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kuala_Lumpur", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date(value));
+export const arrivalClock = (value: string) => new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Kuala_Lumpur", hour: "numeric", minute: "2-digit", hour12: true }).format(new Date(value));
+export const arrivalCountdown = (timestamp: number, now: number) => timestamp < now ? null : timestamp-now < 60000 ? "<1 min" : `${Math.ceil((timestamp-now)/60000)} min`;
 export const boardDate = (value: string) => new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kuala_Lumpur", day: "numeric", month: "short", weekday: "short" }).format(new Date(value));
 export function safeTimetableSource(value: string) {
   try { const url = new URL(value); return url.protocol === "https:" && ["api.data.gov.my", "myrapid.com.my", "www.myrapid.com.my", "www.ktmb.com.my", "www.mymrt.com.my"].includes(url.hostname) && !url.username && !url.password; } catch { return false; }
