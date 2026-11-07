@@ -2,7 +2,7 @@ import type { Mode } from "@/lib/transit-data";
 type Row = Record<string, string>;
 export type ScheduledDeparture = { tripId: string; routeId: string; routeName: string; mode: Mode; destination?: string; direction?: string; scheduledDeparture: string; scheduledTimestamp: number; platform?: string; status: "SCHEDULED"; source: string; lastUpdated: string };
 export type FrequencyWindow = { tripId: string; routeName: string; mode: Mode; destination?: string; direction?: string; platform?: string; start: string; end: string; headwaySeconds: number; source: string };
-export type Timetable = { byStop: Map<string, Row[]>; arrivalStops: Map<string, Row[]>; origins: Map<string, Row>; originConflicts: Set<string>; trips: Map<string, Row>; routes: Map<string, Row & { mode: Mode }>; stops: Map<string, Row>; calendars: Row[]; exceptions: Row[]; frequencies: Map<string, Row[]>; firstTime: Map<string, number>; destination: Map<string, string>; lastSeq: Map<string, number>; source: string; updated: string; maxSeconds: number };
+export type Timetable = { byTrip: Map<string, Row[]>; routeTrips: Map<string, string[]>; byStop: Map<string, Row[]>; arrivalStops: Map<string, Row[]>; origins: Map<string, Row>; originConflicts: Set<string>; trips: Map<string, Row>; routes: Map<string, Row & { mode: Mode }>; stops: Map<string, Row>; calendars: Row[]; exceptions: Row[]; frequencies: Map<string, Row[]>; firstTime: Map<string, number>; destination: Map<string, string>; lastSeq: Map<string, number>; source: string; updated: string; maxSeconds: number };
 export function gtfsSeconds(time: string): number | null {
   const match = /^(\d{1,3}):([0-5]\d):([0-5]\d)$/.exec(time ?? "");
   return match ? +match[1] * 3600 + +match[2] * 60 + +match[3] : null;
@@ -11,7 +11,10 @@ export function buildTimetable(input: { stopTimes: Row[]; trips: Row[]; routes: 
   const byStop = new Map<string, Row[]>(), firstTime = new Map<string, number>(), destination = new Map<string, string>(), lastSeq = new Map<string, number>(), frequencies = new Map<string, Row[]>();
   let maxSeconds = 86400;
   const arrivalStops = new Map<string, Row[]>(), origins = new Map<string, Row>(), originConflicts = new Set<string>();
+  const byTrip = new Map<string, Row[]>(), routeTrips = new Map<string, string[]>();
+  for (const trip of input.trips) { const ids=routeTrips.get(trip.route_id)??[];ids.push(trip.trip_id);routeTrips.set(trip.route_id,ids); }
   for (const row of input.stopTimes) {
+    const tripRows=byTrip.get(row.trip_id)??[];tripRows.push(row);byTrip.set(row.trip_id,tripRows);
     const originSequence = Number(row.stop_sequence);
     if (row.stop_sequence && Number.isFinite(originSequence)) { const prior=origins.get(row.trip_id);if(!prior || originSequence<Number(prior.stop_sequence)){origins.set(row.trip_id,row);originConflicts.delete(row.trip_id);}else if(originSequence===Number(prior.stop_sequence) && (prior.stop_id!==row.stop_id || prior.arrival_time!==row.arrival_time || prior.departure_time!==row.departure_time))originConflicts.add(row.trip_id); }
     const arrivalSeconds = gtfsSeconds(row.arrival_time);
@@ -22,7 +25,8 @@ export function buildTimetable(input: { stopTimes: Row[]; trips: Row[]; routes: 
     maxSeconds = Math.max(maxSeconds, seconds); firstTime.set(row.trip_id, Math.min(firstTime.get(row.trip_id) ?? Infinity, seconds));
   }
   for (const row of input.frequencies) { const rows = frequencies.get(row.trip_id) ?? []; rows.push(row); frequencies.set(row.trip_id, rows); maxSeconds = Math.max(maxSeconds, gtfsSeconds(row.end_time) ?? 0); }
-  return { byStop, arrivalStops, origins, originConflicts, firstTime, destination, lastSeq, frequencies, trips: new Map(input.trips.map(row => [row.trip_id, row])), routes: new Map(input.routes.map(row => [row.route_id, { ...row, mode: input.mode(row) }])), stops: new Map(input.stops.map(row => [row.stop_id, row])), calendars: input.calendars, exceptions: input.exceptions, source: input.source, updated: new Date().toISOString(), maxSeconds };
+  for (const rows of byTrip.values()) rows.sort((a,b)=>Number(a.stop_sequence)-Number(b.stop_sequence));
+  return { byTrip, routeTrips, byStop, arrivalStops, origins, originConflicts, firstTime, destination, lastSeq, frequencies, trips: new Map(input.trips.map(row => [row.trip_id, row])), routes: new Map(input.routes.map(row => [row.route_id, { ...row, mode: input.mode(row) }])), stops: new Map(input.stops.map(row => [row.stop_id, row])), calendars: input.calendars, exceptions: input.exceptions, source: input.source, updated: new Date().toISOString(), maxSeconds };
 }
 export function serviceRuns(table: Timetable, serviceId: string, date: string): boolean {
   const exception = table.exceptions.find(row => row.service_id === serviceId && row.date === date.replaceAll("-", ""));

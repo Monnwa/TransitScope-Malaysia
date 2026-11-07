@@ -1,5 +1,6 @@
 import GtfsRealtimeBindings from "gtfs-realtime-bindings";
 import JSZip from "jszip";
+import { vehicleObservation } from "@/lib/vehicle-observation";
 import { buildTimetable, type Timetable } from "@/lib/scheduled-departures";
 import type { FeedHealth, Mode, MrtLineId, Record } from "@/lib/transit-data";
 
@@ -103,7 +104,13 @@ async function loadStaticFeed(source: typeof staticSources[number]) {
   const timetable = buildTimetable({ stopTimes: stopTimeRows, trips: tripRows, routes: routeRows, stops: stopRows, calendars: calendarRows, exceptions: exceptionRows, frequencies: frequencyRows, source: source.url, mode: route => mapMode(route.route_type, source.defaultMode, route.category) });
   const value = { timetable, routes, trips, stops: stops.slice(0, 700), tripPaths, files: { agencies: agencyRows.length, stopTimes: stopTimeRows.length, calendar: calendarRows.length, shapes: shapeRows.length }, fetchedAt: new Date().toISOString() }; staticCache.set(source.id, { value, expiresAt: Date.now() + STATIC_TTL, lastSuccessAt: value.fetchedAt }); return value;
 }
+const realtimeRequests = new Map<string, ReturnType<typeof loadRealtimeFeed>>();
 async function realtimeFeed(feed: FeedConfig) {
+  const pending=realtimeRequests.get(feed.id);if(pending)return pending;
+  const request=loadRealtimeFeed(feed).finally(()=>realtimeRequests.delete(feed.id));
+  realtimeRequests.set(feed.id,request);return request;
+}
+async function loadRealtimeFeed(feed: FeedConfig) {
   const cached = realtimeCache.get(feed.id); if (cached && cached.expiresAt > Date.now()) return cached.value;
   try {
     // Vehicle positions must remain available even when the substantially larger
@@ -113,11 +120,21 @@ async function realtimeFeed(feed: FeedConfig) {
     const staticData = cachedStatic && cachedStatic.expiresAt > Date.now() ? cachedStatic.value : null;
     const decoded = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(bytes);
     const sourceTimestamp = decoded.header?.timestamp ? new Date(Number(decoded.header.timestamp) * 1000).toISOString() : null;
-    const records = decoded.entity.flatMap((entity: any) => { const vehicle = entity.vehicle; const position = vehicle?.position; const lat = position?.latitude, lon = position?.longitude; if (!vehicle || !validPosition(lat, lon)) return []; const tripId = vehicle.trip?.tripId ?? null; const trip = tripId ? staticData?.trips.get(tripId) : undefined; const routeId = vehicle.trip?.routeId ?? trip?.routeId ?? null; const route = routeId ? staticData?.routes.get(routeId) : undefined; const timestamp = vehicle.timestamp ? new Date(Number(vehicle.timestamp) * 1000).toISOString() : sourceTimestamp; return [{ id: vehicle.vehicle?.id || entity.id || `${feed.id}:${lat}:${lon}`, name: vehicle.vehicle?.label || vehicle.vehicle?.id || "Vehicle identifier unavailable", mode: route?.mode ?? feed.mode, operator: feed.operator, route: route?.name ?? routeId, routeId, tripId, station: null, position: [lat, lon] as [number, number], bearing: position.bearing ?? null, speed: position.speed ?? null, routePath: tripId ? staticData?.tripPaths.get(tripId) ?? null : null, recordKind: "vehicle" as const, reportedAt: timestamp, lastUpdatedAt: new Date().toISOString(), status: "In service" as const, dataMode: "LIVE" as const, source: `Malaysia Open API GTFS-Realtime (${feed.label})` }]; });
+    const records = decoded.entity.flatMap((entity: any) => { const vehicle = entity.vehicle; const position = vehicle?.position; const lat = position?.latitude, lon = position?.longitude; if (!vehicle || !validPosition(lat, lon)) return []; const tripId = vehicle.trip?.tripId ?? null; const trip = tripId ? staticData?.trips.get(tripId) : undefined; const routeId = vehicle.trip?.routeId ?? trip?.routeId ?? null; const route = routeId ? staticData?.routes.get(routeId) : undefined; const timestamp = vehicle.timestamp ? new Date(Number(vehicle.timestamp) * 1000).toISOString() : sourceTimestamp; return [{ feedId: feed.id, observation: vehicleObservation(vehicle), id: vehicle.vehicle?.id || entity.id || `${feed.id}:${lat}:${lon}`, name: vehicle.vehicle?.label || vehicle.vehicle?.id || "Vehicle identifier unavailable", mode: route?.mode ?? feed.mode, operator: feed.operator, route: route?.name ?? routeId, routeId, tripId, station: null, position: [lat, lon] as [number, number], bearing: position.bearing ?? null, speed: position.speed ?? null, routePath: tripId ? staticData?.tripPaths.get(tripId) ?? null : null, recordKind: "vehicle" as const, reportedAt: timestamp, lastUpdatedAt: new Date().toISOString(), status: "In service" as const, dataMode: "LIVE" as const, source: `Malaysia Open API GTFS-Realtime (${feed.label})` }]; });
     const health: FeedHealth = { id: feed.id, label: feed.label, status: "healthy", lastSuccessAt: new Date().toISOString(), sourceTimestamp, message: null, records: records.length }; healthMemory.set(feed.id, health); const value = { records, health }; realtimeCache.set(feed.id, { value, expiresAt: Date.now() + REALTIME_TTL, lastSuccessAt: health.lastSuccessAt! }); return value;
   } catch (error) { const prior = healthMemory.get(feed.id); const health: FeedHealth = { id: feed.id, label: feed.label, status: prior ? "stale" : "unavailable", lastSuccessAt: prior?.lastSuccessAt ?? null, sourceTimestamp: prior?.sourceTimestamp ?? null, message: error instanceof Error ? error.message : "Unknown upstream error", records: prior?.records ?? 0 }; healthMemory.set(feed.id, health); return { records: [], health }; }
 }
 export async function getOfficialTransit() { const outcome = await Promise.all(feeds.map(realtimeFeed)); return { records: outcome.flatMap(x => x.records), feeds: outcome.map(x => x.health) }; }
+export const busSourceIds = ["rapid-bus-kl", "rapid-bus-mrtfeeder", "rapid-bus-penang"] as const;
+export type BusSourceId = typeof busSourceIds[number];
+export async function getBusStaticFeed(id: BusSourceId) { return staticFeed(staticSources.find(source=>source.id===id)!); }
+export async function getBusVehicle(id: BusSourceId, vehicleId: string) {
+  const feed=feeds.find(item=>item.id===id)!;
+  const result=await realtimeFeed(feed);
+  const available=result.health.status==="healthy";
+  const record=(available?result.records:realtimeCache.get(id)?.value.records??[]).find(item=>item.id===vehicleId)??null;
+  return { record, available, health:result.health };
+}
 export async function getTimetable(sourceId: string) { const source = staticSources.find(item => item.id === sourceId); if (!source) throw new Error("Unsupported timetable source"); return (await staticFeed(source)).timetable; }
 export async function getRailStaticFeed(id: "rapid-rail-kl" | "ktmb") { return staticFeed(staticSources.find(source => source.id === id)!); }
 export async function getMrtStaticFeed() { return getRailStaticFeed("rapid-rail-kl"); }
