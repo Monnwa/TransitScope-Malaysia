@@ -14,6 +14,7 @@ export const publicRouteName=(value:string|null|undefined,id?:string|null)=>valu
 export const platformLabel=(value:string|undefined)=>value&&/^(?:platform\s+)?[A-Za-z]?\d{1,2}[A-Za-z]?$/i.test(value)?`Platform ${value.replace(/^platform\s+/i,"")}`:"";
 export const alertLabel=(value:string)=>value==="UNKNOWN"?"Status unavailable":value==="ACTIVE"?"Current":sentenceCase(value);
 export const passengerName=(value:string)=>/^(?:Stop name|Vehicle identifier) unavailable/i.test(value)?"Name unavailable":value;
+export const resultCountLabel=(count:number)=>`${count} ${count===1?"result":"results"}`;
 export function journeyLocationText(data:BusJourney|null,tracking:VehicleProgress|undefined,stale:boolean,preview:boolean){
   if(!data)return "";
   if(preview)return "Scheduled journey";
