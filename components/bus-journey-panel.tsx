@@ -12,6 +12,7 @@ import { journeySelectionKey, retainedStopSelection, selectJourneyStop, type Sel
 import { adherenceSummary,displayedAdherence } from "@/lib/timetable-adherence";
 import { StopTimetableAdherence,AdherenceSummary } from "./timetable-adherence";
 import { journeyLocationText,passengerName,publicRouteCode,publicRouteName,sentenceCase } from "./passenger-copy";
+import { estimatedBusArrival,estimatedBusArrivalLabel } from "@/lib/bus-motion";
 
 export type BusMapJourney={vehicleId:string;path:[number,number][]|null;tripId:string|null;tracking?:VehicleProgress;motion?:RouteAnimator;selectedStop?:SelectedJourneyStop|null;navigation?:number;locate?:number;lastSeen?:{position:[number,number]|null;timestamp:string|null;available:boolean;name:string}};
 type Props={record:TransitRecord;onClose:()=>void;onPathChange:(journey:BusMapJourney)=>void;children?:ReactNode};
@@ -64,6 +65,13 @@ function Journey({record,onClose,onPathChange,children}:Props){
   const stops=(data?.stops??[]).map(stop=>({...stop,status:reliable&&!preview?stop.status:"UNKNOWN" as const,adherence:displayedAdherence(stop.adherence,reliable&&!preview&&tracking?.source==="GPS_INFERRED"&&tracking.confidence==="HIGH")}));
   const summary=adherenceSummary(stops);
   const gpsActive=reliable&&!preview&&(tracking?.source==="GPS_INFERRED"||tracking?.source==="APPROXIMATE");
+  const nextArrival=reliable&&!preview&&data?.match.status==="MATCHED"?estimatedBusArrival(tracking,now):null;
+  const arrivalExpiry=nextArrival?.expiresAt;
+  useEffect(()=>{
+    if(arrivalExpiry===undefined)return;
+    const deadline=setTimeout(()=>setNow(Date.now()),Math.max(0,arrivalExpiry-Date.now()));
+    return()=>clearTimeout(deadline);
+  },[arrivalExpiry]);
   const lastGpsPassed=stops.filter(stop=>stop.status==="PASSED").at(-1)?.sequence;
   const isEarlier=(stop:typeof stops[number])=>stop.status==="DEPARTED"||stop.status==="PASSED"&&stop.sequence!==lastGpsPassed;
   const previousCount=stops.filter(isEarlier).length;
@@ -103,6 +111,7 @@ function Journey({record,onClose,onPathChange,children}:Props){
         {data.frequencies.length>0&&<section className="bus-frequency" aria-label="Bus service frequency"><h3>Service intervals</h3>{data.frequencies.slice(0,allFrequency?data.frequencies.length:1).map((window,index)=><div key={`${window.start}:${window.end}:${index}`}><strong>Every {Math.round(window.headwaySeconds/6)/10} min</strong><span>{boardDate(window.start)} · {arrivalClock(window.start)}–{arrivalClock(window.end)}{malaysiaDay(window.start)!==malaysiaDay(window.end)?` (${boardDate(window.end)})`:""} MYT</span><small>Towards {destination(window.destination)}</small></div>)}{data.frequencies.length>1&&<button type="button" className="bus-text-button" aria-expanded={allFrequency} onClick={()=>setAllFrequency(value=>!value)}>{allFrequency?"Show fewer times":"Show all times"}</button>}<p className="bus-caption">Exact departure times may vary.</p></section>}
         {stops.length>0&&<>
           <div className="bus-progress" role="status"><span aria-hidden="true">🚌</span> <strong>{progress}</strong></div>
+          {nextArrival?<section className="bus-arrival-estimate" aria-label="Estimated next-stop arrival"><span className="bus-time-label bus-estimated">Estimated arrival</span><strong>Next stop: {passengerName(nextArrival.stopName)}</strong><p>{estimatedBusArrivalLabel(nextArrival,now)}</p><small>Based on recent movement. Traffic and stops may change this estimate.</small></section>:<p className="bus-caption">Arrival estimate unavailable</p>}
           {tracking?.vehicleTimestamp&&!preview&&<p className="bus-caption">{stale||tracking.source==="STALE"?"Last updated":"Location updated"} <time dateTime={tracking.vehicleTimestamp}>{stamp(tracking.vehicleTimestamp)}</time></p>}
           {!preview&&<AdherenceSummary stops={stops} summary={summary}/>}
           {reliable&&data.delay&&!preview&&<p className="bus-delay" title="The bus was still at this stop after its scheduled departure time.">At least {data.delay.minimumMinutes} min late · Updated {arrivalClock(data.delay.observedAt)}</p>}

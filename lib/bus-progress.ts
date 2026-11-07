@@ -14,7 +14,7 @@ export function applyBusProgress(journey:BusJourney,table:Timetable,vehicle:Tran
   const trip=table.trips.get(active.tripId),shapeId=trip?.shape_id||null;
   const path=(options.gpsPaths??options.paths)?.get(active.tripId),shape=path?indexShape(path):null;
   const now=options.now??Date.now(),fix=gpsFix(vehicle),token=options.history?.token??"single-observation";
-  const context={key:JSON.stringify([vehicle.feedId,vehicle.id,journey.route?.id,active.key,shapeId,shape?.fingerprint]),historyToken:token,vehicleId:vehicle.id,tripId:active.tripId,routeId:journey.route?.id??null,shapeId,serviceDate:active.serviceDate,stops:[] as StopProjection[]};
+  const context={key:JSON.stringify([vehicle.feedId,vehicle.id,journey.route?.id,active.key,shapeId,shape?.fingerprint]),historyToken:token,vehicleId:vehicle.id,tripId:active.tripId,routeId:journey.route?.id??null,shapeId,serviceDate:active.serviceDate,directionId:trip?.direction_id??null,stops:[] as StopProjection[]};
   const explicit=vehicle.observation?.currentStopSequence!==undefined;
   if(explicit){
     const valid=["AT_STOP","IN_TRANSIT","APPROACHING","COMPLETED"].includes(journey.progress.status);

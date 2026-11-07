@@ -5,11 +5,14 @@ import type { VehicleProgress } from "@/lib/vehicle-progress";
 import { PROGRESS_LIMITS } from "@/lib/route-projection";
 import { officialStopPosition } from "@/lib/journey-stop-selection";
 import { applyJourneyAdherence,type StopAdherence } from "@/lib/timetable-adherence";
+import { estimatedBusArrival,type BusArrivalEstimate } from "@/lib/bus-motion";
 
 type Row = Record<string,string>;
 export type BusJourneyOptions=GpsJourneyOptions&{realtimeAvailable?:boolean;departure?:string|null;direction?:string|null;adherenceToleranceSeconds?:number};
 export function calculateBusJourney(table:Timetable,vehicle:TransitRecord,options:BusJourneyOptions={}):BusJourney {
-  return applyJourneyAdherence(applyBusProgress(calculateBaseBusJourney(table,vehicle,options),table,vehicle,options),options.now??Date.now(),options.adherenceToleranceSeconds);
+  const now=options.now??Date.now(),at={...options,now},journey=applyJourneyAdherence(applyBusProgress(calculateBaseBusJourney(table,vehicle,at),table,vehicle,at),now,options.adherenceToleranceSeconds);
+  journey.estimatedNextStop=journey.vehicle.realtimeAvailable&&journey.match.status==="MATCHED"&&journey.selectedDeparture?.key===journey.vehicleDeparture?.key?estimatedBusArrival(journey.tracking,now):null;
+  return journey;
 }
 export const BUS_POSITION_MAX_AGE = PROGRESS_LIMITS.maxAgeMs;
 export type JourneyDeparture = {
@@ -30,7 +33,7 @@ export type BusJourney = {
   match: {status:"MATCHED"|"PATTERN_ONLY"|"ROUTE_ONLY"|"UNAVAILABLE";method:"TRIP_ID"|"UNIQUE_DESCRIPTOR"|null;reason:string;routeAlias:boolean};
   vehicleDeparture: JourneyDeparture|null; selectedDeparture: JourneyDeparture|null; departures: JourneyDeparture[];
   frequencies: {start:string;end:string;headwaySeconds:number;destination:string;direction:string|null}[];
-  stops: JourneyStop[]; path: [number,number][]|null; tracking?:VehicleProgress;
+  stops: JourneyStop[]; path: [number,number][]|null; tracking?:VehicleProgress; estimatedNextStop?:BusArrivalEstimate|null;
   progress: {status:"UNKNOWN"|"STALE"|"AT_STOP"|"IN_TRANSIT"|"APPROACHING"|"COMPLETED"|"TIMETABLE_PREVIEW";sequence:number|null;message:string};
   delay: {minimumMinutes:number;observedAt:string;sequence:number;basis:string}|null;
   source:string; staticUpdatedAt:string; retrievedAt:string; selectionWarning:string|null;
