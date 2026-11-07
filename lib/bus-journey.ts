@@ -3,6 +3,7 @@ import type { Record as TransitRecord } from "@/lib/transit-data";
 import { applyBusProgress, type GpsJourneyOptions } from "@/lib/bus-progress";
 import type { VehicleProgress } from "@/lib/vehicle-progress";
 import { PROGRESS_LIMITS } from "@/lib/route-projection";
+import { officialStopPosition } from "@/lib/journey-stop-selection";
 
 type Row = Record<string,string>;
 export type BusJourneyOptions=GpsJourneyOptions&{realtimeAvailable?:boolean;departure?:string|null;direction?:string|null};
@@ -16,6 +17,7 @@ export type JourneyDeparture = {
   classification: "SCHEDULED" | "ESTIMATED"; basis: string;
 };
 export type JourneyStop = {
+  position?: [number,number]|null;
   id: string; sequence: number; name: string; arrival: string | null; departure: string | null;
   classification: "SCHEDULED" | "ESTIMATED" | null;
   status: "DEPARTED" | "PASSED" | "CURRENT" | "UPCOMING" | "UNKNOWN";
@@ -172,7 +174,7 @@ function calculateBaseBusJourney(table:Timetable,vehicle:TransitRecord,options:B
   const shift=selected&&selectedPattern.origin!==null?selected.startSeconds-selectedPattern.origin:0;
   response.stops=selectedPattern.rows.map(row=>{
     const arrival=gtfsSeconds(row.arrival_time),departure=gtfsSeconds(row.departure_time);
-    return {id:row.stop_id,sequence:Number(row.stop_sequence),name:table.stops.get(row.stop_id)?.stop_name||`Stop name unavailable (${row.stop_id})`,arrival:selected&&arrival!==null?dated(selected.serviceDate,arrival+shift):null,departure:selected&&departure!==null?dated(selected.serviceDate,departure+shift):null,classification:selected&&(arrival!==null||departure!==null)?row.timepoint==="0"?"ESTIMATED":selected.classification:null,status:"UNKNOWN"};
+    return {position:officialStopPosition(table,row.stop_id),id:row.stop_id,sequence:Number(row.stop_sequence),name:table.stops.get(row.stop_id)?.stop_name||`Stop name unavailable (${row.stop_id})`,arrival:selected&&arrival!==null?dated(selected.serviceDate,arrival+shift):null,departure:selected&&departure!==null?dated(selected.serviceDate,departure+shift):null,classification:selected&&(arrival!==null||departure!==null)?row.timepoint==="0"?"ESTIMATED":selected.classification:null,status:"UNKNOWN"};
   });
   if(selected&&selected.key!==active?.key){response.progress={status:"TIMETABLE_PREVIEW",sequence:null,message:"Timetable preview — vehicle progress belongs to its own matched journey."};return response;}
   if(!realtimeAvailable){response.progress.message="Realtime unavailable — stop progress and delay are not asserted.";return response;}

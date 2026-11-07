@@ -7,8 +7,10 @@ import { arrivalClock, boardDate, malaysiaDay, safeTimetableSource } from "@/lib
 import { newerJourney, currentTracking } from "@/lib/bus-progress";
 import type { VehicleProgress } from "@/lib/vehicle-progress";
 import { GpsEvidence, GpsTimelinePosition } from "./gps-progress";
+import { RouteAnimator, browserAnimationClock } from "@/lib/route-animation";
+import { journeySelectionKey, retainedStopSelection, selectJourneyStop, type SelectedJourneyStop } from "@/lib/journey-stop-selection";
 
-export type BusMapJourney={vehicleId:string;path:[number,number][]|null;tripId:string|null;tracking?:VehicleProgress;lastSeen?:{position:[number,number]|null;timestamp:string|null;available:boolean;name:string}};
+export type BusMapJourney={vehicleId:string;path:[number,number][]|null;tripId:string|null;tracking?:VehicleProgress;motion?:RouteAnimator;selectedStop?:SelectedJourneyStop|null;navigation?:number;locate?:number;lastSeen?:{position:[number,number]|null;timestamp:string|null;available:boolean;name:string}};
 type Props={record:TransitRecord;onClose:()=>void;onPathChange:(journey:BusMapJourney)=>void;children?:ReactNode};
 const destination=(value:string|null|undefined)=>value?/^from\s+.+?\s+to\s+(.+)$/i.exec(value)?.[1]??value:"Destination unavailable";
 const stamp=(value:string)=>`${boardDate(value)}, ${arrivalClock(value)} MYT`;
@@ -20,6 +22,14 @@ function Journey({record,onClose,onPathChange,children}:Props){
   const [departure,setDeparture]=useState<string|null>(null),[direction,setDirection]=useState<string|null>(null),[refresh,setRefresh]=useState(0);
   const [previous,setPrevious]=useState(false),[expanded,setExpanded]=useState(true),[now,setNow]=useState(Date.now),[allFrequency,setAllFrequency]=useState(false);
   const busy=useRef(false),lastRequest=useRef(0),lastManual=useRef(0),body=useRef<HTMLDivElement>(null),id=useId();
+  const [motion]=useState(()=>new RouteAnimator(browserAnimationClock));
+  const [selection,setSelection]=useState<SelectedJourneyStop|null>(null),[navigation,setNavigation]=useState(0),[locate,setLocate]=useState(0);
+  const retained=retainedStopSelection(selection,data);
+  const selectedFresh=!!data&&data.vehicle.realtimeAvailable&&data.progress.status!=="TIMETABLE_PREVIEW"&&data.vehicle.positionStatus==="CURRENT"&&!!data.vehicle.reportedAt&&now-Date.parse(data.vehicle.reportedAt)<=BUS_POSITION_MAX_AGE&&Date.parse(data.vehicle.reportedAt)-now<=30000;
+  const selectedStop=retained?{...retained,status:selectedFresh?retained.status:"UNKNOWN" as const,confidence:selectedFresh?retained.confidence:"LOW"}:null;
+  const runKey=data?journeySelectionKey(data):null;
+  useEffect(()=>{setSelection(null);},[runKey]);
+  useEffect(()=>{const media=window.matchMedia("(prefers-reduced-motion: reduce)"),change=()=>motion.setReducedMotion(media.matches);change();media.addEventListener("change",change);return()=>{media.removeEventListener("change",change);motion.dispose();};},[motion]);
   const query=new URLSearchParams({source:record.feedId??"",vehicle:record.id});
   if(record.tripId)query.set("trip",record.tripId);if(record.routeId)query.set("route",record.routeId);
   const observation=record.observation;
@@ -42,7 +52,8 @@ function Journey({record,onClose,onPathChange,children}:Props){
   },[queryKey,refresh,record.id,record.feedId]);
   useEffect(()=>{if(data&&!busy.current&&now-lastRequest.current>=30000)setRefresh(value=>value+1);},[now,data]);
   const tracking=useMemo(()=>currentTracking(data?.tracking,now,data?.vehicle.realtimeAvailable!==false&&data?.progress.status!=="TIMETABLE_PREVIEW"),[data?.tracking,data?.vehicle.realtimeAvailable,data?.progress.status,now]);
-  useEffect(()=>{if(data)onPathChange({vehicleId:record.id,path:data.path,tripId:data.selectedDeparture?.tripId??null,tracking,lastSeen:{position:data.vehicle.position??record.position,timestamp:data.vehicle.reportedAt??record.observation?.positionTimestamp??null,available:data.vehicle.realtimeAvailable,name:record.name}});},[data,tracking,onPathChange,record.id]);
+  useEffect(()=>{motion.update(data?.path??null,tracking,data?.route?.id??null);},[data?.path,data?.route?.id,tracking,motion]);
+  useEffect(()=>{if(data)onPathChange({vehicleId:record.id,path:data.path,tripId:data.selectedDeparture?.tripId??null,tracking,motion,selectedStop,navigation,locate,lastSeen:{position:data.vehicle.position??record.position,timestamp:data.vehicle.reportedAt??record.observation?.positionTimestamp??null,available:data.vehicle.realtimeAvailable,name:record.name}});},[data,tracking,onPathChange,record.id,motion,selectedStop?.key,selectedStop?.status,selectedStop?.confidence,navigation,locate]);
   const reload=()=>{if(busy.current||Date.now()-lastManual.current<1000)return;lastManual.current=Date.now();busy.current=true;setLoading(true);setRefresh(value=>value+1);};
   const stale=!!data?.vehicle.reportedAt&&(now-Date.parse(data.vehicle.reportedAt)>BUS_POSITION_MAX_AGE||Date.parse(data.vehicle.reportedAt)-now>30000);
   const reliable=!!data&&data.vehicle.realtimeAvailable&&data.vehicle.positionStatus==="CURRENT"&&!stale;
@@ -52,7 +63,10 @@ function Journey({record,onClose,onPathChange,children}:Props){
   const lastGpsPassed=stops.filter(stop=>stop.status==="PASSED").at(-1)?.sequence;
   const isEarlier=(stop:typeof stops[number])=>stop.status==="DEPARTED"||stop.status==="PASSED"&&stop.sequence!==lastGpsPassed;
   const previousCount=stops.filter(isEarlier).length;
-  const visible=stops.filter(stop=>previous||!isEarlier(stop));
+  const visible=stops.filter(stop=>previous||!isEarlier(stop)||selectedStop?.id===stop.id&&selectedStop.sequence===stop.sequence);
+  const scrollInside=(element:HTMLElement|null)=>{const container=body.current;if(!element||!container)return;const row=element.getBoundingClientRect(),box=container.getBoundingClientRect();if(row.top<box.top)container.scrollTop+=row.top-box.top-8;else if(row.bottom>box.bottom)container.scrollTop+=row.bottom-box.bottom+8;};
+  const chooseStop=(stop:typeof stops[number],element:HTMLElement)=>{if(!data)return;setSelection(selectJourneyStop({...data,stops},stop.id,stop.sequence));setNavigation(value=>value+1);scrollInside(element);};
+  const locateBus=()=>{setSelection(null);setLocate(value=>value+1);scrollInside(body.current?.querySelector<HTMLElement>(".bus-timeline-position,.bus-progress")??null);};
   const togglePrevious=()=>{
     const anchor=body.current?.querySelector(`[data-sequence="${data?.progress.sequence}"]`),offset=anchor?.getBoundingClientRect().top;
     setPrevious(value=>!value);requestAnimationFrame(()=>{if(body.current&&anchor&&offset!==undefined)body.current.scrollTop+=anchor.getBoundingClientRect().top-offset;});
@@ -68,6 +82,8 @@ function Journey({record,onClose,onPathChange,children}:Props){
     <div className="bus-journey-body" id={id} ref={body}>
       <div className="bus-toolbar"><span className={`bus-observation ${reliable?"bus-observation-current":""} ${stale||data?.vehicle.positionStatus==="STALE"?"bus-stale":""}`}>{!data?loading?"Matching official trip…":"TIMETABLE UNAVAILABLE":!data.vehicle.realtimeAvailable?"REALTIME UNAVAILABLE":stale||data.vehicle.positionStatus==="STALE"?"STALE POSITION":data.vehicle.positionStatus==="CURRENT"?"LIVE POSITION":"POSITION TIME UNKNOWN"}</span><button type="button" className="bus-refresh" aria-label="Refresh bus journey" disabled={loading} onClick={reload}>{loading?"Loading…":"↻ Refresh"}</button></div>
       <p className="bus-loading" role="status" aria-live="polite">{loading?data?"Refreshing official journey…":"Retrieving official trip and stop sequence…":data?`Updated ${arrivalClock(data.retrievedAt)} MYT · ${data.stops.length} stops`:""}</p>
+      {reliable&&!preview&&<button type="button" className="bus-text-button bus-locate" onClick={locateBus}>◎ Locate bus</button>}
+      {selectedStop&&!selectedStop.position&&<p className="bus-fallback" role="status">Map location unavailable for {selectedStop.name} (Stop {selectedStop.id}).</p>}
       {error&&<p className="bus-error" role="alert">{error} <button type="button" disabled={loading} onClick={reload}>Retry</button></p>}
       {data&&<>
         {data.match.status!=="MATCHED"&&<p className="bus-fallback" role="status">{data.match.reason}</p>}
@@ -92,14 +108,15 @@ function Journey({record,onClose,onPathChange,children}:Props){
             const next=reliable&&!preview&&!gpsActive&&stop.sequence===data.progress.sequence&&stop.status!=="DEPARTED";
             const first=stop.sequence===stops[0]?.sequence,primary=first?stop.departure??stop.arrival:stop.arrival??stop.departure;
             return <Fragment key={`${stop.sequence}:${stop.id}`}>
-              {gpsActive&&tracking?.nextStopSequence===stop.sequence&&<GpsTimelinePosition tracking={tracking} previousName={stops.find(item=>item.sequence===tracking.previousPassedStopSequence)?.name} nextName={stop.name}/>}
-              <li data-sequence={stop.sequence} className={`bus-stop bus-stop-${stop.status.toLowerCase()} ${next?"bus-stop-next":""} ${gpsActive&&tracking?.nextStopSequence===stop.sequence?"bus-gps-next":""}`}>
-              <span className="bus-stop-node" aria-hidden="true">{next?"🚌":""}</span><div className="bus-stop-content"><strong>{stop.name}</strong><span className="bus-stop-status">{stop.status==="PASSED"?"Passed · Progress inferred from GPS":stop.status==="DEPARTED"?"Passed · LIVE PROGRESS":stop.status==="CURRENT"?"At stop":stop.status==="UPCOMING"?next?"Next stop":"Upcoming":"Vehicle progress unknown"}</span>
+              {gpsActive&&tracking?.nextStopSequence===stop.sequence&&<GpsTimelinePosition motion={motion} tracking={tracking} previousName={stops.find(item=>item.sequence===tracking.previousPassedStopSequence)?.name} nextName={stop.name}/>}
+              <li data-sequence={stop.sequence} data-stop-id={stop.id} className={`bus-stop bus-stop-${stop.status.toLowerCase()} ${selectedStop?.id===stop.id&&selectedStop.sequence===stop.sequence?"bus-stop-selected":""} ${next?"bus-stop-next":""} ${gpsActive&&tracking?.nextStopSequence===stop.sequence?"bus-gps-next":""}`}>
+              <span className="bus-stop-node" aria-hidden="true">{next?"🚌":""}</span><button type="button" className="bus-stop-content bus-stop-control" aria-label={`Show ${stop.name} on map (sequence ${stop.sequence})`} aria-pressed={selectedStop?.id===stop.id&&selectedStop.sequence===stop.sequence} onClick={event=>chooseStop(stop,event.currentTarget)}><strong>{stop.name}</strong><span className="bus-stop-status">{stop.status==="PASSED"?"Passed · Progress inferred from GPS":stop.status==="DEPARTED"?"Passed · LIVE PROGRESS":stop.status==="CURRENT"?"At stop":stop.status==="UPCOMING"?next?"Next stop":"Upcoming":"Vehicle progress unknown"}</span>
                 {primary?<div className="bus-stop-times"><span>{first||!stop.arrival?"Departure":"Arrival"} <time dateTime={primary}>{arrivalClock(primary)}</time>{malaysiaDay(primary)!==malaysiaDay(data.selectedDeparture?.departure??now)&&<small> {boardDate(primary)}</small>}</span>{!first&&stop.arrival&&stop.departure&&stop.arrival!==stop.departure&&<span>Departs <time dateTime={stop.departure}>{arrivalClock(stop.departure)}</time></span>}<span className={stop.classification==="ESTIMATED"?"bus-time-label bus-estimated":"bus-time-label"}>{stop.classification}</span></div>:<span className="bus-caption">Stop time unavailable</span>}
                 <small className="bus-stop-code">Stop {stop.id} · Sequence {stop.sequence}</small>
-              </div>
+                {!stop.position&&<small className="bus-stop-code">Map location unavailable</small>}
+              </button>
             </li></Fragment>;
-          })}{gpsActive&&tracking?.status==="BEYOND_LAST"&&<GpsTimelinePosition tracking={tracking} previousName={stops.find(item=>item.sequence===tracking.previousPassedStopSequence)?.name}/>}</ol>
+          })}{gpsActive&&tracking?.status==="BEYOND_LAST"&&<GpsTimelinePosition motion={motion} tracking={tracking} previousName={stops.find(item=>item.sequence===tracking.previousPassedStopSequence)?.name}/>}</ol>
         </>}
         {!stops.length&&<p className="bus-empty" role="status">{data.route?"No reliable vehicle trip timeline is available. Select a published departure, where available, to view its timetable.":"No matching official trip or route was found. Vehicle details and any available route path are retained."}</p>}
         <div className="bus-data-note"><p>LIVE POSITION is a vehicle observation, not a live arrival prediction.</p><p>{data.selectedDeparture?.classification==="ESTIMATED"?"Estimated stop times use the reported trip start and official GTFS offsets. Actual arrivals may differ.":"Scheduled times describe the timetable; they do not confirm actual arrivals or departures."}</p><p>Live arrival predictions: unavailable.</p>{!data.path&&<p>Route geometry is unavailable for this selected trip.</p>}<p>{stale||!data.vehicle.realtimeAvailable?"Last seen":"Vehicle measured"}: {data.vehicle.reportedAt?stamp(data.vehicle.reportedAt):"Not provided"}</p></div>
