@@ -32,6 +32,9 @@ test("reopening a GPS vehicle after closing its panel leaves no stale tooltip fo
   for(let i=0;i<3;i++){await panel(page).getByRole("button",{name:"Close bus journey"}).click();await page.getByTitle(bus.name,{exact:true}).click();await expect(panel(page).getByLabel("Current vehicle position")).toBeVisible();}
   expect(errors).toEqual([]);
 });
+test("fresh projected coordinates use their own timestamp instead of an older dashboard cache",async({page})=>{
+  await setup(page);const older={...bus,position:p(100),observation:{...bus.observation,positionTimestamp:new Date(now-300000).toISOString()}};await page.route("**/api/transit?*",route=>route.fulfill({json:{records:route.request().url().includes("includeStatic")?[]:[older],alerts:[],feeds:[],fetchedAt:new Date(now).toISOString(),demo:false}}));await page.route("**/api/bus-journey?*",route=>route.fulfill({json:payload()}));await open(page);await expect(page.getByTitle(bus.name,{exact:true})).toHaveCSS("opacity","1");await expect(page.locator(".leaflet-popup-content")).toBeVisible();await expect(page.locator(".leaflet-popup-content")).not.toContainText("STALE");await expect(panel(page).getByLabel("Vehicle progress evidence")).toContainText("GPS-INFERRED");
+});
 test("one GPS fix is approximate and cannot create passed stops or completed route segments",async({page})=>{
   await setup(page);await page.route("**/api/bus-journey?*",route=>route.fulfill({json:payload(false)}));await open(page);const board=panel(page);await expect(board.getByLabel("Vehicle progress evidence")).toContainText("APPROXIMATE");await expect(board.locator(".bus-stop-passed")).toHaveCount(0);await expect(board.locator(".bus-stop")).toHaveCount(4);await expect(page.locator(".gps-route-completed,.gps-route-remaining")).toHaveCount(0);await expect(board.locator(".bus-delay")).toHaveCount(0);
 });
