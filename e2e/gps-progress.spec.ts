@@ -27,6 +27,11 @@ test("high-confidence GPS shows passed/current/upcoming in the correct connected
 test("expanding previous stops preserves the latest passed stop and vehicle selection",async({page})=>{
   await setup(page);await page.route("**/api/bus-journey?*",route=>route.fulfill({json:payload()}));await open(page);const board=panel(page);await board.getByRole("button",{name:"Show previous stops"}).click();await expect(board.locator(".bus-stop-passed")).toHaveCount(2);await expect(board.locator(".bus-stop")).toHaveCount(4);await board.getByRole("button",{name:"Hide previous stops"}).click();await expect(board.locator(".bus-stop-passed")).toHaveCount(1);await expect(board.getByLabel("Current vehicle position")).toBeVisible();await expect(page.locator(".vehicle-selected")).toHaveCount(1);
 });
+test("reopening a GPS vehicle after closing its panel leaves no stale tooltip focus listeners",async({page})=>{
+  const errors:string[]=[];page.on("pageerror",error=>errors.push(error.message));await setup(page);await page.route("**/api/bus-journey?*",route=>route.fulfill({json:payload()}));await open(page);
+  for(let i=0;i<3;i++){await panel(page).getByRole("button",{name:"Close bus journey"}).click();await page.getByTitle(bus.name,{exact:true}).click();await expect(panel(page).getByLabel("Current vehicle position")).toBeVisible();}
+  expect(errors).toEqual([]);
+});
 test("one GPS fix is approximate and cannot create passed stops or completed route segments",async({page})=>{
   await setup(page);await page.route("**/api/bus-journey?*",route=>route.fulfill({json:payload(false)}));await open(page);const board=panel(page);await expect(board.getByLabel("Vehicle progress evidence")).toContainText("APPROXIMATE");await expect(board.locator(".bus-stop-passed")).toHaveCount(0);await expect(board.locator(".bus-stop")).toHaveCount(4);await expect(page.locator(".gps-route-completed,.gps-route-remaining")).toHaveCount(0);await expect(board.locator(".bus-delay")).toHaveCount(0);
 });
