@@ -1,8 +1,15 @@
 import { gtfsSeconds, malaysiaDate, serviceRuns, type Timetable } from "@/lib/scheduled-departures";
 import type { Record as TransitRecord } from "@/lib/transit-data";
+import { applyBusProgress, type GpsJourneyOptions } from "@/lib/bus-progress";
+import type { VehicleProgress } from "@/lib/vehicle-progress";
+import { PROGRESS_LIMITS } from "@/lib/route-projection";
 
 type Row = Record<string,string>;
-export const BUS_POSITION_MAX_AGE = 120_000;
+export type BusJourneyOptions=GpsJourneyOptions&{realtimeAvailable?:boolean;departure?:string|null;direction?:string|null};
+export function calculateBusJourney(table:Timetable,vehicle:TransitRecord,options:BusJourneyOptions={}):BusJourney {
+  return applyBusProgress(calculateBaseBusJourney(table,vehicle,options),table,vehicle,options);
+}
+export const BUS_POSITION_MAX_AGE = PROGRESS_LIMITS.maxAgeMs;
 export type JourneyDeparture = {
   key: string; tripId: string; serviceDate: string; startSeconds: number;
   departure: string; destination: string; direction: string | null;
@@ -11,7 +18,7 @@ export type JourneyDeparture = {
 export type JourneyStop = {
   id: string; sequence: number; name: string; arrival: string | null; departure: string | null;
   classification: "SCHEDULED" | "ESTIMATED" | null;
-  status: "DEPARTED" | "CURRENT" | "UPCOMING" | "UNKNOWN";
+  status: "DEPARTED" | "PASSED" | "CURRENT" | "UPCOMING" | "UNKNOWN";
 };
 export type BusJourney = {
   vehicle: {id:string;name:string;operator:string;reportedAt:string|null;position:[number,number]|null;realtimeAvailable:boolean;positionStatus:"CURRENT"|"STALE"|"UNKNOWN"};
@@ -19,7 +26,7 @@ export type BusJourney = {
   match: {status:"MATCHED"|"PATTERN_ONLY"|"ROUTE_ONLY"|"UNAVAILABLE";method:"TRIP_ID"|"UNIQUE_DESCRIPTOR"|null;reason:string;routeAlias:boolean};
   vehicleDeparture: JourneyDeparture|null; selectedDeparture: JourneyDeparture|null; departures: JourneyDeparture[];
   frequencies: {start:string;end:string;headwaySeconds:number;destination:string;direction:string|null}[];
-  stops: JourneyStop[]; path: [number,number][]|null;
+  stops: JourneyStop[]; path: [number,number][]|null; tracking?:VehicleProgress;
   progress: {status:"UNKNOWN"|"STALE"|"AT_STOP"|"IN_TRANSIT"|"APPROACHING"|"COMPLETED"|"TIMETABLE_PREVIEW";sequence:number|null;message:string};
   delay: {minimumMinutes:number;observedAt:string;sequence:number;basis:string}|null;
   source:string; staticUpdatedAt:string; retrievedAt:string; selectionWarning:string|null;
@@ -83,7 +90,7 @@ function inferredDate(table:Timetable,tripId:string,observed:number) {
   return possible.length===1?possible[0]:null;
 }
 
-export function calculateBusJourney(table:Timetable,vehicle:TransitRecord,options:{now?:number;realtimeAvailable?:boolean;departure?:string|null;direction?:string|null;paths?:Map<string,[number,number][]>}={}):BusJourney {
+function calculateBaseBusJourney(table:Timetable,vehicle:TransitRecord,options:BusJourneyOptions={}):BusJourney {
   const now=options.now??Date.now(),realtimeAvailable=options.realtimeAvailable??true,obs=vehicle.observation??{};
   const observed=obs.positionTimestamp?Date.parse(obs.positionTimestamp):NaN;
   const positionStatus=!Number.isFinite(observed)?"UNKNOWN":now-observed>BUS_POSITION_MAX_AGE||observed-now>30000?"STALE":"CURRENT";

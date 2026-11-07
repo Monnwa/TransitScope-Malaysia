@@ -1,11 +1,14 @@
 "use client";
 import "@/app/bus-journey.css";
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import { BUS_POSITION_MAX_AGE, type BusJourney } from "@/lib/bus-journey";
 import { arrivalClock, boardDate, malaysiaDay, safeTimetableSource } from "@/lib/departure-board";
+import { newerJourney, currentTracking } from "@/lib/bus-progress";
+import type { VehicleProgress } from "@/lib/vehicle-progress";
+import { GpsEvidence, GpsTimelinePosition } from "./gps-progress";
 
-export type BusMapJourney={vehicleId:string;path:[number,number][]|null;tripId:string|null};
+export type BusMapJourney={vehicleId:string;path:[number,number][]|null;tripId:string|null;tracking?:VehicleProgress;lastSeen?:{position:[number,number]|null;timestamp:string|null;available:boolean;name:string}};
 type Props={record:TransitRecord;onClose:()=>void;onPathChange:(journey:BusMapJourney)=>void;children?:ReactNode};
 const destination=(value:string|null|undefined)=>value?/^from\s+.+?\s+to\s+(.+)$/i.exec(value)?.[1]??value:"Destination unavailable";
 const stamp=(value:string)=>`${boardDate(value)}, ${arrivalClock(value)} MYT`;
@@ -32,25 +35,29 @@ function Journey({record,onClose,onPathChange,children}:Props){
     fetch(`/api/bus-journey?${queryKey}`,{signal:controller.signal,cache:"no-store"}).then(async response=>{
       if(!response.ok){const result=await response.json().catch(()=>null);throw new Error(result?.error??"Could not retrieve the official bus journey.");}
       const next=await response.json() as BusJourney;if(!Array.isArray(next.stops)||!Array.isArray(next.departures)||!next.match||next.vehicle.id!==record.id)throw new Error("The official journey response was incomplete.");
-      if(active){setData(next);setNow(Date.now());}
+      if(active){setData(current=>newerJourney(current,next));setNow(Date.now());}
     }).catch(reason=>{if(active)setError(`${reason instanceof Error&&reason.name!=="AbortError"?reason.message:"Could not refresh the official bus journey."} Previously retrieved information is retained.`);})
       .finally(()=>{clearTimeout(timeout);if(active){busy.current=false;setLoading(false);}});
     return()=>{active=false;controller.abort();clearTimeout(timeout);busy.current=false;};
   },[queryKey,refresh,record.id,record.feedId]);
   useEffect(()=>{if(data&&!busy.current&&now-lastRequest.current>=30000)setRefresh(value=>value+1);},[now,data]);
-  useEffect(()=>{if(data)onPathChange({vehicleId:record.id,path:data.path,tripId:data.selectedDeparture?.tripId??null});},[data,onPathChange,record.id]);
+  const tracking=useMemo(()=>currentTracking(data?.tracking,now,data?.vehicle.realtimeAvailable!==false&&data?.progress.status!=="TIMETABLE_PREVIEW"),[data?.tracking,data?.vehicle.realtimeAvailable,data?.progress.status,now]);
+  useEffect(()=>{if(data)onPathChange({vehicleId:record.id,path:data.path,tripId:data.selectedDeparture?.tripId??null,tracking,lastSeen:{position:data.vehicle.position??record.position,timestamp:data.vehicle.reportedAt??record.observation?.positionTimestamp??null,available:data.vehicle.realtimeAvailable,name:record.name}});},[data,tracking,onPathChange,record.id]);
   const reload=()=>{if(busy.current||Date.now()-lastManual.current<1000)return;lastManual.current=Date.now();busy.current=true;setLoading(true);setRefresh(value=>value+1);};
   const stale=!!data?.vehicle.reportedAt&&(now-Date.parse(data.vehicle.reportedAt)>BUS_POSITION_MAX_AGE||Date.parse(data.vehicle.reportedAt)-now>30000);
   const reliable=!!data&&data.vehicle.realtimeAvailable&&data.vehicle.positionStatus==="CURRENT"&&!stale;
   const preview=data?.progress.status==="TIMETABLE_PREVIEW";
   const stops=(data?.stops??[]).map(stop=>reliable&&!preview?stop:{...stop,status:"UNKNOWN" as const});
-  const previousCount=stops.filter(stop=>stop.status==="DEPARTED").length;
-  const visible=stops.filter(stop=>previous||stop.status!=="DEPARTED");
+  const gpsActive=reliable&&!preview&&(tracking?.source==="GPS_INFERRED"||tracking?.source==="APPROXIMATE");
+  const lastGpsPassed=stops.filter(stop=>stop.status==="PASSED").at(-1)?.sequence;
+  const isEarlier=(stop:typeof stops[number])=>stop.status==="DEPARTED"||stop.status==="PASSED"&&stop.sequence!==lastGpsPassed;
+  const previousCount=stops.filter(isEarlier).length;
+  const visible=stops.filter(stop=>previous||!isEarlier(stop));
   const togglePrevious=()=>{
     const anchor=body.current?.querySelector(`[data-sequence="${data?.progress.sequence}"]`),offset=anchor?.getBoundingClientRect().top;
     setPrevious(value=>!value);requestAnimationFrame(()=>{if(body.current&&anchor&&offset!==undefined)body.current.scrollTop+=anchor.getBoundingClientRect().top-offset;});
   };
-  const progress=!data?"":preview?data.progress.message:!data.vehicle.realtimeAvailable?"Realtime unavailable — displaying the official timetable only.":stale?"Vehicle position is stale — progress and delay are unavailable.":data.progress.message;
+  const progress=!data?"":preview?data.progress.message:!data.vehicle.realtimeAvailable?"Realtime unavailable — displaying the official timetable only.":stale?"Last seen vehicle position is stale — progress and delay are unavailable.":tracking?.reason??data.progress.message;
   const code=data?.route?.code??record.route??record.routeId??"Route unavailable";
   const title=data?.route?.name??record.route??"Bus journey";
   return <section className={`bus-journey ${expanded?"bus-sheet-expanded":"bus-sheet-collapsed"}`} aria-label="Bus journey detail" aria-busy={loading}>
@@ -76,23 +83,26 @@ function Journey({record,onClose,onPathChange,children}:Props){
         {data.frequencies.length>0&&<section className="bus-frequency" aria-label="Bus service frequency"><h3>Published service frequency</h3>{data.frequencies.slice(0,allFrequency?data.frequencies.length:1).map((window,index)=><div key={`${window.start}:${window.end}:${index}`}><strong>Every {Math.round(window.headwaySeconds/6)/10} min</strong><span>{boardDate(window.start)} · {arrivalClock(window.start)}–{arrivalClock(window.end)}{malaysiaDay(window.start)!==malaysiaDay(window.end)?` (${boardDate(window.end)})`:""} MYT</span><small>Towards {destination(window.destination)}</small></div>)}{data.frequencies.length>1&&<button type="button" className="bus-text-button" aria-expanded={allFrequency} onClick={()=>setAllFrequency(value=>!value)}>{allFrequency?"Show fewer frequency periods":"Show all frequency periods"}</button>}<p className="bus-caption">Headways do not specify exact future departures.</p></section>}
         {stops.length>0&&<>
           <div className="bus-progress" role="status"><span aria-hidden="true">🚌</span> <strong>{progress}</strong></div>
+          {tracking&&!preview&&<GpsEvidence tracking={tracking}/>}
           {reliable&&data.delay&&!preview&&<p className="bus-delay" title={data.delay.basis}>At least {data.delay.minimumMinutes} min late departing · observed {arrivalClock(data.delay.observedAt)}</p>}
           <div className="bus-timeline-heading"><h3>Stop timeline</h3><span>{data.selectedDeparture?boardDate(data.selectedDeparture.departure):"Times unavailable"} · MYT</span></div>
           {data.selectedDeparture&&<p className="bus-time-basis">{data.selectedDeparture.classification} · {data.selectedDeparture.basis}</p>}
           {previousCount>0&&<button type="button" className="bus-previous-toggle" aria-expanded={previous} onClick={togglePrevious}>{previous?"Hide previous stops":"Show previous stops"} ({previousCount})</button>}
           <ol className="bus-stop-timeline" aria-label="Bus stop sequence">{visible.map(stop=>{
-            const next=reliable&&!preview&&stop.sequence===data.progress.sequence&&stop.status!=="DEPARTED";
+            const next=reliable&&!preview&&!gpsActive&&stop.sequence===data.progress.sequence&&stop.status!=="DEPARTED";
             const first=stop.sequence===stops[0]?.sequence,primary=first?stop.departure??stop.arrival:stop.arrival??stop.departure;
-            return <li key={`${stop.sequence}:${stop.id}`} data-sequence={stop.sequence} className={`bus-stop bus-stop-${stop.status.toLowerCase()} ${next?"bus-stop-next":""}`}>
-              <span className="bus-stop-node" aria-hidden="true">{next?"🚌":""}</span><div className="bus-stop-content"><strong>{stop.name}</strong><span className="bus-stop-status">{stop.status==="DEPARTED"?"Departed":stop.status==="CURRENT"?"At stop":stop.status==="UPCOMING"?next?"Next stop":"Upcoming":"Vehicle progress unknown"}</span>
+            return <Fragment key={`${stop.sequence}:${stop.id}`}>
+              {gpsActive&&tracking?.nextStopSequence===stop.sequence&&<GpsTimelinePosition tracking={tracking} previousName={stops.find(item=>item.sequence===tracking.previousPassedStopSequence)?.name} nextName={stop.name}/>}
+              <li data-sequence={stop.sequence} className={`bus-stop bus-stop-${stop.status.toLowerCase()} ${next?"bus-stop-next":""} ${gpsActive&&tracking?.nextStopSequence===stop.sequence?"bus-gps-next":""}`}>
+              <span className="bus-stop-node" aria-hidden="true">{next?"🚌":""}</span><div className="bus-stop-content"><strong>{stop.name}</strong><span className="bus-stop-status">{stop.status==="PASSED"?"Passed · Progress inferred from GPS":stop.status==="DEPARTED"?"Passed · LIVE PROGRESS":stop.status==="CURRENT"?"At stop":stop.status==="UPCOMING"?next?"Next stop":"Upcoming":"Vehicle progress unknown"}</span>
                 {primary?<div className="bus-stop-times"><span>{first||!stop.arrival?"Departure":"Arrival"} <time dateTime={primary}>{arrivalClock(primary)}</time>{malaysiaDay(primary)!==malaysiaDay(data.selectedDeparture?.departure??now)&&<small> {boardDate(primary)}</small>}</span>{!first&&stop.arrival&&stop.departure&&stop.arrival!==stop.departure&&<span>Departs <time dateTime={stop.departure}>{arrivalClock(stop.departure)}</time></span>}<span className={stop.classification==="ESTIMATED"?"bus-time-label bus-estimated":"bus-time-label"}>{stop.classification}</span></div>:<span className="bus-caption">Stop time unavailable</span>}
                 <small className="bus-stop-code">Stop {stop.id} · Sequence {stop.sequence}</small>
               </div>
-            </li>;
-          })}</ol>
+            </li></Fragment>;
+          })}{gpsActive&&tracking?.status==="BEYOND_LAST"&&<GpsTimelinePosition tracking={tracking} previousName={stops.find(item=>item.sequence===tracking.previousPassedStopSequence)?.name}/>}</ol>
         </>}
         {!stops.length&&<p className="bus-empty" role="status">{data.route?"No reliable vehicle trip timeline is available. Select a published departure, where available, to view its timetable.":"No matching official trip or route was found. Vehicle details and any available route path are retained."}</p>}
-        <div className="bus-data-note"><p>LIVE POSITION is a vehicle observation, not a live arrival prediction.</p><p>{data.selectedDeparture?.classification==="ESTIMATED"?"Estimated stop times use the reported trip start and official GTFS offsets. Actual arrivals may differ.":"Scheduled times describe the timetable; they do not confirm actual arrivals or departures."}</p><p>Live arrival predictions: unavailable.</p>{!data.path&&<p>Route geometry is unavailable for this selected trip.</p>}<p>Vehicle measured: {data.vehicle.reportedAt?stamp(data.vehicle.reportedAt):"Not provided"}</p></div>
+        <div className="bus-data-note"><p>LIVE POSITION is a vehicle observation, not a live arrival prediction.</p><p>{data.selectedDeparture?.classification==="ESTIMATED"?"Estimated stop times use the reported trip start and official GTFS offsets. Actual arrivals may differ.":"Scheduled times describe the timetable; they do not confirm actual arrivals or departures."}</p><p>Live arrival predictions: unavailable.</p>{!data.path&&<p>Route geometry is unavailable for this selected trip.</p>}<p>{stale||!data.vehicle.realtimeAvailable?"Last seen":"Vehicle measured"}: {data.vehicle.reportedAt?stamp(data.vehicle.reportedAt):"Not provided"}</p></div>
       </>}
       <details className="bus-technical"><summary>Vehicle details &amp; data sources</summary>{children}{data&&<><p>Trip match: {data.match.status} · {data.match.method??"No verified vehicle match"}</p>{data.match.routeAlias&&<p>Realtime route code verified against a unique official route name.</p>}<p>Selected trip: {data.selectedDeparture?.tripId??"Unresolved"}</p><p>Static timetable retrieved: {stamp(data.staticUpdatedAt)}</p>{safeTimetableSource(data.source)&&<a href={data.source} target="_blank" rel="noreferrer">Official GTFS timetable</a>}</>}</details>
     </div>

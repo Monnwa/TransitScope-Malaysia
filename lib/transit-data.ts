@@ -8,6 +8,7 @@ export type DataMode = string;
 export type Status = "In service" | "Station available" | "Disrupted" | "Unavailable";
 export type MrtLineId = "MRT1" | "MRT2";
 export type VehicleObservation = {
+  gpsAccuracyM?: number;
   tripStartTime?: string; tripStartDate?: string; directionId?: string;
   positionTimestamp?: string; currentStopSequence?: number;
   currentStatus?: "INCOMING_AT" | "STOPPED_AT" | "IN_TRANSIT_TO";

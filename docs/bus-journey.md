@@ -1,5 +1,7 @@
 # Bus vehicle journey timeline
 
+GPS-based progress is now documented in [gps-progress.md](gps-progress.md). Its conservative inference and uncertainty labels extend the initial progress behavior described below.
+
 ## Scope and interaction
 
 Selecting an official bus vehicle opens one journey panel in the existing desktop detail column, or a fixed bottom sheet on mobile. It shows the route code/name, actual trip origin/headsign, direction, operator, selected vehicle reference, a horizontal exact-departure selector, published frequency periods and the ordered stop timeline. Mobile has expanded/collapsed states; the header remains visible while the body scrolls. Previous stops are hidden only when verified progress supports their completion. Closing removes the vehicle highlight and selected route overlay. The existing accessible table is an alternative to clicking overlapping vehicle markers.
