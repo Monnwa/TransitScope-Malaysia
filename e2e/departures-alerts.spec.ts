@@ -10,7 +10,7 @@ for(const mode of ["MRT","LRT","Monorail","KTM","Bus"]){
     await page.route("**/api/alerts",route=>route.fulfill({json:{alerts:[],sources:[],retrievedAt:empty.fetchedAt}}));
     await page.route("**/api/departures?*",route=>route.fulfill({json:{status:"SCHEDULED",message:"Synthetic timetable fixture only",departures:[{tripId:"test-trip",routeId:"test-route",routeName:"Fixture Line",mode,destination:"Fixture Destination",direction:"0",scheduledDeparture:"2026-11-01T06:30:00Z",scheduledTimestamp:1793514600000,platform:"A",status:"SCHEDULED",source:"https://api.data.gov.my/gtfs-static/ktmb",lastUpdated:empty.fetchedAt}],frequencies:[],sources:[],retrievedAt:empty.fetchedAt,liveEta:{available:false,reason:"No verified realtime prediction"}}}));
     await page.goto("/");await page.locator(".rail-station").click();
-    const departures=page.getByRole("region",{name:"Upcoming Departures"});await expect(departures).toContainText("Fixture Destination");await expect(departures).toContainText("SCHEDULED");await expect(departures).toContainText("LIVE ETA: UNAVAILABLE");await departures.getByRole("button",{name:"Refresh departures"}).click();await expect(departures).toContainText("Fixture Destination");
+    const departures=page.getByRole("region",{name:"Upcoming Departures"});await expect(departures).toContainText("Fixture Destination");await expect(departures).toContainText("Scheduled");await expect(departures).toContainText("Live arrival information unavailable");await departures.getByRole("button",{name:"Refresh departures"}).click();await expect(departures).toContainText("Fixture Destination");
   });
 }
 test("official notices preserve source links, filters and precise map association",async({page})=>{
@@ -24,7 +24,7 @@ test("official notices preserve source links, filters and precise map associatio
 });
 test("missing departures have a clear unavailable state and retain the map",async({page})=>{
   await page.route("**/api/alerts",route=>route.fulfill({json:{alerts:[],sources:[],retrievedAt:empty.fetchedAt}}));
-  await page.goto("/?mode=demo");await page.getByPlaceholder("e.g. DEMO-BUS-101").fill("Bukit Bintang");await page.getByRole("button",{name:"View details"}).click();await expect(page.getByRole("region",{name:"Upcoming Departures"})).toContainText("UNAVAILABLE");await expect(page.getByLabel("Interactive transport map")).toBeVisible();
+  await page.goto("/?mode=demo");await page.getByPlaceholder("e.g. bus number or station").fill("Bukit Bintang");await page.getByRole("button",{name:"View details"}).click();await expect(page.getByRole("region",{name:"Upcoming Departures"})).toContainText("Timetable unavailable");await expect(page.getByLabel("Interactive transport map")).toBeVisible();
 });
 test("frequency schedules never appear as precise LIVE ETA or exact departure timestamps",async({page})=>{
   const station={id:"frequency-stop",name:"Fixture Frequency Station",mode:"LRT",route:"Fixture Line",station:"Test",position:[3.142,101.699],recordKind:"stop",stopRefs:["rapid-rail-kl:TEST"],dataMode:"STATIC",status:"Station available",source:"Fixture",reportedAt:null};
@@ -32,5 +32,5 @@ test("frequency schedules never appear as precise LIVE ETA or exact departure ti
   await page.route("**/api/rail-network?*",route=>route.fulfill({json:{lines:[],stations:route.request().url().includes("ktmb")?[]:[station],available:true,source:"Fixture"}}));
   await page.route("**/api/alerts",route=>route.fulfill({json:{alerts:[],sources:[],retrievedAt:empty.fetchedAt}}));
   await page.route("**/api/departures?*",route=>route.fulfill({json:{status:"SCHEDULED",message:"Official frequency timetable; exact departure times are not published.",departures:[],frequencies:[{tripId:"fixture",routeName:"Fixture Line",destination:"Fixture terminus",start:"2026-11-01T06:00:00Z",end:"2026-11-01T10:00:00Z",headwaySeconds:300,source:"https://api.data.gov.my/gtfs-static/ktmb"}],sources:[],retrievedAt:empty.fetchedAt,liveEta:{available:false,reason:"No prediction source"}}}));
-  await page.goto("/");await page.locator(".rail-station").click();const panel=page.getByRole("region",{name:"Upcoming Departures"});await expect(panel).toContainText(/every 5 min/i);await expect(panel.locator("tbody tr")).toHaveCount(0);await expect(panel).toContainText("LIVE ETA: UNAVAILABLE");
+  await page.goto("/");await page.locator(".rail-station").click();const panel=page.getByRole("region",{name:"Upcoming Departures"});await expect(panel).toContainText(/every 5 min/i);await expect(panel.locator("tbody tr")).toHaveCount(0);await expect(panel).toContainText("Live arrival information unavailable");
 });

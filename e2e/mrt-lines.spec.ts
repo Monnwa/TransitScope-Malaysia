@@ -30,7 +30,7 @@ test("station-first loading survives vehicle refresh; line switches and shared s
   await expect.poll(() => completedLiveRequests).toBeGreaterThan(1);
   await expect(page.getByRole("status").filter({ hasText: "Refreshing official transport sources" })).toHaveCount(0);
   await expect(page.locator('.rail-station')).toHaveCount(1);
-  await page.getByRole("button", { name: "Refresh official data" }).click();
+  await page.getByRole("button", { name: "Refresh transport information" }).click();
   await expect(page.locator('.rail-station')).toHaveCount(1);
 });
 test("missing KTM geometry preserves distinct service stations and controls", async ({ page }) => {
@@ -38,5 +38,5 @@ test("missing KTM geometry preserves distinct service stations and controls", as
   await page.route("**/api/rail-network?*", route => route.fulfill({ json: route.request().url().includes("rapid-rail-kl") ? {available:true,lines:[],stations:[],source:"Test"} : { available: true, lines: [{ ...line("KTM:A", "KTM Seremban Line", "#24558A"), paths: [], geometryStatus: "unavailable", mode: "KTM" }, { ...line("KTM:B", "KTM Port Klang Line", "#24558A"), paths: [], geometryStatus: "unavailable", mode: "KTM" }], stations: [{ ...station, id: "kl", name: "Kuala Lumpur", mode: "KTM", railLines: ["KTM:A", "KTM:B"], lineNames: ["KTM Seremban Line", "KTM Port Klang Line"] }], source: "Test" } }));
   await page.goto("/"); await expect(page.locator('.rail-station')).toHaveCount(1);
   await expect(page.getByLabel("Show KTM Seremban Line")).toBeChecked(); await expect(page.getByLabel("Show KTM Port Klang Line")).toBeChecked();
-  await expect(page.getByText("Stations only — geometry unavailable")).toHaveCount(2);
+  await expect(page.getByText("Route map unavailable")).toHaveCount(2);
 });

@@ -13,15 +13,15 @@ test("arrival rows show five then ten, global chronology, separate directions, 1
   await setup(page);let calls=0;await page.route("**/api/departures?*",route=>{calls++;return route.fulfill({json:payload()});});
   await page.goto("/");await page.locator(".rail-station").click();const board=page.getByLabel("Station departure board");
   await expect(board.locator(".train-arrival-row")).toHaveCount(5);await expect(board.locator(".train-arrival-time time").first()).toHaveText("2:05 PM");await expect(board.locator(".train-countdown").first()).toHaveText("About 5 min");
-  await expect(board.getByLabel("Departure service status")).toHaveText("ESTIMATED ARRIVALS");await expect(board.locator(".train-arrival-time .board-type")).toHaveText(["ESTIMATED","SCHEDULED","ESTIMATED","ESTIMATED","ESTIMATED"]);await expect(board).toContainText("Actual train arrival may differ");await expect(board.locator(".board-status-live")).toHaveCount(0);await expect(board).toContainText("LIVE ETA: UNAVAILABLE");
+  await expect(board.getByLabel("Departure service status")).toHaveText("Estimated arrivals");await expect(board.locator(".train-arrival-time .board-type")).toHaveText(["Estimated","Scheduled","Estimated","Estimated","Estimated"]);await expect(board).toContainText("Actual train arrival may differ");await expect(board.locator(".board-status-live")).toHaveCount(0);await expect(board).toContainText("Live arrival information unavailable");
   const initial=calls;await board.getByRole("button",{name:"Show all arrivals"}).click();await expect(board.locator(".train-arrival-row")).toHaveCount(10);expect(calls).toBe(initial);
   expect(await board.locator(".train-arrival-time time").evaluateAll(elements=>elements.map(e=>e.getAttribute("datetime")))).toEqual(Array.from({length:10},(_,i)=>arrival(i).arrivalTime));
-  await expect(board.locator(".train-arrival-row .board-service-meta").first()).toContainText("Direction 0");await expect(board.locator(".train-arrival-row .board-service-meta").nth(1)).toContainText("Direction 1");
+  await expect(board.locator(".train-arrival-row .board-service-meta").first()).toContainText("Platform 1");await expect(board.locator(".train-arrival-row .board-service-meta").nth(1)).toContainText("Platform 2");
 });
 test("countdowns advance, cached endpoint refreshes and failure retains valid arrivals",async({page})=>{
   await setup(page);let calls=0;let failing=false;await page.route("**/api/departures?*",route=>{calls++;return failing?route.fulfill({status:503,body:"Fixture outage"}):route.fulfill({json:payload()});});
   await page.goto("/");await page.locator(".rail-station").click();const board=page.getByLabel("Station departure board");await expect(board.locator(".train-countdown").first()).toHaveText("About 5 min");
-  const initial=calls;failing=true;await page.clock.fastForward(60000);await expect(board.locator(".train-countdown").first()).toHaveText("About 4 min");await expect(board.getByRole("alert")).toContainText("Previously retrieved information is retained");await expect(board.locator(".train-arrival-row")).toHaveCount(5);expect(calls).toBe(initial+1);
+  const initial=calls;failing=true;await page.clock.fastForward(60000);await expect(board.locator(".train-countdown").first()).toHaveText("About 4 min");await expect(board.getByRole("alert")).toContainText("Previously loaded times are still shown");await expect(board.locator(".train-arrival-row")).toHaveCount(5);expect(calls).toBe(initial+1);
 });
 test("switching stations ignores a late arrival calculation response",async({page})=>{
   await setup(page,[station(),station("B")]);let release!:()=>void;let started!:()=>void;const gate=new Promise<void>(resolve=>{release=resolve;});const start=new Promise<void>(resolve=>{started=resolve;});
@@ -32,9 +32,9 @@ test("switching stations ignores a late arrival calculation response",async({pag
 test("unsupported anchors keep Every N min; covered windows alone are suppressed",async({page})=>{
   await setup(page);const frequency={tripId:"fallback",routeName:"Kajang Line",mode:"MRT",destination:"Unanchored fixture",direction:"1",platform:"1",start:now,end:"2026-11-07T10:00:00Z",headwaySeconds:300,source:arrival(0).source};
   await page.route("**/api/departures?*",route=>route.fulfill({json:{...payload(),trainArrivals:[],frequencies:[frequency,{...frequency,tripId:"covered",destination:"Covered fixture"}],arrivalFrequencyCoverage:[`${frequency.source}|covered|1|${now}|${frequency.end}`]}}));
-  await page.goto("/");await page.locator(".rail-station").click();const board=page.getByLabel("Station departure board");await expect(board.getByLabel("Service Frequency")).toContainText("Every 5 min");await expect(board).not.toContainText("Covered fixture");await expect(board.locator(".train-arrival-time")).toHaveCount(0);
+  await page.goto("/");await page.locator(".rail-station").click();const board=page.getByLabel("Station departure board");await expect(board.getByLabel("Service intervals")).toContainText("Every 5 min");await expect(board).not.toContainText("Covered fixture");await expect(board.locator(".train-arrival-time")).toHaveCount(0);
 });
-for(const [reason,message] of [["NO_MORE_TODAY","No more trains today."],["NO_SERVICE_TODAY","No service today."],["TIMETABLE_UNAVAILABLE","Scheduled departure information is currently unavailable."]]){
+for(const [reason,message] of [["NO_MORE_TODAY","No more services today."],["NO_SERVICE_TODAY","No service today."],["TIMETABLE_UNAVAILABLE","Timetable unavailable."]]){
   test(`train-specific empty state ${reason}`,async({page})=>{await setup(page);await page.route("**/api/departures?*",route=>route.fulfill({json:{...payload(),trainArrivals:[],emptyReason:reason,status:reason==="TIMETABLE_UNAVAILABLE"?"UNAVAILABLE":"SCHEDULED"}}));await page.goto("/");await page.locator(".rail-station").click();await expect(page.locator(".board-empty")).toHaveText(message);});
 }
 for(const width of [390,1440])test(`${width}px arrival layout wraps long destinations and dates without overlap`,async({page})=>{
