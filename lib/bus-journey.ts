@@ -4,11 +4,12 @@ import { applyBusProgress, type GpsJourneyOptions } from "@/lib/bus-progress";
 import type { VehicleProgress } from "@/lib/vehicle-progress";
 import { PROGRESS_LIMITS } from "@/lib/route-projection";
 import { officialStopPosition } from "@/lib/journey-stop-selection";
+import { applyJourneyAdherence,type StopAdherence } from "@/lib/timetable-adherence";
 
 type Row = Record<string,string>;
-export type BusJourneyOptions=GpsJourneyOptions&{realtimeAvailable?:boolean;departure?:string|null;direction?:string|null};
+export type BusJourneyOptions=GpsJourneyOptions&{realtimeAvailable?:boolean;departure?:string|null;direction?:string|null;adherenceToleranceSeconds?:number};
 export function calculateBusJourney(table:Timetable,vehicle:TransitRecord,options:BusJourneyOptions={}):BusJourney {
-  return applyBusProgress(calculateBaseBusJourney(table,vehicle,options),table,vehicle,options);
+  return applyJourneyAdherence(applyBusProgress(calculateBaseBusJourney(table,vehicle,options),table,vehicle,options),options.now??Date.now(),options.adherenceToleranceSeconds);
 }
 export const BUS_POSITION_MAX_AGE = PROGRESS_LIMITS.maxAgeMs;
 export type JourneyDeparture = {
@@ -18,6 +19,7 @@ export type JourneyDeparture = {
 };
 export type JourneyStop = {
   position?: [number,number]|null;
+  adherence?:StopAdherence;
   id: string; sequence: number; name: string; arrival: string | null; departure: string | null;
   classification: "SCHEDULED" | "ESTIMATED" | null;
   status: "DEPARTED" | "PASSED" | "CURRENT" | "UPCOMING" | "UNKNOWN";

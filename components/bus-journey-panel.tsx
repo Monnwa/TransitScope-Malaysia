@@ -9,6 +9,8 @@ import type { VehicleProgress } from "@/lib/vehicle-progress";
 import { GpsEvidence, GpsTimelinePosition } from "./gps-progress";
 import { RouteAnimator, browserAnimationClock } from "@/lib/route-animation";
 import { journeySelectionKey, retainedStopSelection, selectJourneyStop, type SelectedJourneyStop } from "@/lib/journey-stop-selection";
+import { adherenceSummary,displayedAdherence } from "@/lib/timetable-adherence";
+import { StopTimetableAdherence,AdherenceSummary } from "./timetable-adherence";
 
 export type BusMapJourney={vehicleId:string;path:[number,number][]|null;tripId:string|null;tracking?:VehicleProgress;motion?:RouteAnimator;selectedStop?:SelectedJourneyStop|null;navigation?:number;locate?:number;lastSeen?:{position:[number,number]|null;timestamp:string|null;available:boolean;name:string}};
 type Props={record:TransitRecord;onClose:()=>void;onPathChange:(journey:BusMapJourney)=>void;children?:ReactNode};
@@ -58,7 +60,8 @@ function Journey({record,onClose,onPathChange,children}:Props){
   const stale=!!data?.vehicle.reportedAt&&(now-Date.parse(data.vehicle.reportedAt)>BUS_POSITION_MAX_AGE||Date.parse(data.vehicle.reportedAt)-now>30000);
   const reliable=!!data&&data.vehicle.realtimeAvailable&&data.vehicle.positionStatus==="CURRENT"&&!stale;
   const preview=data?.progress.status==="TIMETABLE_PREVIEW";
-  const stops=(data?.stops??[]).map(stop=>reliable&&!preview?stop:{...stop,status:"UNKNOWN" as const});
+  const stops=(data?.stops??[]).map(stop=>({...stop,status:reliable&&!preview?stop.status:"UNKNOWN" as const,adherence:displayedAdherence(stop.adherence,reliable&&!preview&&tracking?.source==="GPS_INFERRED"&&tracking.confidence==="HIGH")}));
+  const summary=adherenceSummary(stops);
   const gpsActive=reliable&&!preview&&(tracking?.source==="GPS_INFERRED"||tracking?.source==="APPROXIMATE");
   const lastGpsPassed=stops.filter(stop=>stop.status==="PASSED").at(-1)?.sequence;
   const isEarlier=(stop:typeof stops[number])=>stop.status==="DEPARTED"||stop.status==="PASSED"&&stop.sequence!==lastGpsPassed;
@@ -100,6 +103,7 @@ function Journey({record,onClose,onPathChange,children}:Props){
         {stops.length>0&&<>
           <div className="bus-progress" role="status"><span aria-hidden="true">🚌</span> <strong>{progress}</strong></div>
           {tracking&&!preview&&<GpsEvidence tracking={tracking}/>}
+          {!preview&&<AdherenceSummary stops={stops} summary={summary}/>}
           {reliable&&data.delay&&!preview&&<p className="bus-delay" title={data.delay.basis}>At least {data.delay.minimumMinutes} min late departing · observed {arrivalClock(data.delay.observedAt)}</p>}
           <div className="bus-timeline-heading"><h3>Stop timeline</h3><span>{data.selectedDeparture?boardDate(data.selectedDeparture.departure):"Times unavailable"} · MYT</span></div>
           {data.selectedDeparture&&<p className="bus-time-basis">{data.selectedDeparture.classification} · {data.selectedDeparture.basis}</p>}
@@ -111,6 +115,7 @@ function Journey({record,onClose,onPathChange,children}:Props){
               {gpsActive&&tracking?.nextStopSequence===stop.sequence&&<GpsTimelinePosition motion={motion} tracking={tracking} previousName={stops.find(item=>item.sequence===tracking.previousPassedStopSequence)?.name} nextName={stop.name}/>}
               <li data-sequence={stop.sequence} data-stop-id={stop.id} className={`bus-stop bus-stop-${stop.status.toLowerCase()} ${selectedStop?.id===stop.id&&selectedStop.sequence===stop.sequence?"bus-stop-selected":""} ${next?"bus-stop-next":""} ${gpsActive&&tracking?.nextStopSequence===stop.sequence?"bus-gps-next":""}`}>
               <span className="bus-stop-node" aria-hidden="true">{next?"🚌":""}</span><button type="button" className="bus-stop-content bus-stop-control" aria-label={`Show ${stop.name} on map (sequence ${stop.sequence})`} aria-pressed={selectedStop?.id===stop.id&&selectedStop.sequence===stop.sequence} onClick={event=>chooseStop(stop,event.currentTarget)}><strong>{stop.name}</strong><span className="bus-stop-status">{stop.status==="PASSED"?"Passed · Progress inferred from GPS":stop.status==="DEPARTED"?"Passed · LIVE PROGRESS":stop.status==="CURRENT"?"At stop":stop.status==="UPCOMING"?next?"Next stop":"Upcoming":"Vehicle progress unknown"}</span>
+                <StopTimetableAdherence assessment={stop.adherence} passed={stop.status==="PASSED"}/>
                 {primary?<div className="bus-stop-times"><span>{first||!stop.arrival?"Departure":"Arrival"} <time dateTime={primary}>{arrivalClock(primary)}</time>{malaysiaDay(primary)!==malaysiaDay(data.selectedDeparture?.departure??now)&&<small> {boardDate(primary)}</small>}</span>{!first&&stop.arrival&&stop.departure&&stop.arrival!==stop.departure&&<span>Departs <time dateTime={stop.departure}>{arrivalClock(stop.departure)}</time></span>}<span className={stop.classification==="ESTIMATED"?"bus-time-label bus-estimated":"bus-time-label"}>{stop.classification}</span></div>:<span className="bus-caption">Stop time unavailable</span>}
                 <small className="bus-stop-code">Stop {stop.id} · Sequence {stop.sequence}</small>
                 {!stop.position&&<small className="bus-stop-code">Map location unavailable</small>}

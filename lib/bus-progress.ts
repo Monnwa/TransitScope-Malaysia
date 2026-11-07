@@ -4,6 +4,7 @@ import type { Record as TransitRecord } from "@/lib/transit-data";
 import { indexShape, projectStops, PROGRESS_LIMITS, type GeoPoint, type StopProjection } from "@/lib/route-projection";
 import { evaluateVehicleProgress, unknownProgress, type ProgressHistory, type VehicleProgress } from "@/lib/vehicle-progress";
 import { gpsFix } from "@/lib/vehicle-progress-history";
+import { retainJourneyAdherence } from "@/lib/timetable-adherence";
 const stopCache=new WeakMap<Timetable,Map<string,StopProjection[]>>();
 export type GpsJourneyOptions={paths?:Map<string,GeoPoint[]>;gpsPaths?:Map<string,GeoPoint[]>;shapeDistances?:Map<string,number[]>;history?:ProgressHistory;now?:number};
 export function applyBusProgress(journey:BusJourney,table:Timetable,vehicle:TransitRecord,options:GpsJourneyOptions):BusJourney {
@@ -13,7 +14,7 @@ export function applyBusProgress(journey:BusJourney,table:Timetable,vehicle:Tran
   const trip=table.trips.get(active.tripId),shapeId=trip?.shape_id||null;
   const path=(options.gpsPaths??options.paths)?.get(active.tripId),shape=path?indexShape(path):null;
   const now=options.now??Date.now(),fix=gpsFix(vehicle),token=options.history?.token??"single-observation";
-  const context={key:JSON.stringify([vehicle.feedId,vehicle.id,active.key,shapeId,shape?.fingerprint]),historyToken:token,vehicleId:vehicle.id,tripId:active.tripId,shapeId,serviceDate:active.serviceDate,stops:[] as StopProjection[]};
+  const context={key:JSON.stringify([vehicle.feedId,vehicle.id,journey.route?.id,active.key,shapeId,shape?.fingerprint]),historyToken:token,vehicleId:vehicle.id,tripId:active.tripId,routeId:journey.route?.id??null,shapeId,serviceDate:active.serviceDate,stops:[] as StopProjection[]};
   const explicit=vehicle.observation?.currentStopSequence!==undefined;
   if(explicit){
     const valid=["AT_STOP","IN_TRANSIT","APPROACHING","COMPLETED"].includes(journey.progress.status);
@@ -34,8 +35,9 @@ export function applyBusProgress(journey:BusJourney,table:Timetable,vehicle:Tran
       return {id:stop.id,sequence:stop.sequence,name:stop.name,position:lat&&lon?[Number(lat),Number(lon)] as GeoPoint:null,shapeDistance:reference!==null&&Number.isFinite(reference)?reference:null};
     }),options.shapeDistances?.get(active.tripId));cached.set(cacheKey,projected);
   }
+  const passageKey=context.key;
   context.stops=projected;context.key+=JSON.stringify(projected.map(stop=>[stop.sequence,stop.distanceM===null?null:Math.round(stop.distanceM)]));
-  journey.tracking=fix?evaluateVehicleProgress(context,shape,fix,now,options.history):unknownProgress(context,"Vehicle GPS coordinate or measurement timestamp unavailable.",now,null,options.history?.previous);
+  journey.tracking=fix?evaluateVehicleProgress({...context,passageKey},shape,fix,now,options.history):unknownProgress({...context,passageKey},"Vehicle GPS coordinate or measurement timestamp unavailable.",now,null,options.history?.previous);
   const tracking=journey.tracking;
   if(["GPS_INFERRED","APPROXIMATE"].includes(tracking.source)){
     journey.stops=journey.stops.map(stop=>{const state=tracking.stopStates.find(item=>item.sequence===stop.sequence)?.state;return {...stop,status:state==="PASSED"?"PASSED":state==="UPCOMING"?"UPCOMING":"UNKNOWN"};});
@@ -48,7 +50,7 @@ export function newerJourney(current:BusJourney|null,next:BusJourney):BusJourney
   const sameSelection=current?.selectedDeparture?.key===next.selectedDeparture?.key;
   const bothVehicleRuns=current?.selectedDeparture?.key===current?.vehicleDeparture?.key&&next.selectedDeparture?.key===next.vehicleDeparture?.key;
   if(current&&current.vehicle.id===next.vehicle.id&&(sameSelection||bothVehicleRuns)&&current.vehicle.realtimeAvailable&&next.vehicle.realtimeAvailable&&current.vehicle.reportedAt&&next.vehicle.reportedAt&&Date.parse(next.vehicle.reportedAt)<Date.parse(current.vehicle.reportedAt))return current;
-  return next;
+  return retainJourneyAdherence(current,next);
 }
 export function currentTracking(tracking:VehicleProgress|undefined,now:number,available=true):VehicleProgress|undefined {
   if(tracking&&!available)return {...tracking,source:"PROGRESS_UNKNOWN",status:"UNKNOWN",confidence:"LOW",position:null,distanceM:null,segment:null,nextStopSequence:null,previousStopSequence:null,stopStates:tracking.stopStates.map(stop=>({...stop,state:"SCHEDULED"})),reason:"Realtime evidence is unavailable; last matched position is historical only.",state:null};
