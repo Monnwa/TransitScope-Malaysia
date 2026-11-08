@@ -14,6 +14,8 @@ import type { BusMapJourney } from "./bus-journey-panel";
 import { splitRoutePath, PROGRESS_LIMITS } from "@/lib/route-projection";
 import { MovingVehicle, MovingRoute, JourneyMapNavigation, JourneyStopMarker } from "./journey-map-layers";
 import { informationLabel,locationLabel,passengerName,publicRouteName } from "./passenger-copy";
+import type { ProcessedBusJourney } from "@/lib/processed-bus-journeys";
+import { currentTracking } from "@/lib/bus-progress";
 const colours: globalThis.Record<string, string> = { Bus: "#2563eb", MRT: "#006B3F", LRT: "#E75480", Monorail: "#2878B5", KTM: "#24558A", "Shared bike": "#16a34a" };
 const lastSeenTime=(value:string|null|undefined)=>value&&Number.isFinite(Date.parse(value))?new Intl.DateTimeFormat("en-MY",{timeZone:"Asia/Kuala_Lumpur",dateStyle:"short",timeStyle:"medium"}).format(new Date(value))+" MYT":"time unavailable";
 const vehicleIcon = (record: Record, selected=false) => L.divIcon({ className: `transport-icon vehicle-icon ${selected?"vehicle-selected":""}`, html: `<span style="--marker:${colours[record.mode]}" aria-hidden="true"><i class="vehicle-glyph">${record.mode === "Bus" ? "🚌" : "🚆"}</i></span>`, iconSize: [30, 30], iconAnchor: [15, 15] });
@@ -28,12 +30,13 @@ function SelectedVehicleFocus({record}:{record:Record|undefined}) {
   },[record?.id,map]);
   return null;
 }
-export default function TransitMap({ records, selected, onSelect, resetSignal, network, journey,trainFilters,trainEnabled,onSelectTrain }: { records: Record[]; selected: string | null; onSelect: (record: Record) => void; resetSignal: number; network: ReturnType<typeof useRailNetwork>; journey?:BusMapJourney|null;trainFilters:TrainMapFilters;trainEnabled:boolean;onSelectTrain:()=>void }) {
+export default function TransitMap({ records, selected, onSelect, resetSignal, network, journey,processedJourneys,trainFilters,trainEnabled,onSelectTrain }: { records: Record[]; selected: string | null; onSelect: (record: Record) => void; resetSignal: number; network: ReturnType<typeof useRailNetwork>; journey?:BusMapJourney|null;processedJourneys?:ProcessedBusJourney[];trainFilters:TrainMapFilters;trainEnabled:boolean;onSelectTrain:()=>void }) {
   const [hidden, setHidden] = useState<string[]>([]), [highlighted, setHighlighted] = useState<string[]>([]);
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const selectedRecord = records.find(record => record.id === selected);
-  const selectedPath=journey?.vehicleId===selected?journey.path:selectedRecord?.routePath;
-  const gps=journey?.vehicleId===selected?journey.tracking:undefined;
+  const sharedJourney=processedJourneys?.find(entry=>entry.source===selectedRecord?.feedId&&entry.vehicleId===selected)?.journey;
+  const selectedPath=journey?.vehicleId===selected?journey.path:sharedJourney?.path??selectedRecord?.routePath;
+  const gps=journey?.vehicleId===selected?journey.tracking:currentTracking(sharedJourney?.tracking,Date.now(),sharedJourney?.vehicle.realtimeAvailable);
   const gpsActive=!!gps?.position&&(gps.source==="GPS_INFERRED"||gps.source==="APPROXIMATE");
   const segments=gpsActive&&gps?.source==="GPS_INFERRED"&&selectedPath&&gps.segment!==null?splitRoutePath(selectedPath,gps.segment,gps.position!):null;
   useEffect(() => { if (selectedRecord?.railLines?.length) { setHighlighted(selectedRecord.railLines); setHidden(current => current.filter(id => !selectedRecord.railLines!.includes(id))); } }, [selectedRecord?.id]);

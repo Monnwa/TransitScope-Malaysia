@@ -16,7 +16,7 @@ export type VehicleObservation = {
 };
 export type Record = { feedId?: string; observation?: VehicleObservation; id: string; name: string; mode: Mode; operator: string; route: string | null; routeId?: string | null; tripId?: string | null; station: string | null; position: [number, number] | null; bearing?: number | null; speed?: number | null; nextScheduledAt?: string | null; routePath?: [number, number][] | null; recordKind?: "vehicle" | "stop" | "other"; stopRefs?: string[]; mrtLines?: MrtLineId[]; railLines?: string[]; lineNames?: string[]; modes?: Mode[]; interchange?: boolean; reportedAt: string | null; lastUpdatedAt?: string | null; status: Status; dataMode: DataMode; source: string; bikesAvailable?: number; docksAvailable?: number };
 export type FeedHealth = { id: string; label: string; status: "healthy" | "stale" | "unavailable"; lastSuccessAt: string | null; sourceTimestamp: string | null; message: string | null; records: number };
-export type TransitApiResponse = { records: Record[]; alerts: Alert[]; feeds: FeedHealth[]; fetchedAt: string; demo: boolean };
+export type TransitApiResponse = { records: Record[]; alerts: Alert[]; feeds: FeedHealth[]; fetchedAt: string; demo: boolean; busJourneys?: import("@/lib/processed-bus-journeys").ProcessedBusJourney[] };
 export type Alert = { id: string; title: string; description: string; severity: "High" | "Medium" | "Low"; routes: string[]; stations: string[]; startedAt: string; endsAt: string | null; source: string; dataMode: DataMode };
 
 /** Deterministic, fictional records for classroom testing. Coordinates locate central KL but do not report real operations. */

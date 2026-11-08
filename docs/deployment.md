@@ -1,15 +1,28 @@
-# Deployment preparation
+# Deployment
 
-## Current status
+## Existing production service
 
-No public deployment has been performed and no URL exists. The Next.js production build succeeds locally. The official API needs no token. Production hosting must permit server-side outbound HTTPS requests to `api.data.gov.my`; no upstream URL or secret is exposed to the frontend.
+- Repository: https://github.com/Monnwa/TransitScope-Malaysia
+- Production branch: `master`
+- Existing Vercel project: `transit-scope-malaysia`
+- Production URL: https://transit-scope-malaysia.vercel.app/
 
-## Vercel deployment steps
+Preserve this repository, Vercel project, domain and deployment configuration. Publishing to the existing branch triggers the connected Vercel deployment.
 
-1. Create a Git repository remote and push this workspace.
-2. Import the repository into Vercel as a Next.js project.
-3. Use the default build command, `pnpm build`, and publish.
-4. Confirm the public URL loads, map tiles have attribution, filters work and the SIMULATED disclosure is visible.
-5. Confirm the `/api/transit` route can fetch the official upstream service. It caches realtime responses for 30 seconds and static GTFS sources for 24 hours, reducing unnecessary upstream requests.
-6. Add `NEXT_PUBLIC_*` variables only if a future provider adapter requires non-secret public configuration. Store private provider credentials in server-only Vercel variables.
-6. Update the presentation with the actual URL. Never replace it with an assumed URL.
+## Release authorization
+
+On 8 November 2026, the project owner approved deployment of the automatic bus journey/adherence fix and instructed: **subsequent changes may be deployed directly without asking for approval again**. This standing authorization applies to this project's ordinary releases after the necessary checks pass. It does not waive validation or authorize unrelated project/account changes.
+
+## Release workflow
+
+1. Review the exact diff and preserve unrelated local changes.
+2. Run the required unit/browser regressions, TypeScript, ESLint and optimized production build. Documentation-only changes do not require rerunning application tests.
+3. Commit only the intended changes and push to the existing GitHub branch. Do not force-push.
+4. Verify the deployment status for the exact pushed commit.
+5. Check the public page and official API, including shared bus processing, scheduled/estimated distinctions and map/station refresh behavior. Report material failures and resolve them before treating the release as complete.
+
+## Runtime data
+
+The official API requires no token. Hosting must permit server-side HTTPS requests to `api.data.gov.my`. Realtime feed ingestion is shared and cached for 30 seconds; static GTFS data is cached for 24 hours. Processed fleet responses use `no-store` so callers receive current freshness/processing results. Full fleet results use negotiated gzip compression and an explicit response-size fallback.
+
+Do not expose private credentials in frontend configuration. No paid tracking service or extra deployment infrastructure is required for the current implementation.

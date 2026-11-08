@@ -3,6 +3,7 @@ import JSZip from "jszip";
 import { gtfsTimestamp,vehicleObservation,validGpsPosition } from "@/lib/vehicle-observation";
 import { officialProgressHistory } from "@/lib/vehicle-progress-history";
 import type { ProgressHistory } from "@/lib/vehicle-progress";
+import { ProcessedBusJourneys, type ProcessedBusJourney } from "@/lib/processed-bus-journeys";
 import { buildTimetable, type Timetable } from "@/lib/scheduled-departures";
 import type { FeedHealth, Mode, MrtLineId, Record } from "@/lib/transit-data";
 
@@ -136,16 +137,37 @@ async function loadRealtimeFeed(feed: FeedConfig) {
     const health: FeedHealth = { id: feed.id, label: feed.label, status: "healthy", lastSuccessAt: new Date().toISOString(), sourceTimestamp, message: null, records: records.length }; healthMemory.set(feed.id, health); const value = { records, health }; realtimeCache.set(feed.id, { value, expiresAt: Date.now() + REALTIME_TTL, lastSuccessAt: health.lastSuccessAt! }); return value;
   } catch (error) { officialProgressHistory.interrupt(feed.id); const prior = healthMemory.get(feed.id); const health: FeedHealth = { id: feed.id, label: feed.label, status: prior ? "stale" : "unavailable", lastSuccessAt: prior?.lastSuccessAt ?? null, sourceTimestamp: prior?.sourceTimestamp ?? null, message: error instanceof Error ? error.message : "Unknown upstream error", records: prior?.records ?? 0 }; healthMemory.set(feed.id, health); return { records: [], health }; }
 }
-export async function getOfficialTransit() { const outcome = await Promise.all(feeds.map(realtimeFeed)); return { records: outcome.flatMap(x => x.records), feeds: outcome.map(x => x.health) }; }
+const processedBusJourneys=new ProcessedBusJourneys(officialProgressHistory);
+const busProcessingRequests=new Map<string,Promise<{records:Record[];health:FeedHealth;journeys:ProcessedBusJourney[]}>>();
+async function processedBusFeed(id:BusSourceId) {
+  const pending=busProcessingRequests.get(id);if(pending)return pending;
+  const request=(async()=>{
+    const result=await realtimeFeed(feeds.find(feed=>feed.id===id)!);
+    const records=result.health.status==="healthy"?result.records:realtimeCache.get(id)?.value.records??[];
+    if(!records.length)return {...result,records,journeys:[]};
+    if(result.health.status!=="healthy")return {...result,records,journeys:processedBusJourneys.unavailable(id,records)};
+    try {
+      const staticData=await getBusStaticFeed(id);
+      const journeys=processedBusJourneys.process(id,records,staticData);
+      // The map uses the same validated trip geometry as the processed journey.
+      const byVehicle=new Map(journeys.map(entry=>[entry.vehicleId,entry.journey]));
+      return {...result,records:records.map(record=>({...record,routePath:byVehicle.get(record.id)?.path??record.routePath})),journeys};
+    }catch{return {...result,records,journeys:processedBusJourneys.unavailable(id,records)};}
+  })().finally(()=>busProcessingRequests.delete(id));
+  busProcessingRequests.set(id,request);return request;
+}
+export async function getOfficialTransit() {
+  const outcome=await Promise.all(feeds.map(async feed=>feed.mode==="Bus"?processedBusFeed(feed.id as BusSourceId):{...await realtimeFeed(feed),journeys:[] as ProcessedBusJourney[]}));
+  return {records:outcome.flatMap(value=>value.records),feeds:outcome.map(value=>value.health),busJourneys:outcome.flatMap(value=>value.journeys)};
+}
 export const busSourceIds = ["rapid-bus-kl", "rapid-bus-mrtfeeder", "rapid-bus-penang"] as const;
 export type BusSourceId = typeof busSourceIds[number];
 export async function getBusStaticFeed(id: BusSourceId) { return staticFeed(staticSources.find(source=>source.id===id)!); }
-export async function getBusVehicle(id: BusSourceId, vehicleId: string):Promise<{record:Record|null;available:boolean;health:FeedHealth;history?:ProgressHistory}> {
-  const feed=feeds.find(item=>item.id===id)!;
-  const result=await realtimeFeed(feed);
+export async function getBusVehicle(id: BusSourceId, vehicleId: string):Promise<{record:Record|null;available:boolean;health:FeedHealth;history?:ProgressHistory;processed?:ProcessedBusJourney}> {
+  const result=await processedBusFeed(id);
   const available=result.health.status==="healthy";
   const record=(available?result.records:realtimeCache.get(id)?.value.records??[]).find(item=>item.id===vehicleId)??null;
-  return { record, available, health:result.health,history:available?officialProgressHistory.get(id,vehicleId):undefined };
+  return { record, available, health:result.health,history:available?officialProgressHistory.get(id,vehicleId):undefined,processed:result.journeys.find(entry=>entry.vehicleId===vehicleId) };
 }
 export async function getTimetable(sourceId: string) { const source = staticSources.find(item => item.id === sourceId); if (!source) throw new Error("Unsupported timetable source"); return (await staticFeed(source)).timetable; }
 export async function getRailStaticFeed(id: "rapid-rail-kl" | "ktmb") { return staticFeed(staticSources.find(source => source.id === id)!); }

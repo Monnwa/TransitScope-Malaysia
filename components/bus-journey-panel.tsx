@@ -13,16 +13,17 @@ import { adherenceSummary,displayedAdherence } from "@/lib/timetable-adherence";
 import { StopTimetableAdherence,AdherenceSummary } from "./timetable-adherence";
 import { journeyLocationText,passengerName,publicRouteCode,publicRouteName,sentenceCase } from "./passenger-copy";
 import { estimatedBusArrival,estimatedBusArrivalLabel } from "@/lib/bus-motion";
+import type { ProcessedBusJourney } from "@/lib/processed-bus-journeys";
 
 export type BusMapJourney={vehicleId:string;path:[number,number][]|null;tripId:string|null;tracking?:VehicleProgress;motion?:RouteAnimator;selectedStop?:SelectedJourneyStop|null;navigation?:number;locate?:number;lastSeen?:{position:[number,number]|null;timestamp:string|null;available:boolean;name:string}};
-type Props={record:TransitRecord;onClose:()=>void;onPathChange:(journey:BusMapJourney)=>void;children?:ReactNode};
+type Props={record:TransitRecord;onClose:()=>void;onPathChange:(journey:BusMapJourney)=>void;children?:ReactNode;processed?:ProcessedBusJourney|null;onRefresh?:()=>void;processing?:boolean};
 const destination=(value:string|null|undefined)=>value?/^from\s+.+?\s+to\s+(.+)$/i.exec(value)?.[1]??value:"Destination unavailable";
 const stamp=(value:string)=>`${boardDate(value)}, ${arrivalClock(value)} MYT`;
 export default function BusJourneyPanel(props:Props){
   return <Journey key={`${props.record.feedId}:${props.record.id}:${props.record.tripId}`} {...props}/>;
 }
-function Journey({record,onClose,onPathChange,children}:Props){
-  const [data,setData]=useState<BusJourney|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState("");
+function Journey({record,onClose,onPathChange,children,processed,onRefresh,processing}:Props){
+  const [data,setData]=useState<BusJourney|null>(processed?.journey??null),[loading,setLoading]=useState(!processed),[error,setError]=useState("");
   const [departure,setDeparture]=useState<string|null>(null),[direction,setDirection]=useState<string|null>(null),[refresh,setRefresh]=useState(0);
   const [previous,setPrevious]=useState(false),[expanded,setExpanded]=useState(true),[now,setNow]=useState(Date.now),[allFrequency,setAllFrequency]=useState(false);
   const busy=useRef(false),lastRequest=useRef(0),lastManual=useRef(0),body=useRef<HTMLDivElement>(null),id=useId();
@@ -40,25 +41,34 @@ function Journey({record,onClose,onPathChange,children}:Props){
   if(observation?.tripStartDate)query.set("date",observation.tripStartDate);if(observation?.tripStartTime)query.set("start",observation.tripStartTime);if(observation?.positionTimestamp)query.set("observed",observation.positionTimestamp);
   if(departure)query.set("departure",departure);if(direction!==null)query.set("direction",direction);
   const queryKey=query.toString();
+  const shared=processed!==undefined&&!departure&&direction===null;
+  const sharedProcessing=shared?processing:undefined;
   useEffect(()=>{const timer=setInterval(()=>setNow(Date.now()),15000);return()=>clearInterval(timer);},[]);
   useEffect(()=>{const close=(event:KeyboardEvent)=>{if(event.key==="Escape"&&!event.defaultPrevented)onClose();};document.addEventListener("keydown",close);return()=>document.removeEventListener("keydown",close);},[onClose]);
   useEffect(()=>{
+    if(shared){
+      setData(current=>processed?.journey?newerJourney(current,processed.journey):null);
+      setLoading(!!processing||!processed);
+      setError(processed?.state==="DATA_UNAVAILABLE"?"Journey data could not be refreshed. Previously retrieved information is retained.":"");
+      return;
+    }
     if(!record.feedId){setLoading(false);setError("The official bus source reference is unavailable. Vehicle details and any retrieved route path are retained.");return;}
     const controller=new AbortController();let active=true;busy.current=true;lastRequest.current=Date.now();setLoading(true);setError("");
     const timeout=setTimeout(()=>controller.abort(),25000);
-    fetch(`/api/bus-journey?${queryKey}`,{signal:controller.signal,cache:"no-store"}).then(async response=>{
+    // Strict Mode can dispose an effect before its first request starts.
+    Promise.resolve().then(()=>{if(!active)throw new DOMException("Journey request cancelled","AbortError");return fetch(`/api/bus-journey?${queryKey}`,{signal:controller.signal,cache:"no-store"});}).then(async response=>{
       if(!response.ok){const result=await response.json().catch(()=>null);throw new Error(result?.error??"Could not retrieve the official bus journey.");}
       const next=await response.json() as BusJourney;if(!Array.isArray(next.stops)||!Array.isArray(next.departures)||!next.match||next.vehicle.id!==record.id)throw new Error("The official journey response was incomplete.");
       if(active){setData(current=>newerJourney(current,next));setNow(Date.now());}
     }).catch(reason=>{if(active)setError(`${reason instanceof Error&&reason.name!=="AbortError"?reason.message:"Could not refresh the official bus journey."} Previously retrieved information is retained.`);})
       .finally(()=>{clearTimeout(timeout);if(active){busy.current=false;setLoading(false);}});
     return()=>{active=false;controller.abort();clearTimeout(timeout);busy.current=false;};
-  },[queryKey,refresh,record.id,record.feedId]);
-  useEffect(()=>{if(data&&!busy.current&&now-lastRequest.current>=30000)setRefresh(value=>value+1);},[now,data]);
+  },[queryKey,refresh,record.id,record.feedId,shared,processed,sharedProcessing]);
+  useEffect(()=>{if(!shared&&data&&!busy.current&&now-lastRequest.current>=30000)setRefresh(value=>value+1);},[now,data,shared]);
   const tracking=useMemo(()=>currentTracking(data?.tracking,now,data?.vehicle.realtimeAvailable!==false&&data?.progress.status!=="TIMETABLE_PREVIEW"),[data?.tracking,data?.vehicle.realtimeAvailable,data?.progress.status,now]);
   useEffect(()=>{motion.update(data?.path??null,tracking,data?.route?.id??null);},[data?.path,data?.route?.id,tracking,motion]);
   useEffect(()=>{if(data)onPathChange({vehicleId:record.id,path:data.path,tripId:data.selectedDeparture?.tripId??null,tracking,motion,selectedStop,navigation,locate,lastSeen:{position:data.vehicle.position??record.position,timestamp:data.vehicle.reportedAt??record.observation?.positionTimestamp??null,available:data.vehicle.realtimeAvailable,name:record.name}});},[data,tracking,onPathChange,record.id,motion,selectedStop?.key,selectedStop?.status,selectedStop?.confidence,navigation,locate]);
-  const reload=()=>{if(busy.current||Date.now()-lastManual.current<1000)return;lastManual.current=Date.now();busy.current=true;setLoading(true);setRefresh(value=>value+1);};
+  const reload=()=>{if(busy.current||Date.now()-lastManual.current<1000)return;lastManual.current=Date.now();if(shared){onRefresh?.();return;}busy.current=true;setLoading(true);setRefresh(value=>value+1);};
   const stale=!!data?.vehicle.reportedAt&&(now-Date.parse(data.vehicle.reportedAt)>BUS_POSITION_MAX_AGE||Date.parse(data.vehicle.reportedAt)-now>30000);
   const reliable=!!data&&data.vehicle.realtimeAvailable&&data.vehicle.positionStatus==="CURRENT"&&!stale;
   const preview=data?.progress.status==="TIMETABLE_PREVIEW";
@@ -96,6 +106,8 @@ function Journey({record,onClose,onPathChange,children}:Props){
       <p className="bus-loading" role="status" aria-live="polite">{loading?data?"Refreshing journey…":"Loading journey and stops…":data?`Updated ${arrivalClock(data.retrievedAt)} MYT · ${data.stops.length} stops`:""}</p>
       {reliable&&!preview&&<button type="button" className="bus-text-button bus-locate" onClick={locateBus}>◎ Locate bus</button>}
       {selectedStop&&!selectedStop.position&&<p className="bus-fallback" role="status">Map location unavailable for {passengerName(selectedStop.name)}.</p>}
+      {shared&&processed?.state==="DATA_UNAVAILABLE"&&!data&&<p className="bus-fallback" role="status">Data unavailable. Journey information could not be loaded.</p>}
+      {shared&&processed?.state==="NO_MATCH"&&<p className="bus-fallback" role="status">No matching trip. Available timetable information is shown below.</p>}
       {error&&<p className="bus-error" role="alert">Could not refresh this journey. Previously loaded information is still shown. <button type="button" disabled={loading} onClick={reload}>Retry</button></p>}
       {data&&<>
         {data.match.status!=="MATCHED"&&<p className="bus-fallback" role="status">{data.stops.length?"Journey times are unavailable.":"Journey details are unavailable for this bus."}</p>}
