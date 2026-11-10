@@ -65,7 +65,31 @@ type AdmissionOutcome =
 export type RetainClassificationAdmission = (work: Promise<void>) => void;
 
 export class PostgresClassificationEvidenceStore {
+  private readinessCheck?: Promise<boolean>;
+
   constructor(private readonly query: Query) {}
+
+  isReady(): Promise<boolean> {
+    this.readinessCheck ??= this.checkReadiness().finally(() => { this.readinessCheck = undefined; });
+    return this.readinessCheck;
+  }
+
+  private async checkReadiness(): Promise<boolean> {
+    try {
+      const [row] = await this.query(`
+        WITH migration AS (
+          SELECT to_regclass($1) AS evidence, to_regclass($2) AS outbox,
+                 to_regprocedure('transit_deliver_classification_outbox_v1(uuid,bigint)') AS delivery
+        )
+        SELECT has_table_privilege(evidence, 'SELECT') AND has_table_privilege(evidence, 'INSERT')
+           AND has_table_privilege(outbox, 'SELECT') AND has_table_privilege(outbox, 'INSERT')
+           AND has_table_privilege(outbox, 'UPDATE') AND has_function_privilege(delivery, 'EXECUTE') AS ready
+        FROM migration`, [table, outbox], AbortSignal.timeout(1_500));
+      return row?.ready === true;
+    } catch {
+      return false;
+    }
+  }
 
   async append(records: readonly ClassificationEvidenceRecord[], now = Date.now(), signal?: AbortSignal) {
     const { unique, serialized } = prepareBatch(records, now);
@@ -234,6 +258,14 @@ export class ClassificationEvidenceArchive {
     private readonly retentionDays: number,
     private readonly deferAdmission = false,
   ) {}
+
+  isReady(): Promise<boolean> {
+    return this.store.isReady();
+  }
+
+  async flushWhenReady(): Promise<void> {
+    if (await this.isReady()) await this.flush();
+  }
 
   status() {
     const oldest = this.staged.values().next().value;
@@ -439,10 +471,13 @@ export class ClassificationEvidenceArchive {
 }
 
 export function configuredClassificationArchive(env: Record<string, string | undefined> = process.env): ClassificationEvidenceArchive | undefined {
-  if (env.VERCEL_ENV === "production") return undefined;
+  if (env.VERCEL_ENV === "production" || env.TRANSIT_CLASSIFICATION_ARCHIVE_ENABLED !== "true") return undefined;
   const url = env.TRANSIT_CLASSIFICATION_DATABASE_URL?.trim();
   if (!url) return undefined;
   try {
+    const writer = new URL(url);
+    if (!["postgresql:", "postgres:"].includes(writer.protocol) || !writer.hostname || !writer.username || writer.pathname.length < 2)
+      throw new Error("Invalid archive writer URL");
     const days = Number(env.TRANSIT_CLASSIFICATION_RETENTION_DAYS ?? 7);
     if (!Number.isInteger(days) || days < 1 || days > 30) throw new Error("Invalid archive retention");
     const sql = neon(url);

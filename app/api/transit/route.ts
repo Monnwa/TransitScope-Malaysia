@@ -14,6 +14,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json<TransitApiResponse>({ records: await getStaticTransit(), alerts: [], feeds: [], fetchedAt: new Date().toISOString(), demo: false }, { headers: { "Cache-Control": "public, max-age=30, s-maxage=30, stale-while-revalidate=60" } });
   }
   const { records, feeds, busJourneys, busEvidence } = await getOfficialTransit(after);
-  if (classificationArchive) after(() => classificationArchive?.flush());
+  if (classificationArchive) after(() => classificationArchive?.flushWhenReady());
   return transitResponse({ records, alerts: [], feeds, busJourneys, busEvidence, fetchedAt: new Date().toISOString(), demo: false },request.headers.get("accept-encoding"));
 }

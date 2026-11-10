@@ -14,6 +14,7 @@ import { adherenceFixture, adherencePoint } from "@/tests/fixtures/adherence";
 const table = "transit_classification_evidence_v1";
 const outbox = "transit_classification_outbox_v1";
 const source = "rapid-bus-kl";
+const writerUrl = "postgresql://user:password@disabled.example/test";
 const storeFor = (db: PGlite) => new PostgresClassificationEvidenceStore(async (statement, parameters) =>
   (await db.query(statement, parameters)).rows as Record<string, unknown>[]);
 
@@ -24,6 +25,71 @@ function accepted() {
   if (!record) throw new Error("Expected a directly classified fixture");
   return { ...fixture, stop, record };
 }
+
+describe("archive activation", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it.each([undefined, "false", "", "1", "TRUE", " true ", "unexpected"])(
+    "fails closed for flag %s even with a writer and Deferred Admission",
+    flag => {
+      expect(configuredClassificationArchive({
+        TRANSIT_CLASSIFICATION_ARCHIVE_ENABLED: flag,
+        TRANSIT_CLASSIFICATION_DATABASE_URL: writerUrl,
+        TRANSIT_CLASSIFICATION_DEFER_ADMISSION: "1",
+      })).toBeUndefined();
+    },
+  );
+
+  it.each([undefined, "  ", "invalid", "https://disabled.example/test", "postgresql://disabled.example/test"])(
+    "requires a valid writer URL when enabled (%s)", url => {
+      vi.spyOn(console, "warn").mockImplementation(() => {});
+      expect(configuredClassificationArchive({
+        TRANSIT_CLASSIFICATION_ARCHIVE_ENABLED: "true",
+        TRANSIT_CLASSIFICATION_DATABASE_URL: url,
+      })).toBeUndefined();
+    },
+  );
+
+  it.each([[undefined, "AWAITED"], ["0", "AWAITED"], ["1", "DEFERRED"]] as const)(
+    "selects the admission mode independently when enabled (%s)",
+    (defer, mode) => {
+      expect(configuredClassificationArchive({
+        VERCEL_ENV: "preview",
+        TRANSIT_CLASSIFICATION_ARCHIVE_ENABLED: "true",
+        TRANSIT_CLASSIFICATION_DATABASE_URL: writerUrl,
+        TRANSIT_CLASSIFICATION_DEFER_ADMISSION: defer,
+      })?.status().admissionMode).toBe(mode);
+    },
+  );
+
+  it("defaults off and blocks Production even with explicit opt-in and a writer", () => {
+    expect(configuredClassificationArchive({})).toBeUndefined();
+    expect(configuredClassificationArchive({
+      VERCEL_ENV: "production",
+      TRANSIT_CLASSIFICATION_ARCHIVE_ENABLED: "true",
+      TRANSIT_CLASSIFICATION_DATABASE_URL: writerUrl,
+      TRANSIT_CLASSIFICATION_DEFER_ADMISSION: "1",
+    })).toBeUndefined();
+  });
+
+  it("uses the flag of the initialized server environment", async () => {
+    vi.stubEnv("VERCEL_ENV", "preview");
+    vi.stubEnv("TRANSIT_CLASSIFICATION_DATABASE_URL", writerUrl);
+    vi.stubEnv("TRANSIT_CLASSIFICATION_RETENTION_DAYS", "7");
+    vi.stubEnv("TRANSIT_CLASSIFICATION_ARCHIVE_ENABLED", undefined);
+    vi.resetModules();
+    const build = await import("@/lib/classification-evidence-store");
+    expect(build.classificationArchive).toBeUndefined();
+
+    vi.stubEnv("TRANSIT_CLASSIFICATION_ARCHIVE_ENABLED", "true");
+    vi.resetModules();
+    const runtime = await import("@/lib/classification-evidence-store");
+    expect(runtime.classificationArchive).toBeDefined();
+  });
+});
 
 describe("immutable historical classification archive", () => {
   let directory: string;
@@ -137,13 +203,75 @@ describe("immutable historical classification archive", () => {
     stop.classification = "SCHEDULED";
     journey.tracking!.vehicleTimestamp = new Date(now - 120_001).toISOString();
     expect(captureClassificationEvidence(source, journey, stop, now, 7)).toBeNull();
-    expect(configuredClassificationArchive({})).toBeUndefined();
-    const env = { TRANSIT_CLASSIFICATION_DATABASE_URL: "postgresql://user:password@disabled.example/test" };
-    expect(configuredClassificationArchive(env)?.status().admissionMode).toBe("AWAITED");
-    expect(configuredClassificationArchive({ ...env, TRANSIT_CLASSIFICATION_DEFER_ADMISSION: "1" })?.status().admissionMode).toBe("DEFERRED");
-    expect(configuredClassificationArchive({
-      ...env, VERCEL_ENV: "production", TRANSIT_CLASSIFICATION_DEFER_ADMISSION: "1",
-    })).toBeUndefined();
+  });
+
+  it.each(["0", "1"])("skips staging and SQL with a writer configured and archive disabled (defer %s)", async defer => {
+    const capture = vi.spyOn(ClassificationEvidenceArchive.prototype, "capture");
+    const request = vi.spyOn(globalThis, "fetch");
+    const { now, path, table, fixes, bus, record } = accepted();
+    const archive = configuredClassificationArchive({
+      TRANSIT_CLASSIFICATION_ARCHIVE_ENABLED: "false",
+      TRANSIT_CLASSIFICATION_DATABASE_URL: writerUrl,
+      TRANSIT_CLASSIFICATION_DEFER_ADMISSION: defer,
+    });
+    const history = new VehicleProgressHistory();
+    for (const fix of fixes) history.ingest(source, [{
+      ...bus, position: fix.position, observation: { ...bus.observation, positionTimestamp: new Date(fix.timestamp).toISOString() },
+    }], fix.timestamp);
+    const feed = { timetable: table, tripPaths: new Map([["t", path]]),
+      progressPaths: new Map([["t", path]]), tripShapeDistances: new Map() };
+    const retain = vi.fn();
+    const result = await new ProcessedBusJourneys(history, undefined, archive)
+      .processWithPersistence(source, history.ingest(source, [bus], now), feed, now, retain);
+    expect(result[0].journey?.stops[2].adherence?.result).toBeTruthy();
+    expect(capture).not.toHaveBeenCalled();
+    expect(request).not.toHaveBeenCalled();
+    expect(retain).not.toHaveBeenCalled();
+    expect(await store.outboxStatus(record.recordId)).toEqual({ state: "NOT_FOUND" });
+  });
+
+  it("keeps journeys available and skips staging and writes when a migration is missing", async () => {
+    const { now, path, table, fixes, bus } = accepted();
+    const query = vi.fn(async (statement: string, parameters: unknown[]) =>
+      (await db.query(statement, parameters)).rows as Record<string, unknown>[]);
+    const archive = new ClassificationEvidenceArchive(new PostgresClassificationEvidenceStore(query), 7, true);
+    const history = new VehicleProgressHistory();
+    for (const fix of fixes) history.ingest(source, [{
+      ...bus, position: fix.position, observation: { ...bus.observation, positionTimestamp: new Date(fix.timestamp).toISOString() },
+    }], fix.timestamp);
+    const records = history.ingest(source, [bus], now);
+    const feed = { timetable: table, tripPaths: new Map([["t", path]]),
+      progressPaths: new Map([["t", path]]), tripShapeDistances: new Map() };
+    const expected = new ProcessedBusJourneys(history).process(source, records, feed, now);
+    await db.exec("ALTER FUNCTION transit_deliver_classification_outbox_v1(uuid,bigint) RENAME TO withheld_delivery");
+    try {
+      const retain = vi.fn();
+      const result = await new ProcessedBusJourneys(history, undefined, archive)
+        .processWithPersistence(source, records, feed, now, retain);
+      expect(result).toEqual(expected);
+      expect(result[0].journey?.stops[2].adherence?.result).toBeTruthy();
+      await archive.flushWhenReady();
+      expect(archive.status()).toMatchObject({ captured: 0, staged: 0, queued: 0 });
+      expect(retain).not.toHaveBeenCalled();
+      expect(query).toHaveBeenCalledTimes(2);
+      expect(query.mock.calls.every(([statement]) => statement.trimStart().startsWith("WITH migration AS"))).toBe(true);
+    } finally {
+      await db.exec("ALTER FUNCTION withheld_delivery(uuid,bigint) RENAME TO transit_deliver_classification_outbox_v1");
+    }
+    expect(await archive.isReady()).toBe(true);
+  });
+
+  it("requires a database connection and writer privileges for readiness", async () => {
+    const unavailable = new PostgresClassificationEvidenceStore(async () => { throw new Error("Unavailable"); });
+    expect(await unavailable.isReady()).toBe(false);
+
+    await db.exec(`CREATE ROLE archive_read_only; GRANT SELECT ON ${table}, ${outbox} TO archive_read_only; SET ROLE archive_read_only`);
+    try {
+      expect(await store.isReady()).toBe(false);
+    } finally {
+      await db.exec(`RESET ROLE; REVOKE SELECT ON ${table}, ${outbox} FROM archive_read_only; DROP ROLE archive_read_only`);
+    }
+    expect(await store.isReady()).toBe(true);
   });
 
   it("keeps a failed handoff explicitly staged until PostgreSQL acknowledges the intent", async () => {
@@ -467,7 +595,7 @@ describe("immutable historical classification archive", () => {
         ...fixture.bus, position: adherencePoint(metres), reportedAt: new Date(measured).toISOString(),
         observation: { ...fixture.bus.observation, positionTimestamp: new Date(measured).toISOString() },
       };
-      const actual = archivedProcessor.process(source, history.ingest(source, [record], now), feed, now);
+      const actual = await archivedProcessor.processWithPersistence(source, history.ingest(source, [record], now), feed, now);
       expect(actual).toEqual(existingProcessor.process(source, reference.ingest(source, [record], now), feed, now));
       await archive.flush(now);
     }
