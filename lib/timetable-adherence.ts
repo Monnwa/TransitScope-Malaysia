@@ -1,12 +1,13 @@
 import type { BusJourney,JourneyStop } from "@/lib/bus-journey";
 import { strongerPassage,type PassageEvidence } from "@/lib/gps-passage";
 import { PROGRESS_LIMITS } from "@/lib/route-projection";
+import { attachAdherenceDiagnostics, type StopDiagnostic } from "@/lib/adherence-diagnostics";
 
 export const ON_TIME_TOLERANCE_SECONDS=120;
 export const ADHERENCE_EXPLANATION="Timetable adherence is estimated from GPS-observed vehicle movement across the stop location. It does not confirm actual stop arrival or departure.";
 export type AdherenceStatus="EARLY"|"ON_TIME"|"DELAYED"|"STATUS_UNKNOWN";
 export type ValidAdherence={status:Exclude<AdherenceStatus,"STATUS_UNKNOWN">;inferredPassageTime:string;scheduledReferenceTime:string;differenceSeconds:number;differenceMinutes:number;evidence:PassageEvidence;toleranceSeconds:number};
-export type StopAdherence={status:AdherenceStatus;reference:"DEPARTURE";label:"GPS-INFERRED";reason:string;result:ValidAdherence|null;lastValid:ValidAdherence|null};
+export type StopAdherence={status:AdherenceStatus;reference:"DEPARTURE";label:"GPS-INFERRED";reason:string;result:ValidAdherence|null;lastValid:ValidAdherence|null;diagnostic?:StopDiagnostic};
 export function classifyAdherence(differenceSeconds:number,toleranceSeconds=ON_TIME_TOLERANCE_SECONDS):AdherenceStatus {
   if(!Number.isFinite(differenceSeconds)||!Number.isFinite(toleranceSeconds)||toleranceSeconds<0)return "STATUS_UNKNOWN";
   return differenceSeconds>toleranceSeconds?"DELAYED":differenceSeconds< -toleranceSeconds?"EARLY":"ON_TIME";
@@ -29,7 +30,7 @@ export function assessStopAdherence(journey:BusJourney,stop:JourneyStop,now:numb
   return {status,reference:"DEPARTURE",label:"GPS-INFERRED",reason:"Compared with the exact scheduled departure for this service-date trip stop.",result,lastValid:null};
 }
 export function applyJourneyAdherence(journey:BusJourney,now:number,toleranceSeconds=ON_TIME_TOLERANCE_SECONDS):BusJourney {
-  journey.stops=journey.stops.map(stop=>({...stop,adherence:assessStopAdherence(journey,stop,now,toleranceSeconds)}));return journey;
+  journey.stops=journey.stops.map(stop=>({...stop,adherence:assessStopAdherence(journey,stop,now,toleranceSeconds)}));return attachAdherenceDiagnostics(journey,now);
 }
 /** Client freshness changes withdraw current claims without rewriting the historical estimate. */
 export function displayedAdherence(assessment:StopAdherence|undefined,fresh:boolean){if(!assessment)return unknown("No reliable GPS crossing pair was recorded for this stop.");return fresh?assessment:unknown("Current GPS evidence is unavailable or stale. Last valid observations are historical.",assessment.result??assessment.lastValid);}

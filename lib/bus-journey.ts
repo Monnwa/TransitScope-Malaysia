@@ -28,7 +28,7 @@ export type JourneyStop = {
   status: "DEPARTED" | "PASSED" | "CURRENT" | "UPCOMING" | "UNKNOWN";
 };
 export type BusJourney = {
-  vehicle: {id:string;name:string;operator:string;reportedAt:string|null;position:[number,number]|null;realtimeAvailable:boolean;positionStatus:"CURRENT"|"STALE"|"UNKNOWN"};
+  vehicle: {feedPublishedAt?:string|null;receivedAt?:string|null;id:string;name:string;operator:string;reportedAt:string|null;position:[number,number]|null;realtimeAvailable:boolean;positionStatus:"CURRENT"|"STALE"|"UNKNOWN"};
   route: {id:string;code:string;name:string;origin:string|null;destination:string|null;direction:string|null;directions:string[]}|null;
   match: {status:"MATCHED"|"PATTERN_ONLY"|"ROUTE_ONLY"|"UNAVAILABLE";method:"TRIP_ID"|"UNIQUE_DESCRIPTOR"|null;reason:string;routeAlias:boolean};
   vehicleDeparture: JourneyDeparture|null; selectedDeparture: JourneyDeparture|null; departures: JourneyDeparture[];
@@ -101,7 +101,7 @@ function calculateBaseBusJourney(table:Timetable,vehicle:TransitRecord,options:B
   const now=options.now??Date.now(),realtimeAvailable=options.realtimeAvailable??true,obs=vehicle.observation??{};
   const observed=obs.positionTimestamp?Date.parse(obs.positionTimestamp):NaN;
   const positionStatus=!Number.isFinite(observed)?"UNKNOWN":now-observed>BUS_POSITION_MAX_AGE||observed-now>30000?"STALE":"CURRENT";
-  const response:BusJourney={vehicle:{id:vehicle.id,name:vehicle.name,operator:vehicle.operator,reportedAt:obs.positionTimestamp??null,position:vehicle.position,realtimeAvailable,positionStatus},route:null,match:{status:"UNAVAILABLE",method:null,reason:"No reliable GTFS trip match is available.",routeAlias:false},vehicleDeparture:null,selectedDeparture:null,departures:[],frequencies:[],stops:[],path:vehicle.routePath??null,progress:{status:"UNKNOWN",sequence:null,message:"Vehicle progress unavailable — scheduled times do not confirm departure or arrival."},delay:null,source:table.source,staticUpdatedAt:table.updated,retrievedAt:new Date(now).toISOString(),selectionWarning:null};
+  const response:BusJourney={vehicle:{feedPublishedAt:vehicle.feedPublishedAt??null,receivedAt:vehicle.lastUpdatedAt??null,id:vehicle.id,name:vehicle.name,operator:vehicle.operator,reportedAt:obs.positionTimestamp??null,position:vehicle.position,realtimeAvailable,positionStatus},route:null,match:{status:"UNAVAILABLE",method:null,reason:"No reliable GTFS trip match is available.",routeAlias:false},vehicleDeparture:null,selectedDeparture:null,departures:[],frequencies:[],stops:[],path:vehicle.routePath??null,progress:{status:"UNKNOWN",sequence:null,message:"Vehicle progress unavailable — scheduled times do not confirm departure or arrival."},delay:null,source:table.source,staticUpdatedAt:table.updated,retrievedAt:new Date(now).toISOString(),selectionWarning:null};
   let route=routeFor(table,vehicle.routeId),tripId:string|null=null,active:JourneyDeparture|null=null,method:BusJourney["match"]["method"]=null;
   const reportedTrip=vehicle.tripId?table.trips.get(vehicle.tripId):null;
   const relationValid=obs.scheduleRelationship===undefined||[0,2].includes(obs.scheduleRelationship);

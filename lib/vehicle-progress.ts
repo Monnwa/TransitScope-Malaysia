@@ -1,6 +1,7 @@
 import { angleDifference, bearing, distanceM, distinctCandidates, pointAtDistance, projectCandidates, PROGRESS_LIMITS as L, type GeoPoint, type ShapeIndex, type StopProjection } from "@/lib/route-projection";
 import { inferStopPassage,retainPassage,type PassageEvidence,type PassageObservation } from "@/lib/gps-passage";
 import { busMotionScope,historicalBusSpeed,type HistoricalSpeed,type SpeedSample } from "@/lib/bus-motion";
+import { rejectedPassageDiagnostic, type PassageDiagnostic, type DiagnosticReason } from "@/lib/adherence-diagnostics";
 export type GpsFix={timestamp:number;position:GeoPoint;bearing:number|null;speed:number|null;accuracyM:number|null};
 type MatchedFix=GpsFix&{distanceM:number;rawDistanceM:number;offsetM:number;point:GeoPoint;segment:number};
 export type ProgressState={last:MatchedFix;origin:MatchedFix;highEvidence:boolean;confirmedDistanceM:number;speedSamples?:SpeedSample[];speedScope?:string};
@@ -17,6 +18,7 @@ export type VehicleProgress={
   historicalSpeed?:HistoricalSpeed|null;
   directionId?:string|null;
   routeId?:string|null;passageKey?:string;passages?:PassageEvidence[];
+  evidenceDiagnostics?:PassageDiagnostic[];continuityDiagnostic?:DiagnosticReason;
 };
 export type ProgressHistory={token:string;fixes:GpsFix[];previous?:VehicleProgress};
 type Context={key:string;passageKey?:string;historyToken:string;vehicleId:string;tripId:string;routeId?:string|null;shapeId:string|null;serviceDate:string;directionId?:string|null;stops:StopProjection[]};
@@ -32,6 +34,7 @@ export function evaluateVehicleProgress(context:Context,shape:ShapeIndex,fix:Gps
   let state=previous?.state&&fix.timestamp-previous.state.last.timestamp<=L.maxAgeMs?previous.state:null;
   let lastGood=previous,used=0,failure="GPS could not be associated with one consistent route segment.";
   let passages=previous?.passages??[];
+  let evidenceDiagnostics=previous?.evidenceDiagnostics??[],continuityDiagnostic=previous?.continuityDiagnostic;
   const unique=new Map<number,GpsFix>();for(const item of [...(history?.fixes??[]),fix])if(item.timestamp<=fix.timestamp&&fix.timestamp-item.timestamp<=L.maxAgeMs&&!unique.has(item.timestamp))unique.set(item.timestamp,item);
   const ordered=[...unique.values()].sort((a,b)=>a.timestamp-b.timestamp);
   for(const item of ordered){
@@ -45,7 +48,7 @@ export function evaluateVehicleProgress(context:Context,shape:ShapeIndex,fix:Gps
     candidates=candidates.filter(candidate=>(movingBearing===null||angleDifference(candidate.bearing,movingBearing)<=L.headingToleranceDeg)&&(motionBearing===null||angleDifference(candidate.bearing,motionBearing)<=L.headingToleranceDeg));
     if(!candidates.length){state=null;failure="Vehicle movement or heading conflicts with the trip direction.";continue;}
     if(state){const dt=(item.timestamp-state.last.timestamp)/1000;candidates=candidates.filter(candidate=>candidate.distanceM>=state!.last.distanceM-L.positionHysteresisM&&candidate.distanceM<=state!.last.distanceM+L.maximumSpeedMps*dt+L.passedBufferM);}
-    if(!candidates.length){state=null;failure="GPS movement conflicts with previous route progress; continuity has been reset.";continue;}
+    if(!candidates.length){state=null;failure="GPS movement conflicts with previous route progress; continuity has been reset.";continuityDiagnostic="GPS_OUTLIER_REJECTED";continue;}
     const distinct=distinctCandidates(candidates);
     if(distinct.length!==1){state=null;failure="GPS matches multiple route branches, parallel segments or loop occurrences.";continue;}
     const candidate=distinct[0],stableDistance=state?Math.max(state.last.distanceM,candidate.distanceM):candidate.distanceM,stable=pointAtDistance(shape,stableDistance);
@@ -55,7 +58,7 @@ export function evaluateVehicleProgress(context:Context,shape:ShapeIndex,fix:Gps
     const highEvidence=quality&&!!state&&(state.highEvidence||item.timestamp-origin.timestamp>=L.minimumObservationMs&&stableDistance-origin.distanceM>=L.minimumMovementM&&distanceM(origin.position,item.position)>=20);
     if(state&&quality&&highEvidence){
       const observation=(sample:MatchedFix):PassageObservation=>({contextKey:context.passageKey??context.key,vehicleId:context.vehicleId,tripId:context.tripId,routeId:context.routeId??null,shapeId:context.shapeId,serviceDate:context.serviceDate,timestamp:sample.timestamp,distanceM:sample.distanceM,rawDistanceM:sample.rawDistanceM,offsetM:sample.offsetM,accuracyM:sample.accuracyM,confidence:sample.offsetM<=L.highRouteOffsetM&&(sample.accuracyM===null||sample.accuracyM<=L.highAccuracyM)?"HIGH":"LOW"});
-      for(const stop of context.stops){const evidence=inferStopPassage(stop,observation(state.last),observation(matched),now);if(evidence)passages=retainPassage(passages,evidence);}
+      for(const stop of context.stops){const from=observation(state.last),to=observation(matched),evidence=inferStopPassage(stop,from,to,now);if(evidence){passages=retainPassage(passages,evidence);evidenceDiagnostics=evidenceDiagnostics.filter(item=>item.stopId!==stop.id||item.sequence!==stop.sequence);}else if(!passages.some(item=>item.stopId===stop.id&&item.sequence===stop.sequence)){const diagnostic=rejectedPassageDiagnostic(stop,from,to,now);if(diagnostic)evidenceDiagnostics=[...evidenceDiagnostics.filter(item=>item.stopId!==stop.id||item.sequence!==stop.sequence),diagnostic];}}
     }
     const confirmedDistanceM=highEvidence?Math.max(state?.confirmedDistanceM??-1,Math.min(state!.last.distanceM,stableDistance)-L.passedBufferM):-1;
     const speedSamples=quality&&Math.abs(stableDistance-candidate.distanceM)<.05?[...(state?.speedScope===speedScope?state.speedSamples??[]:[]),matched].filter(sample=>item.timestamp-sample.timestamp<=L.maxAgeMs).slice(-8):[];
@@ -76,5 +79,5 @@ export function evaluateVehicleProgress(context:Context,shape:ShapeIndex,fix:Gps
   const first=context.stops[0],last=context.stops.at(-1),near=next&&Math.abs(next.distanceM!-current.distanceM)<=L.approachingM;
   const status:VehicleProgress["status"]=first?.distanceM!==null&&first?.distanceM!==undefined&&current.distanceM<first.distanceM-L.approachingM?"BEFORE_FIRST":last?.distanceM!==null&&last?.distanceM!==undefined&&current.distanceM>last.distanceM+L.approachingM?"BEYOND_LAST":near?"NEAR_STOP":next&&previousStop?"BETWEEN_STOPS":"ON_ROUTE";
   const reason=status==="BEFORE_FIRST"?`Before ${first.name} — GPS position; departure unconfirmed.`:status==="BEYOND_LAST"?"Beyond the last mapped stop — trip completion is unconfirmed.":near?`Approaching ${next!.name} — arrival is unconfirmed.`:next?`En route to ${next.name}`:"On the matched trip shape; the exact stop bracket is unavailable.";
-  return {passageKey:context.passageKey??context.key,routeId:context.routeId??null,passages:passages,key:context.key,historyToken:context.historyToken,vehicleId:context.vehicleId,tripId:context.tripId,shapeId:context.shapeId,serviceDate:context.serviceDate,source:high?"GPS_INFERRED":"APPROXIMATE",confidence:high?"HIGH":"MEDIUM",status,vehicleTimestamp:new Date(fix.timestamp).toISOString(),ageSeconds:Math.round((now-fix.timestamp)/1000),accuracyM:fix.accuracyM,distanceM:current.distanceM,rawDistanceM:current.rawDistanceM,offsetM:current.offsetM,position:current.point,segment:current.segment,previousStopSequence:previousStop?.sequence??null,previousPassedStopSequence:previousPassed?.sequence??null,nextStopSequence:next?.sequence??null,stopProjections:context.stops,stopStates,lastSuccessfulMatchTime:new Date(fix.timestamp).toISOString(),historicalPosition:current.point,reason,observationsUsed:used||previous?.observationsUsed||1,state,directionId:context.directionId??null,historicalSpeed:speed?{...speed,scope:speedScope}:null};
+  return {evidenceDiagnostics,continuityDiagnostic,passageKey:context.passageKey??context.key,routeId:context.routeId??null,passages:passages,key:context.key,historyToken:context.historyToken,vehicleId:context.vehicleId,tripId:context.tripId,shapeId:context.shapeId,serviceDate:context.serviceDate,source:high?"GPS_INFERRED":"APPROXIMATE",confidence:high?"HIGH":"MEDIUM",status,vehicleTimestamp:new Date(fix.timestamp).toISOString(),ageSeconds:Math.round((now-fix.timestamp)/1000),accuracyM:fix.accuracyM,distanceM:current.distanceM,rawDistanceM:current.rawDistanceM,offsetM:current.offsetM,position:current.point,segment:current.segment,previousStopSequence:previousStop?.sequence??null,previousPassedStopSequence:previousPassed?.sequence??null,nextStopSequence:next?.sequence??null,stopProjections:context.stops,stopStates,lastSuccessfulMatchTime:new Date(fix.timestamp).toISOString(),historicalPosition:current.point,reason,observationsUsed:used||previous?.observationsUsed||1,state,directionId:context.directionId??null,historicalSpeed:speed?{...speed,scope:speedScope}:null};
 }

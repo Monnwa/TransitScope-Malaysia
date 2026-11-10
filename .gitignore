@@ -3,3 +3,5 @@ node_modules/
 playwright-report/
 test-results/
 presentation/.build/
+.env.local
+.env.*.local

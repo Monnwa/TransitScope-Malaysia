@@ -4,6 +4,8 @@ import { gtfsTimestamp,vehicleObservation,validGpsPosition } from "@/lib/vehicle
 import { officialProgressHistory } from "@/lib/vehicle-progress-history";
 import type { ProgressHistory } from "@/lib/vehicle-progress";
 import { ProcessedBusJourneys, type ProcessedBusJourney } from "@/lib/processed-bus-journeys";
+import { configuredBusEvidence } from "@/lib/redis-evidence-store";
+import { classificationArchive, type RetainClassificationAdmission } from "@/lib/classification-evidence-store";
 import { buildTimetable, type Timetable } from "@/lib/scheduled-departures";
 import type { FeedHealth, Mode, MrtLineId, Record } from "@/lib/transit-data";
 
@@ -132,14 +134,15 @@ async function loadRealtimeFeed(feed: FeedConfig) {
     const staticData = cachedStatic && cachedStatic.expiresAt > Date.now() ? cachedStatic.value : null;
     const decoded = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(bytes);
     const sourceTimestamp = gtfsTimestamp(Number(decoded.header?.timestamp))??null;
-    const decodedRecords = decoded.entity.flatMap((entity) => { const vehicle = entity.vehicle; const position = vehicle?.position; const lat = position?.latitude, lon = position?.longitude; if (!vehicle || !position || !validPosition(lat, lon) || !validGpsPosition([lat!,lon!])) return []; const tripId = vehicle.trip?.tripId ?? null; const trip = tripId ? staticData?.trips.get(tripId) : undefined; const routeId = vehicle.trip?.routeId ?? trip?.routeId ?? null; const route = routeId ? staticData?.routes.get(routeId) : undefined; const observation=vehicleObservation(vehicle),timestamp=observation.positionTimestamp??null; return [{ feedId: feed.id, observation, id: vehicle.vehicle?.id || entity.id || `${feed.id}:${lat}:${lon}`, name: vehicle.vehicle?.label || vehicle.vehicle?.id || "Vehicle identifier unavailable", mode: route?.mode ?? feed.mode, operator: feed.operator, route: route?.name ?? routeId, routeId, tripId, station: null, position: [lat, lon] as [number, number], bearing: Object.prototype.hasOwnProperty.call(position,"bearing") ? position.bearing ?? null : null, speed: Object.prototype.hasOwnProperty.call(position,"speed") ? position.speed ?? null : null, routePath: tripId ? staticData?.tripPaths.get(tripId) ?? null : null, recordKind: "vehicle" as const, reportedAt: timestamp, lastUpdatedAt: new Date().toISOString(), status: "In service" as const, dataMode: "LIVE" as const, source: `Malaysia Open API GTFS-Realtime (${feed.label})` }]; });
+    const decodedRecords = decoded.entity.flatMap((entity) => { const vehicle = entity.vehicle; const position = vehicle?.position; const lat = position?.latitude, lon = position?.longitude; if (!vehicle || !position || !validPosition(lat, lon) || !validGpsPosition([lat!,lon!])) return []; const tripId = vehicle.trip?.tripId ?? null; const trip = tripId ? staticData?.trips.get(tripId) : undefined; const routeId = vehicle.trip?.routeId ?? trip?.routeId ?? null; const route = routeId ? staticData?.routes.get(routeId) : undefined; const observation=vehicleObservation(vehicle),timestamp=observation.positionTimestamp??null; return [{ feedPublishedAt: sourceTimestamp, feedId: feed.id, observation, id: vehicle.vehicle?.id || entity.id || `${feed.id}:${lat}:${lon}`, name: vehicle.vehicle?.label || vehicle.vehicle?.id || "Vehicle identifier unavailable", mode: route?.mode ?? feed.mode, operator: feed.operator, route: route?.name ?? routeId, routeId, tripId, station: null, position: [lat, lon] as [number, number], bearing: Object.prototype.hasOwnProperty.call(position,"bearing") ? position.bearing ?? null : null, speed: Object.prototype.hasOwnProperty.call(position,"speed") ? position.speed ?? null : null, routePath: tripId ? staticData?.tripPaths.get(tripId) ?? null : null, recordKind: "vehicle" as const, reportedAt: timestamp, lastUpdatedAt: new Date().toISOString(), status: "In service" as const, dataMode: "LIVE" as const, source: `Malaysia Open API GTFS-Realtime (${feed.label})` }]; });
     const records=officialProgressHistory.ingest(feed.id,decodedRecords);
     const health: FeedHealth = { id: feed.id, label: feed.label, status: "healthy", lastSuccessAt: new Date().toISOString(), sourceTimestamp, message: null, records: records.length }; healthMemory.set(feed.id, health); const value = { records, health }; realtimeCache.set(feed.id, { value, expiresAt: Date.now() + REALTIME_TTL, lastSuccessAt: health.lastSuccessAt! }); return value;
   } catch (error) { officialProgressHistory.interrupt(feed.id); const prior = healthMemory.get(feed.id); const health: FeedHealth = { id: feed.id, label: feed.label, status: prior ? "stale" : "unavailable", lastSuccessAt: prior?.lastSuccessAt ?? null, sourceTimestamp: prior?.sourceTimestamp ?? null, message: error instanceof Error ? error.message : "Unknown upstream error", records: prior?.records ?? 0 }; healthMemory.set(feed.id, health); return { records: [], health }; }
 }
-const processedBusJourneys=new ProcessedBusJourneys(officialProgressHistory);
+const busEvidence=configuredBusEvidence();
+const processedBusJourneys=new ProcessedBusJourneys(officialProgressHistory,busEvidence.persistence,classificationArchive);
 const busProcessingRequests=new Map<string,Promise<{records:Record[];health:FeedHealth;journeys:ProcessedBusJourney[]}>>();
-async function processedBusFeed(id:BusSourceId) {
+async function processedBusFeed(id:BusSourceId,retainAdmission?:RetainClassificationAdmission) {
   const pending=busProcessingRequests.get(id);if(pending)return pending;
   const request=(async()=>{
     const result=await realtimeFeed(feeds.find(feed=>feed.id===id)!);
@@ -148,7 +151,7 @@ async function processedBusFeed(id:BusSourceId) {
     if(result.health.status!=="healthy")return {...result,records,journeys:processedBusJourneys.unavailable(id,records)};
     try {
       const staticData=await getBusStaticFeed(id);
-      const journeys=processedBusJourneys.process(id,records,staticData);
+      const journeys=await processedBusJourneys.processWithPersistence(id,records,staticData,undefined,retainAdmission);
       // The map uses the same validated trip geometry as the processed journey.
       const byVehicle=new Map(journeys.map(entry=>[entry.vehicleId,entry.journey]));
       return {...result,records:records.map(record=>({...record,routePath:byVehicle.get(record.id)?.path??record.routePath})),journeys};
@@ -156,15 +159,15 @@ async function processedBusFeed(id:BusSourceId) {
   })().finally(()=>busProcessingRequests.delete(id));
   busProcessingRequests.set(id,request);return request;
 }
-export async function getOfficialTransit() {
-  const outcome=await Promise.all(feeds.map(async feed=>feed.mode==="Bus"?processedBusFeed(feed.id as BusSourceId):{...await realtimeFeed(feed),journeys:[] as ProcessedBusJourney[]}));
-  return {records:outcome.flatMap(value=>value.records),feeds:outcome.map(value=>value.health),busJourneys:outcome.flatMap(value=>value.journeys)};
+export async function getOfficialTransit(retainAdmission?:RetainClassificationAdmission) {
+  const outcome=await Promise.all(feeds.map(async feed=>feed.mode==="Bus"?processedBusFeed(feed.id as BusSourceId,retainAdmission):{...await realtimeFeed(feed),journeys:[] as ProcessedBusJourney[]}));
+  return {records:outcome.flatMap(value=>value.records),feeds:outcome.map(value=>value.health),busJourneys:outcome.flatMap(value=>value.journeys),busEvidence:busEvidence.persistence?.status()??busEvidence.status};
 }
 export const busSourceIds = ["rapid-bus-kl", "rapid-bus-mrtfeeder", "rapid-bus-penang"] as const;
 export type BusSourceId = typeof busSourceIds[number];
 export async function getBusStaticFeed(id: BusSourceId) { return staticFeed(staticSources.find(source=>source.id===id)!); }
-export async function getBusVehicle(id: BusSourceId, vehicleId: string):Promise<{record:Record|null;available:boolean;health:FeedHealth;history?:ProgressHistory;processed?:ProcessedBusJourney}> {
-  const result=await processedBusFeed(id);
+export async function getBusVehicle(id: BusSourceId, vehicleId: string, retainAdmission?: RetainClassificationAdmission):Promise<{record:Record|null;available:boolean;health:FeedHealth;history?:ProgressHistory;processed?:ProcessedBusJourney}> {
+  const result=await processedBusFeed(id,retainAdmission);
   const available=result.health.status==="healthy";
   const record=(available?result.records:realtimeCache.get(id)?.value.records??[]).find(item=>item.id===vehicleId)??null;
   return { record, available, health:result.health,history:available?officialProgressHistory.get(id,vehicleId):undefined,processed:result.journeys.find(entry=>entry.vehicleId===vehicleId) };
