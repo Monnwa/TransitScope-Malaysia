@@ -63,6 +63,11 @@ type AdmissionOutcome =
   | { state: "NOT_COMMITTED" | "COMMIT_OUTCOME_UNKNOWN"; category: "TIMEOUT" | "DATABASE_ERROR" | "NOT_SUBMITTED" };
 
 export type RetainClassificationAdmission = (work: Promise<void>) => void;
+export type ClassificationCaptureTrace = (
+  record: ClassificationEvidenceRecord,
+  state: "GENERATED" | "STAGED" | "REJECTED",
+  reason?: "CAPACITY" | "OVERSIZED",
+) => void;
 
 export class PostgresClassificationEvidenceStore {
   private readinessCheck?: Promise<boolean>;
@@ -140,7 +145,7 @@ export class PostgresClassificationEvidenceStore {
     return new Set(rows.map(row => row.recordId as string));
   }
 
-  async claim(now?: number, signal?: AbortSignal) {
+  async claim(now?: number, signal?: AbortSignal, scope?: readonly { candidateId: string; checksum: string }[]) {
     const token = randomUUID();
     // Commit the attempt and its retry deadline before starting delivery.
     const rows = await this.query(`
@@ -152,6 +157,9 @@ export class PostgresClassificationEvidenceStore {
                WHEN q.attempts >= $4::integer THEN 'RETRIES_EXHAUSTED' END AS failure
         FROM ${outbox} q CROSS JOIN clock
         WHERE q.state IN ('PENDING', 'RETRYING') AND q.next_attempt_at_ms <= clock.now_ms
+          ${scope ? `AND EXISTS (SELECT 1 FROM jsonb_to_recordset($5::jsonb)
+            AS owned("candidateId" text, checksum text)
+            WHERE q.record_id = owned."candidateId" AND q.payload->>'checksum' = owned.checksum)` : ""}
         ORDER BY q.next_attempt_at_ms, q.record_id
         LIMIT $3 FOR UPDATE OF q SKIP LOCKED
       )
@@ -164,7 +172,7 @@ export class PostgresClassificationEvidenceStore {
           settled_at_ms = CASE WHEN due.failure IS NOT NULL THEN due.now_ms END,
           error_kind = due.failure
       FROM due WHERE q.record_id = due.record_id
-      RETURNING q.state`, [token, now ?? null, deliveryLimit, maxAttempts], signal);
+      RETURNING q.state`, [token, now ?? null, deliveryLimit, maxAttempts, ...(scope ? [JSON.stringify(scope)] : [])], signal);
     if (rows.some(row => row.state !== "RETRYING" && row.state !== "FAILED"))
       throw new Error("Invalid classification outbox claim acknowledgement");
     const claimed = rows.filter(row => row.state === "RETRYING").length;
@@ -257,6 +265,7 @@ export class ClassificationEvidenceArchive {
     private readonly store: PostgresClassificationEvidenceStore,
     private readonly retentionDays: number,
     private readonly deferAdmission = false,
+    private readonly traceCapture?: ClassificationCaptureTrace,
   ) {}
 
   isReady(): Promise<boolean> {
@@ -292,21 +301,25 @@ export class ClassificationEvidenceArchive {
       if (!result || !directResults.has(result)) continue;
       const record = captureClassificationEvidence(source, journey, stop, generatedAtMs, this.retentionDays);
       if (!record) { this.counts.rejected++; continue; }
+      this.traceCapture?.(record, "GENERATED");
       if (this.durableIds.has(record.recordId) || this.staged.has(record.recordId)) continue;
       const bytes = Buffer.byteLength(JSON.stringify(record)) + 1;
       if (bytes + 2 > batchBytes) {
         this.counts.oversized++;
         this.counts.dropped++;
+        this.traceCapture?.(record, "REJECTED", "OVERSIZED");
         continue;
       }
       if (this.staged.size >= maxPendingRecords || this.stagedBytes + bytes > maxPendingBytes) {
         this.counts.capacityRejected++;
         this.counts.dropped++;
+        this.traceCapture?.(record, "REJECTED", "CAPACITY");
         continue;
       }
       this.staged.set(record.recordId, { record, bytes, since: performance.now(), unknown: false });
       this.stagedBytes += bytes;
       this.counts.captured++;
+      this.traceCapture?.(record, "STAGED");
     }
   }
 
