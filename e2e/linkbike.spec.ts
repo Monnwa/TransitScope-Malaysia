@@ -82,14 +82,12 @@ for (const width of [390, 768, 1440]) {
     await page.getByTitle("LinkBike candidate: Lebuh Light").click();
     const details = page.getByLabel("LinkBike station details");
     await expect(details).toBeVisible();
-    await expect(details.locator("dd")).toHaveText([
-      "2", "7", "12", "Not provided", "UNVERIFIED", /MYT$/, candidate.upstream_updated_at_raw,
-      "Passed location checks. Public access is unverified.",
-    ]);
+    await expect(details.locator("dt")).toHaveText(["Available bike", "Total docks"]);
+    await expect(details.locator("dd")).toHaveText(["7", "12"]);
     await expect(details.getByRole("link", { name: "LinkBike Maintenance Portal" })).toBeVisible();
-    await expect(details).toContainText("Retrieved by TransitScope");
-    await expect(details).toContainText("Portal timestamp (unverified)");
-    await expect(details).not.toContainText(/available bikes|live|real.time/i);
+    await expect(details.getByRole("link", { name: "LinkBike station map data" })).toBeVisible();
+    await expect(details).toContainText("Experimental · Unverified station candidate");
+    await expect(details).not.toContainText(/reported bicycles|\blive\b|real.time/i);
     const box = await details.boundingBox();
     expect(box && box.x >= 0 && box.x + box.width <= width).toBe(true);
     await toggle.uncheck();

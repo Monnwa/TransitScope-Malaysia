@@ -8,23 +8,14 @@ import {
 } from "@/lib/linkbike-data";
 
 const icon = divIcon({ className: "linkbike-marker", html: "<span aria-hidden='true'>B</span>", iconSize: [28, 28], iconAnchor: [14, 14] });
-const localTime = new Intl.DateTimeFormat("en-MY", {
-  timeZone: "Asia/Kuala_Lumpur", dateStyle: "medium", timeStyle: "medium",
-});
 
 function StationDetails({ station }: { station: LinkBikeStation }) {
   return <section className="linkbike-popup" aria-label="LinkBike station details">
     <h3>{station.station_name}</h3>
     <p>Experimental · Unverified station candidate</p>
     <dl>
-      <dt>Station ID</dt><dd>{station.station_id}</dd>
-      <dt>Reported bicycles</dt><dd>{station.available_bikes}</dd>
+      <dt>Available bike</dt><dd>{station.available_bikes}</dd>
       <dt>Total docks</dt><dd>{station.total_docks}</dd>
-      <dt>Available docks</dt><dd>Not provided</dd>
-      <dt>Data status</dt><dd>UNVERIFIED</dd>
-      <dt>Retrieved by TransitScope</dt><dd>{localTime.format(new Date(station.fetched_at))} MYT</dd>
-      <dt>Portal timestamp (unverified)</dt><dd>{station.upstream_updated_at_raw}</dd>
-      <dt>Coordinates</dt><dd>Passed location checks. Public access is unverified.</dd>
     </dl>
     {station.validation_warnings.map(warning => <p key={warning}>{warning}</p>)}
     <p>Counts from the <a href={LINKBIKE_PORTAL}>LinkBike Maintenance Portal</a>. Location from the <a href={LINKBIKE_CONSUMER}>LinkBike station map data</a>.</p>
