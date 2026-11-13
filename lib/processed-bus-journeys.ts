@@ -4,6 +4,8 @@ import type { Timetable } from "@/lib/scheduled-departures";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import { VehicleProgressHistory } from "@/lib/vehicle-progress-history";
 import { PROGRESS_LIMITS } from "@/lib/route-projection";
+import type { ClassificationEvidenceArchive, RetainClassificationAdmission } from "@/lib/classification-evidence-store";
+import type { ValidAdherence } from "@/lib/timetable-adherence";
 
 export type ProcessedBusJourney = {
   source: string; vehicleId: string;
@@ -20,8 +22,18 @@ type Entry = { signature:string; table:Timetable; result:ProcessedBusJourney; se
 /** Feed processing owns progress history. UI selection never advances it. */
 export class ProcessedBusJourneys {
   private entries = new Map<string,Entry>();
-  constructor(private history:VehicleProgressHistory) {}
-  process(source:string,records:TransitRecord[],feed:BusJourneyFeed,now=Date.now()):ProcessedBusJourney[] {
+  constructor(private history:VehicleProgressHistory, private archive?:ClassificationEvidenceArchive) {}
+
+  async processWithArchive(source:string, records:TransitRecord[], feed:BusJourneyFeed, now?:number,
+    retainAdmission?:RetainClassificationAdmission):Promise<ProcessedBusJourney[]> {
+    const evaluatedAt = now ?? Date.now();
+    const archive = await this.archive?.isReady() ? this.archive : undefined;
+    const results = this.process(source, records, feed, evaluatedAt, archive);
+    await archive?.finishFeed(now, retainAdmission);
+    return results;
+  }
+
+  process(source:string,records:TransitRecord[],feed:BusJourneyFeed,now=Date.now(),archive?:ClassificationEvidenceArchive):ProcessedBusJourney[] {
     const present=new Set(records.map(record=>busJourneyKey(source,record.id)));
     for(const [key,entry] of this.entries)if(now-entry.seen>600000||entry.result.source===source&&!present.has(key))this.entries.delete(key);
     return records.filter(record=>record.mode==="Bus"&&record.recordKind==="vehicle").map(record=>{
@@ -32,7 +44,11 @@ export class ProcessedBusJourneys {
       const signature=JSON.stringify([record.tripId,record.routeId,record.position,record.bearing,record.speed,record.observation,history?.token,freshness]);
       if(prior?.table===feed.timetable&&prior.signature===signature){prior.seen=now;return prior.result;}
       const next=calculateBusJourney(feed.timetable,record,{now,paths:feed.tripPaths,gpsPaths:feed.progressPaths,shapeDistances:feed.tripShapeDistances,history});
+      const directResults = archive ? new Set<ValidAdherence>(
+        next.stops.flatMap(stop => stop.adherence?.result ? [stop.adherence.result] : []),
+      ) : undefined;
       const journey=newerJourney(prior?.result.journey??null,next);
+      if (journey === next && directResults?.size) archive?.capture(source, journey, directResults, now);
       if(journey.tracking)this.history.save(source,record.id,journey.tracking);
       const result:ProcessedBusJourney={source,vehicleId:record.id,state:journey.match.status==="MATCHED"?"READY":"NO_MATCH",journey};
       this.entries.set(key,{signature,table:feed.timetable,result,seen:now});return result;

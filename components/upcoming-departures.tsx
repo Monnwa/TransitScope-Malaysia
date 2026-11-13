@@ -1,6 +1,6 @@
 "use client";
 import "@/app/departure-board.css";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import TrainArrivalRows from "./train-arrival-rows";
 import { passengerName,platformLabel,publicRouteCode } from "./passenger-copy";
@@ -16,10 +16,10 @@ const stamp = (value: string) => `${boardDate(value)}, ${boardTime(value)} MYT`;
 
 // Keying the inner board clears the previous station before the next frame and
 // aborts its request, while keeping refresh results in the current board.
-export default function UpcomingDepartures({ record }: { record: TransitRecord }) {
-  return <StationBoard key={`${record.id}:${(record.stopRefs ?? []).join("|")}`} record={record}/>;
+export default function UpcomingDepartures({ record, operations }: { record: TransitRecord; operations?: ReactNode }) {
+  return <StationBoard key={`${record.id}:${(record.stopRefs ?? []).join("|")}`} record={record} operations={operations}/>;
 }
-function StationBoard({ record }: { record: TransitRecord }) {
+function StationBoard({ record, operations }: { record: TransitRecord; operations?: ReactNode }) {
   const [data, setData] = useState<DeparturePayload | null>(null), [error, setError] = useState("");
   const [loading, setLoading] = useState(true), [refresh, setRefresh] = useState(0), [expanded, setExpanded] = useState(false), [frequencyExpanded, setFrequencyExpanded] = useState(false);
   const [now, setNow] = useState(Date.now);
@@ -64,6 +64,7 @@ function StationBoard({ record }: { record: TransitRecord }) {
 
       <span className={`board-status ${verifiedPredictions.length ? "board-status-live" : ""}`} aria-label="Departure service status">{loading && !data ? "Loading scheduled services" : status}</span>
     </div>
+    {operations}
     <section className="board-upcoming" aria-label="Upcoming Departures" aria-busy={loading}>
       <div className="board-section-heading"><h3>{record.mode === "Bus" ? "Upcoming buses" : trainDisplay ? "Upcoming trains" : "Upcoming departures"}</h3><button type="button" className="board-refresh" aria-label="Refresh departures" disabled={loading} onClick={reload}>{loading ? "Refreshing…" : "↻ Refresh"}</button></div>
       <div className="board-announcement" role="status" aria-live="polite">{loading ? data ? "Refreshing scheduled services…" : "Loading scheduled services…" : data ? `Updated ${boardTime(data.retrievedAt)} MYT. ${trainDisplay ? `${arrivals.length} upcoming train arrivals available.` : `${departures.length} scheduled departures available.`}${frequencies.length ? " Service intervals are available." : ""}` : ""}</div>

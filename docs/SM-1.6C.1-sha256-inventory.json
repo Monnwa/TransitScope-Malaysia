@@ -1,0 +1,1210 @@
+{
+  "branch": "codex/linkbike-direct-production",
+  "head": "235f7cb67d631a17df86bfc23f70de93dc0fff5d",
+  "deployment": "dpl_G5fdXzqSsERpUHCtHFGdo8ZXH1zM",
+  "archiveManifest": "f17c26abf1d286d13c53514179f4dd77a16e440ba0c8e8fe82271eb2cab5358f",
+  "previousInventorySha256": "aadd2a1084bd77f90b8d72e895a59c14b54e9d034f8e3f5ee57dfae506241d89",
+  "uploadedCount": 120,
+  "identicalToProduction": 113,
+  "gitOnlyCount": 34,
+  "unexpected": [],
+  "files": [
+    {
+      "path": ".env.example",
+      "category": "configuration documentation",
+      "beforeSha256": "31eb6886b5e129295b1dd3bc571a5130d4e7e665fcfad99652a7bb399b19961c",
+      "afterSha256": "56aa1abbbe41e4336ed8cbf7f3d4e8917233d16f0254991a905c79075ac553e0",
+      "archiveSha256": "31eb6886b5e129295b1dd3bc571a5130d4e7e665fcfad99652a7bb399b19961c"
+    },
+    {
+      "path": ".vercelignore",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "a663296069af831309fd0cd2db596d4a345a9c31c9beb934d95ee11bf0ecad28",
+      "afterSha256": "a663296069af831309fd0cd2db596d4a345a9c31c9beb934d95ee11bf0ecad28",
+      "archiveSha256": "a663296069af831309fd0cd2db596d4a345a9c31c9beb934d95ee11bf0ecad28"
+    },
+    {
+      "path": "app/api/alerts/route.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "a4b8211b1bbf75512d0d23b65f04ab3c866416c50a0b9cf7e33bf7b2b0f5d19b",
+      "afterSha256": "a4b8211b1bbf75512d0d23b65f04ab3c866416c50a0b9cf7e33bf7b2b0f5d19b",
+      "archiveSha256": "a4b8211b1bbf75512d0d23b65f04ab3c866416c50a0b9cf7e33bf7b2b0f5d19b"
+    },
+    {
+      "path": "app/api/bus-journey/route.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "43ac131ac5f907b15cfe49f94a04926fd496035bcf3fd9c1f1207b1802e15253",
+      "afterSha256": "43ac131ac5f907b15cfe49f94a04926fd496035bcf3fd9c1f1207b1802e15253",
+      "archiveSha256": "43ac131ac5f907b15cfe49f94a04926fd496035bcf3fd9c1f1207b1802e15253"
+    },
+    {
+      "path": "app/api/departures/route.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "1c47764fe4348bfbd2dab44ba49617fc2aafa6db420f0759e4be7fd4523db5d8",
+      "afterSha256": "1c47764fe4348bfbd2dab44ba49617fc2aafa6db420f0759e4be7fd4523db5d8",
+      "archiveSha256": "1c47764fe4348bfbd2dab44ba49617fc2aafa6db420f0759e4be7fd4523db5d8"
+    },
+    {
+      "path": "app/api/mrt-lines/route.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "97448bfa6b45179d0444f0daf86581a9f76190df0c96bd876687ce61377c4a98",
+      "afterSha256": "97448bfa6b45179d0444f0daf86581a9f76190df0c96bd876687ce61377c4a98",
+      "archiveSha256": "97448bfa6b45179d0444f0daf86581a9f76190df0c96bd876687ce61377c4a98"
+    },
+    {
+      "path": "app/api/rail-network/route.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "dd705a6fda12bf869625e8bcdd68cb8d5278ab095fbbb3793952f55751f2a978",
+      "afterSha256": "dd705a6fda12bf869625e8bcdd68cb8d5278ab095fbbb3793952f55751f2a978",
+      "archiveSha256": "dd705a6fda12bf869625e8bcdd68cb8d5278ab095fbbb3793952f55751f2a978"
+    },
+    {
+      "path": "app/api/train-positions/route.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "40454c737882eb1ed2f374675a02c24985e17bb2b5db6d6373fda09a1142e2d3",
+      "afterSha256": "40454c737882eb1ed2f374675a02c24985e17bb2b5db6d6373fda09a1142e2d3",
+      "archiveSha256": "40454c737882eb1ed2f374675a02c24985e17bb2b5db6d6373fda09a1142e2d3"
+    },
+    {
+      "path": "app/api/transit/route.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "4deb4a5af05fae1808bc807a31ddba956f10eec86498fdb55cd7e1ae9404cb04",
+      "afterSha256": "4deb4a5af05fae1808bc807a31ddba956f10eec86498fdb55cd7e1ae9404cb04",
+      "archiveSha256": "4deb4a5af05fae1808bc807a31ddba956f10eec86498fdb55cd7e1ae9404cb04"
+    },
+    {
+      "path": "app/bus-journey.css",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "32e0acaedf54ac2813c206029e717ab1e9a5f061d9f5858813acaedef04bc925",
+      "afterSha256": "32e0acaedf54ac2813c206029e717ab1e9a5f061d9f5858813acaedef04bc925",
+      "archiveSha256": "32e0acaedf54ac2813c206029e717ab1e9a5f061d9f5858813acaedef04bc925"
+    },
+    {
+      "path": "app/departure-board.css",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "f7c8cb5160b5afa0d549782a471ed5cd855da5a6cf86720705ac2d971a89a7a0",
+      "afterSha256": "f7c8cb5160b5afa0d549782a471ed5cd855da5a6cf86720705ac2d971a89a7a0",
+      "archiveSha256": "f7c8cb5160b5afa0d549782a471ed5cd855da5a6cf86720705ac2d971a89a7a0"
+    },
+    {
+      "path": "app/estimated-trains.css",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "0bc86165de2ee4da998654522e1ddcbaa91e42530b0754ea37e184170505ad9e",
+      "afterSha256": "0bc86165de2ee4da998654522e1ddcbaa91e42530b0754ea37e184170505ad9e",
+      "archiveSha256": "0bc86165de2ee4da998654522e1ddcbaa91e42530b0754ea37e184170505ad9e"
+    },
+    {
+      "path": "app/globals.css",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "ff1fca01fc784d697d1359fb8a0b5bc06f3932db0ff6b64e0d0eb2e8c1f8d9c8",
+      "afterSha256": "ff1fca01fc784d697d1359fb8a0b5bc06f3932db0ff6b64e0d0eb2e8c1f8d9c8",
+      "archiveSha256": "ff1fca01fc784d697d1359fb8a0b5bc06f3932db0ff6b64e0d0eb2e8c1f8d9c8"
+    },
+    {
+      "path": "app/layout.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "541fb3cf00aba3f281224f6d303cfc51191fd000a20ee0db275d59101fd56947",
+      "afterSha256": "541fb3cf00aba3f281224f6d303cfc51191fd000a20ee0db275d59101fd56947",
+      "archiveSha256": "541fb3cf00aba3f281224f6d303cfc51191fd000a20ee0db275d59101fd56947"
+    },
+    {
+      "path": "app/markers.css",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "71f406caa796fdbe2caed8bb9b068b3ed4848c42a73627f798dabd3baad8be7d",
+      "afterSha256": "71f406caa796fdbe2caed8bb9b068b3ed4848c42a73627f798dabd3baad8be7d",
+      "archiveSha256": "71f406caa796fdbe2caed8bb9b068b3ed4848c42a73627f798dabd3baad8be7d"
+    },
+    {
+      "path": "app/page.tsx",
+      "category": "lifecycle correction",
+      "beforeSha256": "61e79bced41364aad5b2e64013aeb61df3dfd8b0c5f4adfc3002d2a31c044ffa",
+      "afterSha256": "927ce8286846ac594d9075fd987d09d5eb773edcda6f77483bc4d7b4659fdb3c",
+      "archiveSha256": "b164640398ff26ecf23d24686de2ce3b41b86882ae4c1ff63ed3a0fc7b1389de"
+    },
+    {
+      "path": "app/station-operations.css",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "6662ba5214dc8e634e66670eb188de045a145e22cc686f8c7f676f683b637fff",
+      "afterSha256": "6662ba5214dc8e634e66670eb188de045a145e22cc686f8c7f676f683b637fff",
+      "archiveSha256": "6662ba5214dc8e634e66670eb188de045a145e22cc686f8c7f676f683b637fff"
+    },
+    {
+      "path": "components/bus-journey-panel.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "130104dfdb34551b20fef9637028b16e5429b61dd98c9135d7363b30cdde79c4",
+      "afterSha256": "130104dfdb34551b20fef9637028b16e5429b61dd98c9135d7363b30cdde79c4",
+      "archiveSha256": "130104dfdb34551b20fef9637028b16e5429b61dd98c9135d7363b30cdde79c4"
+    },
+    {
+      "path": "components/dashboard.tsx",
+      "category": "lifecycle correction",
+      "beforeSha256": "e33db2d3125479b695196a4c031fd93ebce9d02241323e04213f2a3dfd7a1a01",
+      "afterSha256": "1ad698d706b76485814a4a0202ba54ad625d5bcc81e8093fc51aa42d8b185b3e",
+      "archiveSha256": "dd99b079f6df0f71d0af2e32ed636e72b87e7f1e334ef334eca6b60dbb3f8f03"
+    },
+    {
+      "path": "components/estimated-train-context.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "84bda86694d6b64062431afc2d2e880f8edce9074a0639e0f6b8cf67acec9ffe",
+      "afterSha256": "84bda86694d6b64062431afc2d2e880f8edce9074a0639e0f6b8cf67acec9ffe",
+      "archiveSha256": "84bda86694d6b64062431afc2d2e880f8edce9074a0639e0f6b8cf67acec9ffe"
+    },
+    {
+      "path": "components/estimated-train-controls.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "c8210fa9273c9b565a6d1702a63d0d6a6d64a7b6eca3d928497695143ea617ba",
+      "afterSha256": "c8210fa9273c9b565a6d1702a63d0d6a6d64a7b6eca3d928497695143ea617ba",
+      "archiveSha256": "c8210fa9273c9b565a6d1702a63d0d6a6d64a7b6eca3d928497695143ea617ba"
+    },
+    {
+      "path": "components/estimated-train-layer.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "611bb3658afd08a942dc6eb800145c57fc602d57c03cee5423b9b86ae07e6a4f",
+      "afterSha256": "611bb3658afd08a942dc6eb800145c57fc602d57c03cee5423b9b86ae07e6a4f",
+      "archiveSha256": "611bb3658afd08a942dc6eb800145c57fc602d57c03cee5423b9b86ae07e6a4f"
+    },
+    {
+      "path": "components/estimated-train-panel.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "39f2b5df9dab796a00b734ec43c5de524e482b7652f46dc1f8f2e918e0cb4ea2",
+      "afterSha256": "39f2b5df9dab796a00b734ec43c5de524e482b7652f46dc1f8f2e918e0cb4ea2",
+      "archiveSha256": "39f2b5df9dab796a00b734ec43c5de524e482b7652f46dc1f8f2e918e0cb4ea2"
+    },
+    {
+      "path": "components/gps-progress.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "3e73cf30762c988600c01c1d28b616788f11b1318e97862a4109c340737ac582",
+      "afterSha256": "3e73cf30762c988600c01c1d28b616788f11b1318e97862a4109c340737ac582",
+      "archiveSha256": "3e73cf30762c988600c01c1d28b616788f11b1318e97862a4109c340737ac582"
+    },
+    {
+      "path": "components/journey-map-layers.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "817c2d144c172f2eb7ae11b8fbd1db082048a3163d5c9a09f35ea2db8751c77e",
+      "afterSha256": "817c2d144c172f2eb7ae11b8fbd1db082048a3163d5c9a09f35ea2db8751c77e",
+      "archiveSha256": "817c2d144c172f2eb7ae11b8fbd1db082048a3163d5c9a09f35ea2db8751c77e"
+    },
+    {
+      "path": "components/official-alert-metadata.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "a9b4a09f03675d2ba50f9032907c4f1ebd5e692b3aced2671beab9266f9cc121",
+      "afterSha256": "a9b4a09f03675d2ba50f9032907c4f1ebd5e692b3aced2671beab9266f9cc121",
+      "archiveSha256": "a9b4a09f03675d2ba50f9032907c4f1ebd5e692b3aced2671beab9266f9cc121"
+    },
+    {
+      "path": "components/passenger-copy.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "50b8828a44d1664069ba517476c9923bd6f41f0314d6d658e09111d044e2cb5f",
+      "afterSha256": "50b8828a44d1664069ba517476c9923bd6f41f0314d6d658e09111d044e2cb5f",
+      "archiveSha256": "50b8828a44d1664069ba517476c9923bd6f41f0314d6d658e09111d044e2cb5f"
+    },
+    {
+      "path": "components/station-operations.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "e5f2c92429d635b6163c98c6c70d0c67f5292ec7ded4b7b5df8148e4cced3af5",
+      "afterSha256": "e5f2c92429d635b6163c98c6c70d0c67f5292ec7ded4b7b5df8148e4cced3af5",
+      "archiveSha256": "e5f2c92429d635b6163c98c6c70d0c67f5292ec7ded4b7b5df8148e4cced3af5"
+    },
+    {
+      "path": "components/timetable-adherence.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "12d020a7b818a253c2d10af9a5a2340bf759b7a149422f76aa6cd9f6fa868b3a",
+      "afterSha256": "12d020a7b818a253c2d10af9a5a2340bf759b7a149422f76aa6cd9f6fa868b3a",
+      "archiveSha256": "12d020a7b818a253c2d10af9a5a2340bf759b7a149422f76aa6cd9f6fa868b3a"
+    },
+    {
+      "path": "components/train-arrival-rows.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "5b064f275b180363bed2bef2207276787f5a59096c2fe958a0339b7e6e7ad7d5",
+      "afterSha256": "5b064f275b180363bed2bef2207276787f5a59096c2fe958a0339b7e6e7ad7d5",
+      "archiveSha256": "5b064f275b180363bed2bef2207276787f5a59096c2fe958a0339b7e6e7ad7d5"
+    },
+    {
+      "path": "components/transit-map.tsx",
+      "category": "lifecycle correction",
+      "beforeSha256": "1126d2776caf268bfc430426d09a2e1d81e11f0064024b44c92cbb6135c81b02",
+      "afterSha256": "506e36cd5eb5e3e3391b09c0fbc1b51d663e098e55ccade229e952a94efbaaec",
+      "archiveSha256": "12509a57ce3ad9b2cce7412dee367e0d5893c8736e8e586bdebd252584696ce3"
+    },
+    {
+      "path": "components/upcoming-departures.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "3ad5cda767b1c3768098d049a991b228c3fd033c0c33846adc05688e3693e529",
+      "afterSha256": "3ad5cda767b1c3768098d049a991b228c3fd033c0c33846adc05688e3693e529",
+      "archiveSha256": "3ad5cda767b1c3768098d049a991b228c3fd033c0c33846adc05688e3693e529"
+    },
+    {
+      "path": "components/use-official-alerts.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "5d18d6e8c2ac718d4d0a9d27b76349856cf7a00b0d9b4efb3f976f04fe2860f0",
+      "afterSha256": "5d18d6e8c2ac718d4d0a9d27b76349856cf7a00b0d9b4efb3f976f04fe2860f0",
+      "archiveSha256": "5d18d6e8c2ac718d4d0a9d27b76349856cf7a00b0d9b4efb3f976f04fe2860f0"
+    },
+    {
+      "path": "components/use-rail-network.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "bd344c73b95fd71f6ba3942318c7033b9fa15a160cb5893ae91aeabaac855c45",
+      "afterSha256": "bd344c73b95fd71f6ba3942318c7033b9fa15a160cb5893ae91aeabaac855c45",
+      "archiveSha256": "bd344c73b95fd71f6ba3942318c7033b9fa15a160cb5893ae91aeabaac855c45"
+    },
+    {
+      "path": "database/classification-evidence.sql",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "68aab0d2c3f34f5812cfe9b5f79faed08a4ffb0b1d8e0a6d863239409570337d",
+      "afterSha256": "68aab0d2c3f34f5812cfe9b5f79faed08a4ffb0b1d8e0a6d863239409570337d",
+      "archiveSha256": "68aab0d2c3f34f5812cfe9b5f79faed08a4ffb0b1d8e0a6d863239409570337d"
+    },
+    {
+      "path": "database/classification-outbox.sql",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "5f8a0ff28d003efff38c4b5429ba4f8238ba0648e4a1cb19f8df430ccad4206e",
+      "afterSha256": "5f8a0ff28d003efff38c4b5429ba4f8238ba0648e4a1cb19f8df430ccad4206e",
+      "archiveSha256": "5f8a0ff28d003efff38c4b5429ba4f8238ba0648e4a1cb19f8df430ccad4206e"
+    },
+    {
+      "path": "e2e/background-bus-processing.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "14b5b619ac520af063b93df0155214f2d17158ba05b5c040c360b9999b078b30",
+      "afterSha256": "14b5b619ac520af063b93df0155214f2d17158ba05b5c040c360b9999b078b30",
+      "archiveSha256": "14b5b619ac520af063b93df0155214f2d17158ba05b5c040c360b9999b078b30"
+    },
+    {
+      "path": "e2e/bus-animation.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "31b946065b7004524bea823951879024fe1ac5c050b62053c91424796239a6f9",
+      "afterSha256": "31b946065b7004524bea823951879024fe1ac5c050b62053c91424796239a6f9",
+      "archiveSha256": "31b946065b7004524bea823951879024fe1ac5c050b62053c91424796239a6f9"
+    },
+    {
+      "path": "e2e/bus-journey.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "b87954dfd0899fd954f4ab4804c7a5a960689b75e04fb29dba010e87711f4e33",
+      "afterSha256": "b87954dfd0899fd954f4ab4804c7a5a960689b75e04fb29dba010e87711f4e33",
+      "archiveSha256": "b87954dfd0899fd954f4ab4804c7a5a960689b75e04fb29dba010e87711f4e33"
+    },
+    {
+      "path": "e2e/bus-motion.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "9a63ddec6cd64119fbe5aa06e9f21de1d35792e33a9f11b8179fabb49c481d30",
+      "afterSha256": "9a63ddec6cd64119fbe5aa06e9f21de1d35792e33a9f11b8179fabb49c481d30",
+      "archiveSha256": "9a63ddec6cd64119fbe5aa06e9f21de1d35792e33a9f11b8179fabb49c481d30"
+    },
+    {
+      "path": "e2e/dashboard.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "8a753924b301a214c03e6bbbb533d56fe7ebeab10e05229d5b07a611125363b8",
+      "afterSha256": "8a753924b301a214c03e6bbbb533d56fe7ebeab10e05229d5b07a611125363b8",
+      "archiveSha256": "8a753924b301a214c03e6bbbb533d56fe7ebeab10e05229d5b07a611125363b8"
+    },
+    {
+      "path": "e2e/departure-board.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "f4d01c9393f1a8f0ae530e72989c0565ee9efc56b8f89af97516b0ef0eba01a1",
+      "afterSha256": "f4d01c9393f1a8f0ae530e72989c0565ee9efc56b8f89af97516b0ef0eba01a1",
+      "archiveSha256": "f4d01c9393f1a8f0ae530e72989c0565ee9efc56b8f89af97516b0ef0eba01a1"
+    },
+    {
+      "path": "e2e/departures-alerts.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "3e973cbe5f68d29c6416604e2aae2e983afa132659a29c7907062934e0cc75c1",
+      "afterSha256": "3e973cbe5f68d29c6416604e2aae2e983afa132659a29c7907062934e0cc75c1",
+      "archiveSha256": "3e973cbe5f68d29c6416604e2aae2e983afa132659a29c7907062934e0cc75c1"
+    },
+    {
+      "path": "e2e/gps-progress.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "d844991a7d36697dce7652c3afe3dffea5cec6a74bb36230e860ff4f4dbcfa91",
+      "afterSha256": "d844991a7d36697dce7652c3afe3dffea5cec6a74bb36230e860ff4f4dbcfa91",
+      "archiveSha256": "d844991a7d36697dce7652c3afe3dffea5cec6a74bb36230e860ff4f4dbcfa91"
+    },
+    {
+      "path": "e2e/mrt-lines.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "86a05bc3252ab7eedce1c486d6adf18f2c37fd50a41156d73b7f4a99a584283b",
+      "afterSha256": "86a05bc3252ab7eedce1c486d6adf18f2c37fd50a41156d73b7f4a99a584283b",
+      "archiveSha256": "86a05bc3252ab7eedce1c486d6adf18f2c37fd50a41156d73b7f4a99a584283b"
+    },
+    {
+      "path": "e2e/passenger-copy.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "a6e514f2396001ceb42bf36789a4acc223f45d4e11082ad67a409d583011a092",
+      "afterSha256": "a6e514f2396001ceb42bf36789a4acc223f45d4e11082ad67a409d583011a092",
+      "archiveSha256": "a6e514f2396001ceb42bf36789a4acc223f45d4e11082ad67a409d583011a092"
+    },
+    {
+      "path": "e2e/timetable-adherence.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "783c85835092cc7b8588aafde6516999a6c20caffef0ec994b94bf32dca02e7c",
+      "afterSha256": "783c85835092cc7b8588aafde6516999a6c20caffef0ec994b94bf32dca02e7c",
+      "archiveSha256": "783c85835092cc7b8588aafde6516999a6c20caffef0ec994b94bf32dca02e7c"
+    },
+    {
+      "path": "e2e/train-arrivals.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "bb595ca19c3959ace082188ca48e585fffad5feb96d3e457ef72d24f1d79dcb2",
+      "afterSha256": "bb595ca19c3959ace082188ca48e585fffad5feb96d3e457ef72d24f1d79dcb2",
+      "archiveSha256": "bb595ca19c3959ace082188ca48e585fffad5feb96d3e457ef72d24f1d79dcb2"
+    },
+    {
+      "path": "e2e/train-positions.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "f06026512fc6954885ac6d6176ff37a2d747490b3400eb95779b05c5de04bc87",
+      "afterSha256": "f06026512fc6954885ac6d6176ff37a2d747490b3400eb95779b05c5de04bc87",
+      "archiveSha256": "d789334a35dd904bbd7e8c84bdaeceb51a5e4eaf2636d5f832c6400fe603a3e3"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "82f39b02b907c5914b4bcc5e08363080c23324cd915592fd0c048343a658b29d",
+      "afterSha256": "82f39b02b907c5914b4bcc5e08363080c23324cd915592fd0c048343a658b29d",
+      "archiveSha256": "82f39b02b907c5914b4bcc5e08363080c23324cd915592fd0c048343a658b29d"
+    },
+    {
+      "path": "lib/alert-classifier.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "fe98582393e8a2fa29a12eb367d8e88e66d68bb95aa79b16d260739e63d128eb",
+      "afterSha256": "fe98582393e8a2fa29a12eb367d8e88e66d68bb95aa79b16d260739e63d128eb",
+      "archiveSha256": "fe98582393e8a2fa29a12eb367d8e88e66d68bb95aa79b16d260739e63d128eb"
+    },
+    {
+      "path": "lib/bus-journey-store.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "24aa72dd6ec438fa494e3cf1f4f2b4013d8281565a7f184c7c494a5a0aa3958a",
+      "afterSha256": "24aa72dd6ec438fa494e3cf1f4f2b4013d8281565a7f184c7c494a5a0aa3958a",
+      "archiveSha256": "24aa72dd6ec438fa494e3cf1f4f2b4013d8281565a7f184c7c494a5a0aa3958a"
+    },
+    {
+      "path": "lib/bus-journey.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "9fc0610e0d0db612649fc14d05c3048f7faeba90031d964194f3426191800a77",
+      "afterSha256": "9fc0610e0d0db612649fc14d05c3048f7faeba90031d964194f3426191800a77",
+      "archiveSha256": "9fc0610e0d0db612649fc14d05c3048f7faeba90031d964194f3426191800a77"
+    },
+    {
+      "path": "lib/bus-motion.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "b6eccf4216e7bceb3e65d16373f978d8a4defee1dca2d490ccdbd8804699e911",
+      "afterSha256": "b6eccf4216e7bceb3e65d16373f978d8a4defee1dca2d490ccdbd8804699e911",
+      "archiveSha256": "b6eccf4216e7bceb3e65d16373f978d8a4defee1dca2d490ccdbd8804699e911"
+    },
+    {
+      "path": "lib/bus-progress.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "d9cfbc650ef4e7c5204106b043a1f758f2fb9c838d10aa1809fd90f5fb185260",
+      "afterSha256": "d9cfbc650ef4e7c5204106b043a1f758f2fb9c838d10aa1809fd90f5fb185260",
+      "archiveSha256": "d9cfbc650ef4e7c5204106b043a1f758f2fb9c838d10aa1809fd90f5fb185260"
+    },
+    {
+      "path": "lib/classification-evidence-store.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "1d327192862063bde6c33cb416c2e1f78a9952c15ed6d0f20e2f53bd20f6d754",
+      "afterSha256": "1d327192862063bde6c33cb416c2e1f78a9952c15ed6d0f20e2f53bd20f6d754",
+      "archiveSha256": "1d327192862063bde6c33cb416c2e1f78a9952c15ed6d0f20e2f53bd20f6d754"
+    },
+    {
+      "path": "lib/classification-evidence.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "9d6258da57deb0da9fdbc57f7b2465ff91a38a2ae0f414d0fb6b7d1d3c31eade",
+      "afterSha256": "9d6258da57deb0da9fdbc57f7b2465ff91a38a2ae0f414d0fb6b7d1d3c31eade",
+      "archiveSha256": "9d6258da57deb0da9fdbc57f7b2465ff91a38a2ae0f414d0fb6b7d1d3c31eade"
+    },
+    {
+      "path": "lib/departure-board.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "c82bb8923cdc2972665ab76bcecede2cc56983e5073e96a3cdd98b53c8909d1a",
+      "afterSha256": "c82bb8923cdc2972665ab76bcecede2cc56983e5073e96a3cdd98b53c8909d1a",
+      "archiveSha256": "c82bb8923cdc2972665ab76bcecede2cc56983e5073e96a3cdd98b53c8909d1a"
+    },
+    {
+      "path": "lib/gps-passage.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "5c8af0b06f8cf1fe82fc464ba15165af0733b039c7f484823a50fdb906a6a85f",
+      "afterSha256": "5c8af0b06f8cf1fe82fc464ba15165af0733b039c7f484823a50fdb906a6a85f",
+      "archiveSha256": "5c8af0b06f8cf1fe82fc464ba15165af0733b039c7f484823a50fdb906a6a85f"
+    },
+    {
+      "path": "lib/journey-stop-selection.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "a27213f19c55164e619d87fe4d86206ebf0e267a56d54cf9a95539e04368281a",
+      "afterSha256": "a27213f19c55164e619d87fe4d86206ebf0e267a56d54cf9a95539e04368281a",
+      "archiveSha256": "a27213f19c55164e619d87fe4d86206ebf0e267a56d54cf9a95539e04368281a"
+    },
+    {
+      "path": "lib/mrt-lines.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "4907b07ef87769d7158723c6b0c2dced2aef77c5f2de086430a3ed85637509af",
+      "afterSha256": "4907b07ef87769d7158723c6b0c2dced2aef77c5f2de086430a3ed85637509af",
+      "archiveSha256": "4907b07ef87769d7158723c6b0c2dced2aef77c5f2de086430a3ed85637509af"
+    },
+    {
+      "path": "lib/official-alert-model.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "8efb1b9b250d94a46cbbfef30523030733ea1058da44fe14ba3ccb16317603d3",
+      "afterSha256": "8efb1b9b250d94a46cbbfef30523030733ea1058da44fe14ba3ccb16317603d3",
+      "archiveSha256": "8efb1b9b250d94a46cbbfef30523030733ea1058da44fe14ba3ccb16317603d3"
+    },
+    {
+      "path": "lib/official-alerts.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "a84fb3f25aeb6ca4a6e0207366713a0e341080b589113bc578b1275672924cb6",
+      "afterSha256": "a84fb3f25aeb6ca4a6e0207366713a0e341080b589113bc578b1275672924cb6",
+      "archiveSha256": "a84fb3f25aeb6ca4a6e0207366713a0e341080b589113bc578b1275672924cb6"
+    },
+    {
+      "path": "lib/official-transit.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "51b7d969e875ac0b662d6ad5e4706e4a7ddc0372b36b8ed58afa0604c86eb906",
+      "afterSha256": "51b7d969e875ac0b662d6ad5e4706e4a7ddc0372b36b8ed58afa0604c86eb906",
+      "archiveSha256": "51b7d969e875ac0b662d6ad5e4706e4a7ddc0372b36b8ed58afa0604c86eb906"
+    },
+    {
+      "path": "lib/osm-ktm.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "071dac97c6087f0f83bd6146987048cce2641467285ac2141a23fe7e2ef8ffa1",
+      "afterSha256": "071dac97c6087f0f83bd6146987048cce2641467285ac2141a23fe7e2ef8ffa1",
+      "archiveSha256": "071dac97c6087f0f83bd6146987048cce2641467285ac2141a23fe7e2ef8ffa1"
+    },
+    {
+      "path": "lib/processed-bus-journeys.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "1e33913d0e6a576e779acef0f52192378af06c89c95a26b03d573a12612618ea",
+      "afterSha256": "1e33913d0e6a576e779acef0f52192378af06c89c95a26b03d573a12612618ea",
+      "archiveSha256": "1e33913d0e6a576e779acef0f52192378af06c89c95a26b03d573a12612618ea"
+    },
+    {
+      "path": "lib/rail-model.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "5a344e9c06da097449d89c5ed79745240ccac3acd8ebb1174c35ec615a7c81a7",
+      "afterSha256": "5a344e9c06da097449d89c5ed79745240ccac3acd8ebb1174c35ec615a7c81a7",
+      "archiveSha256": "5a344e9c06da097449d89c5ed79745240ccac3acd8ebb1174c35ec615a7c81a7"
+    },
+    {
+      "path": "lib/rail-network.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "b86e493c8515434e844045716a9a5262446eaf425a5654a7eba31f33c714ba81",
+      "afterSha256": "b86e493c8515434e844045716a9a5262446eaf425a5654a7eba31f33c714ba81",
+      "archiveSha256": "b86e493c8515434e844045716a9a5262446eaf425a5654a7eba31f33c714ba81"
+    },
+    {
+      "path": "lib/route-animation.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "37d7590e66db0609717c8cc8d39b7336d37a0001c6b97d465931fb57c386d549",
+      "afterSha256": "37d7590e66db0609717c8cc8d39b7336d37a0001c6b97d465931fb57c386d549",
+      "archiveSha256": "37d7590e66db0609717c8cc8d39b7336d37a0001c6b97d465931fb57c386d549"
+    },
+    {
+      "path": "lib/route-projection.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "0e0ad7ace957be3b5b91c3b9460d3a8a22af5c16b3d89125df3e05338501efd7",
+      "afterSha256": "0e0ad7ace957be3b5b91c3b9460d3a8a22af5c16b3d89125df3e05338501efd7",
+      "archiveSha256": "0e0ad7ace957be3b5b91c3b9460d3a8a22af5c16b3d89125df3e05338501efd7"
+    },
+    {
+      "path": "lib/scheduled-departures.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "f8843cfc68fe277fda88b6e675852912d4d7b2fba87976822791692f9ccf6c8e",
+      "afterSha256": "f8843cfc68fe277fda88b6e675852912d4d7b2fba87976822791692f9ccf6c8e",
+      "archiveSha256": "f8843cfc68fe277fda88b6e675852912d4d7b2fba87976822791692f9ccf6c8e"
+    },
+    {
+      "path": "lib/station-operations.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "a589c4119b0cf37415d0824618630289e14afc3f92365a13738973c4e2789663",
+      "afterSha256": "a589c4119b0cf37415d0824618630289e14afc3f92365a13738973c4e2789663",
+      "archiveSha256": "a589c4119b0cf37415d0824618630289e14afc3f92365a13738973c4e2789663"
+    },
+    {
+      "path": "lib/timetable-adherence.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "17dcc08996b98a18bd19d3d6446c21fd524e2c0c2a3431f4d4cf5e5285440f11",
+      "afterSha256": "17dcc08996b98a18bd19d3d6446c21fd524e2c0c2a3431f4d4cf5e5285440f11",
+      "archiveSha256": "17dcc08996b98a18bd19d3d6446c21fd524e2c0c2a3431f4d4cf5e5285440f11"
+    },
+    {
+      "path": "lib/train-arrivals.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "41529deff1b80a7f64966d8b9aea46e4afac8f60f7b6b16280b35bc0e9637bab",
+      "afterSha256": "41529deff1b80a7f64966d8b9aea46e4afac8f60f7b6b16280b35bc0e9637bab",
+      "archiveSha256": "41529deff1b80a7f64966d8b9aea46e4afac8f60f7b6b16280b35bc0e9637bab"
+    },
+    {
+      "path": "lib/train-position-display.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "e257bc2c015c02edabdbc954c5f2e4c43a39dde469ad731bc3f042bd931904b1",
+      "afterSha256": "e257bc2c015c02edabdbc954c5f2e4c43a39dde469ad731bc3f042bd931904b1",
+      "archiveSha256": "e257bc2c015c02edabdbc954c5f2e4c43a39dde469ad731bc3f042bd931904b1"
+    },
+    {
+      "path": "lib/train-positions.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "5863a36b849057f4d580eb3db8ecbd10bdc106862e1e3c98c70adea8d5cdbd1b",
+      "afterSha256": "5863a36b849057f4d580eb3db8ecbd10bdc106862e1e3c98c70adea8d5cdbd1b",
+      "archiveSha256": "5863a36b849057f4d580eb3db8ecbd10bdc106862e1e3c98c70adea8d5cdbd1b"
+    },
+    {
+      "path": "lib/transit-data.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "cdb68abd68dc6c9277c8f5b579264b536560858093726ccb2d004d1e70342878",
+      "afterSha256": "cdb68abd68dc6c9277c8f5b579264b536560858093726ccb2d004d1e70342878",
+      "archiveSha256": "cdb68abd68dc6c9277c8f5b579264b536560858093726ccb2d004d1e70342878"
+    },
+    {
+      "path": "lib/transit-response.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "43afd90534c3d693c5d6fbbacde5fbf0d594dee2f4ac9c86a09aec00a4f69271",
+      "afterSha256": "43afd90534c3d693c5d6fbbacde5fbf0d594dee2f4ac9c86a09aec00a4f69271",
+      "archiveSha256": "43afd90534c3d693c5d6fbbacde5fbf0d594dee2f4ac9c86a09aec00a4f69271"
+    },
+    {
+      "path": "lib/vehicle-observation.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "b8dc3c4d9cafcd562e22004c233de31fa50743e543ab9b624eceba781a765edc",
+      "afterSha256": "b8dc3c4d9cafcd562e22004c233de31fa50743e543ab9b624eceba781a765edc",
+      "archiveSha256": "b8dc3c4d9cafcd562e22004c233de31fa50743e543ab9b624eceba781a765edc"
+    },
+    {
+      "path": "lib/vehicle-progress-history.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "0d994f523a1b2991546a8f86d14711d64a9872267542471188b648dfab93dd8c",
+      "afterSha256": "0d994f523a1b2991546a8f86d14711d64a9872267542471188b648dfab93dd8c",
+      "archiveSha256": "0d994f523a1b2991546a8f86d14711d64a9872267542471188b648dfab93dd8c"
+    },
+    {
+      "path": "lib/vehicle-progress.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "6bcaa9d9c23e75f36cf48f1b8b4866a2ac8b1f7dbe47056f8999cbc8f9459169",
+      "afterSha256": "6bcaa9d9c23e75f36cf48f1b8b4866a2ac8b1f7dbe47056f8999cbc8f9459169",
+      "archiveSha256": "6bcaa9d9c23e75f36cf48f1b8b4866a2ac8b1f7dbe47056f8999cbc8f9459169"
+    },
+    {
+      "path": "next-env.d.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "f4e8976c19fc926644d72610bf1058bd6bf52add97e46a02bc0b912a751625c0",
+      "afterSha256": "f4e8976c19fc926644d72610bf1058bd6bf52add97e46a02bc0b912a751625c0",
+      "archiveSha256": "f4e8976c19fc926644d72610bf1058bd6bf52add97e46a02bc0b912a751625c0"
+    },
+    {
+      "path": "next.config.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "d25e17d9dec03e46e8772687e7501f7dd7b03784f1ce13cb42329f91860620af",
+      "afterSha256": "d25e17d9dec03e46e8772687e7501f7dd7b03784f1ce13cb42329f91860620af",
+      "archiveSha256": "d25e17d9dec03e46e8772687e7501f7dd7b03784f1ce13cb42329f91860620af"
+    },
+    {
+      "path": "package.json",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "6a69086e2b13ed6295b96cfcc3c78d60b3385308b017d493b6dd1a6e1a1d2d4f",
+      "afterSha256": "6a69086e2b13ed6295b96cfcc3c78d60b3385308b017d493b6dd1a6e1a1d2d4f",
+      "archiveSha256": "cfcd7789e1bb38cb06bce6c5d7c7c058719ad2b5778864ed0707e6d6d470a771"
+    },
+    {
+      "path": "playwright.config.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "23b5b312f20ce20da485d8b0601261e3b22651b652cbb3e921656a205916da9d",
+      "afterSha256": "23b5b312f20ce20da485d8b0601261e3b22651b652cbb3e921656a205916da9d",
+      "archiveSha256": "23b5b312f20ce20da485d8b0601261e3b22651b652cbb3e921656a205916da9d"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "11dbad554feb5c6defae309cf9fb8fa1c6d812173dee0d93af74faf41dacf7c6",
+      "afterSha256": "11dbad554feb5c6defae309cf9fb8fa1c6d812173dee0d93af74faf41dacf7c6",
+      "archiveSha256": "a0f0696174fb0072363a08adb1759811370cdf8a0774cdd1f15a2102cae2b8b3"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "7e8cac5885e940f26e86d2c934cb034ca20c13119f76ca4dbee936bc84c7fd67",
+      "afterSha256": "7e8cac5885e940f26e86d2c934cb034ca20c13119f76ca4dbee936bc84c7fd67",
+      "archiveSha256": "7e8cac5885e940f26e86d2c934cb034ca20c13119f76ca4dbee936bc84c7fd67"
+    },
+    {
+      "path": "scripts/capture-evidence.mjs",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "d2d1b539c59cfe214853c26a3f73a76a2ff4a206c4731f261f7cbddf2e2a5c32",
+      "afterSha256": "d2d1b539c59cfe214853c26a3f73a76a2ff4a206c4731f261f7cbddf2e2a5c32",
+      "archiveSha256": "d2d1b539c59cfe214853c26a3f73a76a2ff4a206c4731f261f7cbddf2e2a5c32"
+    },
+    {
+      "path": "tests/background-bus-api.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "54932586a4719f962bafba50d635312b4c0a665986838fd1a9c3132e27417086",
+      "afterSha256": "54932586a4719f962bafba50d635312b4c0a665986838fd1a9c3132e27417086",
+      "archiveSha256": "54932586a4719f962bafba50d635312b4c0a665986838fd1a9c3132e27417086"
+    },
+    {
+      "path": "tests/bus-journey-api.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "3eb644791ad62acff109d319c79aeca1edd84452e128893ac189dac35a84bbf3",
+      "afterSha256": "3eb644791ad62acff109d319c79aeca1edd84452e128893ac189dac35a84bbf3",
+      "archiveSha256": "3eb644791ad62acff109d319c79aeca1edd84452e128893ac189dac35a84bbf3"
+    },
+    {
+      "path": "tests/bus-journey-cache.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "95ea06a507f7b5d124a5cba6f6c9058fdc36213c88449ec0b3b0a4bdde50e6f1",
+      "afterSha256": "95ea06a507f7b5d124a5cba6f6c9058fdc36213c88449ec0b3b0a4bdde50e6f1",
+      "archiveSha256": "95ea06a507f7b5d124a5cba6f6c9058fdc36213c88449ec0b3b0a4bdde50e6f1"
+    },
+    {
+      "path": "tests/bus-journey-store.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "fea39b6a5bd8607dea5be71a6559c939b71ac1d755d13954d7350b9cf9ef743b",
+      "afterSha256": "fea39b6a5bd8607dea5be71a6559c939b71ac1d755d13954d7350b9cf9ef743b",
+      "archiveSha256": "fea39b6a5bd8607dea5be71a6559c939b71ac1d755d13954d7350b9cf9ef743b"
+    },
+    {
+      "path": "tests/bus-journey.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "ed3ed7b7ea9bb7b68b5715652855103922db75a9f52e3a6a54af0a2aba90298c",
+      "afterSha256": "ed3ed7b7ea9bb7b68b5715652855103922db75a9f52e3a6a54af0a2aba90298c",
+      "archiveSha256": "ed3ed7b7ea9bb7b68b5715652855103922db75a9f52e3a6a54af0a2aba90298c"
+    },
+    {
+      "path": "tests/bus-motion-review.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "022fa11816443ec139525944f9bec13d164be2860f9c67227f0333b3700cdfac",
+      "afterSha256": "022fa11816443ec139525944f9bec13d164be2860f9c67227f0333b3700cdfac",
+      "archiveSha256": "022fa11816443ec139525944f9bec13d164be2860f9c67227f0333b3700cdfac"
+    },
+    {
+      "path": "tests/bus-motion.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "a3d21c4bf357c58afaace17f4f83052f8727d5e92bbeff05b3ed965d07885308",
+      "afterSha256": "a3d21c4bf357c58afaace17f4f83052f8727d5e92bbeff05b3ed965d07885308",
+      "archiveSha256": "a3d21c4bf357c58afaace17f4f83052f8727d5e92bbeff05b3ed965d07885308"
+    },
+    {
+      "path": "tests/classification-evidence.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "4b3da204725febbf6898489e712d84af30b1bc5c7f3f042d0f28e213d1e179d1",
+      "afterSha256": "4b3da204725febbf6898489e712d84af30b1bc5c7f3f042d0f28e213d1e179d1",
+      "archiveSha256": "4b3da204725febbf6898489e712d84af30b1bc5c7f3f042d0f28e213d1e179d1"
+    },
+    {
+      "path": "tests/departure-board.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "98d3823c13b840d4ec6a360e9bd9d0abe0662cb17b8bcc7a71e2486c6c43c2bd",
+      "afterSha256": "98d3823c13b840d4ec6a360e9bd9d0abe0662cb17b8bcc7a71e2486c6c43c2bd",
+      "archiveSha256": "98d3823c13b840d4ec6a360e9bd9d0abe0662cb17b8bcc7a71e2486c6c43c2bd"
+    },
+    {
+      "path": "tests/departure-empty-states.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "3e220f85d54bed384d64f2170f6c8f20e657f79847ca87aa2023c8b59b7978da",
+      "afterSha256": "3e220f85d54bed384d64f2170f6c8f20e657f79847ca87aa2023c8b59b7978da",
+      "archiveSha256": "3e220f85d54bed384d64f2170f6c8f20e657f79847ca87aa2023c8b59b7978da"
+    },
+    {
+      "path": "tests/fixtures/adherence.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "95338c6f97955151b4a2b62252b22e6c2e19be8b82e637a4ca8327b8ab002a94",
+      "afterSha256": "95338c6f97955151b4a2b62252b22e6c2e19be8b82e637a4ca8327b8ab002a94",
+      "archiveSha256": "95338c6f97955151b4a2b62252b22e6c2e19be8b82e637a4ca8327b8ab002a94"
+    },
+    {
+      "path": "tests/fixtures/bus-motion-review.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "e615ce4e68ab80622cb59f2c68d32ac7b0c806d61bad1446d8455e364f2a85ca",
+      "afterSha256": "e615ce4e68ab80622cb59f2c68d32ac7b0c806d61bad1446d8455e364f2a85ca",
+      "archiveSha256": "e615ce4e68ab80622cb59f2c68d32ac7b0c806d61bad1446d8455e364f2a85ca"
+    },
+    {
+      "path": "tests/fixtures/train-positions.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "6246192d4e888c606c5f0c4894b3d0834f4e84ff77c14bbd409c6d939de4f0b8",
+      "afterSha256": "6246192d4e888c606c5f0c4894b3d0834f4e84ff77c14bbd409c6d939de4f0b8",
+      "archiveSha256": "6246192d4e888c606c5f0c4894b3d0834f4e84ff77c14bbd409c6d939de4f0b8"
+    },
+    {
+      "path": "tests/mrt-lines.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "ee69ef2c8e852dacc14ece0d685f4b4c9ddece3cba814b59d8f3cf3d6b8d634c",
+      "afterSha256": "ee69ef2c8e852dacc14ece0d685f4b4c9ddece3cba814b59d8f3cf3d6b8d634c",
+      "archiveSha256": "ee69ef2c8e852dacc14ece0d685f4b4c9ddece3cba814b59d8f3cf3d6b8d634c"
+    },
+    {
+      "path": "tests/official-alerts.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "b6d335ab8ebafdfa5b46545064e6c1a7e6d2f84bd9b574d8979f5fd3955deb3c",
+      "afterSha256": "b6d335ab8ebafdfa5b46545064e6c1a7e6d2f84bd9b574d8979f5fd3955deb3c",
+      "archiveSha256": "b6d335ab8ebafdfa5b46545064e6c1a7e6d2f84bd9b574d8979f5fd3955deb3c"
+    },
+    {
+      "path": "tests/official-gps-quality.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "52bf89204620877d54d37bca1d4c1ef51ff96087bd148e27bfbd0c85f4d51573",
+      "afterSha256": "52bf89204620877d54d37bca1d4c1ef51ff96087bd148e27bfbd0c85f4d51573",
+      "archiveSha256": "52bf89204620877d54d37bca1d4c1ef51ff96087bd148e27bfbd0c85f4d51573"
+    },
+    {
+      "path": "tests/processed-bus-journeys.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "2b865b14f4be56abb2c25dd6f3fd98ff580da7e15828ce91d11cd13cd29d7ac0",
+      "afterSha256": "2b865b14f4be56abb2c25dd6f3fd98ff580da7e15828ce91d11cd13cd29d7ac0",
+      "archiveSha256": "2b865b14f4be56abb2c25dd6f3fd98ff580da7e15828ce91d11cd13cd29d7ac0"
+    },
+    {
+      "path": "tests/rail-network.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "e025f83a314e7926e05c60dc10f03aebcb7999e7cbf03369214aada95ad64fb2",
+      "afterSha256": "e025f83a314e7926e05c60dc10f03aebcb7999e7cbf03369214aada95ad64fb2",
+      "archiveSha256": "e025f83a314e7926e05c60dc10f03aebcb7999e7cbf03369214aada95ad64fb2"
+    },
+    {
+      "path": "tests/route-animation.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "d0967bd7d7cba57721e66859196a5715203ca086beade94144a33d78224ae0b8",
+      "afterSha256": "d0967bd7d7cba57721e66859196a5715203ca086beade94144a33d78224ae0b8",
+      "archiveSha256": "d0967bd7d7cba57721e66859196a5715203ca086beade94144a33d78224ae0b8"
+    },
+    {
+      "path": "tests/scheduled-departures.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "a4f3124d95db29d9007d3159ebae7619d2d6864915603cb84cd3b49801ccb146",
+      "afterSha256": "a4f3124d95db29d9007d3159ebae7619d2d6864915603cb84cd3b49801ccb146",
+      "archiveSha256": "a4f3124d95db29d9007d3159ebae7619d2d6864915603cb84cd3b49801ccb146"
+    },
+    {
+      "path": "tests/setup.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "60aa525f7ffa6bfd3045d22710d4eeef3a5ff2074ecc3dbcef99374badebad17",
+      "afterSha256": "60aa525f7ffa6bfd3045d22710d4eeef3a5ff2074ecc3dbcef99374badebad17",
+      "archiveSha256": "60aa525f7ffa6bfd3045d22710d4eeef3a5ff2074ecc3dbcef99374badebad17"
+    },
+    {
+      "path": "tests/station-operations.test.tsx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "3f53d02912fea6f2e17bf532525bd075ba2470aa6363881a9c05a103162813ee",
+      "afterSha256": "3f53d02912fea6f2e17bf532525bd075ba2470aa6363881a9c05a103162813ee",
+      "archiveSha256": "3f53d02912fea6f2e17bf532525bd075ba2470aa6363881a9c05a103162813ee"
+    },
+    {
+      "path": "tests/timetable-adherence.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "18fd467bed3594f8c4cd1bdde9a354e3ed79a1ea508ee8b379205ffb8a1cea4f",
+      "afterSha256": "18fd467bed3594f8c4cd1bdde9a354e3ed79a1ea508ee8b379205ffb8a1cea4f",
+      "archiveSha256": "18fd467bed3594f8c4cd1bdde9a354e3ed79a1ea508ee8b379205ffb8a1cea4f"
+    },
+    {
+      "path": "tests/train-arrivals.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "209bb190ce4b2e2a3a1020fadfe656143162f861d4d9bf8fba61a7c60ecc0593",
+      "afterSha256": "209bb190ce4b2e2a3a1020fadfe656143162f861d4d9bf8fba61a7c60ecc0593",
+      "archiveSha256": "209bb190ce4b2e2a3a1020fadfe656143162f861d4d9bf8fba61a7c60ecc0593"
+    },
+    {
+      "path": "tests/train-positions-api.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "b30159c931a836d61f9282684d2e657423cbddaaeee8e65c01ecfb0cd75e1fb0",
+      "afterSha256": "b30159c931a836d61f9282684d2e657423cbddaaeee8e65c01ecfb0cd75e1fb0",
+      "archiveSha256": "b30159c931a836d61f9282684d2e657423cbddaaeee8e65c01ecfb0cd75e1fb0"
+    },
+    {
+      "path": "tests/train-positions.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "f2f03a22eeb094991dd3d60b68037a84346f6873c6ee7a554d6c37f082cc8c85",
+      "afterSha256": "f2f03a22eeb094991dd3d60b68037a84346f6873c6ee7a554d6c37f082cc8c85",
+      "archiveSha256": "f2f03a22eeb094991dd3d60b68037a84346f6873c6ee7a554d6c37f082cc8c85"
+    },
+    {
+      "path": "tests/transit-data.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "164c0053b2b46926ca6d3979b74528fa2110ed247384216b3e50bd1fe5980cee",
+      "afterSha256": "164c0053b2b46926ca6d3979b74528fa2110ed247384216b3e50bd1fe5980cee",
+      "archiveSha256": "164c0053b2b46926ca6d3979b74528fa2110ed247384216b3e50bd1fe5980cee"
+    },
+    {
+      "path": "tests/transit-response.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "e1bef65faa432104564becf61c45e4beb101c88091087987639cf3ba7274ec9c",
+      "afterSha256": "e1bef65faa432104564becf61c45e4beb101c88091087987639cf3ba7274ec9c",
+      "archiveSha256": "e1bef65faa432104564becf61c45e4beb101c88091087987639cf3ba7274ec9c"
+    },
+    {
+      "path": "tests/vehicle-progress.test.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "75f4bbc7dc01d0544b728ad79654173246bf598556dd85cbaff5c4180fdb8dee",
+      "afterSha256": "75f4bbc7dc01d0544b728ad79654173246bf598556dd85cbaff5c4180fdb8dee",
+      "archiveSha256": "75f4bbc7dc01d0544b728ad79654173246bf598556dd85cbaff5c4180fdb8dee"
+    },
+    {
+      "path": "tsconfig.json",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "3db0881a10d9f89817f4974cd21e963fbe3f031fab2f83d805f4ecb84f533a6c",
+      "afterSha256": "3db0881a10d9f89817f4974cd21e963fbe3f031fab2f83d805f4ecb84f533a6c",
+      "archiveSha256": "3db0881a10d9f89817f4974cd21e963fbe3f031fab2f83d805f4ecb84f533a6c"
+    },
+    {
+      "path": "tsconfig.tsbuildinfo",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "6a696136d03100622cd303f3acd4f7bd9a6a8f4717fe8290478d53d7e56aa592",
+      "afterSha256": "6a696136d03100622cd303f3acd4f7bd9a6a8f4717fe8290478d53d7e56aa592",
+      "archiveSha256": "6a696136d03100622cd303f3acd4f7bd9a6a8f4717fe8290478d53d7e56aa592"
+    },
+    {
+      "path": "vitest.config.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "45cba9ff0b7b00423d7852a1850b076e71ecc51b940f038dbddc2b3a917e146f",
+      "afterSha256": "45cba9ff0b7b00423d7852a1850b076e71ecc51b940f038dbddc2b3a917e146f",
+      "archiveSha256": "45cba9ff0b7b00423d7852a1850b076e71ecc51b940f038dbddc2b3a917e146f"
+    },
+    {
+      "path": ".gitignore",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "6579910bd2036a053c0640a8f651bcd798292537d10a3295d3b18713a78bdb17",
+      "afterSha256": "6579910bd2036a053c0640a8f651bcd798292537d10a3295d3b18713a78bdb17",
+      "gitBlobSha256": "5cc8849825a43aaf0b7a9ce6e94adfbb52926d993e74e6c7564413f0c0dfc4ee"
+    },
+    {
+      "path": "docs/accessibility-inspection.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "529d74f1e792cada37d59621246c92b2f2adf49688dbcdf8a5c3121b65c07692",
+      "afterSha256": "529d74f1e792cada37d59621246c92b2f2adf49688dbcdf8a5c3121b65c07692",
+      "gitBlobSha256": "21940762c95ced05d4bdcb0e3d843b438a6818afba00231fb4f9d9821849c719"
+    },
+    {
+      "path": "docs/background-bus-processing.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "56dc89a97c0dffe63e0138df8ea20bcf0816ea356b55eeca7f0f254ada55c31e",
+      "afterSha256": "56dc89a97c0dffe63e0138df8ea20bcf0816ea356b55eeca7f0f254ada55c31e",
+      "gitBlobSha256": "92c027ae19b15a3895ff080ebe814c2091648bfb6d122b3e79492f66f3a514b4"
+    },
+    {
+      "path": "docs/bus-animation-navigation.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "81a3ac56e900f2cab0e1a23e4bfb84fdb9e962a186865fa1ea12feb2f9ba7988",
+      "afterSha256": "81a3ac56e900f2cab0e1a23e4bfb84fdb9e962a186865fa1ea12feb2f9ba7988",
+      "gitBlobSha256": "f4bf78ffa4d19cfe53b249b99cbfeb6be30a7a9052de16410a964a2e90f536a0"
+    },
+    {
+      "path": "docs/bus-gps-final-review.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "76a9d95119d2ebb03a72f0b27b632899f38eff7187349176f061ef57cfd7f2b0",
+      "afterSha256": "76a9d95119d2ebb03a72f0b27b632899f38eff7187349176f061ef57cfd7f2b0",
+      "gitBlobSha256": "48daa0a0f94d8f4c2ef29735af3e46323d7935b0f358d883eaba3413fe7d6b1b"
+    },
+    {
+      "path": "docs/bus-journey.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "ddc9f93b7a100dd7e0bbcb97413f35c23144afeb9163932222950a163fc10900",
+      "afterSha256": "ddc9f93b7a100dd7e0bbcb97413f35c23144afeb9163932222950a163fc10900",
+      "gitBlobSha256": "78b9ea5cf6f12b9dddf78071edcb4fbdf6152b7f04c70533819cf4a4c3197572"
+    },
+    {
+      "path": "docs/data-sources.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "f62ba60f94b699637f2f143997b6f12235ac0d9884324b51e274210b182c0be3",
+      "afterSha256": "f62ba60f94b699637f2f143997b6f12235ac0d9884324b51e274210b182c0be3",
+      "gitBlobSha256": "1dc7a300109858237658b2bab77809a90c8025dceb28ffaf9faed80a21f2b5d2"
+    },
+    {
+      "path": "docs/deployment.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "38d7d30bc93d9acb73e69976faea67f1d13d807a98d2cc2ad4102c1c234eeff2",
+      "afterSha256": "38d7d30bc93d9acb73e69976faea67f1d13d807a98d2cc2ad4102c1c234eeff2",
+      "gitBlobSha256": "2ee064461efac11c8facf58d97d840de410021151675e69f2d2b6e3987d8e18d"
+    },
+    {
+      "path": "docs/design-rationale.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "a818ca4fb8ebf09c3444b042e42f01afce993a6750ef31261d325a47c68b2232",
+      "afterSha256": "a818ca4fb8ebf09c3444b042e42f01afce993a6750ef31261d325a47c68b2232",
+      "gitBlobSha256": "7ce24a85b92eeb5df13d804985a4c852816b9f3ec73775ca6644caf7750bcefa"
+    },
+    {
+      "path": "docs/gps-matching-evaluation.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "67f9f14039501f5a787d96b2dbb92a5d59a5d252b4c35cedb63a1560546574c7",
+      "afterSha256": "67f9f14039501f5a787d96b2dbb92a5d59a5d252b4c35cedb63a1560546574c7",
+      "gitBlobSha256": "b3fb944c4fb6560b18d8d4ef80c64a418daf9ca1473646991b3688df1c5c780e"
+    },
+    {
+      "path": "docs/gps-progress.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "607073781406fa4c0e93677fd4423ee1205aa3033547e2ba55672509389b8611",
+      "afterSha256": "607073781406fa4c0e93677fd4423ee1205aa3033547e2ba55672509389b8611",
+      "gitBlobSha256": "96140d6bb964e0ade4b5a89c6bfaf0873913fa2a78011456cb6909e4c570f6c6"
+    },
+    {
+      "path": "docs/hci-principles.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "1167d330747a9c6f451dedda5ab5bf7b2dedcb39d8a09c7b90d98480872bd9f8",
+      "afterSha256": "1167d330747a9c6f451dedda5ab5bf7b2dedcb39d8a09c7b90d98480872bd9f8",
+      "gitBlobSha256": "e93197d91456629da0dc221ae04d81aaf857a43c242bb41c1585e2b6a623f43d"
+    },
+    {
+      "path": "docs/mrt-visualization.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "be9e90205297004e11ff445ee7ece0b626be02aa7aa95efbc5ccaf79ad91fe13",
+      "afterSha256": "be9e90205297004e11ff445ee7ece0b626be02aa7aa95efbc5ccaf79ad91fe13",
+      "gitBlobSha256": "169f25fd112741a360e9e1c97dd3bf792d6147fa9afbfc955ebee0e1233b8ed3"
+    },
+    {
+      "path": "docs/passenger-copy.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "8162ced777939d3b11fdcf8fbfa93cf4d7a0468b0e8b1725bfd1e8c7a870f65d",
+      "afterSha256": "8162ced777939d3b11fdcf8fbfa93cf4d7a0468b0e8b1725bfd1e8c7a870f65d",
+      "gitBlobSha256": "899beb4014910ee27ff0034750335a981e5d042c1f64067f09fceaecef930fad"
+    },
+    {
+      "path": "docs/project-limitations.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "b8706d201e5d5ddf8243c09950fdefaab1270a3d6d257555fbafed9438d43f2a",
+      "afterSha256": "b8706d201e5d5ddf8243c09950fdefaab1270a3d6d257555fbafed9438d43f2a",
+      "gitBlobSha256": "7f5a9c5d30ad71dc160052914296160d581b1b149d199504a51e174cf524c87d"
+    },
+    {
+      "path": "docs/rail-network.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "9b47cf49ee127ae8cb0cbcc63f945f7e8b84b8f7852b7c563e6b1f06a731b009",
+      "afterSha256": "9b47cf49ee127ae8cb0cbcc63f945f7e8b84b8f7852b7c563e6b1f06a731b009",
+      "gitBlobSha256": "d26290ba10d5ae94f931fa6065c0c1b1dd36dede65beebe6d6b242770077e24c"
+    },
+    {
+      "path": "docs/requirements.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "1032ce8e622cae096950b33f20dd8d5cb713f21b21d69f68e76e2d98a86b394c",
+      "afterSha256": "1032ce8e622cae096950b33f20dd8d5cb713f21b21d69f68e76e2d98a86b394c",
+      "gitBlobSha256": "f8e1c56edd1e8c06555aa80c9e53f60a6196f6657e467a3d284873f80b23f6ba"
+    },
+    {
+      "path": "docs/scheduled-departures-alerts.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "44cf5d0b8be580a1e4940bba03c1a2e434e41177895aae07cc061b997229c52c",
+      "afterSha256": "44cf5d0b8be580a1e4940bba03c1a2e434e41177895aae07cc061b997229c52c",
+      "gitBlobSha256": "40c0394415e080b1144ff87a9c35179188d71e215b83d5b5b01fc5a963e1272f"
+    },
+    {
+      "path": "docs/station-departure-board.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "9c2959e560b316a14d5edc3c3024ee6d7fdf28d311f383e8b4aea14fd4504a70",
+      "afterSha256": "9c2959e560b316a14d5edc3c3024ee6d7fdf28d311f383e8b4aea14fd4504a70",
+      "gitBlobSha256": "52135d0d4652de9c7db1010e5ce00e757fc6553bba7c5e8b217234feead1ecf1"
+    },
+    {
+      "path": "docs/system-architecture.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "c2301bd5c37bf5d60ce59d4c43e8579abcd94fbd480697590ceab8bac86367e8",
+      "afterSha256": "c2301bd5c37bf5d60ce59d4c43e8579abcd94fbd480697590ceab8bac86367e8",
+      "gitBlobSha256": "84a7816beb44be61cbffc6dc256d6be83da8ff4be89a820ea0ef59a08a4d55bd"
+    },
+    {
+      "path": "docs/timetable-adherence.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "aeb8861c676f197ac6086438753b4bd61438fb36ba4e6676386d0896bd5d7871",
+      "afterSha256": "aeb8861c676f197ac6086438753b4bd61438fb36ba4e6676386d0896bd5d7871",
+      "gitBlobSha256": "757e4459900eb2259e6b46a639915462e9beb11bc327a94d1ae1e6e3bb5b1e2a"
+    },
+    {
+      "path": "docs/train-arrivals.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "353621f4c46efe9723186b0938e785b93124da32afe356bc1427f7d4e29412f1",
+      "afterSha256": "353621f4c46efe9723186b0938e785b93124da32afe356bc1427f7d4e29412f1",
+      "gitBlobSha256": "75f707042d2d084ff36eff305b9677a7d6d156331c805972e737bfc2db8c3091"
+    },
+    {
+      "path": "docs/train-position-audit.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "37c8261c7a85f33a01eccff535b9fdad88397feff7e19e96a577c3e7da243fd1",
+      "afterSha256": "37c8261c7a85f33a01eccff535b9fdad88397feff7e19e96a577c3e7da243fd1",
+      "gitBlobSha256": "91bed7f6a86c2c190f14dadbde28171f153027d1abf9685b75dd59cc56701f36"
+    },
+    {
+      "path": "docs/usability-results-template.csv",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "4309fa4860de764bafe712bff53e284752a3efaf0cb4980ff3bebdc6a8479f9f",
+      "afterSha256": "4309fa4860de764bafe712bff53e284752a3efaf0cb4980ff3bebdc6a8479f9f",
+      "gitBlobSha256": "4870197dff1632deebe3f69ac52f769574828ee778202f449c8d92bb195561b2"
+    },
+    {
+      "path": "docs/usability-test-plan.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "d851d64165d26a6b93705f64b44a1e95c9a4dd9f9876e1675a17e464cbc835c4",
+      "afterSha256": "d851d64165d26a6b93705f64b44a1e95c9a4dd9f9876e1675a17e464cbc835c4",
+      "gitBlobSha256": "6428a9999c8791153684d97609b7ccf4464756e94e9c0afd026b53dcef8b2bcc"
+    },
+    {
+      "path": "presentation/TransitScope_HCI_Lab2.pdf",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "fbbf70b945ea253d2bed7eace5d3f0247e2b33c7e0f01d750755ee3615eb3c92",
+      "afterSha256": "fbbf70b945ea253d2bed7eace5d3f0247e2b33c7e0f01d750755ee3615eb3c92",
+      "gitBlobSha256": "6629377016a9e943fbc02914d34e7837798c838d07bc227e9792de0bc767b79f"
+    },
+    {
+      "path": "presentation/TransitScope_HCI_Lab2.pptx",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "de3ee345403820dbbd2f18e1d221b320258579df4b2da3bfe247e58563ea2339",
+      "afterSha256": "de3ee345403820dbbd2f18e1d221b320258579df4b2da3bfe247e58563ea2339",
+      "gitBlobSha256": "de3ee345403820dbbd2f18e1d221b320258579df4b2da3bfe247e58563ea2339"
+    },
+    {
+      "path": "presentation/build-deck.mjs",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "8add202673abc5e6b58c5c3b82d55eecf5f0bb2a3384a9f8b4f9c2505ad36440",
+      "afterSha256": "8add202673abc5e6b58c5c3b82d55eecf5f0bb2a3384a9f8b4f9c2505ad36440",
+      "gitBlobSha256": "f5322a61b8095322bbcae38136b9de170e39737fce76262b828369e262393f76"
+    },
+    {
+      "path": "presentation/evidence_screenshots/alert-detail.png",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "26de8b878d5c2c8bb6847fddb864ed2f0defafd1c4b4d5b294f2642c137dec03",
+      "afterSha256": "26de8b878d5c2c8bb6847fddb864ed2f0defafd1c4b4d5b294f2642c137dec03",
+      "gitBlobSha256": "26de8b878d5c2c8bb6847fddb864ed2f0defafd1c4b4d5b294f2642c137dec03"
+    },
+    {
+      "path": "presentation/evidence_screenshots/dashboard-overview.png",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "dc35046e1e72f93dfd49b5583ce97c9d5f7719218cfbb4d429f000e7118b0abc",
+      "afterSha256": "dc35046e1e72f93dfd49b5583ce97c9d5f7719218cfbb4d429f000e7118b0abc",
+      "gitBlobSha256": "dc35046e1e72f93dfd49b5583ce97c9d5f7719218cfbb4d429f000e7118b0abc"
+    },
+    {
+      "path": "presentation/evidence_screenshots/shared-bike-filter.png",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "b43654e6ad1a2d0328fba0a61aafd2de1f8c7544c64aa8862f98db0e2a292b60",
+      "afterSha256": "b43654e6ad1a2d0328fba0a61aafd2de1f8c7544c64aa8862f98db0e2a292b60",
+      "gitBlobSha256": "b43654e6ad1a2d0328fba0a61aafd2de1f8c7544c64aa8862f98db0e2a292b60"
+    },
+    {
+      "path": "presentation/export-pdf.py",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "3a444e6eed8af685ef37621b7506df374a6b380d09cd89ed7e075648446213f4",
+      "afterSha256": "3a444e6eed8af685ef37621b7506df374a6b380d09cd89ed7e075648446213f4",
+      "gitBlobSha256": "4263ea3e2a26baf500c5cf542e332a8a0f456d5afdba635c8857b4faf4f22a48"
+    },
+    {
+      "path": "presentation/presentation_notes.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "029c30dc646ecfb7e271679f7d97d0afc42feb97bc5c2ca259dfd7a3385bc701",
+      "afterSha256": "029c30dc646ecfb7e271679f7d97d0afc42feb97bc5c2ca259dfd7a3385bc701",
+      "gitBlobSha256": "d3a8fceca66fd3b0ca25924565e28890416d6ada5720051e6224eef3fd6727f7"
+    },
+    {
+      "path": "presentation/slide_timing.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "75d02fe242491856ff6af23280084e27a3eef718ad7af27bcaab9cb46673460a",
+      "afterSha256": "75d02fe242491856ff6af23280084e27a3eef718ad7af27bcaab9cb46673460a",
+      "gitBlobSha256": "08cd45ce117d2da2ca7d876c1677b8441fb6ace38ea661781284ef6257679094"
+    },
+    {
+      "path": "app/api/micromobility/linkbike/route.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "7a0ce136c98617f47ab8a5495bf5ddc0a2ddd8fb8fdc752d51edc839351a963f",
+      "afterSha256": "7a0ce136c98617f47ab8a5495bf5ddc0a2ddd8fb8fdc752d51edc839351a963f"
+    },
+    {
+      "path": "app/linkbike.css",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "fecfae5b8da71b6bed11f56804554c0d2569f6f405b428e792aa928be95761ea",
+      "afterSha256": "fecfae5b8da71b6bed11f56804554c0d2569f6f405b428e792aa928be95761ea"
+    },
+    {
+      "path": "components/linkbike-layer.tsx",
+      "category": "lifecycle correction",
+      "beforeSha256": "2ff6bef055cc854e6f8d69bcbbdc6576741fb1963e3ea3e6105506848ce69096",
+      "afterSha256": "b49e48a90942faf3acf491b422447305964f59e0390ff7dad0f041aca9b4d1f6"
+    },
+    {
+      "path": "docs/SM-1.6B-direct-linkbike-integration-report.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "d89d456808a1ae28bdf6410d2cfe887b3b882e2e66492ffbecdab4ea477a10fa",
+      "afterSha256": "d89d456808a1ae28bdf6410d2cfe887b3b882e2e66492ffbecdab4ea477a10fa"
+    },
+    {
+      "path": "docs/SM-1.6B-production-baseline-verification.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "d80b35a73d135418348e09759c958e4b01668388db2e3ab109ff58714052a5e9",
+      "afterSha256": "d80b35a73d135418348e09759c958e4b01668388db2e3ab109ff58714052a5e9"
+    },
+    {
+      "path": "docs/SM-1.6C-cache-and-polling-risk.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "9c111dae855372360ed8ff234c56a86b5137da04a97c0d022752fa7964e18524",
+      "afterSha256": "9c111dae855372360ed8ff234c56a86b5137da04a97c0d022752fa7964e18524"
+    },
+    {
+      "path": "docs/SM-1.6C-feature-gate-matrix.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "cf850bc6109296d0fd9f140c8e6e975e7b479d98f4b488efb13c41273920dc8d",
+      "afterSha256": "cf850bc6109296d0fd9f140c8e6e975e7b479d98f4b488efb13c41273920dc8d"
+    },
+    {
+      "path": "docs/SM-1.6C-linkbike-release-candidate-audit.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "caa604873300f53787dd89295c201023729cddd26c931e61ad017aa0feb2d4c6",
+      "afterSha256": "caa604873300f53787dd89295c201023729cddd26c931e61ad017aa0feb2d4c6"
+    },
+    {
+      "path": "docs/linkbike-experimental-integration.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "843599455661a2b64941535218e45976d10aa9758dac142a9f9f530e36df1637",
+      "afterSha256": "843599455661a2b64941535218e45976d10aa9758dac142a9f9f530e36df1637"
+    },
+    {
+      "path": "docs/linkbike-portal-integration-audit.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "c4dd6672a3195c00a504bedd90c1176a02da649c1312a04ac2bb17744b8ed96d",
+      "afterSha256": "c4dd6672a3195c00a504bedd90c1176a02da649c1312a04ac2bb17744b8ed96d"
+    },
+    {
+      "path": "docs/linkbike-regression-audit.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "24432ca32be5ed1edbb1132dfa3501f0047f2a9f2f92a00ffe62d5eddc71cd33",
+      "afterSha256": "24432ca32be5ed1edbb1132dfa3501f0047f2a9f2f92a00ffe62d5eddc71cd33"
+    },
+    {
+      "path": "docs/shared-micromobility-data-feasibility.md",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "c43e9c3107f1fa6459891185a161e434f3d57d82db0939205e5c957f134edcb5",
+      "afterSha256": "c43e9c3107f1fa6459891185a161e434f3d57d82db0939205e5c957f134edcb5"
+    },
+    {
+      "path": "e2e/linkbike.spec.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "034d99a4176ed9b219dbfdf80352e088f090461b0ff703c2eb1e80e5d12381d8",
+      "afterSha256": "034d99a4176ed9b219dbfdf80352e088f090461b0ff703c2eb1e80e5d12381d8"
+    },
+    {
+      "path": "lib/linkbike-data.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "35116eef8b55eb2861cedcc4ec25ab6c731a63932b69b60976bbc14d5bef4ed5",
+      "afterSha256": "35116eef8b55eb2861cedcc4ec25ab6c731a63932b69b60976bbc14d5bef4ed5"
+    },
+    {
+      "path": "lib/linkbike-feature.ts",
+      "category": "lifecycle correction",
+      "beforeSha256": "1ace60c52d9448d9351adc328e253660307649953bfa2d3ab030b6ce3d92b521",
+      "afterSha256": "3b9ad9bb87a2a5d9c5be6a9853ce5dc3bf90627373cb8ea8e3381618c7b3b96c"
+    },
+    {
+      "path": "lib/linkbike-parser.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "a0945085f336cdd47ab378086c2da89e5793cb04755842fdb675cff97010995b",
+      "afterSha256": "a0945085f336cdd47ab378086c2da89e5793cb04755842fdb675cff97010995b"
+    },
+    {
+      "path": "lib/linkbike.ts",
+      "category": "unchanged since SM-1.6C",
+      "beforeSha256": "cac4b3e15b49fcf98751d8e84c6f57e8d3426ba2d4a70e814bb85102bda8c037",
+      "afterSha256": "cac4b3e15b49fcf98751d8e84c6f57e8d3426ba2d4a70e814bb85102bda8c037"
+    },
+    {
+      "path": "tests/linkbike.test.ts",
+      "category": "gate tests",
+      "beforeSha256": "bd66327fa2082672aa75e42c223b3b5b2ca3ffa4899a46ae776d8aa1d5694c87",
+      "afterSha256": "73c9dac2da9e961b67fecbdb2f4dd6c9b19a3093315f5f971237fc9c22526b03"
+    }
+  ],
+  "newDocumentation": [
+    {
+      "path": "docs/SM-1.6C.1-feature-gate-correction.md",
+      "sha256": "907cf309925175917eafaf256585f4a582b0c5963f17322eb2329635ec93f9bb"
+    },
+    {
+      "path": "docs/SM-1.6C.1-runtime-gate-matrix.md",
+      "sha256": "b6352ca935237d046a10cb40dfa5987c7c40e0fc6f2b7d29f2eb8f3b4113678d"
+    }
+  ],
+  "notes": "The inventory excludes its own digest and ignored test/build outputs."
+}

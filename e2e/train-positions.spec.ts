@@ -58,7 +58,16 @@ test("visibility toggle, line controls, mode and information-type filters hide t
   await page.getByRole("button",{name:"Estimated trains",exact:true}).click();await expect(page.locator(marker)).toHaveCount(0);await expect(page.locator(".vehicle-icon")).toHaveCount(1);await expect(page.locator(".rail-station")).toHaveCount(1);
   await page.getByRole("button",{name:"Estimated trains",exact:true}).click();await expect(page.locator(marker)).toHaveCount(12);
   await toggle(page).uncheck();await expect(page.locator(marker)).toHaveCount(0);const calls=state.calls();await page.clock.fastForward(65000);expect(state.calls()).toBe(calls);
-  await toggle(page).check();await expect(page.locator(marker)).toHaveCount(12);await page.clock.fastForward(60000);await expect.poll(state.calls).toBe(calls+2);
+  await toggle(page).check();
+  await expect.poll(state.calls).toBe(calls+1);
+  await expect(page.getByRole("region",{name:"Estimated train positions",exact:true}).getByRole("status")).toContainText("12 estimated trains");
+  // At +65s the two directions on each line converge inside the grouping radius.
+  const expectedGroups=Object.values(rapidRailMeta).map(line=>`${line.id}:2`).sort();
+  await expect.poll(()=>page.locator(marker).evaluateAll(icons=>icons.map(icon=>{
+    const {trainLine,trainCount}=(icon as HTMLElement).dataset;
+    return `${trainLine}:${trainCount}`;
+  }).sort())).toEqual(expectedGroups);
+  await page.clock.fastForward(60000);await expect.poll(state.calls).toBe(calls+2);
 });
 test("headway-only service shows clear per-line unavailable messages and never fabricates markers or countdowns",async({page})=>{
   await setup(page,{unavailable:true});await toggle(page).check();const controls=page.getByRole("region",{name:"Estimated train positions",exact:true});await expect(controls).toContainText("Choose a station for departure times");await expect(page.locator(marker)).toHaveCount(0);await controls.getByText("Availability by line",{exact:true}).click();await expect(controls.locator("li")).toHaveCount(6);await expect(controls.locator("li").first()).toContainText("individual train positions are unavailable");await expect(page.locator(".rail-station")).toHaveCount(1);

@@ -16,6 +16,7 @@ import { MovingVehicle, MovingRoute, JourneyMapNavigation, JourneyStopMarker } f
 import { informationLabel,locationLabel,passengerName,publicRouteName } from "./passenger-copy";
 import type { ProcessedBusJourney } from "@/lib/processed-bus-journeys";
 import { currentTracking } from "@/lib/bus-progress";
+import LinkBikeLayer from "./linkbike-layer";
 const colours: globalThis.Record<string, string> = { Bus: "#2563eb", MRT: "#006B3F", LRT: "#E75480", Monorail: "#2878B5", KTM: "#24558A", "Shared bike": "#16a34a" };
 const lastSeenTime=(value:string|null|undefined)=>value&&Number.isFinite(Date.parse(value))?new Intl.DateTimeFormat("en-MY",{timeZone:"Asia/Kuala_Lumpur",dateStyle:"short",timeStyle:"medium"}).format(new Date(value))+" MYT":"time unavailable";
 const vehicleIcon = (record: Record, selected=false) => L.divIcon({ className: `transport-icon vehicle-icon ${selected?"vehicle-selected":""}`, html: `<span style="--marker:${colours[record.mode]}" aria-hidden="true"><i class="vehicle-glyph">${record.mode === "Bus" ? "🚌" : "🚆"}</i></span>`, iconSize: [30, 30], iconAnchor: [15, 15] });
@@ -30,7 +31,7 @@ function SelectedVehicleFocus({record}:{record:Record|undefined}) {
   },[record?.id,map]);
   return null;
 }
-export default function TransitMap({ records, selected, onSelect, resetSignal, network, journey,processedJourneys,trainFilters,trainEnabled,onSelectTrain }: { records: Record[]; selected: string | null; onSelect: (record: Record) => void; resetSignal: number; network: ReturnType<typeof useRailNetwork>; journey?:BusMapJourney|null;processedJourneys?:ProcessedBusJourney[];trainFilters:TrainMapFilters;trainEnabled:boolean;onSelectTrain:()=>void }) {
+export default function TransitMap({ records, selected, onSelect, resetSignal, network, journey,processedJourneys,trainFilters,trainEnabled,onSelectTrain,enableLinkBike,showLinkBike,linkBikeControlsHost }: { records: Record[]; selected: string | null; onSelect: (record: Record) => void; resetSignal: number; network: ReturnType<typeof useRailNetwork>; journey?:BusMapJourney|null;processedJourneys?:ProcessedBusJourney[];trainFilters:TrainMapFilters;trainEnabled:boolean;onSelectTrain:()=>void;enableLinkBike?:boolean;showLinkBike:boolean;linkBikeControlsHost:HTMLDivElement|null }) {
   const [hidden, setHidden] = useState<string[]>([]), [highlighted, setHighlighted] = useState<string[]>([]);
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const selectedRecord = records.find(record => record.id === selected);
@@ -78,6 +79,7 @@ export default function TransitMap({ records, selected, onSelect, resetSignal, n
         return <CircleMarker key={record.id} center={record.position!} radius={record.interchange ? 8 : 6} className="rail-station" pane="markerPane" pathOptions={{ color: stationColours[0] ?? colours[record.mode], fillColor: record.interchange ? stationColours[1] ?? "#fff" : "#fff", weight: 3, fillOpacity: dimmed ? .3 : 1, opacity: dimmed ? .3 : 1 }} eventHandlers={{ click: () => selectStation(record) }}><Tooltip>{passengerName(record.name)}</Tooltip>{popup}</CircleMarker>;
       })}
       <EstimatedTrainLayer filters={trainFilters} hidden={hidden} availableLines={network.lines.filter(line=>line.geometryStatus==="available").map(line=>line.id)} highlighted={highlighted} onSelect={onSelectTrain} onHighlight={id=>setHighlighted([id])}/>
+      {enableLinkBike && showLinkBike && linkBikeControlsHost && <LinkBikeLayer controlsHost={linkBikeControlsHost} />}
       {userPosition && <Marker position={userPosition} icon={L.divIcon({ className: "transport-icon user-icon", html: '<span></span>', iconSize: [22, 22], iconAnchor: [11, 11] })}><Popup>Your current location</Popup></Marker>}
     </MapContainer><div className="map-legend" aria-label="Map legend"><span>Train lines and stations</span><span>◉ Interchange</span><span>🚌 Bus / 🚆 Train</span><span>● Your location</span><span>○ Station / stop</span>{gpsActive&&<span className="map-progress-key">{locationLabel(gps!.source)}{segments?" · Grey: route behind · Blue: route ahead":""}</span>}</div></div>
   </section>;

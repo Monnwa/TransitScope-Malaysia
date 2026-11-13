@@ -1,0 +1,132 @@
+.station-operations {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin: 14px 0 18px;
+}
+
+.station-ops-quick {
+  margin: 0 0 9px;
+}
+
+.station-ops-heading, .station-ops-direction {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.station-ops-heading h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.station-ops-heading > div {
+  min-width: 0;
+  max-width: 55%;
+}
+
+.station-ops-heading select, .station-ops-direction select {
+  max-width: 100%;
+  min-height: 36px;
+  padding: 5px 7px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  background: #fff;
+  font-size: 12px;
+}
+
+.station-ops-direction {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 8px 0;
+}
+
+.station-ops-services, .station-ops-notices {
+  list-style: none;
+  margin: 9px 0 0;
+  padding: 0;
+}
+
+.station-ops-service {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 11px;
+  margin-top: 7px;
+  background: #f8fafc;
+}
+
+.station-ops-service h4 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.station-ops-state {
+  display: inline-block;
+  color: #43586f;
+  background: #ebf0f5;
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+.station-ops-state.attention {
+  color: #784600;
+  background: #fff0d5;
+}
+
+.station-ops-source, .station-ops-notices small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.station-ops-source {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 9px;
+  margin-top: 7px;
+}
+
+.station-ops-source a, .station-ops-notices a {
+  color: #174d85;
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+
+.station-ops-notices li {
+  border-top: 1px solid var(--line);
+  padding: 7px 0;
+}
+
+.station-ops-notices a {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.station-ops-notices small, .station-ops-alternative strong {
+  display: block;
+}
+
+.station-operations .station-ops-note, .station-operations .station-ops-alternative {
+  margin: 7px 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.station-ops-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .station-ops-heading select, .station-ops-direction select { min-height: 44px; }
+}

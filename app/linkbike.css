@@ -1,0 +1,10 @@
+.linkbike-controls { display:flex; align-items:center; flex-wrap:wrap; gap:.45rem 1rem; padding:.5rem 0; font-size:.875rem; }
+.linkbike-controls label { display:inline-flex; align-items:center; gap:.45rem; min-height:44px; cursor:pointer; font-weight:600; }
+.linkbike-marker { display:grid; place-items:center; border:2px solid white; border-radius:6px; background:#713f12; color:white; font-weight:800; box-shadow:0 0 0 1px #713f12,0 2px 5px #0005; }
+.linkbike-marker:focus-visible { outline:3px solid #172554; outline-offset:3px; }
+.linkbike-map-status { display:flex; align-items:center; flex-wrap:wrap; gap:.35rem .75rem; color:#422006; }
+.linkbike-map-status button { min-height:44px; }
+.linkbike-popup h3 { font-size:1rem; margin:0; }
+.linkbike-popup dl { display:grid; grid-template-columns:1fr 1fr; gap:.35rem .55rem; margin:0; }
+.linkbike-popup dt { font-weight:600; }
+.linkbike-popup dd { margin:0; overflow-wrap:anywhere; }

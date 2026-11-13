@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
+import { classificationArchive } from "@/lib/classification-evidence-store";
 import { busSourceIds, getBusStaticFeed, getBusVehicle, type BusSourceId } from "@/lib/official-transit";
 import { calculateBusJourney } from "@/lib/bus-journey";
 import type { Record as TransitRecord } from "@/lib/transit-data";
@@ -8,7 +9,8 @@ export const maxDuration=60;
 export async function GET(request:NextRequest) {
   const q=request.nextUrl.searchParams,source=q.get("source"),id=q.get("vehicle");
   if(!source||!busSourceIds.includes(source as BusSourceId)||!id||id.length>160||/[\x00-\x1f]/.test(id)||request.url.length>3000||q.get("direction")&&!/^[01]$/.test(q.get("direction")!))return NextResponse.json({error:"Provide a supported official bus source and vehicle identifier."},{status:400});
-  const [realtime,staticFeed]=await Promise.allSettled([getBusVehicle(source as BusSourceId,id),getBusStaticFeed(source as BusSourceId)]);
+  const [realtime,staticFeed]=await Promise.allSettled([getBusVehicle(source as BusSourceId,id,classificationArchive ? after : undefined),getBusStaticFeed(source as BusSourceId)]);
+  if (classificationArchive) after(() => classificationArchive?.flushWhenReady());
   if(staticFeed.status!=="fulfilled")return NextResponse.json({error:"Official GTFS timetable unavailable. The vehicle route path remains available where already retrieved.",code:"TIMETABLE_UNAVAILABLE"},{status:503});
   const current=realtime.status==="fulfilled"?realtime.value:null;
   if(!q.get("departure")&&!q.get("direction")&&current?.available&&current.processed?.journey)return NextResponse.json(current.processed.journey,{headers:{"Cache-Control":"no-store"}});
