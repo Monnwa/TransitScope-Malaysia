@@ -7,7 +7,7 @@ import { splitRoutePath, type GeoPoint } from "@/lib/route-projection";
 import { mapStopAnchor } from "@/lib/journey-stop-selection";
 import type { BusMapJourney } from "./bus-journey-panel";
 import { arrivalClock } from "@/lib/departure-board";
-import { passengerName,publicRouteName,sentenceCase,stopStatusLabel } from "./passenger-copy";
+import { passengerName,publicRouteName,stopStatusLabel } from "./passenger-copy";
 
 export function MovingVehicle({position,motion,icon,title,selected,stale,onClick,children}:{position:GeoPoint;motion?:RouteAnimator;icon:L.DivIcon;title:string;selected:boolean;stale:boolean;onClick:()=>void;children:ReactNode}){
   const marker=useRef<L.Marker>(null),frame=motion?.getFrame();
@@ -52,5 +52,5 @@ export function JourneyStopMarker({journey}:{journey:BusMapJourney}){
   const stop=journey.selectedStop,popup=useRef<L.Popup>(null),map=useMap();
   useEffect(()=>{if(stop?.position)popup.current?.openOn(map);},[stop?.key,journey.navigation,map]);
   if(!stop?.position)return null;
-  return <><CircleMarker className="journey-stop-selected" center={stop.position} radius={11} pane="markerPane" pathOptions={{color:"#10243e",weight:4,fillColor:"#f2c500",fillOpacity:1}} eventHandlers={{click:()=>popup.current?.openOn(map)}}><Tooltip>{passengerName(stop.name)} · Selected stop</Tooltip></CircleMarker><Popup ref={popup} key={stop.key} position={stop.position} autoPan={false} closeOnClick={false} maxWidth={245} minWidth={170}><div className="journey-stop-popup" role="status"><strong>{passengerName(stop.name)}</strong><span>{publicRouteName(stop.routeName)?`Route ${stop.routeName}`:"Route unavailable"} · {stop.classification?sentenceCase(stop.classification):"Scheduled services"}</span><span>Arrival: {stop.arrival?arrivalClock(stop.arrival):"Time unavailable"} · Departure: {stop.departure?arrivalClock(stop.departure):"Time unavailable"} MYT</span><span>{stopStatusLabel(stop.status)}</span></div></Popup></>;
+  return <><CircleMarker className="journey-stop-selected" center={stop.position} radius={11} pane="markerPane" pathOptions={{color:"#10243e",weight:4,fillColor:"#f2c500",fillOpacity:1}} eventHandlers={{click:()=>popup.current?.openOn(map)}}><Tooltip>{passengerName(stop.name)} · Selected stop</Tooltip></CircleMarker><Popup ref={popup} key={stop.key} position={stop.position} autoPan={false} closeOnClick={false} maxWidth={245} minWidth={170}><div className="journey-stop-popup" role="status"><strong>{passengerName(stop.name)}</strong><span>{publicRouteName(stop.routeName)?`Route ${stop.routeName}`:"Route unavailable"} · {stop.classification}</span><span>Arrival {stop.arrival?arrivalClock(stop.arrival):"Time unavailable"} · Departure {stop.departure?arrivalClock(stop.departure):"Time unavailable"} MYT</span><span>{stopStatusLabel(stop.status)}</span></div></Popup></>;
 }

@@ -24,7 +24,7 @@ export type JourneyStop = {
   position?: [number,number]|null;
   adherence?:StopAdherence;
   id: string; sequence: number; name: string; arrival: string | null; departure: string | null;
-  classification: "SCHEDULED" | "ESTIMATED" | null;
+  classification: "SCHEDULED" | "ESTIMATED" | "SIMULATED" | null;
   status: "DEPARTED" | "PASSED" | "CURRENT" | "UPCOMING" | "UNKNOWN";
 };
 export type BusJourney = {

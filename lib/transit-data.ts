@@ -5,7 +5,7 @@ export const dataModeSchema = z.enum(["SIMULATED", "LIVE", "STATIC", "SCHEDULED"
 export type Mode = z.infer<typeof modeSchema>;
 /** Runtime values are validated by dataModeSchema; the string type keeps UI filter controls extensible. */
 export type DataMode = string;
-export type Status = "In service" | "Station available" | "Disrupted" | "Unavailable";
+export type Status = "In service" | "At stop" | "Station available" | "Disrupted" | "Unavailable";
 export type MrtLineId = "MRT1" | "MRT2";
 export type VehicleObservation = {
   gpsAccuracyM?: number;

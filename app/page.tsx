@@ -1,10 +1,8 @@
-import { connection } from "next/server";
 import Dashboard from "@/components/dashboard";
-import { linkBikeEnabled } from "@/lib/linkbike-feature";
+import { simulationTime } from "@/lib/simulation/clock";
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ mode?: string | string[] }> }) {
-  await connection();
-  const { mode } = await searchParams;
-  const initialDemo = (Array.isArray(mode) ? mode[0] : mode) === "demo";
-  return <Dashboard enableLinkBike={linkBikeEnabled()} initialDemo={initialDemo} />;
+export const dynamic = "force-dynamic";
+
+export default function Home() {
+  return <Dashboard initialTime={simulationTime()}/>;
 }

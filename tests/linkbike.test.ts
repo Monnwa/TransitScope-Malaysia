@@ -161,71 +161,28 @@ describe("LinkBike source", () => {
     expect(await createLinkBikeSource()()).toMatchObject({ status: "UNAVAILABLE", stations: [] });
   });
 
-  it("returns 404 without fetching when disabled, and uses JSON/no-store when enabled", async () => {
-    const fetch = vi.fn(async (url: string) => new Response(url === LINKBIKE_PORTAL ? portal : json));
+  it("returns bounded simulated inventory regardless of retired rollout flags", async () => {
+    const fetch = vi.fn();
     vi.stubGlobal("fetch", fetch);
-    vi.stubEnv("LINKBIKE_ENABLE_NON_PRODUCTION", "false");
-    vi.stubEnv("LINKBIKE_ENABLE_PRODUCTION", undefined);
-    expect((await GET()).status).toBe(404);
+    for (const enabled of ["false", "true"]) {
+      vi.stubEnv("LINKBIKE_ENABLE_PRODUCTION", enabled);
+      vi.stubEnv("VERCEL_ENV", "production");
+      vi.stubEnv("VERCEL_TARGET_ENV", "production");
+      vi.stubEnv("NODE_ENV", "production");
+      const response = await GET();
+      expect(response.status).toBe(200);
+      expect(response.headers.get("cache-control")).toBe("no-store");
+      const data = await response.json();
+      expect(data.status).toBe("SIMULATED");
+      expect(data.dataMode).toBe("SIMULATED");
+      expect(data.stations).toHaveLength(27);
+      for (const station of data.stations) {
+        expect(station.data_status).toBe("SIMULATED");
+        expect(station.available_bikes).toBeGreaterThanOrEqual(0);
+        expect(station.available_bikes + station.available_docks).toBe(station.total_docks);
+      }
+    }
     expect(fetch).not.toHaveBeenCalled();
-    vi.stubEnv("LINKBIKE_ENABLE_NON_PRODUCTION", "true");
-    vi.stubEnv("NODE_ENV", "production");
-    vi.stubEnv("VERCEL_ENV", undefined);
-    vi.stubEnv("VERCEL_TARGET_ENV", undefined);
-    expect((await GET()).status).toBe(404);
-    vi.stubEnv("VERCEL_ENV", "production");
-    expect((await GET()).status).toBe(404);
-    vi.stubEnv("VERCEL_TARGET_ENV", "production");
-    expect((await GET()).status).toBe(404);
-    vi.stubEnv("VERCEL_ENV", "preview");
-    vi.stubEnv("VERCEL_TARGET_ENV", undefined);
-    expect((await GET()).status).toBe(404);
-    vi.stubEnv("VERCEL_TARGET_ENV", "production");
-    expect((await GET()).status).toBe(404);
-    expect(fetch).not.toHaveBeenCalled();
-    vi.stubEnv("VERCEL_TARGET_ENV", "preview");
-    expect(linkBikeEnabled()).toBe(true);
-    const response = await GET();
-    expect(response.status).toBe(200);
-    expect(response.headers.get("cache-control")).toBe("no-store");
-    expect(await response.json()).toMatchObject({ status: "UNVERIFIED", refresh_seconds: 300 });
-  });
-
-  it("allows an anonymous read when the Production gate is explicitly enabled in the fixture", async () => {
-    vi.stubEnv("NODE_ENV", "production");
-    vi.stubEnv("VERCEL_ENV", "production");
-    vi.stubEnv("VERCEL_TARGET_ENV", "production");
-    vi.stubEnv("LINKBIKE_ENABLE_NON_PRODUCTION", undefined);
-    vi.stubEnv("LINKBIKE_ENABLE_PRODUCTION", "true");
-    const fetch = vi.fn(async (url: string) => new Response(url === LINKBIKE_PORTAL ? portal : json));
-    vi.stubGlobal("fetch", fetch);
-    vi.resetModules();
-    const route = await import("@/app/api/micromobility/linkbike/route");
-    expect(Object.keys(route).sort()).toEqual(["GET", "dynamic", "runtime"]);
-    const response = await route.GET();
-    expect(fetch).toHaveBeenCalledTimes(2);
-    expect(response.status).toBe(200);
-    expect(response.headers.get("cache-control")).toBe("no-store");
-    expect(await response.json()).toMatchObject({
-      status: "UNVERIFIED",
-      stations: [{ station_id: "2", is_public_station: null, available_docks: null, upstream_updated_at: null }],
-    });
-  });
-
-  it("returns a safe 503 for malformed portal HTML without leaking the body", async () => {
-    vi.stubEnv("LINKBIKE_ENABLE_NON_PRODUCTION", "true");
-    vi.stubEnv("VERCEL_ENV", "preview");
-    vi.stubEnv("VERCEL_TARGET_ENV", "preview");
-    vi.stubGlobal("fetch", vi.fn(async (url: string) => new Response(url === LINKBIKE_PORTAL ?
-      "<html><p>Upstream internal diagnostic text</p></html>" : json)));
-    vi.resetModules();
-    const route = await import("@/app/api/micromobility/linkbike/route");
-    const response = await route.GET();
-    expect(response.status).toBe(503);
-    expect(response.headers.get("cache-control")).toBe("no-store");
-    const body = await response.text();
-    expect(body).not.toContain("Upstream internal diagnostic text");
-    expect(JSON.parse(body)).toMatchObject({ status: "UNAVAILABLE", stations: [], upstream_updated_at: null });
   });
 
   it("keeps reported portal counts and suppresses coordinates when the consumer source fails", async () => {

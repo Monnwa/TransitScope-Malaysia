@@ -58,7 +58,7 @@ function stationAliases(record: TransitRecord) {
   return [...new Set(names.filter(name => name.length >= 3 && !name.includes("unavailable")))];
 }
 
-function servicesAt(record: TransitRecord): Service[] {
+export function servicesAt(record: TransitRecord): Service[] {
   const lines = Object.values(rapidRailMeta);
   const mapped = (record.railLines ?? []).map((id, index): Service => {
     const line = lines.find(item => item.id === id);
