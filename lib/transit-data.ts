@@ -21,8 +21,6 @@ export type Alert = { id: string; title: string; description: string; severity: 
 
 /** Deterministic, fictional records for classroom testing. Coordinates locate central KL but do not report real operations. */
 export const demoRecords: Record[] = [
-  { id: "DEMO-BUS-101", name: "Demo Bus 101", mode: "Bus", operator: "TransitScope demo", route: "D100", station: null, position: [3.1467, 101.6957], reportedAt: "2026-10-31T10:24:00+08:00", status: "In service", dataMode: "SIMULATED", source: "Deterministic classroom dataset", recordKind: "vehicle" },
-  { id: "DEMO-BUS-204", name: "Demo Bus 204", mode: "Bus", operator: "TransitScope demo", route: "D200", station: null, position: [3.1391, 101.6869], reportedAt: "2026-10-31T10:23:00+08:00", status: "In service", dataMode: "SIMULATED", source: "Deterministic classroom dataset", recordKind: "vehicle" },
   { id: "DEMO-MRT-01", name: "Bukit Bintang station", mode: "MRT", operator: "Static reference", route: "Kajang Line", station: "Bukit Bintang", position: [3.1469, 101.7113], reportedAt: null, status: "Station available", dataMode: "SCHEDULED", source: "Static demonstration reference", recordKind: "stop" },
   { id: "DEMO-LRT-01", name: "Masjid Jamek station", mode: "LRT", operator: "Static reference", route: "Kelana Jaya Line", station: "Masjid Jamek", position: [3.1493, 101.6961], reportedAt: null, status: "Station available", dataMode: "SCHEDULED", source: "Static demonstration reference" },
   { id: "DEMO-MONO-01", name: "Raja Chulan station", mode: "Monorail", operator: "Static reference", route: "KL Monorail", station: "Raja Chulan", position: [3.1507, 101.7061], reportedAt: null, status: "Station available", dataMode: "SCHEDULED", source: "Static demonstration reference" },

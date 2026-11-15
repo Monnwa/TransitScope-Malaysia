@@ -19,9 +19,6 @@ const scenarios: AlertScenario[] = [
   { id: "komuter-normal", category: "Normal service", severity: "Low", title: "KTM Komuter running normally",
     description: "Simulated Komuter services are running at their usual intervals.",
     routes: ["KTM Tanjung Malim–Port Klang", "KTM Batu Caves–Pulau Sebang"], routeIds: ["KTM:KA15_KD19", "KTM:KC05_KB18"], stations: [], modes: ["KTM"], age: 5 },
-  { id: "bus-restoration", category: "Restoration", severity: "Low", title: "D100 service restored",
-    description: "Buses have resumed their usual route between KL Sentral and KLCC after an earlier diversion.",
-    routes: ["D100"], routeIds: ["D100"], stations: ["KL Sentral"], modes: ["Bus"], age: 18 },
 ];
 
 export function simulationAlerts(now: number) {

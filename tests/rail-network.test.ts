@@ -4,7 +4,7 @@ import { mapMode } from "@/lib/official-transit";
 import { validRailPath } from "@/lib/rail-network";
 import { demoRecords, type Record } from "@/lib/transit-data";
 describe("unified railway stations", () => {
-  const station = (name: string, mode: Record["mode"], line: string, position: [number, number]): Record => ({ ...demoRecords[2], id: line + name, name, mode, railLines: [line], lineNames: [line], position });
+  const station = (name: string, mode: Record["mode"], line: string, position: [number, number]): Record => ({ ...demoRecords[0], id: line + name, name, mode, railLines: [line], lineNames: [line], position });
   it("merges co-located cross-mode stations and retains every membership", () => {
     const result = mergeRailStations([station("PASAR SENI", "MRT", "MRT1", [3.14, 101.69]), station("Pasar Seni", "LRT", "LRT-KJ", [3.141, 101.69])]);
     expect(result).toHaveLength(1); expect(result[0].railLines).toEqual(["MRT1", "LRT-KJ"]); expect(result[0].interchange).toBe(true); expect(result[0].modes).toEqual(["MRT", "LRT"]);

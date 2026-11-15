@@ -6,7 +6,7 @@ const { records } = simulationSnapshot(Date.UTC(2026, 10, 14, 4));
 
 describe("TransitScope filtering", () => {
   it("finds a simulated bus by stable vehicle identifier", () => {
-    expect(filterRecords(records, "bus:D100:01", [], [], []).map(record => record.id)).toEqual(["bus:D100:01"]);
+    expect(filterRecords(records, "bus:T401:01", [], [], []).map(record => record.id)).toEqual(["bus:T401:01"]);
   });
   it("finds all 27 LinkBike stations through the mode filter", () => {
     const results = filterRecords(records, "", ["Shared bike"], [], []);

@@ -39,13 +39,14 @@ export default function UpcomingDepartures({ record, operations, now, onRefresh 
       </select></label>}
       <div className="board-announcement">{arrivals.length} upcoming simulated services · MYT</div>
       <div className="board-departure-list"><ul id={listId} aria-label="Simulated arrivals">{visible.map(arrival => {
-        const time = timestamp(arrival.arrivalTimestamp);
+        const eventTime = arrival.mode === "Bus" ? arrival.departureTimestamp : arrival.arrivalTimestamp;
+        const time = timestamp(eventTime);
         return <li key={arrival.tripId} className="board-departure" style={{ borderLeftColor: railNetwork.lines.find(line => line.id === arrival.routeId)?.colour }}>
           <div className="board-service"><span className="board-route">{arrival.routeName}</span><strong className="board-destination">Towards {arrival.destination}</strong>
             <span className="board-service-meta">{arrival.mode === "Bus" ? "Direction" : "Platform"} {arrival.platform} · {arrival.vehicleId}</span></div>
           <div className="board-time"><time dateTime={time}>{arrivalClock(time)}</time>
             {malaysiaDay(now) !== malaysiaDay(time) && <small className="board-date">{boardDate(time)}</small>}
-            <span className="train-countdown">{arrivalCountdown(arrival.arrivalTimestamp, now)}</span><small className="board-type">{SIMULATED}</small></div>
+            <span className="train-countdown">{arrivalCountdown(eventTime, now)}</span><small className="board-type">{SIMULATED}</small></div>
         </li>;
       })}</ul></div>
       {arrivals.length > 5 && <button type="button" className="board-expand" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded(value => !value)}>

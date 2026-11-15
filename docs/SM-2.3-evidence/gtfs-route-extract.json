@@ -1,0 +1,1326 @@
+{
+  "agency": [
+    {
+      "agency_name": "MRT Feeder Bus",
+      "agency_url": "https://www.myrapid.com.my/traveling-with-us/how-to-travel-with-us/rapid-kl/mrt/mrt-feeder-bus",
+      "agency_timezone": "Asia/Kuala_Lumpur",
+      "agency_phone": "03-7885-2585",
+      "agency_lang": "en"
+    }
+  ],
+  "calendar": [
+    {
+      "service_id": "26103003",
+      "monday": "0",
+      "tuesday": "0",
+      "wednesday": "0",
+      "thursday": "0",
+      "friday": "0",
+      "saturday": "1",
+      "sunday": "1",
+      "start_date": "20261115",
+      "end_date": "20261206"
+    },
+    {
+      "service_id": "26103001",
+      "monday": "1",
+      "tuesday": "1",
+      "wednesday": "1",
+      "thursday": "1",
+      "friday": "1",
+      "saturday": "0",
+      "sunday": "0",
+      "start_date": "20261116",
+      "end_date": "20261204"
+    }
+  ],
+  "exceptions": [],
+  "routes": [
+    {
+      "code": "T401",
+      "name": "MRT Cochrane – Bandar Sri Permaisuri",
+      "routeId": "30000058",
+      "direction": "0",
+      "shapeId": "1000000558",
+      "originalVertices": 494,
+      "visits": [
+        {
+          "id": "12001284",
+          "name": "MRT COCHRANE PINTU A",
+          "published": [
+            3.133286,
+            101.72268
+          ],
+          "vertex": 0,
+          "elapsedMs": 0,
+          "offsetM": 21.59,
+          "originalShapeSegment": 4,
+          "alongM": 0
+        },
+        {
+          "id": "12001274",
+          "name": "WISMA INDAH",
+          "published": [
+            3.133644,
+            101.718315
+          ],
+          "vertex": 14,
+          "elapsedMs": 92000,
+          "offsetM": 1.23,
+          "originalShapeSegment": 17,
+          "alongM": 575.18
+        },
+        {
+          "id": "12001277",
+          "name": "WARISAN CITY VIEW (OPP)",
+          "published": [
+            3.128942,
+            101.72052
+          ],
+          "vertex": 31,
+          "elapsedMs": 200000,
+          "offsetM": 5.92,
+          "originalShapeSegment": 33,
+          "alongM": 1256.7
+        },
+        {
+          "id": "12001282",
+          "name": "SUNWAY VELOCITY RESIDENCE",
+          "published": [
+            3.127738,
+            101.72226
+          ],
+          "vertex": 38,
+          "elapsedMs": 238000,
+          "offsetM": 5.81,
+          "originalShapeSegment": 39,
+          "alongM": 1492.5
+        },
+        {
+          "id": "12001340",
+          "name": "MRT MALURI PINTU D",
+          "published": [
+            3.1235027,
+            101.72815
+          ],
+          "vertex": 60,
+          "elapsedMs": 370000,
+          "offsetM": 16.61,
+          "originalShapeSegment": 60,
+          "alongM": 2332.12
+        },
+        {
+          "id": "12001352",
+          "name": "FLAT SRI SABAH",
+          "published": [
+            3.1169,
+            101.72622
+          ],
+          "vertex": 83,
+          "elapsedMs": 509000,
+          "offsetM": 2.86,
+          "originalShapeSegment": 82,
+          "alongM": 3213.73
+        },
+        {
+          "id": "12001330",
+          "name": "FLAT SRI PULAU PINANG BLOK 13",
+          "published": [
+            3.116136,
+            101.72436
+          ],
+          "vertex": 91,
+          "elapsedMs": 556000,
+          "offsetM": 10.14,
+          "originalShapeSegment": 89,
+          "alongM": 3507.28
+        },
+        {
+          "id": "12001346",
+          "name": "INDAH MAS APARTMENT",
+          "published": [
+            3.11805,
+            101.72166
+          ],
+          "vertex": 100,
+          "elapsedMs": 618000,
+          "offsetM": 6.96,
+          "originalShapeSegment": 97,
+          "alongM": 3900.17
+        },
+        {
+          "id": "12001345",
+          "name": "FLAT SRI PULAU PINANG BLOK 1",
+          "published": [
+            3.1174834,
+            101.71978
+          ],
+          "vertex": 105,
+          "elapsedMs": 656000,
+          "offsetM": 3.4,
+          "originalShapeSegment": 101,
+          "alongM": 4133.7
+        },
+        {
+          "id": "12001310",
+          "name": "MASJID AZZUBAIR IBNUL AWWAM (OPP)",
+          "published": [
+            3.1143389,
+            101.72044
+          ],
+          "vertex": 117,
+          "elapsedMs": 729000,
+          "offsetM": 2.09,
+          "originalShapeSegment": 112,
+          "alongM": 4594.02
+        },
+        {
+          "id": "12001288",
+          "name": "PASAR BESAR CHERAS",
+          "published": [
+            3.112433,
+            101.7238
+          ],
+          "vertex": 130,
+          "elapsedMs": 824000,
+          "offsetM": 5.38,
+          "originalShapeSegment": 124,
+          "alongM": 5192.14
+        },
+        {
+          "id": "12001332",
+          "name": "FLAT SRI MELAKA (TIMUR)",
+          "published": [
+            3.1110018,
+            101.7248402
+          ],
+          "vertex": 134,
+          "elapsedMs": 857000,
+          "offsetM": 1.37,
+          "originalShapeSegment": 127,
+          "alongM": 5389.99
+        },
+        {
+          "id": "12001324",
+          "name": "(M2) FLAT SRI MELAKA BLOK 26",
+          "published": [
+            3.1086528,
+            101.722885
+          ],
+          "vertex": 148,
+          "elapsedMs": 921000,
+          "offsetM": 0.24,
+          "originalShapeSegment": 140,
+          "alongM": 5787.15
+        },
+        {
+          "id": "12001317",
+          "name": "FLAT SRI MELAKA (BARAT)",
+          "published": [
+            3.1089357,
+            101.7217786
+          ],
+          "vertex": 154,
+          "elapsedMs": 955000,
+          "offsetM": 2.62,
+          "originalShapeSegment": 145,
+          "alongM": 6002.08
+        },
+        {
+          "id": "12001280",
+          "name": "PEJ. DBKL ZON 1",
+          "published": [
+            3.112968,
+            101.72193
+          ],
+          "vertex": 167,
+          "elapsedMs": 1030000,
+          "offsetM": 4.77,
+          "originalShapeSegment": 157,
+          "alongM": 6474.67
+        },
+        {
+          "id": "12001309",
+          "name": "MASJID AZZUBAIR IBNUL AWWAM",
+          "published": [
+            3.114236,
+            101.72036
+          ],
+          "vertex": 176,
+          "elapsedMs": 1087000,
+          "offsetM": 4.84,
+          "originalShapeSegment": 165,
+          "alongM": 6830.89
+        },
+        {
+          "id": "12003211",
+          "name": "RESIDENSI AKASIA (OPP)",
+          "published": [
+            3.109165,
+            101.71818
+          ],
+          "vertex": 193,
+          "elapsedMs": 1196000,
+          "offsetM": 5.58,
+          "originalShapeSegment": 181,
+          "alongM": 7523.1
+        },
+        {
+          "id": "12001343",
+          "name": "SMK SERI PERMAISURI",
+          "published": [
+            3.1073222,
+            101.716774
+          ],
+          "vertex": 197,
+          "elapsedMs": 1237000,
+          "offsetM": 5.02,
+          "originalShapeSegment": 184,
+          "alongM": 7780.99
+        },
+        {
+          "id": "12001298",
+          "name": "BAH. TEKNOLOGI PENDIDIKAN NEGERI W.P",
+          "published": [
+            3.1047916,
+            101.715
+          ],
+          "vertex": 201,
+          "elapsedMs": 1292000,
+          "offsetM": 4.84,
+          "originalShapeSegment": 187,
+          "alongM": 8124.48
+        },
+        {
+          "id": "12001266",
+          "name": "PLAZA DWITASIK",
+          "published": [
+            3.1023237,
+            101.7141008
+          ],
+          "vertex": 209,
+          "elapsedMs": 1351000,
+          "offsetM": 18.57,
+          "originalShapeSegment": 194,
+          "alongM": 8489.06
+        },
+        {
+          "id": "12001267",
+          "name": "PUSAT PERNIAGAAN DANAU LUMAYAN",
+          "published": [
+            3.1007439,
+            101.7155219
+          ],
+          "vertex": 219,
+          "elapsedMs": 1394000,
+          "offsetM": 3.77,
+          "originalShapeSegment": 203,
+          "alongM": 8753.4
+        },
+        {
+          "id": "12001272",
+          "name": "WISMA ZELAN",
+          "published": [
+            3.099577,
+            101.71785
+          ],
+          "vertex": 240,
+          "elapsedMs": 1481000,
+          "offsetM": 3.67,
+          "originalShapeSegment": 223,
+          "alongM": 9293.98
+        },
+        {
+          "id": "12001273",
+          "name": "TAMAN TASIK PERMAISURI",
+          "published": [
+            3.0967163,
+            101.7182805
+          ],
+          "vertex": 246,
+          "elapsedMs": 1533000,
+          "offsetM": 3.32,
+          "originalShapeSegment": 228,
+          "alongM": 9616.55
+        },
+        {
+          "id": "12001270",
+          "name": "UNIT BERKUDA DBKL (UTARA)",
+          "published": [
+            3.0946703,
+            101.7171665
+          ],
+          "vertex": 257,
+          "elapsedMs": 1576000,
+          "offsetM": 1.85,
+          "originalShapeSegment": 238,
+          "alongM": 9889.37
+        },
+        {
+          "id": "12001300",
+          "name": "VISTA AMANI CONDOMINIUM",
+          "published": [
+            3.0961519,
+            101.7151883
+          ],
+          "vertex": 271,
+          "elapsedMs": 1631000,
+          "offsetM": 8.39,
+          "originalShapeSegment": 251,
+          "alongM": 10236.63
+        },
+        {
+          "id": "12001295",
+          "name": "CENDANA APARTMENT",
+          "published": [
+            3.0985076,
+            101.7130785
+          ],
+          "vertex": 285,
+          "elapsedMs": 1699000,
+          "offsetM": 7.08,
+          "originalShapeSegment": 264,
+          "alongM": 10663
+        },
+        {
+          "id": "12001294",
+          "name": "(M1) DATARAN DWITASIK",
+          "published": [
+            3.0990719,
+            101.7116941
+          ],
+          "vertex": 292,
+          "elapsedMs": 1733000,
+          "offsetM": 4.01,
+          "originalShapeSegment": 270,
+          "alongM": 10876.53
+        },
+        {
+          "id": "12001357",
+          "name": "QUEENSVILLE",
+          "published": [
+            3.1018,
+            101.71221
+          ],
+          "vertex": 298,
+          "elapsedMs": 1783000,
+          "offsetM": 5.69,
+          "originalShapeSegment": 275,
+          "alongM": 11185.36
+        },
+        {
+          "id": "12001297",
+          "name": "LAMAN TASIK CONDOMINIUM",
+          "published": [
+            3.104736,
+            101.71461
+          ],
+          "vertex": 306,
+          "elapsedMs": 1851000,
+          "offsetM": 7.67,
+          "originalShapeSegment": 282,
+          "alongM": 11607.6
+        },
+        {
+          "id": "12001304",
+          "name": "VISTA TASIK",
+          "published": [
+            3.106514,
+            101.715904
+          ],
+          "vertex": 310,
+          "elapsedMs": 1891000,
+          "offsetM": 5.64,
+          "originalShapeSegment": 285,
+          "alongM": 11852.63
+        },
+        {
+          "id": "12003212",
+          "name": "RESIDENSI AKASIA",
+          "published": [
+            3.109295,
+            101.71796
+          ],
+          "vertex": 316,
+          "elapsedMs": 1952000,
+          "offsetM": 2.56,
+          "originalShapeSegment": 290,
+          "alongM": 12237.02
+        },
+        {
+          "id": "12001342",
+          "name": "BALAI POLIS SRI PERMAISURI",
+          "published": [
+            3.111874,
+            101.7180827
+          ],
+          "vertex": 329,
+          "elapsedMs": 2032000,
+          "offsetM": 5.32,
+          "originalShapeSegment": 302,
+          "alongM": 12733.86
+        },
+        {
+          "id": "12001301",
+          "name": "SERI PUTERI CONDOMINIUM",
+          "published": [
+            3.1117999,
+            101.7152556
+          ],
+          "vertex": 335,
+          "elapsedMs": 2082000,
+          "offsetM": 18.3,
+          "originalShapeSegment": 307,
+          "alongM": 13048.82
+        },
+        {
+          "id": "12001296",
+          "name": "LRT CHERAS",
+          "published": [
+            3.1123972,
+            101.71454
+          ],
+          "vertex": 341,
+          "elapsedMs": 2104000,
+          "offsetM": 5.38,
+          "originalShapeSegment": 312,
+          "alongM": 13183.42
+        },
+        {
+          "id": "12001269",
+          "name": "BINTANG MAS CONDOMINIUM",
+          "published": [
+            3.112277,
+            101.71675
+          ],
+          "vertex": 352,
+          "elapsedMs": 2145000,
+          "offsetM": 7.18,
+          "originalShapeSegment": 322,
+          "alongM": 13439.05
+        },
+        {
+          "id": "12001310",
+          "name": "MASJID AZZUBAIR IBNUL AWWAM (OPP)",
+          "published": [
+            3.1143389,
+            101.72044
+          ],
+          "vertex": 371,
+          "elapsedMs": 2289000,
+          "offsetM": 2.09,
+          "originalShapeSegment": 340,
+          "alongM": 14353.25
+        },
+        {
+          "id": "12001279",
+          "name": "KONDO SERI MAS",
+          "published": [
+            3.113305,
+            101.7219
+          ],
+          "vertex": 381,
+          "elapsedMs": 2339000,
+          "offsetM": 0.26,
+          "originalShapeSegment": 349,
+          "alongM": 14668.2
+        },
+        {
+          "id": "12001318",
+          "name": "FLAT SRI MELAKA (BARAT)",
+          "published": [
+            3.1091321,
+            101.721851
+          ],
+          "vertex": 393,
+          "elapsedMs": 2417000,
+          "offsetM": 1.73,
+          "originalShapeSegment": 360,
+          "alongM": 15158.04
+        },
+        {
+          "id": "12001323",
+          "name": "FLAT SRI MELAKA BLOK 26",
+          "published": [
+            3.1087611,
+            101.7228818
+          ],
+          "vertex": 400,
+          "elapsedMs": 2453000,
+          "offsetM": 2.59,
+          "originalShapeSegment": 366,
+          "alongM": 15379.87
+        },
+        {
+          "id": "12001331",
+          "name": "FLAT SRI MELAKA (TIMUR)",
+          "published": [
+            3.11097,
+            101.724749
+          ],
+          "vertex": 411,
+          "elapsedMs": 2514000,
+          "offsetM": 0.83,
+          "originalShapeSegment": 376,
+          "alongM": 15762.07
+        },
+        {
+          "id": "12001327",
+          "name": "(M3) PASAR BESAR CHERAS",
+          "published": [
+            3.1122556,
+            101.723694
+          ],
+          "vertex": 415,
+          "elapsedMs": 2545000,
+          "offsetM": 7.03,
+          "originalShapeSegment": 379,
+          "alongM": 15946.27
+        },
+        {
+          "id": "12001309",
+          "name": "MASJID AZZUBAIR IBNUL AWWAM",
+          "published": [
+            3.114236,
+            101.72036
+          ],
+          "vertex": 431,
+          "elapsedMs": 2640000,
+          "offsetM": 4.84,
+          "originalShapeSegment": 394,
+          "alongM": 16550.38
+        },
+        {
+          "id": "12001348",
+          "name": "FLAT SRI JOHOR BLOK 3",
+          "published": [
+            3.1167696,
+            101.719315
+          ],
+          "vertex": 443,
+          "elapsedMs": 2699000,
+          "offsetM": 7.63,
+          "originalShapeSegment": 405,
+          "alongM": 16921.52
+        },
+        {
+          "id": "12001356",
+          "name": "INDAH MAS APARTMENT",
+          "published": [
+            3.1181612,
+            101.7219
+          ],
+          "vertex": 453,
+          "elapsedMs": 2758000,
+          "offsetM": 0.24,
+          "originalShapeSegment": 414,
+          "alongM": 17288.69
+        },
+        {
+          "id": "12001329",
+          "name": "FLAT SRI PULAU PINANG BLOK 13 (OPP)",
+          "published": [
+            3.1164277,
+            101.724236
+          ],
+          "vertex": 460,
+          "elapsedMs": 2812000,
+          "offsetM": 3.38,
+          "originalShapeSegment": 420,
+          "alongM": 17626.33
+        },
+        {
+          "id": "12001353",
+          "name": "FLAT SRI SABAH",
+          "published": [
+            3.117239,
+            101.72633
+          ],
+          "vertex": 468,
+          "elapsedMs": 2867000,
+          "offsetM": 5.47,
+          "originalShapeSegment": 427,
+          "alongM": 17976.81
+        },
+        {
+          "id": "12001351",
+          "name": "STADIUM BADMINTON CHERAS",
+          "published": [
+            3.1193223,
+            101.72809
+          ],
+          "vertex": 477,
+          "elapsedMs": 2921000,
+          "offsetM": 13.29,
+          "originalShapeSegment": 435,
+          "alongM": 18311.77
+        },
+        {
+          "id": "12001338",
+          "name": "MRT MALURI PINTU B",
+          "published": [
+            3.1232612,
+            101.727844
+          ],
+          "vertex": 488,
+          "elapsedMs": 2996000,
+          "offsetM": 15.41,
+          "originalShapeSegment": 445,
+          "alongM": 18782.08
+        },
+        {
+          "id": "12001604",
+          "name": "AEON MALURI 1 (OPP)",
+          "published": [
+            3.1250637,
+            101.72671
+          ],
+          "vertex": 492,
+          "elapsedMs": 3034000,
+          "offsetM": 9.33,
+          "originalShapeSegment": 448,
+          "alongM": 19019.81
+        },
+        {
+          "id": "12001287",
+          "name": "JAB. KESIHATAN & ALAM SEKITAR DBKL",
+          "published": [
+            3.126686,
+            101.723625
+          ],
+          "vertex": 505,
+          "elapsedMs": 3098000,
+          "offsetM": 6.43,
+          "originalShapeSegment": 460,
+          "alongM": 19417.04
+        },
+        {
+          "id": "12001278",
+          "name": "QUEEN'S AVENUE",
+          "published": [
+            3.128891,
+            101.7214
+          ],
+          "vertex": 514,
+          "elapsedMs": 3164000,
+          "offsetM": 2.35,
+          "originalShapeSegment": 468,
+          "alongM": 19831.21
+        },
+        {
+          "id": "12001284",
+          "name": "MRT COCHRANE PINTU A",
+          "published": [
+            3.133286,
+            101.72268
+          ],
+          "vertex": 528,
+          "elapsedMs": 3300000,
+          "offsetM": 21.59,
+          "originalShapeSegment": 481,
+          "alongM": 20548.88
+        }
+      ],
+      "mid": 26,
+      "sample": "261030010280S2",
+      "sampleDeparture": "06:00:00",
+      "layoverMs": 300000,
+      "timetable": [
+        {
+          "service": "26103001",
+          "trips": 36,
+          "first": "06:00:00",
+          "last": "23:30:00",
+          "headwaysMin": [
+            30
+          ],
+          "durationMin": [
+            55,
+            70
+          ]
+        },
+        {
+          "service": "26103003",
+          "trips": 36,
+          "first": "06:00:00",
+          "last": "23:30:00",
+          "headwaysMin": [
+            30
+          ],
+          "durationMin": [
+            50,
+            60
+          ]
+        }
+      ],
+      "metrics": {
+        "lengthM": 20548.88381514236,
+        "longestM": 176.61559159929269,
+        "midM": 10876.529149076803,
+        "boardingOffsetsM": 21.59,
+        "publishedOriginGapM": 621.5595555086983,
+        "closingGapM": 0,
+        "cochraneBollardM": 33.22011482019502
+      }
+    },
+    {
+      "code": "T402",
+      "name": "MRT Taman Midah – LRT Salak Selatan",
+      "routeId": "30000098",
+      "direction": "0",
+      "shapeId": "1000000567",
+      "originalVertices": 482,
+      "visits": [
+        {
+          "id": "12003043",
+          "name": "MRT TAMAN MIDAH PINTU A",
+          "published": [
+            3.1055319,
+            101.7315913
+          ],
+          "vertex": 0,
+          "elapsedMs": 0,
+          "offsetM": 7.38,
+          "originalShapeSegment": 1,
+          "alongM": 0
+        },
+        {
+          "id": "12001730",
+          "name": "RUMAH KANAK-KANAK TENGKU BUDRIAH",
+          "published": [
+            3.10848,
+            101.72901
+          ],
+          "vertex": 18,
+          "elapsedMs": 100000,
+          "offsetM": 1.19,
+          "originalShapeSegment": 18,
+          "alongM": 529.55
+        },
+        {
+          "id": "12003175",
+          "name": "HOSPITAL REHABILITASI CHERAS (JPR)",
+          "published": [
+            3.105832,
+            101.72957
+          ],
+          "vertex": 44,
+          "elapsedMs": 231000,
+          "offsetM": 4.83,
+          "originalShapeSegment": 43,
+          "alongM": 1230.34
+        },
+        {
+          "id": "12001290",
+          "name": "KLINIK KESIHATAN CHERAS",
+          "published": [
+            3.1066515,
+            101.72594
+          ],
+          "vertex": 69,
+          "elapsedMs": 342000,
+          "offsetM": 3.01,
+          "originalShapeSegment": 67,
+          "alongM": 1821.41
+        },
+        {
+          "id": "12001289",
+          "name": "S.M. TEKNIK KL (OPP)",
+          "published": [
+            3.1034994,
+            101.723976
+          ],
+          "vertex": 75,
+          "elapsedMs": 420000,
+          "offsetM": 2.48,
+          "originalShapeSegment": 72,
+          "alongM": 2234.51
+        },
+        {
+          "id": "12001285",
+          "name": "PUSAT PERUBATAN UKM",
+          "published": [
+            3.100426,
+            101.72272
+          ],
+          "vertex": 82,
+          "elapsedMs": 489000,
+          "offsetM": 6.48,
+          "originalShapeSegment": 78,
+          "alongM": 2604.72
+        },
+        {
+          "id": "12001731",
+          "name": "HUKM",
+          "published": [
+            3.09938,
+            101.72307
+          ],
+          "vertex": 88,
+          "elapsedMs": 521000,
+          "offsetM": 5.42,
+          "originalShapeSegment": 83,
+          "alongM": 2774.36
+        },
+        {
+          "id": "12001319",
+          "name": "STADIUM BOLA SEPAK KL",
+          "published": [
+            3.0997722,
+            101.72233
+          ],
+          "vertex": 108,
+          "elapsedMs": 595000,
+          "offsetM": 9.55,
+          "originalShapeSegment": 102,
+          "alongM": 3162.4
+        },
+        {
+          "id": "12001272",
+          "name": "WISMA ZELAN",
+          "published": [
+            3.099577,
+            101.71785
+          ],
+          "vertex": 149,
+          "elapsedMs": 794000,
+          "offsetM": 3.67,
+          "originalShapeSegment": 142,
+          "alongM": 4235.16
+        },
+        {
+          "id": "12001273",
+          "name": "TAMAN TASIK PERMAISURI",
+          "published": [
+            3.0967163,
+            101.7182805
+          ],
+          "vertex": 155,
+          "elapsedMs": 855000,
+          "offsetM": 3.32,
+          "originalShapeSegment": 147,
+          "alongM": 4557.74
+        },
+        {
+          "id": "12001270",
+          "name": "UNIT BERKUDA DBKL (UTARA)",
+          "published": [
+            3.0946703,
+            101.7171665
+          ],
+          "vertex": 166,
+          "elapsedMs": 906000,
+          "offsetM": 1.85,
+          "originalShapeSegment": 157,
+          "alongM": 4830.56
+        },
+        {
+          "id": "12001300",
+          "name": "VISTA AMANI CONDOMINIUM",
+          "published": [
+            3.0961519,
+            101.7151883
+          ],
+          "vertex": 180,
+          "elapsedMs": 971000,
+          "offsetM": 8.39,
+          "originalShapeSegment": 170,
+          "alongM": 5177.81
+        },
+        {
+          "id": "12001295",
+          "name": "CENDANA APARTMENT",
+          "published": [
+            3.0985076,
+            101.7130785
+          ],
+          "vertex": 194,
+          "elapsedMs": 1051000,
+          "offsetM": 7.08,
+          "originalShapeSegment": 183,
+          "alongM": 5604.18
+        },
+        {
+          "id": "12001294",
+          "name": "(M1) DATARAN DWITASIK",
+          "published": [
+            3.0990719,
+            101.7116941
+          ],
+          "vertex": 201,
+          "elapsedMs": 1092000,
+          "offsetM": 4.01,
+          "originalShapeSegment": 189,
+          "alongM": 5817.72
+        },
+        {
+          "id": "12001357",
+          "name": "QUEENSVILLE",
+          "published": [
+            3.1018,
+            101.71221
+          ],
+          "vertex": 207,
+          "elapsedMs": 1151000,
+          "offsetM": 5.69,
+          "originalShapeSegment": 194,
+          "alongM": 6126.55
+        },
+        {
+          "id": "12001734",
+          "name": "JPJ SRI PERMAISURI",
+          "published": [
+            3.102963,
+            101.70863
+          ],
+          "vertex": 228,
+          "elapsedMs": 1301000,
+          "offsetM": 9.41,
+          "originalShapeSegment": 214,
+          "alongM": 6923.43
+        },
+        {
+          "id": "12001733",
+          "name": "LRT SALAK SELATAN",
+          "published": [
+            3.102016,
+            101.70649
+          ],
+          "vertex": 239,
+          "elapsedMs": 1375000,
+          "offsetM": 6.74,
+          "originalShapeSegment": 224,
+          "alongM": 7311.77
+        },
+        {
+          "id": "12001735",
+          "name": "BAYU TASIK CONDOMINIUM",
+          "published": [
+            3.104374,
+            101.71132
+          ],
+          "vertex": 264,
+          "elapsedMs": 1572000,
+          "offsetM": 0.05,
+          "originalShapeSegment": 248,
+          "alongM": 8365.71
+        },
+        {
+          "id": "12001736",
+          "name": "VILLA LAMAN TASIK",
+          "published": [
+            3.104083,
+            101.71216
+          ],
+          "vertex": 268,
+          "elapsedMs": 1592000,
+          "offsetM": 1.36,
+          "originalShapeSegment": 251,
+          "alongM": 8465.31
+        },
+        {
+          "id": "12001737",
+          "name": "(M1) QUEENSVILLE",
+          "published": [
+            3.101905,
+            101.7126
+          ],
+          "vertex": 281,
+          "elapsedMs": 1657000,
+          "offsetM": 3.57,
+          "originalShapeSegment": 263,
+          "alongM": 8810.27
+        },
+        {
+          "id": "12001738",
+          "name": "DATARAN DWITASIK",
+          "published": [
+            3.099878,
+            101.712074
+          ],
+          "vertex": 286,
+          "elapsedMs": 1702000,
+          "offsetM": 2.47,
+          "originalShapeSegment": 267,
+          "alongM": 9045.99
+        },
+        {
+          "id": "12003266",
+          "name": "CENDANA APARTMEN (OPP)",
+          "published": [
+            3.098711,
+            101.713083
+          ],
+          "vertex": 293,
+          "elapsedMs": 1751000,
+          "offsetM": 0.38,
+          "originalShapeSegment": 273,
+          "alongM": 9303.54
+        },
+        {
+          "id": "12001740",
+          "name": "VISTA AMANI CONDOMINIUM (OPP)",
+          "published": [
+            3.096405,
+            101.71528
+          ],
+          "vertex": 309,
+          "elapsedMs": 1831000,
+          "offsetM": 0.14,
+          "originalShapeSegment": 288,
+          "alongM": 9731.69
+        },
+        {
+          "id": "12001741",
+          "name": "SUASANA LUMAYAN CONDOMINIUM",
+          "published": [
+            3.095959,
+            101.71805
+          ],
+          "vertex": 333,
+          "elapsedMs": 1923000,
+          "offsetM": 5.19,
+          "originalShapeSegment": 311,
+          "alongM": 10223.33
+        },
+        {
+          "id": "12001742",
+          "name": "WISMA ZELAN",
+          "published": [
+            3.099327,
+            101.71773
+          ],
+          "vertex": 349,
+          "elapsedMs": 1994000,
+          "offsetM": 1.05,
+          "originalShapeSegment": 326,
+          "alongM": 10604.91
+        },
+        {
+          "id": "12001743",
+          "name": "SEKOLAH MENENGAH SAINS SELANGOR",
+          "published": [
+            3.102387,
+            101.71978
+          ],
+          "vertex": 365,
+          "elapsedMs": 2100000,
+          "offsetM": 4.74,
+          "originalShapeSegment": 341,
+          "alongM": 11178.02
+        },
+        {
+          "id": "12001285",
+          "name": "PUSAT PERUBATAN UKM",
+          "published": [
+            3.100426,
+            101.72272
+          ],
+          "vertex": 379,
+          "elapsedMs": 2200000,
+          "offsetM": 6.48,
+          "originalShapeSegment": 354,
+          "alongM": 11713.02
+        },
+        {
+          "id": "12001731",
+          "name": "HUKM",
+          "published": [
+            3.09938,
+            101.72307
+          ],
+          "vertex": 385,
+          "elapsedMs": 2232000,
+          "offsetM": 5.42,
+          "originalShapeSegment": 359,
+          "alongM": 11882.66
+        },
+        {
+          "id": "12001283",
+          "name": "KELAB RENANG CHERAS (OPP)",
+          "published": [
+            3.098303,
+            101.722496
+          ],
+          "vertex": 406,
+          "elapsedMs": 2312000,
+          "offsetM": 4.21,
+          "originalShapeSegment": 379,
+          "alongM": 12305.23
+        },
+        {
+          "id": "12001286",
+          "name": "PUSAT BELIA ANTARABANGSA KL (OPP)",
+          "published": [
+            3.0963674,
+            101.72294
+          ],
+          "vertex": 412,
+          "elapsedMs": 2355000,
+          "offsetM": 11.66,
+          "originalShapeSegment": 384,
+          "alongM": 12530.94
+        },
+        {
+          "id": "12001333",
+          "name": "TMN JAYA (UTARA)",
+          "published": [
+            3.0943916,
+            101.72521
+          ],
+          "vertex": 422,
+          "elapsedMs": 2437000,
+          "offsetM": 4.04,
+          "originalShapeSegment": 393,
+          "alongM": 12960.28
+        },
+        {
+          "id": "12001336",
+          "name": "TMN MIDAH (BARAT)",
+          "published": [
+            3.0963945,
+            101.72619
+          ],
+          "vertex": 429,
+          "elapsedMs": 2492000,
+          "offsetM": 3.4,
+          "originalShapeSegment": 399,
+          "alongM": 13254.28
+        },
+        {
+          "id": "12001292",
+          "name": "SK TMN MIDAH",
+          "published": [
+            3.096927,
+            101.72713
+          ],
+          "vertex": 434,
+          "elapsedMs": 2520000,
+          "offsetM": 5.48,
+          "originalShapeSegment": 403,
+          "alongM": 13399.88
+        },
+        {
+          "id": "12001341",
+          "name": "PUSAT KOMERSIAL TMN MIDAH",
+          "published": [
+            3.0965862,
+            101.72896
+          ],
+          "vertex": 439,
+          "elapsedMs": 2561000,
+          "offsetM": 4.45,
+          "originalShapeSegment": 407,
+          "alongM": 13606.6
+        },
+        {
+          "id": "12001744",
+          "name": "SEKOLAH KEBANGSAAN TAMAN MIDAH",
+          "published": [
+            3.094993,
+            101.72942
+          ],
+          "vertex": 448,
+          "elapsedMs": 2610000,
+          "offsetM": 0.69,
+          "originalShapeSegment": 415,
+          "alongM": 13867.07
+        },
+        {
+          "id": "12001850",
+          "name": "PERUMAHAN TAMAN MIDAH",
+          "published": [
+            3.096719,
+            101.73233
+          ],
+          "vertex": 460,
+          "elapsedMs": 2688000,
+          "offsetM": 2.11,
+          "originalShapeSegment": 426,
+          "alongM": 14275.71
+        },
+        {
+          "id": "12001851",
+          "name": "PANGSAPURI JASMINE",
+          "published": [
+            3.098074,
+            101.733617
+          ],
+          "vertex": 468,
+          "elapsedMs": 2733000,
+          "offsetM": 3.82,
+          "originalShapeSegment": 433,
+          "alongM": 14511.49
+        },
+        {
+          "id": "12001745",
+          "name": "TESCO EXTRA CHERAS",
+          "published": [
+            3.09847,
+            101.73498
+          ],
+          "vertex": 477,
+          "elapsedMs": 2776000,
+          "offsetM": 0.48,
+          "originalShapeSegment": 441,
+          "alongM": 14730.79
+        },
+        {
+          "id": "12003043",
+          "name": "MRT TAMAN MIDAH PINTU A",
+          "published": [
+            3.1055319,
+            101.7315913
+          ],
+          "vertex": 516,
+          "elapsedMs": 3000000,
+          "offsetM": 7.38,
+          "originalShapeSegment": 479,
+          "alongM": 15849.48
+        }
+      ],
+      "mid": 16,
+      "sample": "261030010163S9",
+      "sampleDeparture": "16:00:00",
+      "layoverMs": 600000,
+      "timetable": [
+        {
+          "service": "26103001",
+          "trips": 42,
+          "first": "06:00:00",
+          "last": "23:30:00",
+          "headwaysMin": [
+            20,
+            30
+          ],
+          "durationMin": [
+            40,
+            55
+          ]
+        },
+        {
+          "service": "26103003",
+          "trips": 36,
+          "first": "06:00:00",
+          "last": "23:30:00",
+          "headwaysMin": [
+            30
+          ],
+          "durationMin": [
+            35,
+            35
+          ]
+        }
+      ],
+      "metrics": {
+        "lengthM": 15849.478092636096,
+        "longestM": 176.61559159929269,
+        "midM": 7311.766237874384,
+        "boardingOffsetsM": 11.66,
+        "publishedOriginGapM": 115.97355700426647,
+        "closingGapM": 0,
+        "cochraneBollardM": 2617.2952333768612
+      }
+    }
+  ]
+}

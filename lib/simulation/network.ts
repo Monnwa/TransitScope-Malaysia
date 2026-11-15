@@ -2,6 +2,9 @@ import { rapidRailMeta, mergeRailStations, type RailLine } from "@/lib/rail-mode
 import { distanceM, indexShape, type GeoPoint } from "@/lib/route-projection";
 import type { Mode, Record as TransitRecord } from "@/lib/transit-data";
 import { SIMULATED, SIMULATION_SOURCE } from "./clock";
+import { busRoadPaths } from "./bus-road-paths";
+import { busOperationalTiming, busRunningTimes, busSpeedLimitKmh, busStopDwellMs, scheduleBusLeg } from "./bus-operations";
+import { reviewBusStop, type BusStopReview } from "./bus-stop-review";
 
 export type SimulatedStop = { id: string; name: string; position: GeoPoint };
 type RouteDefinition = {
@@ -34,7 +37,6 @@ const bukitBintang = stop("Bukit Bintang", 3.147, 101.711);
 const kajang = stop("Kajang", 2.983, 101.791);
 const maluri = stop("Maluri", 3.123, 101.728);
 const hangTuah = stop("Hang Tuah", 3.140, 101.706);
-const pasarRakyat = stop("Pasar Rakyat", 3.142, 101.723);
 const klcc = stop("KLCC", 3.159, 101.713);
 const gombak = stop("Gombak", 3.231, 101.724);
 const ampang = stop("Ampang", 3.150, 101.761);
@@ -42,10 +44,6 @@ const chowKit = stop("Chow Kit", 3.167, 101.698);
 const kotaDamansara = stop("Kota Damansara", 3.149, 101.579);
 const rajaChulan = stop("Raja Chulan", 3.1507, 101.7061);
 const universiti = stop("Universiti", 3.115, 101.662);
-const terminalPenang = stop("Pengkalan Weld", 5.412, 100.341);
-const komtar = stop("Komtar", 5.414, 100.330);
-const airItam = stop("Air Itam", 5.401, 100.280);
-const jelutong = stop("Jelutong", 5.392, 100.319);
 
 function rapid(code: string, stops: SimulatedStop[], fleetSize: number, seed: number): RouteDefinition {
   const meta = rapidRailMeta[code];
@@ -127,21 +125,6 @@ const railDefinitions = [
     stop("Sungai Gadut", 2.651, 101.998), stop("Rembau", 2.588, 102.094), stop("Pulau Sebang", 2.464, 102.226)], 14, 108),
 ];
 
-const busCorridors: [string, string, SimulatedStop[]][] = [
-  ["D100", "Rapid KL Bus", [sentral, pasar, masjid, stop("Central Market East", 3.146, 101.700), bukitBintang, klcc]],
-  ["D200", "Rapid KL Bus", [titiwangsa, chowKit, stop("Medan Tuanku", 3.159, 101.699), masjid, pasar]],
-  ["D300", "Rapid KL Bus", [universiti, stop("Kerinchi", 3.116, 101.668), stop("Bangsar", 3.127, 101.679), sentral, pasar]],
-  ["D400", "Rapid KL Bus", [bandarTasikSelatan, stop("Salak Selatan", 3.103, 101.706), stop("Cheras", 3.113, 101.714), chanSowLin, hangTuah]],
-  ["D500", "Rapid KL Bus", [klcc, stop("Ampang Park", 3.161, 101.720), stop("Dato’ Keramat", 3.165, 101.731), ampang]],
-  ["D600", "Rapid KL Bus", [gombak, stop("Taman Melati", 3.219, 101.721), stop("Wangsa Maju", 3.206, 101.732), titiwangsa]],
-  ["D700", "Rapid KL Bus", [maluri, stop("Cochrane", 3.132, 101.723), pasarRakyat, bukitBintang, rajaChulan, klcc]],
-  ["T801", "MRT Feeder Bus", [kwasa, kotaDamansara, stop("Surian", 3.150, 101.594), stop("Mutiara Damansara", 3.155, 101.610)]],
-  ["T802", "MRT Feeder Bus", [kajang, stop("Stadium Kajang", 2.993, 101.787), stop("Sungai Jernih", 3.000, 101.787), stop("Bukit Dukung", 3.026, 101.772)]],
-  ["T803", "MRT Feeder Bus", [putrajaya, stop("Cyberjaya City Centre", 2.938, 101.655), stop("Cyberjaya Utara", 2.956, 101.650), stop("16 Sierra", 2.958, 101.669)]],
-  ["P101", "Rapid Penang", [terminalPenang, komtar, stop("Jalan Macalister", 5.417, 100.319), airItam]],
-  ["P102", "Rapid Penang", [terminalPenang, komtar, jelutong, stop("Gelugor", 5.369, 100.315)]],
-];
-
 function leg(stops: SimulatedStop[], speedKmh: number, dwellMs: number) {
   const path: GeoPoint[] = [stops[0].position];
   const vertices = [0];
@@ -166,15 +149,68 @@ function leg(stops: SimulatedStop[], speedKmh: number, dwellMs: number) {
 }
 
 function prepareRoute(definition: RouteDefinition) {
-  const dwell = definition.mode === "Bus" ? 25_000 : 40_000;
+  const dwell = 40_000;
   const legs = [leg(definition.stops, definition.speedKmh, dwell), leg([...definition.stops].reverse(), definition.speedKmh, dwell)] as const;
   return { ...definition, legs, period: legs[0].duration + legs[1].duration };
 }
 
-export const busRoutes = busCorridors.map(([id, operator, stops], index) => prepareRoute({
-  id, operator, stops, name: `${stops[0].name} – ${stops.at(-1)!.name}`,
-  mode: "Bus", colour: "#2563eb", fleetSize: 27, speedKmh: 26 + index % 4 * 2, seed: 201 + index,
-}));
+function roadLeg(
+  path: GeoPoint[],
+  visits: (typeof busRoadPaths)[number]["visits"],
+  originDwellMs: number,
+  terminalDwellMs: number,
+) {
+  const shape = indexShape(path);
+  if (!shape || shape.path.length !== path.length || shape.cumulative.some((distance, index) =>
+    index > 0 && (distance <= shape.cumulative[index - 1] || distance - shape.cumulative[index - 1] > 200))) {
+    throw new Error("Invalid feeder road shape");
+  }
+
+  const start = visits[0].vertex;
+  const boardingStops = visits.map(({ id, name, vertex, elapsedMs }) => {
+    const distance = shape.cumulative[vertex - start];
+    if (distance === undefined) throw new Error("Feeder stop outside its road shape: " + id);
+    return { id, name, position: path[vertex - start], distance, elapsedMs };
+  });
+  if (new Set(boardingStops.map(stop => stop.id)).size !== boardingStops.length) {
+    throw new Error("A feeder leg repeats a stop ID");
+  }
+  const elapsed = busRunningTimes(boardingStops, originDwellMs);
+  const schedule = scheduleBusLeg(boardingStops.map(({ id, name, position, distance }) =>
+    ({ id, name, position, distance })), elapsed, terminalDwellMs);
+  return { shape, stops: schedule, duration: schedule.at(-1)!.departure };
+}
+
+export const busRoutes: SimulatedRoute[] = busRoadPaths.map(fixture => {
+  const { id, name, path, visits, midpoint } = fixture;
+  const first = path[0], last = path.at(-1)!;
+  if (first[0] !== last[0] || first[1] !== last[1] || visits[0].id !== visits.at(-1)!.id ||
+      visits[0].vertex !== 0 || visits.at(-1)!.vertex !== path.length - 1) {
+    throw new Error("Feeder road loop does not close at " + id);
+  }
+  const { headwayMs, originLayoverMs } = busOperationalTiming[id];
+  const turnVertex = visits[midpoint].vertex;
+  const legs = [
+    roadLeg(path.slice(0, turnVertex + 1), visits.slice(0, midpoint + 1), 0, busStopDwellMs),
+    roadLeg(path.slice(turnVertex), visits.slice(midpoint), busStopDwellMs, originLayoverMs),
+  ] as const;
+  const period = legs[0].duration + legs[1].duration;
+  const fleetSize = period / headwayMs;
+  if (!Number.isSafeInteger(fleetSize) || fleetSize < 1) throw new Error("Invalid feeder headway for " + id);
+  const stops = [...new Map(visits.map(({ id, name, vertex }) => [id, { id, name, position: path[vertex] }])).values()];
+  return {
+    id, name, mode: "Bus", operator: "Rapid KL Bus", colour: "#2563eb",
+    fleetSize, speedKmh: busSpeedLimitKmh, seed: 0, stops, legs, period,
+  };
+});
+
+export const busStopReviews: ReadonlyMap<string, BusStopReview> = new Map(busRoadPaths.flatMap(route =>
+  route.visits.map(({ id, name, vertex, published }) =>
+    [`bus-stop:${route.id}:${id}`, reviewBusStop(route.id, { id, name, position: route.path[vertex] }, published)] as const
+  )
+));
+
+
 export const railRoutes = railDefinitions.map(prepareRoute);
 export type SimulatedRoute = ReturnType<typeof prepareRoute>;
 

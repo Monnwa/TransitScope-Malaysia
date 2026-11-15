@@ -42,7 +42,7 @@ export default function SimulatedBusPanel({ journey, navigation, onNavigate, onC
       <p className="bus-eyebrow">{SIMULATED} BUS JOURNEY</p>
       <h2><span aria-hidden="true">🚌</span> <span className="bus-route-badge">{journey.routeId}</span> {journey.vehicle.name}</h2>
       <p className="bus-origin">From {journey.origin}</p><p className="bus-destination">Towards {journey.destination}</p>
-      <p className="bus-meta">Direction {journey.direction + 1} · {journey.vehicle.operator}</p>
+      <p className="bus-meta">{journey.direction === 0 ? "Outbound segment" : "Return segment"} · {journey.vehicle.operator}</p>
     </div>
     <div className="bus-journey-body" id={panelId}>
       <div className="bus-toolbar"><span className="bus-observation">{journey.vehicle.status}</span>
@@ -81,7 +81,7 @@ export default function SimulatedBusPanel({ journey, navigation, onNavigate, onC
           <button type="button" className="bus-stop-control bus-stop-content" aria-pressed={stop.sequence === selected} onClick={() => navigate(stop.sequence)}>
             <strong>{stop.name}</strong><span className="bus-stop-status">{stopStatusLabel(stop.status)}</span>
             <span className="bus-stop-times">Arrival <time dateTime={stop.arrival}>{arrivalClock(stop.arrival)}</time> · Departure <time dateTime={stop.departure}>{arrivalClock(stop.departure)}</time></span>
-            <small>Timetable {arrivalClock(stop.scheduledDeparture)}{stop.status === "PASSED" && ` · ${journey.timing}`}</small>
+            <small>Simulated timetable {arrivalClock(stop.scheduledDeparture)}{stop.status === "PASSED" && ` · ${journey.timing}`}</small>
           </button>
         </li>)}
       </ol>

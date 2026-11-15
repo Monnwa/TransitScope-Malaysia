@@ -1,0 +1,499 @@
+{
+  "before": {
+    "proof": [
+      {
+        "now": 1794628800000,
+        "railAndLinkBike": "b2ced749d5c3d875037a090c01830c131887f7d88023c2f6f262c0377c6b28a9",
+        "bus": "f11bd396775d039acacaf2337c2c9bb153f3fcfa607ff10a4e690fc86c68e68e",
+        "ids": [
+          "bus:D100:01",
+          "bus:D100:02",
+          "bus:D100:03",
+          "bus:D100:04"
+        ],
+        "busCount": 324
+      },
+      {
+        "now": 1794628805000,
+        "railAndLinkBike": "994a18dd0cb894e4592672c24d03c897cd83434c97f73d23e5a94e46653490f2",
+        "bus": "2e8e7171cc604dfd5fce0ccbbfca13a878a77002b9286bd675caea5e6d4dbe01",
+        "ids": [
+          "bus:D100:01",
+          "bus:D100:02",
+          "bus:D100:03",
+          "bus:D100:04"
+        ],
+        "busCount": 324
+      },
+      {
+        "now": 1794628860000,
+        "railAndLinkBike": "6045f1c386278065dede142c577648929ec9cf8653d11e6adbead849a328faa8",
+        "bus": "ef06ef959724ec2ed6f729ed0e53897825346aeadb6e3f82df9fe357edd556f4",
+        "ids": [
+          "bus:D100:01",
+          "bus:D100:02",
+          "bus:D100:03",
+          "bus:D100:04"
+        ],
+        "busCount": 324
+      },
+      {
+        "now": 1794629700000,
+        "railAndLinkBike": "6fbec2827cb73e2fdca4cc54429dbd5ade3fbc587c28f5cd71e773b9e71eb19d",
+        "bus": "d036430d7d81d9b4a4c6c72cf4097001941278c32394d34461d6f0b044af67af",
+        "ids": [
+          "bus:D100:01",
+          "bus:D100:02",
+          "bus:D100:03",
+          "bus:D100:04"
+        ],
+        "busCount": 324
+      },
+      {
+        "now": 1794632400000,
+        "railAndLinkBike": "6058e5c6a7162f759a14d6ec760b824525d52bfdb98502060e3f62ac62c12332",
+        "bus": "7dd2cecd4c272a176a7a1039bf6a11cf54a7d739f8ed31debefc0aba9fb61b0b",
+        "ids": [
+          "bus:D100:01",
+          "bus:D100:02",
+          "bus:D100:03",
+          "bus:D100:04"
+        ],
+        "busCount": 324
+      },
+      {
+        "now": 1794715200000,
+        "railAndLinkBike": "4446f9c76368a8c5ff991a08eb8c16b4d5b57f9a77f8a9aecf94504b8ce868eb",
+        "bus": "2356a6a4c66a73e19640953d4df20aa5e4fa5703c748d7ccc93ac544f75e441a",
+        "ids": [
+          "bus:D100:01",
+          "bus:D100:02",
+          "bus:D100:03",
+          "bus:D100:04"
+        ],
+        "busCount": 324
+      }
+    ],
+    "routes": [
+      {
+        "id": "D100",
+        "period": 3449387,
+        "size": 27,
+        "stops": 6,
+        "legs": [
+          {
+            "len": 10573.38193760122,
+            "edges": 195,
+            "running": 1464009,
+            "duration": 1614009,
+            "endArrive": 1589009,
+            "stops": 6
+          },
+          {
+            "len": 12172.151483101487,
+            "edges": 213,
+            "running": 1685378,
+            "duration": 1835378,
+            "endArrive": 1810378,
+            "stops": 6
+          }
+        ]
+      },
+      {
+        "id": "D200",
+        "period": 2249462,
+        "size": 27,
+        "stops": 5,
+        "legs": [
+          {
+            "len": 7741.776085248492,
+            "edges": 129,
+            "running": 995373,
+            "duration": 1120373,
+            "endArrive": 1095373,
+            "stops": 5
+          },
+          {
+            "len": 7809.569933818023,
+            "edges": 125,
+            "running": 1004089,
+            "duration": 1129089,
+            "endArrive": 1104089,
+            "stops": 5
+          }
+        ]
+      },
+      {
+        "id": "D300",
+        "period": 2679072,
+        "size": 27,
+        "stops": 5,
+        "legs": [
+          {
+            "len": 10574.474254306082,
+            "edges": 182,
+            "running": 1268939,
+            "duration": 1393939,
+            "endArrive": 1368939,
+            "stops": 5
+          },
+          {
+            "len": 9667.757137024088,
+            "edges": 170,
+            "running": 1160133,
+            "duration": 1285133,
+            "endArrive": 1260133,
+            "stops": 5
+          }
+        ]
+      },
+      {
+        "id": "D400",
+        "period": 4163782,
+        "size": 27,
+        "stops": 5,
+        "legs": [
+          {
+            "len": 17235.47000218557,
+            "edges": 250,
+            "running": 1971461,
+            "duration": 2096461,
+            "endArrive": 2071461,
+            "stops": 5
+          },
+          {
+            "len": 17265.055391299396,
+            "edges": 252,
+            "running": 1942321,
+            "duration": 2067321,
+            "endArrive": 2042321,
+            "stops": 5
+          }
+        ]
+      },
+      {
+        "id": "D500",
+        "period": 2780146,
+        "size": 27,
+        "stops": 4,
+        "legs": [
+          {
+            "len": 9529.103957582478,
+            "edges": 120,
+            "running": 1319416,
+            "duration": 1419416,
+            "endArrive": 1394416,
+            "stops": 4
+          },
+          {
+            "len": 9105.26201656928,
+            "edges": 119,
+            "running": 1260730,
+            "duration": 1360730,
+            "endArrive": 1335730,
+            "stops": 4
+          }
+        ]
+      },
+      {
+        "id": "D600",
+        "period": 3513339,
+        "size": 27,
+        "stops": 4,
+        "legs": [
+          {
+            "len": 13111.964699639162,
+            "edges": 164,
+            "running": 1685825,
+            "duration": 1785825,
+            "endArrive": 1760825,
+            "stops": 4
+          },
+          {
+            "len": 12658.43287714332,
+            "edges": 152,
+            "running": 1627514,
+            "duration": 1727514,
+            "endArrive": 1702514,
+            "stops": 4
+          }
+        ]
+      },
+      {
+        "id": "D700",
+        "period": 3178331,
+        "size": 27,
+        "stops": 6,
+        "legs": [
+          {
+            "len": 11544.981925202404,
+            "edges": 209,
+            "running": 1385400,
+            "duration": 1535400,
+            "endArrive": 1510400,
+            "stops": 6
+          },
+          {
+            "len": 12441.076912064405,
+            "edges": 198,
+            "running": 1492931,
+            "duration": 1642931,
+            "endArrive": 1617931,
+            "stops": 6
+          }
+        ]
+      },
+      {
+        "id": "T801",
+        "period": 3045198,
+        "size": 27,
+        "stops": 4,
+        "legs": [
+          {
+            "len": 15310.983352426669,
+            "edges": 176,
+            "running": 1722487,
+            "duration": 1822487,
+            "endArrive": 1797487,
+            "stops": 4
+          },
+          {
+            "len": 9979.638792729858,
+            "edges": 110,
+            "running": 1122711,
+            "duration": 1222711,
+            "endArrive": 1197711,
+            "stops": 4
+          }
+        ]
+      },
+      {
+        "id": "T802",
+        "period": 2381688,
+        "size": 27,
+        "stops": 4,
+        "legs": [
+          {
+            "len": 8401.784246312725,
+            "edges": 123,
+            "running": 1163326,
+            "duration": 1263326,
+            "endArrive": 1238326,
+            "stops": 4
+          },
+          {
+            "len": 7354.828472950325,
+            "edges": 127,
+            "running": 1018362,
+            "duration": 1118362,
+            "endArrive": 1093362,
+            "stops": 4
+          }
+        ]
+      },
+      {
+        "id": "T803",
+        "period": 4650730,
+        "size": 27,
+        "stops": 4,
+        "legs": [
+          {
+            "len": 16207.44714265975,
+            "edges": 265,
+            "running": 2083816,
+            "duration": 2183816,
+            "endArrive": 2158816,
+            "stops": 4
+          },
+          {
+            "len": 18409.320150516738,
+            "edges": 316,
+            "running": 2366914,
+            "duration": 2466914,
+            "endArrive": 2441914,
+            "stops": 4
+          }
+        ]
+      },
+      {
+        "id": "P101",
+        "period": 1920776,
+        "size": 27,
+        "stops": 4,
+        "legs": [
+          {
+            "len": 7169.896374112022,
+            "edges": 5,
+            "running": 860388,
+            "duration": 960388,
+            "endArrive": 935388,
+            "stops": 4
+          },
+          {
+            "len": 7169.896374112022,
+            "edges": 5,
+            "running": 860388,
+            "duration": 960388,
+            "endArrive": 935388,
+            "stops": 4
+          }
+        ]
+      },
+      {
+        "id": "P102",
+        "period": 1677346,
+        "size": 27,
+        "stops": 4,
+        "legs": [
+          {
+            "len": 6565.98418926258,
+            "edges": 5,
+            "running": 738673,
+            "duration": 838673,
+            "endArrive": 813673,
+            "stops": 4
+          },
+          {
+            "len": 6565.98418926258,
+            "edges": 5,
+            "running": 738673,
+            "duration": 838673,
+            "endArrive": 813673,
+            "stops": 4
+          }
+        ]
+      }
+    ],
+    "stops": 55,
+    "railRouteCount": 8
+  },
+  "after": {
+    "proof": [
+      {
+        "now": 1794628800000,
+        "railAndLinkBike": "b2ced749d5c3d875037a090c01830c131887f7d88023c2f6f262c0377c6b28a9",
+        "bus": "b0e5710675feeba0edba5b0291bff4b447a41c064d3d2a271d75bcd30dd42235",
+        "ids": [
+          "bus:T401:01",
+          "bus:T401:02",
+          "bus:T402:01",
+          "bus:T402:02"
+        ],
+        "busCount": 4
+      },
+      {
+        "now": 1794628805000,
+        "railAndLinkBike": "994a18dd0cb894e4592672c24d03c897cd83434c97f73d23e5a94e46653490f2",
+        "bus": "7a65e717f9002c85b36846f44705e3a003ea90b3b75d0a543575116444edd75c",
+        "ids": [
+          "bus:T401:01",
+          "bus:T401:02",
+          "bus:T402:01",
+          "bus:T402:02"
+        ],
+        "busCount": 4
+      },
+      {
+        "now": 1794628860000,
+        "railAndLinkBike": "6045f1c386278065dede142c577648929ec9cf8653d11e6adbead849a328faa8",
+        "bus": "12c629af85fb72ecd3a28a7d6c5735ace247022d00d0f94c846aad2c9caab8bb",
+        "ids": [
+          "bus:T401:01",
+          "bus:T401:02",
+          "bus:T402:01",
+          "bus:T402:02"
+        ],
+        "busCount": 4
+      },
+      {
+        "now": 1794629700000,
+        "railAndLinkBike": "6fbec2827cb73e2fdca4cc54429dbd5ade3fbc587c28f5cd71e773b9e71eb19d",
+        "bus": "2742f39e3a4f7d44d93f97af558a8fec88b5064ea3e464427db75c4cd03d4dd2",
+        "ids": [
+          "bus:T401:01",
+          "bus:T401:02",
+          "bus:T402:01",
+          "bus:T402:02"
+        ],
+        "busCount": 4
+      },
+      {
+        "now": 1794632400000,
+        "railAndLinkBike": "6058e5c6a7162f759a14d6ec760b824525d52bfdb98502060e3f62ac62c12332",
+        "bus": "0b4cafe2ddfb94e441940f0476ad0120cdece59299e9ec02c6f2703e212bc5c5",
+        "ids": [
+          "bus:T401:01",
+          "bus:T401:02",
+          "bus:T402:01",
+          "bus:T402:02"
+        ],
+        "busCount": 4
+      },
+      {
+        "now": 1794715200000,
+        "railAndLinkBike": "4446f9c76368a8c5ff991a08eb8c16b4d5b57f9a77f8a9aecf94504b8ce868eb",
+        "bus": "f643b81944d2cfdfa68f07c74b66de9daba87d1687a40415b63d5495b4a0abaf",
+        "ids": [
+          "bus:T401:01",
+          "bus:T401:02",
+          "bus:T402:01",
+          "bus:T402:02"
+        ],
+        "busCount": 4
+      }
+    ],
+    "routes": [
+      {
+        "id": "T401",
+        "period": 3600000,
+        "size": 2,
+        "stops": 49,
+        "legs": [
+          {
+            "len": 10876.53699710658,
+            "edges": 292,
+            "running": 1358000,
+            "duration": 1748000,
+            "endArrive": 1733000,
+            "stops": 27
+          },
+          {
+            "len": 9672.361645214316,
+            "edges": 236,
+            "running": 1192000,
+            "duration": 1852000,
+            "endArrive": 1552000,
+            "stops": 26
+          }
+        ]
+      },
+      {
+        "id": "T402",
+        "period": 3600000,
+        "size": 2,
+        "stops": 36,
+        "legs": [
+          {
+            "len": 7311.771513727233,
+            "edges": 239,
+            "running": 1150000,
+            "duration": 1390000,
+            "endArrive": 1375000,
+            "stops": 17
+          },
+          {
+            "len": 8537.71801520456,
+            "edges": 277,
+            "running": 1295000,
+            "duration": 2210000,
+            "endArrive": 1610000,
+            "stops": 23
+          }
+        ]
+      }
+    ],
+    "stops": 85,
+    "railRouteCount": 8
+  },
+  "protectedEqual": true
+}

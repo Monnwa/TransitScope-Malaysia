@@ -13,7 +13,7 @@ describe("simulation", () => {
     const first = simulationSnapshot(now);
     const later = simulationSnapshot(now + 10_000);
     const buses = first.records.filter(record => record.mode === "Bus" && record.recordKind === "vehicle");
-    expect(buses).toHaveLength(324);
+    expect(buses).toHaveLength(4);
     expect(first).toEqual(simulationSnapshot(now));
     expect(new Set(first.records.map(record => record.id)).size).toBe(first.records.length);
     expect(later.records.map(record => record.id)).toEqual(first.records.map(record => record.id));
@@ -43,8 +43,8 @@ describe("simulation", () => {
         expect(atArrival.stops[next.sequence - 1].status).toBe("CURRENT");
       }
     }
-    expect(journeys.some(journey => journey.stops.some(stop => stop.status === "CURRENT"))).toBe(true);
-    expect(new Set(journeys.map(journey => journey.timing))).toEqual(new Set(["Early", "On time", "Delayed"]));
+    expect(buses.some(bus => busJourney(bus.id, now - 1)?.stops.some(stop => stop.status === "CURRENT"))).toBe(true);
+    expect(journeys.every(journey => journey.timing === "On time" && journey.offsetMinutes === 0)).toBe(true);
     expect(buses.some((bus, index) => bus.position!.some((value, axis) => value !== later.records[index].position![axis]))).toBe(true);
     const choice = journeys[0].departures[0];
     expect(busJourney(buses[0].id, now, choice.vehicleId, choice.arrivalTimestamp)?.journeyId).toBe(choice.tripId);
@@ -55,7 +55,7 @@ describe("simulation", () => {
     for (const station of first.records.filter(record => record.recordKind === "stop")) {
       const arrivals = stationArrivals(station.stopRefs!, now);
       expect(arrivals).toHaveLength(8);
-      expect(arrivals.every(arrival => arrival.arrivalTimestamp >= now && arrival.departureTimestamp >= arrival.arrivalTimestamp)).toBe(true);
+      expect(arrivals.every(arrival => (arrival.mode === "Bus" ? arrival.departureTimestamp : arrival.arrivalTimestamp) >= now && arrival.departureTimestamp >= arrival.arrivalTimestamp)).toBe(true);
       const later = stationArrivals(station.stopRefs!, now + 5_000);
       for (const arrival of arrivals.filter(item => item.arrivalTimestamp >= now + 5_000)) expect(later).toContainEqual(arrival);
     }

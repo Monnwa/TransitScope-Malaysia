@@ -5,8 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { filterRecords, type Mode, type Record as TransitRecord, type Status } from "@/lib/transit-data";
 import { simulationSnapshot } from "@/lib/simulation";
-import { SIMULATED, simulationTime } from "@/lib/simulation/clock";
-import { railNetwork } from "@/lib/simulation/network";
+import { MINUTE, SIMULATED, simulationTime } from "@/lib/simulation/clock";
+import { busRoutes, railNetwork } from "@/lib/simulation/network";
 import { busJourney } from "@/lib/simulation/vehicles";
 import { isBandarTasikSelatan } from "@/lib/station-operations";
 import { passengerName, resultCountLabel } from "./passenger-copy";
@@ -28,6 +28,7 @@ const formats = new Intl.DateTimeFormat("en-MY", { dateStyle: "medium", timeStyl
 export default function Dashboard({ initialTime }: { initialTime: number }) {
   const [now, setNow] = useState(initialTime);
   const [query, setQuery] = useState("");
+  const [busRouteId, setBusRouteId] = useState("");
   const [activeModes, setModes] = useState<Mode[]>([]);
   const [activeStatus, setStatuses] = useState<Status[]>([]);
   const [showSimulated, setShowSimulated] = useState(true);
@@ -46,8 +47,9 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   }, []);
 
   const snapshot = useMemo(() => simulationSnapshot(now), [now]);
-  const results = useMemo(() => showSimulated ? filterRecords(snapshot.records, query, activeModes, activeStatus, [SIMULATED]) : [],
-    [snapshot, query, activeModes, activeStatus, showSimulated]);
+  const results = useMemo(() => showSimulated ? filterRecords(snapshot.records, query, activeModes, activeStatus, [SIMULATED])
+    .filter(item => !busRouteId || item.mode === "Bus" && item.routeId === busRouteId) : [],
+    [snapshot, query, activeModes, activeStatus, showSimulated, busRouteId]);
   const record = snapshot.records.find(item => item.id === selectedId);
   const train = snapshot.trains.find(item => item.id === selectedId);
   const journey = useMemo(() => selectedId ? busJourney(selectedId, now, preview?.vehicleId, preview?.start) : null, [selectedId, now, preview]);
@@ -66,6 +68,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
 
   function reset() {
     setQuery("");
+    setBusRouteId("");
     setModes([]);
     setStatuses([]);
     setShowSimulated(true);
@@ -113,6 +116,9 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
         </section>
         <section className="filters" aria-label="Dashboard filters">
           <div><span>Transport type</span>{modes.map(mode => <Filter key={mode} label={mode} active={activeModes.includes(mode)} onClick={() => setModes(items => toggle(items, mode))}/>)}</div>
+          <div><label>Bus route <select value={busRouteId} onChange={event => { setBusRouteId(event.target.value); select(null); }}>
+            <option value="">All routes</option>{busRoutes.map(route => <option key={route.id} value={route.id}>{route.id}</option>)}
+          </select></label></div>
           <div><span>Service status</span>{statuses.map(status => <Filter key={status} label={status} active={activeStatus.includes(status)} onClick={() => setStatuses(items => toggle(items, status))}/>)}</div>
           <div><span>Information</span><Filter label={SIMULATED} active={showSimulated} onClick={() => setShowSimulated(value => !value)}/></div>
         </section>
@@ -175,6 +181,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
           </div>}
         </section>
         <section className="about" id="about"><h2>About this information</h2><p>Vehicle movements, timetables, notices and bike availability follow a shared simulation clock. Route and station coordinates are approximate.</p>
+          <p>Bus paths and stop order come from published GTFS. Positions, ETAs and headways are simulated ({busRoutes.map(route => route.id + " " + route.period / route.fleetSize / MINUTE + " min").join(" · ")}). Stop markers are projected onto route paths, and boarding bays remain unverified.</p>
           <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">Map © OpenStreetMap contributors</a>
         </section>
       </section>

@@ -3,14 +3,14 @@ import { mergeMrtStations, mrtLineFromCategory } from "@/lib/official-transit";
 import { validateMrtPath } from "@/lib/mrt-lines";
 import { demoRecords, type Record } from "@/lib/transit-data";
 
-const station = (name: string, line: "MRT1" | "MRT2"): Record => ({ ...demoRecords[2], id: name + line, name, mrtLines: [line], dataMode: "STATIC" });
+const station = (name: string, line: "MRT1" | "MRT2"): Record => ({ ...demoRecords[0], id: name + line, name, mrtLines: [line], dataMode: "STATIC" });
 describe("MRT route membership", () => {
   it("uses operator route IDs rather than the shared MRT category", () => {
     expect(mrtLineFromCategory("KGL")).toBe("MRT1"); expect(mrtLineFromCategory("PYL")).toBe("MRT2");
     expect(mrtLineFromCategory("MRT")).toBeUndefined(); expect(mrtLineFromCategory("KJ")).toBeUndefined();
   });
   it("merges shared stations, preserving both lines and other transport modes", () => {
-    const bus = demoRecords[0];
+    const bus: Record = { ...demoRecords[0], id: "fixture-bus", mode: "Bus", route: "T401", mrtLines: undefined };
     const records = mergeMrtStations([station("KWASA DAMANSARA", "MRT1"), station("Kwasa Damansara", "MRT2"), station("TUN RAZAK EXCHANGE", "MRT1"), station("TRX", "MRT2"), station("Kajang", "MRT1"), bus]);
     expect(records).toHaveLength(4);
     expect(records.filter(record => record.interchange)).toHaveLength(2);
