@@ -1,13 +1,15 @@
 "use client";
 import L from "leaflet";
-import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
-import { CircleMarker, Marker, Polyline, Popup, Tooltip, useMap } from "react-leaflet";
+import { useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from "react";
+import { Marker, Polyline, Popup, Tooltip, useMap } from "react-leaflet";
 import type { RouteAnimator } from "@/lib/route-animation";
 import { splitRoutePath, type GeoPoint } from "@/lib/route-projection";
 import { mapStopAnchor } from "@/lib/journey-stop-selection";
 import type { BusMapJourney } from "./bus-journey-panel";
+import type { JourneyNavigation } from "./simulated-bus-panel";
+import type { SimulatedBusJourney } from "@/lib/simulation/vehicles";
 import { arrivalClock } from "@/lib/departure-board";
-import { passengerName,publicRouteName,stopStatusLabel } from "./passenger-copy";
+import { passengerName,stopStatusLabel } from "./passenger-copy";
 
 export function MovingVehicle({position,motion,icon,title,selected,stale,onClick,children}:{position:GeoPoint;motion?:RouteAnimator;icon:L.DivIcon;title:string;selected:boolean;stale:boolean;onClick:()=>void;children:ReactNode}){
   const marker=useRef<L.Marker>(null),frame=motion?.getFrame();
@@ -48,9 +50,35 @@ export function JourneyMapNavigation({journey}:{journey?:BusMapJourney|null}){
   },[journey?.selectedStop?.key,map]);
   return null;
 }
-export function JourneyStopMarker({journey}:{journey:BusMapJourney}){
-  const stop=journey.selectedStop,popup=useRef<L.Popup>(null),map=useMap();
-  useEffect(()=>{if(stop?.position)popup.current?.openOn(map);},[stop?.key,journey.navigation,map]);
-  if(!stop?.position)return null;
-  return <><CircleMarker className="journey-stop-selected" center={stop.position} radius={11} pane="markerPane" pathOptions={{color:"#10243e",weight:4,fillColor:"#f2c500",fillOpacity:1}} eventHandlers={{click:()=>popup.current?.openOn(map)}}><Tooltip>{passengerName(stop.name)} · Selected stop</Tooltip></CircleMarker><Popup ref={popup} key={stop.key} position={stop.position} autoPan={false} closeOnClick={false} maxWidth={245} minWidth={170}><div className="journey-stop-popup" role="status"><strong>{passengerName(stop.name)}</strong><span>{publicRouteName(stop.routeName)?`Route ${stop.routeName}`:"Route unavailable"} · {stop.classification}</span><span>Arrival {stop.arrival?arrivalClock(stop.arrival):"Time unavailable"} · Departure {stop.departure?arrivalClock(stop.departure):"Time unavailable"} MYT</span><span>{stopStatusLabel(stop.status)}</span></div></Popup></>;
+type Stop = SimulatedBusJourney["stops"][number];
+
+function JourneyStopPin({ stop, routeId, selected, action }: {
+  stop: Stop; routeId: string; selected: boolean; action?: number;
+}) {
+  const marker = useRef<L.Marker>(null);
+  const icon = useMemo(() => L.divIcon({
+    className: `transport-icon bus-journey-stop${selected ? " journey-stop-selected" : ""}`,
+    html: '<span class="bus-journey-stop-dot" aria-hidden="true"></span>',
+    iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -6],
+  }), [selected]);
+  useEffect(() => { if (selected) marker.current?.openPopup(); }, [selected, action]);
+  const name = passengerName(stop.name);
+  return <Marker ref={marker} position={stop.position} icon={icon} title={name}
+    zIndexOffset={selected ? 100 : 0} bubblingMouseEvents={false}>
+    <Tooltip>{name}{selected ? " · Selected stop" : ""}</Tooltip>
+    <Popup autoPan={false} closeOnClick={false} maxWidth={245} minWidth={170}>
+      <div className="journey-stop-popup" role="status">
+        <strong>{name}</strong><span>Route {routeId} · {stop.classification}</span>
+        <span>Arrival {arrivalClock(stop.arrival)} · Departure {arrivalClock(stop.departure)} MYT</span>
+        <span>{stopStatusLabel(stop.status)}</span>
+      </div>
+    </Popup>
+  </Marker>;
+}
+
+export function JourneyStopMarkers({ journey, navigation }: {
+  journey: SimulatedBusJourney; navigation: JourneyNavigation | null;
+}) {
+  return journey.stops.map(stop => <JourneyStopPin key={stop.id} stop={stop}
+    routeId={journey.routeId} selected={stop.sequence === navigation?.sequence} action={navigation?.action}/>);
 }
