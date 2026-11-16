@@ -1,7 +1,7 @@
 import type { Mode, Record as TransitRecord } from "@/lib/transit-data";
-export type RailLine = { id: string; name: string; colour: string; mode: Mode; paths: [number, number][][]; source: string; dataMode: "STATIC"; geometryStatus: "available" | "unavailable" };
+export type RailLine = { id: string; name: string; colour: string; mode: Mode; paths: [number, number][][]; source: string; dataMode: "STATIC" | "SIMULATED"; geometryStatus: "available" | "unavailable" };
 export type RailNetwork = { lines: RailLine[]; stations: TransitRecord[]; source: string; available: boolean };
-export const rapidRailMeta: Record<string, { id: string; name: string; colour: string; mode: Mode }> = {
+export const rapidRailMeta: Record<string, { id: string; name: string; colour: string; mode: "MRT" | "LRT" | "Monorail" }> = {
   KGL: { id: "MRT1", name: "MRT Kajang Line (MRT1)", colour: "#006B3F", mode: "MRT" },
   PYL: { id: "MRT2", name: "MRT Putrajaya Line (MRT2)", colour: "#F2C500", mode: "MRT" },
   KJ: { id: "LRT-KJ", name: "LRT Kelana Jaya Line", colour: "#E75480", mode: "LRT" },

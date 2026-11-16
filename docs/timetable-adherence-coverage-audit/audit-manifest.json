@@ -1,0 +1,343 @@
+{
+  "auditDate": "2026-11-08",
+  "timezone": "Asia/Kuala_Lumpur",
+  "baseCommit": "235f7cb67d631a17df86bfc23f70de93dc0fff5d",
+  "committed": false,
+  "deployed": false,
+  "runtimeDiff": "unchanged",
+  "checks": {
+    "existingRelevantUnitTests": 99,
+    "uniqueStopOccurrences": 3801,
+    "eligiblePassed": 3519,
+    "classifiedPassed": 604,
+    "reasonTotals": "passed",
+    "fiveBreakdownTotals": "passed",
+    "csvAnonymisation": "passed",
+    "reportLocalLinks": "passed",
+    "classifiedTimestampAndThresholdConsistency": {
+      "classifiedRows": 604,
+      "ratioTimestampMatches": 604,
+      "thresholdMatches": 604,
+      "pairLimitsValid": 604
+    }
+  },
+  "method": "Read-only production snapshots, direct official captures and unchanged-function offline replay; exact root causes not observable remain explicitly unresolved.",
+  "sourceFiles": [
+    {
+      "file": "production-0-meta.json",
+      "sha256": "411d4ef611c5327ebf4aa99795a6c968190cc2a239a6b4a0b74ec4df1594f925"
+    },
+    {
+      "file": "production-0.json.gz",
+      "sha256": "64d3070a600a04352301e30863ca231e7d6fab132625ca8ffc697cea5e42e032"
+    },
+    {
+      "file": "production-1-meta.json",
+      "sha256": "e9807459d94d1bbede5d639f0f125c8c2e2dded33b59f0bbee730866c928f55b"
+    },
+    {
+      "file": "production-1.json.gz",
+      "sha256": "87c032b7389f3b554432ff4b154448c0fd878d23fff5b3b13b9c0b02898c54c7"
+    },
+    {
+      "file": "production-2-meta.json",
+      "sha256": "8ed758e1ee03bf78aba92cd2be29fd29c1bbed205fbdba1882251227d02b52ab"
+    },
+    {
+      "file": "production-2.json.gz",
+      "sha256": "3cacb29854b3f54f7327459f6b56256a50111cb31b8b732111a610c49a5fdfba"
+    },
+    {
+      "file": "production-3-meta.json",
+      "sha256": "a5e7dd472a7c6e8da59e69b15ccbf1d0d12eb1e5738cf08171327e3143636f33"
+    },
+    {
+      "file": "production-3.json.gz",
+      "sha256": "27658b150effdd0c1e4f06151c52e32cc8a69b4ee096c582158ad18ef043b3ba"
+    },
+    {
+      "file": "production-4-meta.json",
+      "sha256": "8df238e92a9bd8e00347b48bf7f5ce54bab4321cb33b283d952d188b53d7966a"
+    },
+    {
+      "file": "production-4.json.gz",
+      "sha256": "3a5de51ceb64c755864442d4ede172c9a06108992f9731e2e72b2c3d4b09f367"
+    },
+    {
+      "file": "production-5-meta.json",
+      "sha256": "7262a3a2dcb99e455d451afbaeca6e69fccbda387d4a098bf27df8cbce1296a1"
+    },
+    {
+      "file": "production-5.json.gz",
+      "sha256": "7dba8e9dab855fcd180a16af55552601778d57932335048077ff11188f31a668"
+    },
+    {
+      "file": "production-6-meta.json",
+      "sha256": "5a3070369ab6101beae010b05606ff4f05367abef40d4c40aa8ffbf55127f2e1"
+    },
+    {
+      "file": "production-6.json.gz",
+      "sha256": "5ba3dcae69865c41e04678f972619aaa6ae0b0c10acdd92801c128b8d4c4a120"
+    },
+    {
+      "file": "rapid-bus-kl-0.json",
+      "sha256": "52a7ff4ac29c71445890a196668255715c8577f8b6988c61e43947d9cdd2a563"
+    },
+    {
+      "file": "rapid-bus-kl-0.pb",
+      "sha256": "29cee57ed9eac11534791faeba9659b4ef992dd9fc11d0906a94fe52ff647803"
+    },
+    {
+      "file": "rapid-bus-kl-1.json",
+      "sha256": "60e291acccc98ec7fe46614cccc1f7cffd46cae2b8b8220298cf349b90ed43ad"
+    },
+    {
+      "file": "rapid-bus-kl-1.pb",
+      "sha256": "484803be960f3b2a4c1a0c1f2804bbf562159b1f9784c6749865ec0dd26481e4"
+    },
+    {
+      "file": "rapid-bus-kl-2.json",
+      "sha256": "261374227fb067483894a396733739384e0b56d3c6d3c10e93e131f434af1272"
+    },
+    {
+      "file": "rapid-bus-kl-2.pb",
+      "sha256": "769f4747a268f01c2c8a966ac6102c9a343bf985dfea1fbaa581963bdfa82503"
+    },
+    {
+      "file": "rapid-bus-kl-3.json",
+      "sha256": "16654d4e266d4e980d36c261b4741093c9a06a79b56eb5c281b0f143890b718f"
+    },
+    {
+      "file": "rapid-bus-kl-3.pb",
+      "sha256": "d1f73f2a1a2c6c1258468c93c8a9e8f4643ffba65cc2ef903611ef4367a564e5"
+    },
+    {
+      "file": "rapid-bus-kl-4.json",
+      "sha256": "6897dd78e933ccf2fba35680855af038238a0dd9844417d7eb201750815a4314"
+    },
+    {
+      "file": "rapid-bus-kl-4.pb",
+      "sha256": "0a88b8597a92a7bef9ccd3821d39a564b45d445d57c58fa7099cbc77404855de"
+    },
+    {
+      "file": "rapid-bus-kl-5.json",
+      "sha256": "da82e36dd48caa1e6353f0efc62ba8a9c286a11dbd18e5d60f3e2a51ee2a97b6"
+    },
+    {
+      "file": "rapid-bus-kl-5.pb",
+      "sha256": "2739e9822bbfb3389d79553a0eb89fc5b4f77e2b371f4fe6bada6d020d4e23e3"
+    },
+    {
+      "file": "rapid-bus-kl-6.json",
+      "sha256": "e2d1c188fcd4dc751f03607121534b063ccd96bd7808a072d236d1ee8ab8cf99"
+    },
+    {
+      "file": "rapid-bus-kl-6.pb",
+      "sha256": "7d9eaff907f698f134a7c58964f65579a126255976a75603f6277740487d322b"
+    },
+    {
+      "file": "rapid-bus-kl-static.json",
+      "sha256": "5058d30338207fc7b71ebe87658879fd25c0cf77f24784823da84157df38d988"
+    },
+    {
+      "file": "rapid-bus-kl.zip",
+      "sha256": "08c85afdaec25d4c0b77f2e43335f28fe5fb843495bca0c07955c479d628c571"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-0.json",
+      "sha256": "f75c04f1ab7040f5f3846f7f824c431b10ecc299b87fb72d466d07d74e421bf1"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-0.pb",
+      "sha256": "3b11de34ce9b7ec7477297f76b9ee1c93ea68c1cf69ef7ccc51c264c0b3e6e90"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-1.json",
+      "sha256": "a963ccc9a520291fa788d50ec604c0979a35ed4e3014fe2807b76eec85921851"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-1.pb",
+      "sha256": "d269d8a2a6f171b82837d2e37a569a05d69da6e2d3511bdb14db51b89a842acd"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-2.json",
+      "sha256": "df68ae1b7121db5bd8528a11cee7d39104fccccf002f0de85560ccda793fe718"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-2.pb",
+      "sha256": "f541f72487a4a540ff713da91bbef162187c88e497bce41b3ebcec21c1779f54"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-3.json",
+      "sha256": "8b633158695086aa84250437d7dc65f094e0eb42f2dd0ebeffad8982c914ba4a"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-3.pb",
+      "sha256": "b317d17d9bb4b6280d280276c6f38ea614b653f768eb7c84161578d6196dc4eb"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-4.json",
+      "sha256": "8654021435db7cec327ad21c91b8944a374bdadb664314fccf8b0391b73ee186"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-4.pb",
+      "sha256": "861e6e563167ef5e908ee2ef6c73c8bf092b34b7041364d002c3f98b71bd74aa"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-5.json",
+      "sha256": "46b7644ffe15a0bb2ff1531657da7d285114daa69fa6312b9667bf53fc09c861"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-5.pb",
+      "sha256": "b93c9a10842cfada8bf56335940350324b90949cb016f96905fdbd3679d5733d"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-6.json",
+      "sha256": "3edb37cab0dcc9e6d96ffcac211f241e1c5d9c1860ad18c14304ff73c92d7baa"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-6.pb",
+      "sha256": "550b2e2382ff87d7ff349e835055ce9e3df19e53e19a97a58f5c3106d3e083dd"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder-static.json",
+      "sha256": "97c650837813ff7ee380b1653178d07be4a4206dafe1342a923f10252c1adbd3"
+    },
+    {
+      "file": "rapid-bus-mrtfeeder.zip",
+      "sha256": "5ba228f83b94213c15eeb722d33f41b63f4b3d7e652e7656428bb429b3c4675d"
+    },
+    {
+      "file": "rapid-bus-penang-0.json",
+      "sha256": "d5b9c79099b7c52cb55da5583006072ba0a797fd11399d82b7a0f34a6117e354"
+    },
+    {
+      "file": "rapid-bus-penang-0.pb",
+      "sha256": "1eb1c192c67fb8e82828cc5b1d0d1cf2861544497e44f269eecaad875c87cab6"
+    },
+    {
+      "file": "rapid-bus-penang-1.json",
+      "sha256": "060f975ed5d766861398cd2e6759cc306928d4030ed07541e5016031ab685c12"
+    },
+    {
+      "file": "rapid-bus-penang-1.pb",
+      "sha256": "0350935227e31ebe9382d0fc97b397fd8a7df61a305c6f7c82f6bffdf289fa8d"
+    },
+    {
+      "file": "rapid-bus-penang-2.json",
+      "sha256": "79543f618435cf397b894b88bd9c2cc65bb335748f1949aed32313319da8b679"
+    },
+    {
+      "file": "rapid-bus-penang-2.pb",
+      "sha256": "9c6fe949a716d899dda3a559b88c61d3e7cad2c583d0098bea5c17d5e4cf3ea2"
+    },
+    {
+      "file": "rapid-bus-penang-3.json",
+      "sha256": "4609c84b8edae4cbc2081e6e8e1473214fa78eb990cabec63f139210b72b2149"
+    },
+    {
+      "file": "rapid-bus-penang-3.pb",
+      "sha256": "e3c7eb4a118bb6fae5abaac2bd3529e64dd5d0d3afba3c3b2492da0ff1faae57"
+    },
+    {
+      "file": "rapid-bus-penang-4.json",
+      "sha256": "6ca65cc507698d5b3188c777392d1c139120c6141a029ff74acab70f3a6e171e"
+    },
+    {
+      "file": "rapid-bus-penang-4.pb",
+      "sha256": "473d949d07a5a2bf20c297e34215afba98d61edc259919b5e6af3b3c52a4bce0"
+    },
+    {
+      "file": "rapid-bus-penang-5.json",
+      "sha256": "e726f84bf307c5f65a3e12179448d0b517f76afa43ead5be699c8559764e2dc7"
+    },
+    {
+      "file": "rapid-bus-penang-5.pb",
+      "sha256": "473d949d07a5a2bf20c297e34215afba98d61edc259919b5e6af3b3c52a4bce0"
+    },
+    {
+      "file": "rapid-bus-penang-6.json",
+      "sha256": "427e20bddbbf2e8a499fed8b12fcec3d81776c6f4a06de83ba56afe429d12814"
+    },
+    {
+      "file": "rapid-bus-penang-6.pb",
+      "sha256": "2b88366da2c0a48385ce4bffe1735475321a8dbc02d09676543f81b07f762cd4"
+    },
+    {
+      "file": "rapid-bus-penang-static.json",
+      "sha256": "b88d3c58f5f42d420ce3bfdde9d1e26ade440d85b08a6324f6ad28f50d84a3b6"
+    },
+    {
+      "file": "rapid-bus-penang.zip",
+      "sha256": "b9c932f68295ab04b884fc77aae77471ba7ddaf543803f7c8e928d7f7b36bdae"
+    }
+  ],
+  "scripts": [
+    {
+      "file": "capture.cjs",
+      "sha256": "4fd7fcf51cb1a8f787517678a1d8dff42f9436ab0fc729369a86eb174639bccb"
+    },
+    {
+      "file": "analyse.cjs",
+      "sha256": "bc78e7670e02597f7d1ea170953a4a584fc95cd2eeaa19c7810ce3cacc54d2ee"
+    },
+    {
+      "file": "verify-deliverables.cjs",
+      "sha256": "211e15cd5c9287871eb6812066d5265322537a3fda35e7ef65ef048bc5cb91fa"
+    }
+  ],
+  "deliverables": [
+    {
+      "file": "docs/timetable-adherence-coverage-audit.md",
+      "sha256": "3c431ca4a382849625a91d2f6c7d319ded7dc2bf6db0fbf4a724107defbc7705"
+    },
+    {
+      "file": "docs/timetable-adherence-coverage-audit/coverage-by-operator.csv",
+      "sha256": "0710aa3f342fc0cc8add168ddfed73b576dbee36aa48e82889037ed3cb3c27d4"
+    },
+    {
+      "file": "docs/timetable-adherence-coverage-audit/coverage-by-route.csv",
+      "sha256": "5acd735126a3479c2531c8de8d53e0d2301493aae3977740c0a92bd5f3eefa9d"
+    },
+    {
+      "file": "docs/timetable-adherence-coverage-audit/coverage-by-stop.csv",
+      "sha256": "af0b146d0197a0f22e102a6d327457cef9d6a19d9450ad9301d3ff47a5bbb280"
+    },
+    {
+      "file": "docs/timetable-adherence-coverage-audit/coverage-by-trip.csv",
+      "sha256": "9f91db4ffca233e15bb14359cd8e63664a8d5583661470c05bb574377c28fab6"
+    },
+    {
+      "file": "docs/timetable-adherence-coverage-audit/coverage-by-vehicle.csv",
+      "sha256": "83d864b08490a5755137666183c2bfbc91483d67916ba07b64ab5cd8c486d0b3"
+    },
+    {
+      "file": "docs/timetable-adherence-coverage-audit/diagnostic-samples.csv",
+      "sha256": "bdf4bcec9c622b8747809695c8d50ece4f2c08f3154ff7b7ebcbe574390021f0"
+    },
+    {
+      "file": "docs/timetable-adherence-coverage-audit/geometry-blockers.csv",
+      "sha256": "1999b73d1097d7b7d9245f165f02f4fa880c9bec10f7731018f5c415855dd801"
+    },
+    {
+      "file": "docs/timetable-adherence-coverage-audit/history-discontinuities.csv",
+      "sha256": "c9a5c73a0cd56c509a83578969c81368be75830a3a15a230c16f57bea4fbae40"
+    },
+    {
+      "file": "docs/timetable-adherence-coverage-audit/summary.json",
+      "sha256": "6c23a93eb23c4488d8eed2158705a3ac7df3c323d5284e9893a997d4e4c04a75"
+    },
+    {
+      "file": "docs/timetable-adherence-coverage-audit/unavailable-by-reason-operator-route.csv",
+      "sha256": "30f7e32f0636cc9fd193b832bb07989939702705018ecdba6bd298517fbbaf21"
+    },
+    {
+      "file": "docs/timetable-adherence-coverage-audit/unavailable-examples.csv",
+      "sha256": "5cb1286e3d5fffc28e1eead83e1939ec9c6643138f8eec7bc37391e6f15b4493"
+    },
+    {
+      "file": "docs/timetable-adherence-coverage-audit/vehicle-pipeline.csv",
+      "sha256": "4a65bf50517221157a182b110d194e86da3f1c47c79ed2a047e2d1d96445ad55"
+    }
+  ]
+}

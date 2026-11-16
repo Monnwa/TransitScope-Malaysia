@@ -2,6 +2,15 @@ import {afterEach,describe,expect,it,vi} from "vitest";
 import {classifyAnnouncement,updateAlertStatuses} from "@/lib/alert-classifier";
 import {parseOfficialAnnouncements,robotsAllows,getOfficialAlerts} from "@/lib/official-alerts";
 import {safeOfficialUrl} from "@/lib/official-alert-model";
+vi.mock("node:https", async () => {
+  const { EventEmitter } = await import("node:events");
+  const get = () => {
+    const request = new EventEmitter();
+    queueMicrotask(() => request.emit("error", new Error("ERL fixture offline")));
+    return request;
+  };
+  return { get, default: { get } };
+});
 const rss=`<rss><channel><item><title>Kajang Line service disruption</title><link>https://myrapid.com.my/fixture-notice/</link><pubDate>Sun, 01 Nov 2026 06:00:00 GMT</pubDate><description>Fixture only, not a real incident.</description></item></channel></rss>`;
 afterEach(()=>{vi.unstubAllGlobals();vi.useRealTimers();});
 describe("official alerts ingestion and conservative status",()=>{

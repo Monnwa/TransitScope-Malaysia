@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
-import { getMrtAlignments } from "@/lib/mrt-lines";
+import { railNetwork } from "@/lib/simulation/network";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
 export async function GET() {
-  try {
-    const lines = await getMrtAlignments();
-    return NextResponse.json({ lines, available: lines.length === 2, source: lines.length === 2 ? "Official GTFS Static; validated WGS84 geometry and station coverage" : "Some MRT railway alignments are unavailable. Stations remain visible; retry later." }, { headers: { "Cache-Control": lines.length === 2 ? "public, s-maxage=86400, stale-while-revalidate=86400" : "no-store" } });
-  } catch {
-    return NextResponse.json({ lines: [], available: false, source: "MRT alignment unavailable; no geometry was fabricated." }, { headers: { "Cache-Control": "no-store" } });
-  }
+  const lines = railNetwork.lines.filter(line => line.mode === "MRT");
+  return NextResponse.json({ ...railNetwork, lines, stations: railNetwork.stations.filter(station => station.modes?.includes("MRT")) },
+    { headers: { "Cache-Control": "no-store" } });
 }

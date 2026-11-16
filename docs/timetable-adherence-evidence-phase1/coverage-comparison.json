@@ -1,0 +1,738 @@
+{
+  "baselineCommit": "235f7cb67d631a17df86bfc23f70de93dc0fff5d",
+  "input": "Identical seven-round direct official GPS/static capture from the coverage audit; offline only",
+  "restartBeforeRound": 3,
+  "referenceEligible": 3483,
+  "variants": {
+    "baseline-continuous": {
+      "buses": 330,
+      "matched": 250,
+      "passed": 3765,
+      "nativeEligible": 3483,
+      "nativeClassified": 195,
+      "fixedEligible": 3483,
+      "fixedClassified": 195,
+      "fixedCoveragePct": 5.598621877691645,
+      "fixedUnavailableReasons": {
+        "NO_GPS_HISTORY": 3279,
+        "PASSAGE_TIME_UNAVAILABLE": 9
+      },
+      "nativeCoveragePct": 5.598621877691645,
+      "nativeUnavailableReasons": {
+        "NO_GPS_HISTORY": 3279,
+        "PASSAGE_TIME_UNAVAILABLE": 9
+      },
+      "rounds": [
+        {
+          "round": 0,
+          "buses": 344,
+          "matched": 264,
+          "passed": 0,
+          "nativeEligible": 0,
+          "nativeClassified": 0,
+          "fixedEligible": 3483,
+          "fixedClassified": 0,
+          "fixedCoveragePct": 0,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3483
+          }
+        },
+        {
+          "round": 1,
+          "buses": 351,
+          "matched": 268,
+          "passed": 3035,
+          "nativeEligible": 2671,
+          "nativeClassified": 0,
+          "fixedEligible": 3483,
+          "fixedClassified": 0,
+          "fixedCoveragePct": 0,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3483
+          }
+        },
+        {
+          "round": 2,
+          "buses": 347,
+          "matched": 264,
+          "passed": 3422,
+          "nativeEligible": 3063,
+          "nativeClassified": 40,
+          "fixedEligible": 3483,
+          "fixedClassified": 39,
+          "fixedCoveragePct": 1.119724375538329,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3444
+          }
+        },
+        {
+          "round": 3,
+          "buses": 342,
+          "matched": 260,
+          "passed": 3747,
+          "nativeEligible": 3420,
+          "nativeClassified": 77,
+          "fixedEligible": 3483,
+          "fixedClassified": 74,
+          "fixedCoveragePct": 2.124605225380419,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3407,
+            "PASSAGE_TIME_UNAVAILABLE": 2
+          }
+        },
+        {
+          "round": 4,
+          "buses": 340,
+          "matched": 256,
+          "passed": 3897,
+          "nativeEligible": 3487,
+          "nativeClassified": 144,
+          "fixedEligible": 3483,
+          "fixedClassified": 135,
+          "fixedCoveragePct": 3.875968992248062,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3343,
+            "PASSAGE_TIME_UNAVAILABLE": 5
+          }
+        },
+        {
+          "round": 5,
+          "buses": 337,
+          "matched": 253,
+          "passed": 3758,
+          "nativeEligible": 3391,
+          "nativeClassified": 161,
+          "fixedEligible": 3483,
+          "fixedClassified": 153,
+          "fixedCoveragePct": 4.392764857881137,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3324,
+            "PASSAGE_TIME_UNAVAILABLE": 6
+          }
+        },
+        {
+          "round": 6,
+          "buses": 330,
+          "matched": 250,
+          "passed": 3765,
+          "nativeEligible": 3483,
+          "nativeClassified": 195,
+          "fixedEligible": 3483,
+          "fixedClassified": 195,
+          "fixedCoveragePct": 5.598621877691645,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3279,
+            "PASSAGE_TIME_UNAVAILABLE": 9
+          }
+        }
+      ],
+      "storage": {
+        "documents": 0,
+        "observations": 0,
+        "passages": 0,
+        "bytes": 0,
+        "observationBytes": 0,
+        "largestDocumentBytes": 0,
+        "reads": 0,
+        "writes": 0,
+        "logicalWriteBytes": 0,
+        "cleanupRemaining": 0
+      },
+      "processingMs": {
+        "max": 494.8855000000003,
+        "mean": 117.28789523809549
+      }
+    },
+    "baseline-restart": {
+      "buses": 330,
+      "matched": 250,
+      "passed": 3439,
+      "nativeEligible": 3157,
+      "nativeClassified": 49,
+      "fixedEligible": 3483,
+      "fixedClassified": 49,
+      "fixedCoveragePct": 1.4068331897789261,
+      "fixedUnavailableReasons": {
+        "NO_GPS_HISTORY": 3431,
+        "PASSAGE_TIME_UNAVAILABLE": 3
+      },
+      "nativeCoveragePct": 1.5521064301552105,
+      "nativeUnavailableReasons": {
+        "NO_GPS_HISTORY": 3105,
+        "PASSAGE_TIME_UNAVAILABLE": 3
+      },
+      "rounds": [
+        {
+          "round": 0,
+          "buses": 344,
+          "matched": 264,
+          "passed": 0,
+          "nativeEligible": 0,
+          "nativeClassified": 0,
+          "fixedEligible": 3483,
+          "fixedClassified": 0,
+          "fixedCoveragePct": 0,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3483
+          }
+        },
+        {
+          "round": 1,
+          "buses": 351,
+          "matched": 268,
+          "passed": 3035,
+          "nativeEligible": 2671,
+          "nativeClassified": 0,
+          "fixedEligible": 3483,
+          "fixedClassified": 0,
+          "fixedCoveragePct": 0,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3483
+          }
+        },
+        {
+          "round": 2,
+          "buses": 347,
+          "matched": 264,
+          "passed": 3422,
+          "nativeEligible": 3063,
+          "nativeClassified": 40,
+          "fixedEligible": 3483,
+          "fixedClassified": 39,
+          "fixedCoveragePct": 1.119724375538329,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3444
+          }
+        },
+        {
+          "round": 3,
+          "buses": 342,
+          "matched": 260,
+          "passed": 0,
+          "nativeEligible": 0,
+          "nativeClassified": 0,
+          "fixedEligible": 3483,
+          "fixedClassified": 0,
+          "fixedCoveragePct": 0,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3483
+          }
+        },
+        {
+          "round": 4,
+          "buses": 340,
+          "matched": 256,
+          "passed": 2710,
+          "nativeEligible": 2367,
+          "nativeClassified": 0,
+          "fixedEligible": 3483,
+          "fixedClassified": 0,
+          "fixedCoveragePct": 0,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3483
+          }
+        },
+        {
+          "round": 5,
+          "buses": 337,
+          "matched": 253,
+          "passed": 2776,
+          "nativeEligible": 2448,
+          "nativeClassified": 16,
+          "fixedEligible": 3483,
+          "fixedClassified": 15,
+          "fixedCoveragePct": 0.4306632213608958,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3468
+          }
+        },
+        {
+          "round": 6,
+          "buses": 330,
+          "matched": 250,
+          "passed": 3439,
+          "nativeEligible": 3157,
+          "nativeClassified": 49,
+          "fixedEligible": 3483,
+          "fixedClassified": 49,
+          "fixedCoveragePct": 1.4068331897789261,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3431,
+            "PASSAGE_TIME_UNAVAILABLE": 3
+          }
+        }
+      ],
+      "storage": {
+        "documents": 0,
+        "observations": 0,
+        "passages": 0,
+        "bytes": 0,
+        "observationBytes": 0,
+        "largestDocumentBytes": 0,
+        "reads": 0,
+        "writes": 0,
+        "logicalWriteBytes": 0,
+        "cleanupRemaining": 0
+      },
+      "processingMs": {
+        "max": 478.40480000000025,
+        "mean": 101.20100000000015
+      }
+    },
+    "phase1-disabled": {
+      "buses": 330,
+      "matched": 250,
+      "passed": 3765,
+      "nativeEligible": 3483,
+      "nativeClassified": 195,
+      "fixedEligible": 3483,
+      "fixedClassified": 195,
+      "fixedCoveragePct": 5.598621877691645,
+      "fixedUnavailableReasons": {
+        "NO_GPS_HISTORY": 3279,
+        "INSUFFICIENT_EVIDENCE": 3,
+        "GPS_GAP_TOO_LARGE": 1,
+        "GPS_OUTLIER_REJECTED": 3,
+        "PASSAGE_TIME_UNAVAILABLE": 2
+      },
+      "nativeCoveragePct": 5.598621877691645,
+      "nativeUnavailableReasons": {
+        "NO_GPS_HISTORY": 3279,
+        "INSUFFICIENT_EVIDENCE": 3,
+        "GPS_GAP_TOO_LARGE": 1,
+        "GPS_OUTLIER_REJECTED": 3,
+        "PASSAGE_TIME_UNAVAILABLE": 2
+      },
+      "rounds": [
+        {
+          "round": 0,
+          "buses": 344,
+          "matched": 264,
+          "passed": 0,
+          "nativeEligible": 0,
+          "nativeClassified": 0,
+          "fixedEligible": 3483,
+          "fixedClassified": 0,
+          "fixedCoveragePct": 0,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3483
+          }
+        },
+        {
+          "round": 1,
+          "buses": 351,
+          "matched": 268,
+          "passed": 3035,
+          "nativeEligible": 2671,
+          "nativeClassified": 0,
+          "fixedEligible": 3483,
+          "fixedClassified": 0,
+          "fixedCoveragePct": 0,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3483
+          }
+        },
+        {
+          "round": 2,
+          "buses": 347,
+          "matched": 264,
+          "passed": 3422,
+          "nativeEligible": 3063,
+          "nativeClassified": 40,
+          "fixedEligible": 3483,
+          "fixedClassified": 39,
+          "fixedCoveragePct": 1.119724375538329,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3444
+          }
+        },
+        {
+          "round": 3,
+          "buses": 342,
+          "matched": 260,
+          "passed": 3747,
+          "nativeEligible": 3420,
+          "nativeClassified": 77,
+          "fixedEligible": 3483,
+          "fixedClassified": 74,
+          "fixedCoveragePct": 2.124605225380419,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3407,
+            "PASSAGE_TIME_UNAVAILABLE": 2
+          }
+        },
+        {
+          "round": 4,
+          "buses": 340,
+          "matched": 256,
+          "passed": 3897,
+          "nativeEligible": 3487,
+          "nativeClassified": 144,
+          "fixedEligible": 3483,
+          "fixedClassified": 135,
+          "fixedCoveragePct": 3.875968992248062,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3343,
+            "INSUFFICIENT_EVIDENCE": 2,
+            "GPS_OUTLIER_REJECTED": 1,
+            "PASSAGE_TIME_UNAVAILABLE": 2
+          }
+        },
+        {
+          "round": 5,
+          "buses": 337,
+          "matched": 253,
+          "passed": 3758,
+          "nativeEligible": 3391,
+          "nativeClassified": 161,
+          "fixedEligible": 3483,
+          "fixedClassified": 153,
+          "fixedCoveragePct": 4.392764857881137,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3324,
+            "INSUFFICIENT_EVIDENCE": 2,
+            "GPS_OUTLIER_REJECTED": 2,
+            "PASSAGE_TIME_UNAVAILABLE": 2
+          }
+        },
+        {
+          "round": 6,
+          "buses": 330,
+          "matched": 250,
+          "passed": 3765,
+          "nativeEligible": 3483,
+          "nativeClassified": 195,
+          "fixedEligible": 3483,
+          "fixedClassified": 195,
+          "fixedCoveragePct": 5.598621877691645,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3279,
+            "INSUFFICIENT_EVIDENCE": 3,
+            "GPS_GAP_TOO_LARGE": 1,
+            "GPS_OUTLIER_REJECTED": 3,
+            "PASSAGE_TIME_UNAVAILABLE": 2
+          }
+        }
+      ],
+      "storage": {
+        "documents": 0,
+        "observations": 0,
+        "passages": 0,
+        "bytes": 0,
+        "observationBytes": 0,
+        "largestDocumentBytes": 0,
+        "reads": 0,
+        "writes": 0,
+        "logicalWriteBytes": 0,
+        "cleanupRemaining": 0
+      },
+      "processingMs": {
+        "max": 485.29069999999956,
+        "mean": 119.34531428571435
+      }
+    },
+    "phase1-continuous": {
+      "buses": 330,
+      "matched": 250,
+      "passed": 3765,
+      "nativeEligible": 3483,
+      "nativeClassified": 195,
+      "fixedEligible": 3483,
+      "fixedClassified": 195,
+      "fixedCoveragePct": 5.598621877691645,
+      "fixedUnavailableReasons": {
+        "NO_GPS_HISTORY": 3279,
+        "INSUFFICIENT_EVIDENCE": 3,
+        "GPS_GAP_TOO_LARGE": 1,
+        "GPS_OUTLIER_REJECTED": 3,
+        "PASSAGE_TIME_UNAVAILABLE": 2
+      },
+      "nativeCoveragePct": 5.598621877691645,
+      "nativeUnavailableReasons": {
+        "NO_GPS_HISTORY": 3279,
+        "INSUFFICIENT_EVIDENCE": 3,
+        "GPS_GAP_TOO_LARGE": 1,
+        "GPS_OUTLIER_REJECTED": 3,
+        "PASSAGE_TIME_UNAVAILABLE": 2
+      },
+      "rounds": [
+        {
+          "round": 0,
+          "buses": 344,
+          "matched": 264,
+          "passed": 0,
+          "nativeEligible": 0,
+          "nativeClassified": 0,
+          "fixedEligible": 3483,
+          "fixedClassified": 0,
+          "fixedCoveragePct": 0,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3483
+          }
+        },
+        {
+          "round": 1,
+          "buses": 351,
+          "matched": 268,
+          "passed": 3035,
+          "nativeEligible": 2671,
+          "nativeClassified": 0,
+          "fixedEligible": 3483,
+          "fixedClassified": 0,
+          "fixedCoveragePct": 0,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3483
+          }
+        },
+        {
+          "round": 2,
+          "buses": 347,
+          "matched": 264,
+          "passed": 3422,
+          "nativeEligible": 3063,
+          "nativeClassified": 40,
+          "fixedEligible": 3483,
+          "fixedClassified": 39,
+          "fixedCoveragePct": 1.119724375538329,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3444
+          }
+        },
+        {
+          "round": 3,
+          "buses": 342,
+          "matched": 260,
+          "passed": 3747,
+          "nativeEligible": 3420,
+          "nativeClassified": 77,
+          "fixedEligible": 3483,
+          "fixedClassified": 74,
+          "fixedCoveragePct": 2.124605225380419,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3407,
+            "PASSAGE_TIME_UNAVAILABLE": 2
+          }
+        },
+        {
+          "round": 4,
+          "buses": 340,
+          "matched": 256,
+          "passed": 3897,
+          "nativeEligible": 3487,
+          "nativeClassified": 144,
+          "fixedEligible": 3483,
+          "fixedClassified": 135,
+          "fixedCoveragePct": 3.875968992248062,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3343,
+            "INSUFFICIENT_EVIDENCE": 2,
+            "GPS_OUTLIER_REJECTED": 1,
+            "PASSAGE_TIME_UNAVAILABLE": 2
+          }
+        },
+        {
+          "round": 5,
+          "buses": 337,
+          "matched": 253,
+          "passed": 3758,
+          "nativeEligible": 3391,
+          "nativeClassified": 161,
+          "fixedEligible": 3483,
+          "fixedClassified": 153,
+          "fixedCoveragePct": 4.392764857881137,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3324,
+            "INSUFFICIENT_EVIDENCE": 2,
+            "GPS_OUTLIER_REJECTED": 2,
+            "PASSAGE_TIME_UNAVAILABLE": 2
+          }
+        },
+        {
+          "round": 6,
+          "buses": 330,
+          "matched": 250,
+          "passed": 3765,
+          "nativeEligible": 3483,
+          "nativeClassified": 195,
+          "fixedEligible": 3483,
+          "fixedClassified": 195,
+          "fixedCoveragePct": 5.598621877691645,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3279,
+            "INSUFFICIENT_EVIDENCE": 3,
+            "GPS_GAP_TOO_LARGE": 1,
+            "GPS_OUTLIER_REJECTED": 3,
+            "PASSAGE_TIME_UNAVAILABLE": 2
+          }
+        }
+      ],
+      "storage": {
+        "documents": 257,
+        "observations": 1291,
+        "passages": 337,
+        "bytes": 1202429,
+        "observationBytes": 511628,
+        "largestDocumentBytes": 10195,
+        "reads": 22,
+        "writes": 1291,
+        "logicalWriteBytes": 4376231,
+        "cleanupRemaining": 0
+      },
+      "processingMs": {
+        "max": 340.45679999999993,
+        "mean": 188.3588142857147
+      }
+    },
+    "phase1-restart": {
+      "buses": 330,
+      "matched": 250,
+      "passed": 3439,
+      "nativeEligible": 3157,
+      "nativeClassified": 130,
+      "fixedEligible": 3483,
+      "fixedClassified": 130,
+      "fixedCoveragePct": 3.7324145851277635,
+      "fixedUnavailableReasons": {
+        "NO_GPS_HISTORY": 3348,
+        "INSUFFICIENT_EVIDENCE": 2,
+        "GPS_GAP_TOO_LARGE": 1,
+        "PASSAGE_TIME_UNAVAILABLE": 1,
+        "GPS_OUTLIER_REJECTED": 1
+      },
+      "nativeCoveragePct": 4.117833386126069,
+      "nativeUnavailableReasons": {
+        "NO_GPS_HISTORY": 3022,
+        "INSUFFICIENT_EVIDENCE": 2,
+        "GPS_GAP_TOO_LARGE": 1,
+        "PASSAGE_TIME_UNAVAILABLE": 1,
+        "GPS_OUTLIER_REJECTED": 1
+      },
+      "rounds": [
+        {
+          "round": 0,
+          "buses": 344,
+          "matched": 264,
+          "passed": 0,
+          "nativeEligible": 0,
+          "nativeClassified": 0,
+          "fixedEligible": 3483,
+          "fixedClassified": 0,
+          "fixedCoveragePct": 0,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3483
+          }
+        },
+        {
+          "round": 1,
+          "buses": 351,
+          "matched": 268,
+          "passed": 3035,
+          "nativeEligible": 2671,
+          "nativeClassified": 0,
+          "fixedEligible": 3483,
+          "fixedClassified": 0,
+          "fixedCoveragePct": 0,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3483
+          }
+        },
+        {
+          "round": 2,
+          "buses": 347,
+          "matched": 264,
+          "passed": 3422,
+          "nativeEligible": 3063,
+          "nativeClassified": 40,
+          "fixedEligible": 3483,
+          "fixedClassified": 39,
+          "fixedCoveragePct": 1.119724375538329,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3444
+          }
+        },
+        {
+          "round": 3,
+          "buses": 342,
+          "matched": 260,
+          "passed": 0,
+          "nativeEligible": 0,
+          "nativeClassified": 0,
+          "fixedEligible": 3483,
+          "fixedClassified": 0,
+          "fixedCoveragePct": 0,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3483
+          }
+        },
+        {
+          "round": 4,
+          "buses": 340,
+          "matched": 256,
+          "passed": 2710,
+          "nativeEligible": 2367,
+          "nativeClassified": 61,
+          "fixedEligible": 3483,
+          "fixedClassified": 58,
+          "fixedCoveragePct": 1.6652311225954637,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3424,
+            "INSUFFICIENT_EVIDENCE": 1
+          }
+        },
+        {
+          "round": 5,
+          "buses": 337,
+          "matched": 253,
+          "passed": 2776,
+          "nativeEligible": 2448,
+          "nativeClassified": 80,
+          "fixedEligible": 3483,
+          "fixedClassified": 77,
+          "fixedCoveragePct": 2.2107378696525983,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3405,
+            "INSUFFICIENT_EVIDENCE": 1
+          }
+        },
+        {
+          "round": 6,
+          "buses": 330,
+          "matched": 250,
+          "passed": 3439,
+          "nativeEligible": 3157,
+          "nativeClassified": 130,
+          "fixedEligible": 3483,
+          "fixedClassified": 130,
+          "fixedCoveragePct": 3.7324145851277635,
+          "fixedUnavailableReasons": {
+            "NO_GPS_HISTORY": 3348,
+            "INSUFFICIENT_EVIDENCE": 2,
+            "GPS_GAP_TOO_LARGE": 1,
+            "PASSAGE_TIME_UNAVAILABLE": 1,
+            "GPS_OUTLIER_REJECTED": 1
+          }
+        }
+      ],
+      "storage": {
+        "documents": 256,
+        "observations": 1274,
+        "passages": 260,
+        "bytes": 1113111,
+        "observationBytes": 505090,
+        "largestDocumentBytes": 9240,
+        "reads": 22,
+        "writes": 1274,
+        "logicalWriteBytes": 4046328,
+        "cleanupRemaining": 0
+      },
+      "processingMs": {
+        "max": 348.3742999999995,
+        "mean": 188.6433333333336
+      }
+    }
+  },
+  "unchangedCoreRows": 2391,
+  "coreRows": 2391,
+  "coreDifferences": [],
+  "restartGpsProgressRowsUnchanged": 2391
+}

@@ -1,0 +1,4265 @@
+{
+  "scope": "Read-only; runtime source unchanged; no deployment",
+  "primarySnapshot": "2026-11-08T08:33:57.037Z",
+  "rounds": 7,
+  "server": {
+    "allVehicles": 332,
+    "buses": 332,
+    "matchedBuses": 251,
+    "passedStops": 3801,
+    "passedValidDeparture": 3801,
+    "eligiblePassed": 3519,
+    "eligibleWithSufficientGpsPair": 604,
+    "eligibleWithInferredPassage": 604,
+    "passedWithSufficientGpsPair": 653,
+    "passedWithInferredPassage": 653,
+    "passedWithConfirmedPassage": 653,
+    "classifiedPassed": 604,
+    "eligibleClassified": 604,
+    "unavailablePassed": 3197,
+    "eligibleUnavailable": 2915,
+    "coveragePct": 17.163967036089797,
+    "endToEndPct": 15.890555117074454,
+    "explicitDeparted": 0,
+    "reasons": {
+      "NO_GPS_HISTORY": {
+        "allPassed": 2710,
+        "eligiblePassed": 2710,
+        "percentEligible": 77.0105143506678,
+        "percentAllPassed": 71.29702709813208
+      },
+      "GPS_GAP_TOO_LARGE": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      },
+      "GPS_STALE": {
+        "allPassed": 13,
+        "eligiblePassed": 13,
+        "percentEligible": 0.36942313157146917,
+        "percentAllPassed": 0.34201525914233094
+      },
+      "INVALID_GPS_TIMESTAMP": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      },
+      "GPS_OUTLIER_REJECTED": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      },
+      "TRIP_MISMATCH": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      },
+      "STOP_SEQUENCE_MISMATCH": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      },
+      "NO_SCHEDULED_TIME": {
+        "allPassed": 282,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 7.419100236779795
+      },
+      "PASSAGE_TIME_UNAVAILABLE": {
+        "allPassed": 192,
+        "eligiblePassed": 192,
+        "percentEligible": 5.456095481670929,
+        "percentAllPassed": 5.05130228887135
+      },
+      "INSUFFICIENT_EVIDENCE": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      },
+      "OTHER": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      }
+    }
+  },
+  "productionTrend": [
+    {
+      "round": 0,
+      "fetchedAt": "2026-11-08T08:30:51.601Z",
+      "allVehicles": 352,
+      "buses": 344,
+      "matchedBuses": 264,
+      "passedStops": 3943,
+      "passedValidDeparture": 3943,
+      "eligiblePassed": 3573,
+      "eligibleWithSufficientGpsPair": 426,
+      "eligibleWithInferredPassage": 426,
+      "passedWithSufficientGpsPair": 466,
+      "passedWithInferredPassage": 466,
+      "passedWithConfirmedPassage": 466,
+      "classifiedPassed": 426,
+      "eligibleClassified": 426,
+      "unavailablePassed": 3517,
+      "eligibleUnavailable": 3147,
+      "coveragePct": 11.922753988245173,
+      "endToEndPct": 10.803956378392087,
+      "explicitDeparted": 0
+    },
+    {
+      "round": 1,
+      "fetchedAt": "2026-11-08T08:31:22.154Z",
+      "allVehicles": 351,
+      "buses": 351,
+      "matchedBuses": 268,
+      "passedStops": 3947,
+      "passedValidDeparture": 3947,
+      "eligiblePassed": 3568,
+      "eligibleWithSufficientGpsPair": 445,
+      "eligibleWithInferredPassage": 445,
+      "passedWithSufficientGpsPair": 486,
+      "passedWithInferredPassage": 486,
+      "passedWithConfirmedPassage": 486,
+      "classifiedPassed": 445,
+      "eligibleClassified": 445,
+      "unavailablePassed": 3502,
+      "eligibleUnavailable": 3123,
+      "coveragePct": 12.471973094170403,
+      "endToEndPct": 11.274385609323536,
+      "explicitDeparted": 0
+    },
+    {
+      "round": 2,
+      "fetchedAt": "2026-11-08T08:31:53.265Z",
+      "allVehicles": 355,
+      "buses": 347,
+      "matchedBuses": 264,
+      "passedStops": 3874,
+      "passedValidDeparture": 3874,
+      "eligiblePassed": 3479,
+      "eligibleWithSufficientGpsPair": 496,
+      "eligibleWithInferredPassage": 496,
+      "passedWithSufficientGpsPair": 538,
+      "passedWithInferredPassage": 538,
+      "passedWithConfirmedPassage": 538,
+      "classifiedPassed": 496,
+      "eligibleClassified": 496,
+      "unavailablePassed": 3378,
+      "eligibleUnavailable": 2983,
+      "coveragePct": 14.256970393791319,
+      "endToEndPct": 12.803304078471864,
+      "explicitDeparted": 0
+    },
+    {
+      "round": 3,
+      "fetchedAt": "2026-11-08T08:32:24.706Z",
+      "allVehicles": 350,
+      "buses": 342,
+      "matchedBuses": 260,
+      "passedStops": 4130,
+      "passedValidDeparture": 4130,
+      "eligiblePassed": 3767,
+      "eligibleWithSufficientGpsPair": 560,
+      "eligibleWithInferredPassage": 560,
+      "passedWithSufficientGpsPair": 606,
+      "passedWithInferredPassage": 606,
+      "passedWithConfirmedPassage": 606,
+      "classifiedPassed": 560,
+      "eligibleClassified": 560,
+      "unavailablePassed": 3570,
+      "eligibleUnavailable": 3207,
+      "coveragePct": 14.865941067162199,
+      "endToEndPct": 13.559322033898304,
+      "explicitDeparted": 0
+    },
+    {
+      "round": 4,
+      "fetchedAt": "2026-11-08T08:32:55.135Z",
+      "allVehicles": 349,
+      "buses": 341,
+      "matchedBuses": 258,
+      "passedStops": 4036,
+      "passedValidDeparture": 4036,
+      "eligiblePassed": 3626,
+      "eligibleWithSufficientGpsPair": 593,
+      "eligibleWithInferredPassage": 593,
+      "passedWithSufficientGpsPair": 654,
+      "passedWithInferredPassage": 654,
+      "passedWithConfirmedPassage": 654,
+      "classifiedPassed": 593,
+      "eligibleClassified": 593,
+      "unavailablePassed": 3443,
+      "eligibleUnavailable": 3033,
+      "coveragePct": 16.35410921125207,
+      "endToEndPct": 14.692765113974232,
+      "explicitDeparted": 0
+    },
+    {
+      "round": 5,
+      "fetchedAt": "2026-11-08T08:33:27.113Z",
+      "allVehicles": 337,
+      "buses": 337,
+      "matchedBuses": 253,
+      "passedStops": 3906,
+      "passedValidDeparture": 3906,
+      "eligiblePassed": 3539,
+      "eligibleWithSufficientGpsPair": 610,
+      "eligibleWithInferredPassage": 610,
+      "passedWithSufficientGpsPair": 671,
+      "passedWithInferredPassage": 671,
+      "passedWithConfirmedPassage": 671,
+      "classifiedPassed": 610,
+      "eligibleClassified": 610,
+      "unavailablePassed": 3296,
+      "eligibleUnavailable": 2929,
+      "coveragePct": 17.23650748799096,
+      "endToEndPct": 15.61699948796723,
+      "explicitDeparted": 0
+    },
+    {
+      "round": 6,
+      "fetchedAt": "2026-11-08T08:33:57.037Z",
+      "allVehicles": 332,
+      "buses": 332,
+      "matchedBuses": 251,
+      "passedStops": 3801,
+      "passedValidDeparture": 3801,
+      "eligiblePassed": 3519,
+      "eligibleWithSufficientGpsPair": 604,
+      "eligibleWithInferredPassage": 604,
+      "passedWithSufficientGpsPair": 653,
+      "passedWithInferredPassage": 653,
+      "passedWithConfirmedPassage": 653,
+      "classifiedPassed": 604,
+      "eligibleClassified": 604,
+      "unavailablePassed": 3197,
+      "eligibleUnavailable": 2915,
+      "coveragePct": 17.163967036089797,
+      "endToEndPct": 15.890555117074454,
+      "explicitDeparted": 0
+    }
+  ],
+  "clientSession": {
+    "allVehicles": 332,
+    "buses": 332,
+    "matchedBuses": 251,
+    "passedStops": 3801,
+    "passedValidDeparture": 3801,
+    "eligiblePassed": 3519,
+    "eligibleWithSufficientGpsPair": 604,
+    "eligibleWithInferredPassage": 604,
+    "passedWithSufficientGpsPair": 653,
+    "passedWithInferredPassage": 653,
+    "passedWithConfirmedPassage": 653,
+    "classifiedPassed": 604,
+    "eligibleClassified": 604,
+    "unavailablePassed": 3197,
+    "eligibleUnavailable": 2915,
+    "coveragePct": 17.163967036089797,
+    "endToEndPct": 15.890555117074454,
+    "explicitDeparted": 0,
+    "reasons": {
+      "NO_GPS_HISTORY": {
+        "allPassed": 2710,
+        "eligiblePassed": 2710,
+        "percentEligible": 77.0105143506678,
+        "percentAllPassed": 71.29702709813208
+      },
+      "GPS_GAP_TOO_LARGE": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      },
+      "GPS_STALE": {
+        "allPassed": 13,
+        "eligiblePassed": 13,
+        "percentEligible": 0.36942313157146917,
+        "percentAllPassed": 0.34201525914233094
+      },
+      "INVALID_GPS_TIMESTAMP": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      },
+      "GPS_OUTLIER_REJECTED": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      },
+      "TRIP_MISMATCH": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      },
+      "STOP_SEQUENCE_MISMATCH": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      },
+      "NO_SCHEDULED_TIME": {
+        "allPassed": 282,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 7.419100236779795
+      },
+      "PASSAGE_TIME_UNAVAILABLE": {
+        "allPassed": 192,
+        "eligiblePassed": 192,
+        "percentEligible": 5.456095481670929,
+        "percentAllPassed": 5.05130228887135
+      },
+      "INSUFFICIENT_EVIDENCE": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      },
+      "OTHER": {
+        "allPassed": 0,
+        "eligiblePassed": 0,
+        "percentEligible": 0,
+        "percentAllPassed": 0
+      }
+    }
+  },
+  "historyDiscontinuities": {
+    "transitions": 16,
+    "tokenChanges": 1,
+    "lostClassificationAppearances": 48,
+    "examples": [
+      {
+        "round": 1,
+        "operator": "Rapid Penang",
+        "route": "502",
+        "vehicle": "vehicle-e4698bc944d331",
+        "tokenChanged": false,
+        "originAdvanced": false,
+        "lostClassifications": 5,
+        "sameMeasurement": false
+      },
+      {
+        "round": 1,
+        "operator": "Rapid Penang",
+        "route": "302",
+        "vehicle": "vehicle-7ed152cac0fcb5",
+        "tokenChanged": false,
+        "originAdvanced": true,
+        "lostClassifications": 4,
+        "sameMeasurement": false
+      },
+      {
+        "round": 1,
+        "operator": "Rapid Penang",
+        "route": "303",
+        "vehicle": "vehicle-1ce0acbd45f298",
+        "tokenChanged": false,
+        "originAdvanced": true,
+        "lostClassifications": 1,
+        "sameMeasurement": false
+      },
+      {
+        "round": 2,
+        "operator": "MRT Feeder Bus",
+        "route": "T463",
+        "vehicle": "vehicle-a438e34cf509fa",
+        "tokenChanged": false,
+        "originAdvanced": true,
+        "lostClassifications": 6,
+        "sameMeasurement": false
+      },
+      {
+        "round": 2,
+        "operator": "MRT Feeder Bus",
+        "route": "T352",
+        "vehicle": "vehicle-9b45a25e4d8f80",
+        "tokenChanged": false,
+        "originAdvanced": false,
+        "lostClassifications": 5,
+        "sameMeasurement": false
+      },
+      {
+        "round": 2,
+        "operator": "MRT Feeder Bus",
+        "route": "T460",
+        "vehicle": "vehicle-455034c175bee9",
+        "tokenChanged": false,
+        "originAdvanced": false,
+        "lostClassifications": 2,
+        "sameMeasurement": false
+      },
+      {
+        "round": 2,
+        "operator": "Rapid Penang",
+        "route": "302",
+        "vehicle": "vehicle-2a1cef9778180b",
+        "tokenChanged": false,
+        "originAdvanced": true,
+        "lostClassifications": 2,
+        "sameMeasurement": false
+      },
+      {
+        "round": 3,
+        "operator": "MRT Feeder Bus",
+        "route": "T460",
+        "vehicle": "vehicle-7c55b4a912eee2",
+        "tokenChanged": false,
+        "originAdvanced": true,
+        "lostClassifications": 6,
+        "sameMeasurement": false
+      },
+      {
+        "round": 4,
+        "operator": "Rapid KL Bus",
+        "route": "780",
+        "vehicle": "vehicle-d9399d48dab78d",
+        "tokenChanged": true,
+        "originAdvanced": true,
+        "lostClassifications": 0,
+        "sameMeasurement": false
+      },
+      {
+        "round": 4,
+        "operator": "Rapid Penang",
+        "route": "308",
+        "vehicle": "vehicle-4f7c2f35aecbdf",
+        "tokenChanged": false,
+        "originAdvanced": true,
+        "lostClassifications": 4,
+        "sameMeasurement": false
+      },
+      {
+        "round": 4,
+        "operator": "Rapid Penang",
+        "route": "12",
+        "vehicle": "vehicle-dd5fd9721bd698",
+        "tokenChanged": false,
+        "originAdvanced": true,
+        "lostClassifications": 1,
+        "sameMeasurement": false
+      },
+      {
+        "round": 4,
+        "operator": "Rapid Penang",
+        "route": "303",
+        "vehicle": "vehicle-1ce0acbd45f298",
+        "tokenChanged": false,
+        "originAdvanced": false,
+        "lostClassifications": 1,
+        "sameMeasurement": false
+      }
+    ]
+  },
+  "staticQuality": [
+    {
+      "source": "rapid-bus-kl",
+      "routeRows": 139,
+      "tripRows": 2121,
+      "stopRows": 4106,
+      "stopTimeRows": 88827,
+      "calendarRows": 2,
+      "exceptionRows": 0,
+      "frequencyRows": 2118,
+      "nonExactFrequencyRows": 2118,
+      "exactFrequencyRows": 0,
+      "missingDepartures": 0,
+      "missingArrivals": 0,
+      "interpolatedRows": 0,
+      "above24HourRows": 931,
+      "unknownTripReferences": 0,
+      "unknownStopReferences": 0,
+      "tripsWithoutStopTimes": 3,
+      "tripsWithoutCalendarOrException": 0,
+      "invalidStopCoordinates": 0,
+      "invalidTimeOrSequencePatterns": 0,
+      "duplicateTrips": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "duplicateStops": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "duplicateTripSequences": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "duplicateExceptions": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "duplicateShapeSequences": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "tripsWithValidatedShape": 2121,
+      "activeServicesToday": 1
+    },
+    {
+      "source": "rapid-bus-mrtfeeder",
+      "routeRows": 91,
+      "tripRows": 6291,
+      "stopRows": 2119,
+      "stopTimeRows": 175812,
+      "calendarRows": 2,
+      "exceptionRows": 3,
+      "frequencyRows": 0,
+      "nonExactFrequencyRows": 0,
+      "exactFrequencyRows": 0,
+      "missingDepartures": 0,
+      "missingArrivals": 0,
+      "interpolatedRows": 0,
+      "above24HourRows": 1005,
+      "unknownTripReferences": 0,
+      "unknownStopReferences": 0,
+      "tripsWithoutStopTimes": 0,
+      "tripsWithoutCalendarOrException": 0,
+      "invalidStopCoordinates": 0,
+      "invalidTimeOrSequencePatterns": 0,
+      "duplicateTrips": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "duplicateStops": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "duplicateTripSequences": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "duplicateExceptions": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "duplicateShapeSequences": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "tripsWithValidatedShape": 6291,
+      "activeServicesToday": 1
+    },
+    {
+      "source": "rapid-bus-penang",
+      "routeRows": 47,
+      "tripRows": 7866,
+      "stopRows": 1933,
+      "stopTimeRows": 404591,
+      "calendarRows": 4,
+      "exceptionRows": 0,
+      "frequencyRows": 0,
+      "nonExactFrequencyRows": 0,
+      "exactFrequencyRows": 0,
+      "missingDepartures": 0,
+      "missingArrivals": 0,
+      "interpolatedRows": 0,
+      "above24HourRows": 1598,
+      "unknownTripReferences": 0,
+      "unknownStopReferences": 0,
+      "tripsWithoutStopTimes": 0,
+      "tripsWithoutCalendarOrException": 0,
+      "invalidStopCoordinates": 0,
+      "invalidTimeOrSequencePatterns": 0,
+      "duplicateTrips": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "duplicateStops": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "duplicateTripSequences": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "duplicateExceptions": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "duplicateShapeSequences": {
+        "repeated": 0,
+        "conflicting": 0
+      },
+      "tripsWithValidatedShape": 7866,
+      "activeServicesToday": 1
+    }
+  ],
+  "rawGps": [
+    {
+      "source": "rapid-bus-kl",
+      "rows": 494,
+      "uniqueVehicles": 80,
+      "invalidPositions": 0,
+      "invalidMeasurementTimes": 0,
+      "futureTimes": 0,
+      "staleTimes": 0,
+      "repeatedTimestamps": 87,
+      "outOfOrder": 0,
+      "sameTimestampConflicts": 0,
+      "descriptorChanges": 0,
+      "duplicateIdsWithinSnapshot": 0,
+      "missingAccuracy": 494,
+      "missingReportedSequence": 494,
+      "gapsAbove60s": 16,
+      "gapsAbove120s": 1,
+      "reappearanceEpisodes": 1,
+      "vehiclesReappearingAfterOmission": 1,
+      "idBasis": {
+        "vehicle.id": 494
+      },
+      "positiveSameDescriptorGapsSeconds": {
+        "n": 327,
+        "min": 3,
+        "median": 30,
+        "p95": 60,
+        "max": 121
+      },
+      "measurementAgeSeconds": {
+        "n": 494,
+        "min": 21.971,
+        "median": 49.991,
+        "p95": 83.013,
+        "max": 111.621
+      },
+      "usableMeasurementAgeSeconds": {
+        "n": 494,
+        "min": 21.971,
+        "median": 49.991,
+        "p95": 83.013,
+        "max": 111.621
+      },
+      "publicationMinusMeasurementSeconds": {
+        "n": 494,
+        "min": 2,
+        "median": 30,
+        "p95": 62,
+        "max": 89
+      },
+      "localReceiptMinusPublicationSeconds": {
+        "n": 494,
+        "min": 15.991,
+        "median": 22.013,
+        "p95": 24.053,
+        "max": 24.053
+      }
+    },
+    {
+      "source": "rapid-bus-mrtfeeder",
+      "rows": 851,
+      "uniqueVehicles": 130,
+      "invalidPositions": 0,
+      "invalidMeasurementTimes": 0,
+      "futureTimes": 7,
+      "staleTimes": 0,
+      "repeatedTimestamps": 59,
+      "outOfOrder": 0,
+      "sameTimestampConflicts": 0,
+      "descriptorChanges": 0,
+      "duplicateIdsWithinSnapshot": 0,
+      "missingAccuracy": 851,
+      "missingReportedSequence": 851,
+      "gapsAbove60s": 4,
+      "gapsAbove120s": 0,
+      "reappearanceEpisodes": 0,
+      "vehiclesReappearingAfterOmission": 0,
+      "idBasis": {
+        "vehicle.id": 851
+      },
+      "positiveSameDescriptorGapsSeconds": {
+        "n": 656,
+        "min": 4,
+        "median": 30,
+        "p95": 45,
+        "max": 65
+      },
+      "measurementAgeSeconds": {
+        "n": 851,
+        "min": -91890905.989,
+        "median": 41.704,
+        "p95": 60.978,
+        "max": 102.999
+      },
+      "usableMeasurementAgeSeconds": {
+        "n": 844,
+        "min": 19.011,
+        "median": 41.704,
+        "p95": 60.978,
+        "max": 102.999
+      },
+      "publicationMinusMeasurementSeconds": {
+        "n": 844,
+        "min": 3,
+        "median": 21,
+        "p95": 39,
+        "max": 85
+      },
+      "localReceiptMinusPublicationSeconds": {
+        "n": 844,
+        "min": 16.011,
+        "median": 21.704,
+        "p95": 23.978,
+        "max": 23.978
+      }
+    },
+    {
+      "source": "rapid-bus-penang",
+      "rows": 1046,
+      "uniqueVehicles": 155,
+      "invalidPositions": 0,
+      "invalidMeasurementTimes": 0,
+      "futureTimes": 0,
+      "staleTimes": 2,
+      "repeatedTimestamps": 159,
+      "outOfOrder": 0,
+      "sameTimestampConflicts": 0,
+      "descriptorChanges": 0,
+      "duplicateIdsWithinSnapshot": 0,
+      "missingAccuracy": 1046,
+      "missingReportedSequence": 1046,
+      "gapsAbove60s": 39,
+      "gapsAbove120s": 1,
+      "reappearanceEpisodes": 1,
+      "vehiclesReappearingAfterOmission": 1,
+      "idBasis": {
+        "vehicle.id": 1046
+      },
+      "positiveSameDescriptorGapsSeconds": {
+        "n": 732,
+        "min": 4,
+        "median": 31,
+        "p95": 61,
+        "max": 156
+      },
+      "measurementAgeSeconds": {
+        "n": 1046,
+        "min": 26.997,
+        "median": 44.995,
+        "p95": 80.96,
+        "max": 139.96
+      },
+      "usableMeasurementAgeSeconds": {
+        "n": 1044,
+        "min": 26.997,
+        "median": 44.995,
+        "p95": 80.96,
+        "max": 118.96
+      },
+      "publicationMinusMeasurementSeconds": {
+        "n": 1046,
+        "min": 9,
+        "median": 24,
+        "p95": 34,
+        "max": 90
+      },
+      "localReceiptMinusPublicationSeconds": {
+        "n": 1046,
+        "min": 15.985,
+        "median": 21.683,
+        "p95": 52.96,
+        "max": 52.96
+      }
+    }
+  ],
+  "replay": {
+    "rounds": [
+      {
+        "round": 0,
+        "warm": {
+          "allVehicles": 344,
+          "buses": 344,
+          "matchedBuses": 264,
+          "passedStops": 0,
+          "passedValidDeparture": 0,
+          "eligiblePassed": 0,
+          "eligibleWithSufficientGpsPair": 0,
+          "eligibleWithInferredPassage": 0,
+          "passedWithSufficientGpsPair": 0,
+          "passedWithInferredPassage": 0,
+          "passedWithConfirmedPassage": 0,
+          "classifiedPassed": 0,
+          "eligibleClassified": 0,
+          "unavailablePassed": 0,
+          "eligibleUnavailable": 0,
+          "coveragePct": null,
+          "endToEndPct": null,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            }
+          }
+        },
+        "cold": {
+          "allVehicles": 344,
+          "buses": 344,
+          "matchedBuses": 264,
+          "passedStops": 0,
+          "passedValidDeparture": 0,
+          "eligiblePassed": 0,
+          "eligibleWithSufficientGpsPair": 0,
+          "eligibleWithInferredPassage": 0,
+          "passedWithSufficientGpsPair": 0,
+          "passedWithInferredPassage": 0,
+          "passedWithConfirmedPassage": 0,
+          "classifiedPassed": 0,
+          "eligibleClassified": 0,
+          "unavailablePassed": 0,
+          "eligibleUnavailable": 0,
+          "coveragePct": null,
+          "endToEndPct": null,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            }
+          }
+        }
+      },
+      {
+        "round": 1,
+        "warm": {
+          "allVehicles": 351,
+          "buses": 351,
+          "matchedBuses": 268,
+          "passedStops": 3035,
+          "passedValidDeparture": 3035,
+          "eligiblePassed": 2671,
+          "eligibleWithSufficientGpsPair": 0,
+          "eligibleWithInferredPassage": 0,
+          "passedWithSufficientGpsPair": 0,
+          "passedWithInferredPassage": 0,
+          "passedWithConfirmedPassage": 0,
+          "classifiedPassed": 0,
+          "eligibleClassified": 0,
+          "unavailablePassed": 3035,
+          "eligibleUnavailable": 2671,
+          "coveragePct": 0,
+          "endToEndPct": 0,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 2671,
+              "eligiblePassed": 2671,
+              "percentEligible": 100,
+              "percentAllPassed": 88.00658978583196
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 364,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 11.993410214168039
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            }
+          }
+        },
+        "cold": {
+          "allVehicles": 351,
+          "buses": 351,
+          "matchedBuses": 268,
+          "passedStops": 0,
+          "passedValidDeparture": 0,
+          "eligiblePassed": 0,
+          "eligibleWithSufficientGpsPair": 0,
+          "eligibleWithInferredPassage": 0,
+          "passedWithSufficientGpsPair": 0,
+          "passedWithInferredPassage": 0,
+          "passedWithConfirmedPassage": 0,
+          "classifiedPassed": 0,
+          "eligibleClassified": 0,
+          "unavailablePassed": 0,
+          "eligibleUnavailable": 0,
+          "coveragePct": null,
+          "endToEndPct": null,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            }
+          }
+        }
+      },
+      {
+        "round": 2,
+        "warm": {
+          "allVehicles": 347,
+          "buses": 347,
+          "matchedBuses": 264,
+          "passedStops": 3422,
+          "passedValidDeparture": 3422,
+          "eligiblePassed": 3063,
+          "eligibleWithSufficientGpsPair": 40,
+          "eligibleWithInferredPassage": 40,
+          "passedWithSufficientGpsPair": 43,
+          "passedWithInferredPassage": 43,
+          "passedWithConfirmedPassage": 43,
+          "classifiedPassed": 40,
+          "eligibleClassified": 40,
+          "unavailablePassed": 3382,
+          "eligibleUnavailable": 3023,
+          "coveragePct": 1.3059092393078682,
+          "endToEndPct": 1.168907071887785,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 3023,
+              "eligiblePassed": 3023,
+              "percentEligible": 98.69409076069213,
+              "percentAllPassed": 88.34015195791935
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 359,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 10.49094097019287
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            }
+          }
+        },
+        "cold": {
+          "allVehicles": 347,
+          "buses": 347,
+          "matchedBuses": 264,
+          "passedStops": 0,
+          "passedValidDeparture": 0,
+          "eligiblePassed": 0,
+          "eligibleWithSufficientGpsPair": 0,
+          "eligibleWithInferredPassage": 0,
+          "passedWithSufficientGpsPair": 0,
+          "passedWithInferredPassage": 0,
+          "passedWithConfirmedPassage": 0,
+          "classifiedPassed": 0,
+          "eligibleClassified": 0,
+          "unavailablePassed": 0,
+          "eligibleUnavailable": 0,
+          "coveragePct": null,
+          "endToEndPct": null,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            }
+          }
+        }
+      },
+      {
+        "round": 3,
+        "warm": {
+          "allVehicles": 342,
+          "buses": 342,
+          "matchedBuses": 260,
+          "passedStops": 3747,
+          "passedValidDeparture": 3747,
+          "eligiblePassed": 3420,
+          "eligibleWithSufficientGpsPair": 77,
+          "eligibleWithInferredPassage": 77,
+          "passedWithSufficientGpsPair": 84,
+          "passedWithInferredPassage": 84,
+          "passedWithConfirmedPassage": 84,
+          "classifiedPassed": 77,
+          "eligibleClassified": 77,
+          "unavailablePassed": 3670,
+          "eligibleUnavailable": 3343,
+          "coveragePct": 2.2514619883040936,
+          "endToEndPct": 2.0549773151854818,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 3340,
+              "eligiblePassed": 3340,
+              "percentEligible": 97.6608187134503,
+              "percentAllPassed": 89.13797704830532
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 1,
+              "eligiblePassed": 1,
+              "percentEligible": 0.029239766081871343,
+              "percentAllPassed": 0.02668801708033093
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 327,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 8.726981585268215
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 2,
+              "eligiblePassed": 2,
+              "percentEligible": 0.05847953216374269,
+              "percentAllPassed": 0.05337603416066186
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            }
+          }
+        },
+        "cold": {
+          "allVehicles": 342,
+          "buses": 342,
+          "matchedBuses": 260,
+          "passedStops": 0,
+          "passedValidDeparture": 0,
+          "eligiblePassed": 0,
+          "eligibleWithSufficientGpsPair": 0,
+          "eligibleWithInferredPassage": 0,
+          "passedWithSufficientGpsPair": 0,
+          "passedWithInferredPassage": 0,
+          "passedWithConfirmedPassage": 0,
+          "classifiedPassed": 0,
+          "eligibleClassified": 0,
+          "unavailablePassed": 0,
+          "eligibleUnavailable": 0,
+          "coveragePct": null,
+          "endToEndPct": null,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            }
+          }
+        }
+      },
+      {
+        "round": 4,
+        "warm": {
+          "allVehicles": 340,
+          "buses": 340,
+          "matchedBuses": 256,
+          "passedStops": 3897,
+          "passedValidDeparture": 3897,
+          "eligiblePassed": 3487,
+          "eligibleWithSufficientGpsPair": 144,
+          "eligibleWithInferredPassage": 144,
+          "passedWithSufficientGpsPair": 156,
+          "passedWithInferredPassage": 156,
+          "passedWithConfirmedPassage": 156,
+          "classifiedPassed": 144,
+          "eligibleClassified": 144,
+          "unavailablePassed": 3753,
+          "eligibleUnavailable": 3343,
+          "coveragePct": 4.129624318898767,
+          "endToEndPct": 3.695150115473441,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 3336,
+              "eligiblePassed": 3336,
+              "percentEligible": 95.6696300544881,
+              "percentAllPassed": 85.60431100846806
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 1,
+              "eligiblePassed": 1,
+              "percentEligible": 0.028677946659019213,
+              "percentAllPassed": 0.025660764690787787
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 1,
+              "eligiblePassed": 1,
+              "percentEligible": 0.028677946659019213,
+              "percentAllPassed": 0.025660764690787787
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 410,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 10.520913523222992
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 2,
+              "eligiblePassed": 2,
+              "percentEligible": 0.05735589331803843,
+              "percentAllPassed": 0.051321529381575574
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 3,
+              "eligiblePassed": 3,
+              "percentEligible": 0.08603383997705764,
+              "percentAllPassed": 0.07698229407236336
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            }
+          }
+        },
+        "cold": {
+          "allVehicles": 340,
+          "buses": 340,
+          "matchedBuses": 256,
+          "passedStops": 0,
+          "passedValidDeparture": 0,
+          "eligiblePassed": 0,
+          "eligibleWithSufficientGpsPair": 0,
+          "eligibleWithInferredPassage": 0,
+          "passedWithSufficientGpsPair": 0,
+          "passedWithInferredPassage": 0,
+          "passedWithConfirmedPassage": 0,
+          "classifiedPassed": 0,
+          "eligibleClassified": 0,
+          "unavailablePassed": 0,
+          "eligibleUnavailable": 0,
+          "coveragePct": null,
+          "endToEndPct": null,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            }
+          }
+        }
+      },
+      {
+        "round": 5,
+        "warm": {
+          "allVehicles": 337,
+          "buses": 337,
+          "matchedBuses": 253,
+          "passedStops": 3758,
+          "passedValidDeparture": 3758,
+          "eligiblePassed": 3391,
+          "eligibleWithSufficientGpsPair": 161,
+          "eligibleWithInferredPassage": 161,
+          "passedWithSufficientGpsPair": 178,
+          "passedWithInferredPassage": 178,
+          "passedWithConfirmedPassage": 178,
+          "classifiedPassed": 161,
+          "eligibleClassified": 161,
+          "unavailablePassed": 3597,
+          "eligibleUnavailable": 3230,
+          "coveragePct": 4.747861987614273,
+          "endToEndPct": 4.284193720063864,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 3224,
+              "eligiblePassed": 3224,
+              "percentEligible": 95.07519905632557,
+              "percentAllPassed": 85.79031399680682
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 2,
+              "eligiblePassed": 2,
+              "percentEligible": 0.058979652020053085,
+              "percentAllPassed": 0.05321979776476849
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 367,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 9.76583288983502
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 2,
+              "eligiblePassed": 2,
+              "percentEligible": 0.058979652020053085,
+              "percentAllPassed": 0.05321979776476849
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 2,
+              "eligiblePassed": 2,
+              "percentEligible": 0.058979652020053085,
+              "percentAllPassed": 0.05321979776476849
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            }
+          }
+        },
+        "cold": {
+          "allVehicles": 337,
+          "buses": 337,
+          "matchedBuses": 253,
+          "passedStops": 0,
+          "passedValidDeparture": 0,
+          "eligiblePassed": 0,
+          "eligibleWithSufficientGpsPair": 0,
+          "eligibleWithInferredPassage": 0,
+          "passedWithSufficientGpsPair": 0,
+          "passedWithInferredPassage": 0,
+          "passedWithConfirmedPassage": 0,
+          "classifiedPassed": 0,
+          "eligibleClassified": 0,
+          "unavailablePassed": 0,
+          "eligibleUnavailable": 0,
+          "coveragePct": null,
+          "endToEndPct": null,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            }
+          }
+        }
+      },
+      {
+        "round": 6,
+        "warm": {
+          "allVehicles": 330,
+          "buses": 330,
+          "matchedBuses": 250,
+          "passedStops": 3765,
+          "passedValidDeparture": 3765,
+          "eligiblePassed": 3483,
+          "eligibleWithSufficientGpsPair": 195,
+          "eligibleWithInferredPassage": 195,
+          "passedWithSufficientGpsPair": 212,
+          "passedWithInferredPassage": 212,
+          "passedWithConfirmedPassage": 212,
+          "classifiedPassed": 195,
+          "eligibleClassified": 195,
+          "unavailablePassed": 3570,
+          "eligibleUnavailable": 3288,
+          "coveragePct": 5.598621877691645,
+          "endToEndPct": 5.179282868525896,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 3279,
+              "eligiblePassed": 3279,
+              "percentEligible": 94.14298018949182,
+              "percentAllPassed": 87.09163346613546
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 1,
+              "eligiblePassed": 1,
+              "percentEligible": 0.02871088142405972,
+              "percentAllPassed": 0.02656042496679947
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 3,
+              "eligiblePassed": 3,
+              "percentEligible": 0.08613264427217916,
+              "percentAllPassed": 0.0796812749003984
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 282,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 7.49003984063745
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 2,
+              "eligiblePassed": 2,
+              "percentEligible": 0.05742176284811944,
+              "percentAllPassed": 0.05312084993359894
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 3,
+              "eligiblePassed": 3,
+              "percentEligible": 0.08613264427217916,
+              "percentAllPassed": 0.0796812749003984
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": 0,
+              "percentAllPassed": 0
+            }
+          }
+        },
+        "cold": {
+          "allVehicles": 330,
+          "buses": 330,
+          "matchedBuses": 250,
+          "passedStops": 0,
+          "passedValidDeparture": 0,
+          "eligiblePassed": 0,
+          "eligibleWithSufficientGpsPair": 0,
+          "eligibleWithInferredPassage": 0,
+          "passedWithSufficientGpsPair": 0,
+          "passedWithInferredPassage": 0,
+          "passedWithConfirmedPassage": 0,
+          "classifiedPassed": 0,
+          "eligibleClassified": 0,
+          "unavailablePassed": 0,
+          "eligibleUnavailable": 0,
+          "coveragePct": null,
+          "endToEndPct": null,
+          "explicitDeparted": 0,
+          "reasons": {
+            "NO_GPS_HISTORY": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_GAP_TOO_LARGE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_STALE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INVALID_GPS_TIMESTAMP": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "GPS_OUTLIER_REJECTED": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "TRIP_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "STOP_SEQUENCE_MISMATCH": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "NO_SCHEDULED_TIME": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "PASSAGE_TIME_UNAVAILABLE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "INSUFFICIENT_EVIDENCE": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            },
+            "OTHER": {
+              "allPassed": 0,
+              "eligiblePassed": 0,
+              "percentEligible": null,
+              "percentAllPassed": null
+            }
+          }
+        }
+      }
+    ],
+    "attempts": {
+      "VALID_PAIR": 337,
+      "GPS_STALE": 3,
+      "GPS_GAP_TOO_LARGE": 25,
+      "INSUFFICIENT_EVIDENCE": 14,
+      "GPS_OUTLIER_REJECTED": 4
+    },
+    "finalCold": {
+      "allVehicles": 330,
+      "buses": 330,
+      "matchedBuses": 250,
+      "passedStops": 0,
+      "passedValidDeparture": 0,
+      "eligiblePassed": 0,
+      "eligibleWithSufficientGpsPair": 0,
+      "eligibleWithInferredPassage": 0,
+      "passedWithSufficientGpsPair": 0,
+      "passedWithInferredPassage": 0,
+      "passedWithConfirmedPassage": 0,
+      "classifiedPassed": 0,
+      "eligibleClassified": 0,
+      "unavailablePassed": 0,
+      "eligibleUnavailable": 0,
+      "coveragePct": null,
+      "endToEndPct": null,
+      "explicitDeparted": 0,
+      "reasons": {
+        "NO_GPS_HISTORY": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": null,
+          "percentAllPassed": null
+        },
+        "GPS_GAP_TOO_LARGE": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": null,
+          "percentAllPassed": null
+        },
+        "GPS_STALE": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": null,
+          "percentAllPassed": null
+        },
+        "INVALID_GPS_TIMESTAMP": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": null,
+          "percentAllPassed": null
+        },
+        "GPS_OUTLIER_REJECTED": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": null,
+          "percentAllPassed": null
+        },
+        "TRIP_MISMATCH": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": null,
+          "percentAllPassed": null
+        },
+        "STOP_SEQUENCE_MISMATCH": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": null,
+          "percentAllPassed": null
+        },
+        "NO_SCHEDULED_TIME": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": null,
+          "percentAllPassed": null
+        },
+        "PASSAGE_TIME_UNAVAILABLE": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": null,
+          "percentAllPassed": null
+        },
+        "INSUFFICIENT_EVIDENCE": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": null,
+          "percentAllPassed": null
+        },
+        "OTHER": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": null,
+          "percentAllPassed": null
+        }
+      }
+    },
+    "finalWarm": {
+      "allVehicles": 330,
+      "buses": 330,
+      "matchedBuses": 250,
+      "passedStops": 3765,
+      "passedValidDeparture": 3765,
+      "eligiblePassed": 3483,
+      "eligibleWithSufficientGpsPair": 195,
+      "eligibleWithInferredPassage": 195,
+      "passedWithSufficientGpsPair": 212,
+      "passedWithInferredPassage": 212,
+      "passedWithConfirmedPassage": 212,
+      "classifiedPassed": 195,
+      "eligibleClassified": 195,
+      "unavailablePassed": 3570,
+      "eligibleUnavailable": 3288,
+      "coveragePct": 5.598621877691645,
+      "endToEndPct": 5.179282868525896,
+      "explicitDeparted": 0,
+      "reasons": {
+        "NO_GPS_HISTORY": {
+          "allPassed": 3279,
+          "eligiblePassed": 3279,
+          "percentEligible": 94.14298018949182,
+          "percentAllPassed": 87.09163346613546
+        },
+        "GPS_GAP_TOO_LARGE": {
+          "allPassed": 1,
+          "eligiblePassed": 1,
+          "percentEligible": 0.02871088142405972,
+          "percentAllPassed": 0.02656042496679947
+        },
+        "GPS_STALE": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": 0,
+          "percentAllPassed": 0
+        },
+        "INVALID_GPS_TIMESTAMP": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": 0,
+          "percentAllPassed": 0
+        },
+        "GPS_OUTLIER_REJECTED": {
+          "allPassed": 3,
+          "eligiblePassed": 3,
+          "percentEligible": 0.08613264427217916,
+          "percentAllPassed": 0.0796812749003984
+        },
+        "TRIP_MISMATCH": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": 0,
+          "percentAllPassed": 0
+        },
+        "STOP_SEQUENCE_MISMATCH": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": 0,
+          "percentAllPassed": 0
+        },
+        "NO_SCHEDULED_TIME": {
+          "allPassed": 282,
+          "eligiblePassed": 0,
+          "percentEligible": 0,
+          "percentAllPassed": 7.49003984063745
+        },
+        "PASSAGE_TIME_UNAVAILABLE": {
+          "allPassed": 2,
+          "eligiblePassed": 2,
+          "percentEligible": 0.05742176284811944,
+          "percentAllPassed": 0.05312084993359894
+        },
+        "INSUFFICIENT_EVIDENCE": {
+          "allPassed": 3,
+          "eligiblePassed": 3,
+          "percentEligible": 0.08613264427217916,
+          "percentAllPassed": 0.0796812749003984
+        },
+        "OTHER": {
+          "allPassed": 0,
+          "eligiblePassed": 0,
+          "percentEligible": 0,
+          "percentAllPassed": 0
+        }
+      }
+    },
+    "acceptedIntervalsSeconds": {
+      "n": 337,
+      "min": 10,
+      "median": 31,
+      "p95": 60,
+      "max": 60
+    },
+    "acceptedMovementMetres": {
+      "n": 337,
+      "min": 47.387777263396856,
+      "median": 288.10988524423374,
+      "p95": 642.1720314822924,
+      "max": 903.0666183151334
+    }
+  },
+  "productionStaticCrosscheck": {
+    "routeConflicts": 0,
+    "directionConflicts": 0,
+    "passedRows": 3801,
+    "matchedStopRows": 3801,
+    "departureMatches": 3801,
+    "departureMismatches": 0,
+    "missingTrip": 0,
+    "missingStopSequence": 0,
+    "invalidCalendarRuns": 0,
+    "crossMidnightRuns": 0,
+    "estimatedReferenceRuns": 41,
+    "matchReasons": {
+      "Trip pattern matched, but the reported start is outside its published frequency window. Stop times are withheld; published headways remain available.": 20,
+      "The reported trip ID is absent from the current official timetable. Route information only.": 57,
+      "Realtime route, direction or trip relationship conflicts with the static trip. No vehicle journey was assumed.": 4
+    }
+  },
+  "productionClocks": {
+    "measurementSubstitutions": 0,
+    "journeyClockDifferences": 0,
+    "byOperator": {
+      "rapid-bus-kl": {
+        "serverReceiptMinusMeasurement": {
+          "n": 67,
+          "min": 30.928,
+          "median": 48.967,
+          "p95": 59.967,
+          "max": 62.967
+        },
+        "publicationMinusMeasurement": {
+          "n": 67,
+          "min": 14,
+          "median": 30,
+          "p95": 48,
+          "max": 62
+        },
+        "apiPublicationMinusServerReceipt": {
+          "n": 67,
+          "min": 0.07,
+          "median": 0.07,
+          "p95": 31.125,
+          "max": 31.14
+        }
+      },
+      "rapid-bus-mrtfeeder": {
+        "serverReceiptMinusMeasurement": {
+          "n": 115,
+          "min": 29.711,
+          "median": 45.699,
+          "p95": 59.699,
+          "max": 91.699
+        },
+        "publicationMinusMeasurement": {
+          "n": 115,
+          "min": 5,
+          "median": 21,
+          "p95": 35,
+          "max": 67
+        },
+        "apiPublicationMinusServerReceipt": {
+          "n": 116,
+          "min": 30.325,
+          "median": 30.338,
+          "p95": 30.338,
+          "max": 30.338
+        }
+      },
+      "rapid-bus-penang": {
+        "serverReceiptMinusMeasurement": {
+          "n": 149,
+          "min": 40.07,
+          "median": 46.73,
+          "p95": 55.73,
+          "max": 141.67
+        },
+        "publicationMinusMeasurement": {
+          "n": 149,
+          "min": 18,
+          "median": 24,
+          "p95": 33,
+          "max": 87
+        },
+        "apiPublicationMinusServerReceipt": {
+          "n": 149,
+          "min": 30.367,
+          "median": 62.307,
+          "p95": 62.308,
+          "max": 92.967
+        }
+      }
+    },
+    "continuityOriginAgeSeconds": {
+      "n": 226,
+      "min": 41.037,
+      "median": 341.037,
+      "p95": 778.037,
+      "max": 834.037
+    },
+    "classifiedPairToAgeSeconds": {
+      "n": 604,
+      "min": 124.037,
+      "median": 376.037,
+      "p95": 711.037,
+      "max": 778.037
+    },
+    "classifiedPairsOlderThan120Seconds": 604
+  },
+  "vehiclePipeline": {
+    "rapid-bus-kl": {
+      "received": 67,
+      "matched": 41,
+      "noPassedStops": 52,
+      "futureClocks": 0,
+      "missingDirection": 67,
+      "missingServiceDate": 0,
+      "missingStartTime": 0,
+      "reasons": {
+        "Trip pattern matched, but the reported start is outside its published frequency window. Stop times are withheld; published headways remain available.": 20,
+        "The reported trip ID is absent from the current official timetable. Route information only.": 6
+      },
+      "progressSources": {
+        "NO_TRACKING": 26,
+        "GPS_INFERRED": 30,
+        "APPROXIMATE": 8,
+        "PROGRESS_UNKNOWN": 3
+      }
+    },
+    "rapid-bus-mrtfeeder": {
+      "received": 116,
+      "matched": 102,
+      "noPassedStops": 44,
+      "futureClocks": 1,
+      "missingDirection": 116,
+      "missingServiceDate": 116,
+      "missingStartTime": 116,
+      "reasons": {
+        "The reported trip ID is absent from the current official timetable. Route information only.": 10,
+        "Realtime route, direction or trip relationship conflicts with the static trip. No vehicle journey was assumed.": 4
+      },
+      "progressSources": {
+        "APPROXIMATE": 14,
+        "NO_TRACKING": 14,
+        "GPS_INFERRED": 74,
+        "STALE": 1,
+        "PROGRESS_UNKNOWN": 13
+      }
+    },
+    "rapid-bus-penang": {
+      "received": 149,
+      "matched": 108,
+      "noPassedStops": 61,
+      "futureClocks": 0,
+      "missingDirection": 149,
+      "missingServiceDate": 149,
+      "missingStartTime": 149,
+      "reasons": {
+        "The reported trip ID is absent from the current official timetable. Route information only.": 41
+      },
+      "progressSources": {
+        "GPS_INFERRED": 89,
+        "APPROXIMATE": 11,
+        "NO_TRACKING": 41,
+        "STALE": 3,
+        "PROGRESS_UNKNOWN": 5
+      }
+    }
+  },
+  "geometry": {
+    "matchedJourneyStops": 11400,
+    "highStopProjections": 10450,
+    "lowStopProjections": 950,
+    "reasons": {
+      "Stop projection conflicts with GTFS stop-sequence order.": 899,
+      "Stop maps to multiple route branches or loop occurrences.": 48,
+      "Published shape-distance anchor conflicts with the stop coordinate.": 3
+    }
+  },
+  "passageConsistency": {
+    "classifiedRows": 604,
+    "ratioTimestampMatches": 604,
+    "thresholdMatches": 604,
+    "pairLimitsValid": 604
+  },
+  "uiFreshnessSupplement": {
+    "expiredPassedRows": 18,
+    "expiredClassifiedRows": 5
+  },
+  "pairStages": {
+    "eligible": 604,
+    "ineligible": 49
+  },
+  "reasonByOperatorRoute": [
+    {
+      "reason": "NO_SCHEDULED_TIME",
+      "operator": "Rapid KL Bus",
+      "route": "772",
+      "passed": 16,
+      "eligible": 0
+    },
+    {
+      "reason": "NO_SCHEDULED_TIME",
+      "operator": "Rapid KL Bus",
+      "route": "780",
+      "passed": 47,
+      "eligible": 0
+    },
+    {
+      "reason": "NO_SCHEDULED_TIME",
+      "operator": "Rapid KL Bus",
+      "route": "600",
+      "passed": 9,
+      "eligible": 0
+    },
+    {
+      "reason": "NO_SCHEDULED_TIME",
+      "operator": "Rapid KL Bus",
+      "route": "T715",
+      "passed": 1,
+      "eligible": 0
+    },
+    {
+      "reason": "NO_SCHEDULED_TIME",
+      "operator": "Rapid KL Bus",
+      "route": "151",
+      "passed": 18,
+      "eligible": 0
+    },
+    {
+      "reason": "NO_SCHEDULED_TIME",
+      "operator": "Rapid KL Bus",
+      "route": "200",
+      "passed": 95,
+      "eligible": 0
+    },
+    {
+      "reason": "NO_SCHEDULED_TIME",
+      "operator": "Rapid KL Bus",
+      "route": "173",
+      "passed": 29,
+      "eligible": 0
+    },
+    {
+      "reason": "NO_SCHEDULED_TIME",
+      "operator": "Rapid KL Bus",
+      "route": "180",
+      "passed": 22,
+      "eligible": 0
+    },
+    {
+      "reason": "NO_SCHEDULED_TIME",
+      "operator": "Rapid KL Bus",
+      "route": "222",
+      "passed": 20,
+      "eligible": 0
+    },
+    {
+      "reason": "NO_SCHEDULED_TIME",
+      "operator": "Rapid KL Bus",
+      "route": "750",
+      "passed": 21,
+      "eligible": 0
+    },
+    {
+      "reason": "NO_SCHEDULED_TIME",
+      "operator": "Rapid KL Bus",
+      "route": "250",
+      "passed": 4,
+      "eligible": 0
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T818",
+      "passed": 2,
+      "eligible": 2
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T352",
+      "passed": 28,
+      "eligible": 28
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T352",
+      "passed": 3,
+      "eligible": 3
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T412",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T565",
+      "passed": 21,
+      "eligible": 21
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T568",
+      "passed": 8,
+      "eligible": 8
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T568",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T772",
+      "passed": 11,
+      "eligible": 11
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T569",
+      "passed": 33,
+      "eligible": 33
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T569",
+      "passed": 7,
+      "eligible": 7
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T567",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T459",
+      "passed": 3,
+      "eligible": 3
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T459",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T588",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T804",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T804",
+      "passed": 4,
+      "eligible": 4
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T102",
+      "passed": 46,
+      "eligible": 46
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T102",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T152",
+      "passed": 35,
+      "eligible": 35
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T152",
+      "passed": 4,
+      "eligible": 4
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T451",
+      "passed": 35,
+      "eligible": 35
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T451",
+      "passed": 4,
+      "eligible": 4
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T180",
+      "passed": 20,
+      "eligible": 20
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T117",
+      "passed": 5,
+      "eligible": 5
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T811",
+      "passed": 10,
+      "eligible": 10
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T813",
+      "passed": 7,
+      "eligible": 7
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T400",
+      "passed": 31,
+      "eligible": 31
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T400",
+      "passed": 3,
+      "eligible": 3
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T417",
+      "passed": 25,
+      "eligible": 25
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T419",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T418",
+      "passed": 4,
+      "eligible": 4
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T803",
+      "passed": 16,
+      "eligible": 16
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T457",
+      "passed": 23,
+      "eligible": 23
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T462",
+      "passed": 36,
+      "eligible": 36
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T462",
+      "passed": 4,
+      "eligible": 4
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T464",
+      "passed": 35,
+      "eligible": 35
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T464",
+      "passed": 3,
+      "eligible": 3
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T807",
+      "passed": 24,
+      "eligible": 24
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T807",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T415",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T809",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T566",
+      "passed": 23,
+      "eligible": 23
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T812",
+      "passed": 8,
+      "eligible": 8
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T812",
+      "passed": 2,
+      "eligible": 2
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T511",
+      "passed": 23,
+      "eligible": 23
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T511",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T561",
+      "passed": 14,
+      "eligible": 14
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T453",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T401",
+      "passed": 62,
+      "eligible": 62
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T401",
+      "passed": 7,
+      "eligible": 7
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T816",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T816",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T815",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T103",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T105",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T409",
+      "passed": 2,
+      "eligible": 2
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T460",
+      "passed": 20,
+      "eligible": 20
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T803",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T852",
+      "passed": 7,
+      "eligible": 7
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T852",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T410",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T585",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T589",
+      "passed": 13,
+      "eligible": 13
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T589",
+      "passed": 2,
+      "eligible": 2
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T402",
+      "passed": 27,
+      "eligible": 27
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T101",
+      "passed": 14,
+      "eligible": 14
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T457",
+      "passed": 2,
+      "eligible": 2
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T461",
+      "passed": 2,
+      "eligible": 2
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T506",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T418",
+      "passed": 6,
+      "eligible": 6
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T305",
+      "passed": 23,
+      "eligible": 23
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T305",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T810",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T414",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T413",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T455",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T802",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T110",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "MRT Feeder Bus",
+      "route": "T110",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T154",
+      "passed": 22,
+      "eligible": 22
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T543",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T587",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "MRT Feeder Bus",
+      "route": "T586",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "202",
+      "passed": 120,
+      "eligible": 120
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "11",
+      "passed": 38,
+      "eligible": 38
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "301",
+      "passed": 88,
+      "eligible": 88
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "301",
+      "passed": 9,
+      "eligible": 9
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "13",
+      "passed": 3,
+      "eligible": 3
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "13",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "303",
+      "passed": 20,
+      "eligible": 20
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "303",
+      "passed": 2,
+      "eligible": 2
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "201",
+      "passed": 235,
+      "eligible": 235
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "401E",
+      "passed": 93,
+      "eligible": 93
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "401E",
+      "passed": 12,
+      "eligible": 12
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "801",
+      "passed": 48,
+      "eligible": 48
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "801",
+      "passed": 12,
+      "eligible": 12
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "CT15",
+      "passed": 23,
+      "eligible": 23
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "703",
+      "passed": 17,
+      "eligible": 17
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "304",
+      "passed": 149,
+      "eligible": 149
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "101",
+      "passed": 371,
+      "eligible": 371
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "101",
+      "passed": 21,
+      "eligible": 21
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "CT13",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "EB60",
+      "passed": 10,
+      "eligible": 10
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "EB60",
+      "passed": 3,
+      "eligible": 3
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "CAT",
+      "passed": 7,
+      "eligible": 7
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "T310",
+      "passed": 20,
+      "eligible": 20
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "802",
+      "passed": 37,
+      "eligible": 37
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "802",
+      "passed": 3,
+      "eligible": 3
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "104",
+      "passed": 63,
+      "eligible": 63
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "104",
+      "passed": 2,
+      "eligible": 2
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "304",
+      "passed": 9,
+      "eligible": 9
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "702",
+      "passed": 39,
+      "eligible": 39
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "702",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "601",
+      "passed": 70,
+      "eligible": 70
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "302",
+      "passed": 184,
+      "eligible": 184
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "603",
+      "passed": 26,
+      "eligible": 26
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "603",
+      "passed": 5,
+      "eligible": 5
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "201",
+      "passed": 8,
+      "eligible": 8
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "206",
+      "passed": 22,
+      "eligible": 22
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "605",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "605",
+      "passed": 5,
+      "eligible": 5
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "202",
+      "passed": 6,
+      "eligible": 6
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "102",
+      "passed": 83,
+      "eligible": 83
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "102",
+      "passed": 4,
+      "eligible": 4
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "701",
+      "passed": 31,
+      "eligible": 31
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "401",
+      "passed": 24,
+      "eligible": 24
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "302",
+      "passed": 8,
+      "eligible": 8
+    },
+    {
+      "reason": "GPS_STALE",
+      "operator": "Rapid Penang",
+      "route": "CAT",
+      "passed": 13,
+      "eligible": 13
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "306",
+      "passed": 75,
+      "eligible": 75
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "103",
+      "passed": 3,
+      "eligible": 3
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "601",
+      "passed": 6,
+      "eligible": 6
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "613",
+      "passed": 31,
+      "eligible": 31
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "613",
+      "passed": 7,
+      "eligible": 7
+    },
+    {
+      "reason": "NO_GPS_HISTORY",
+      "operator": "Rapid Penang",
+      "route": "709",
+      "passed": 37,
+      "eligible": 37
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "709",
+      "passed": 4,
+      "eligible": 4
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "306",
+      "passed": 1,
+      "eligible": 1
+    },
+    {
+      "reason": "PASSAGE_TIME_UNAVAILABLE",
+      "operator": "Rapid Penang",
+      "route": "701",
+      "passed": 1,
+      "eligible": 1
+    }
+  ],
+  "breakdowns": {
+    "operator": [
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "operator_key": "rapid-bus-penang",
+        "passed": 2518,
+        "eligible": 2518,
+        "classified": 406,
+        "unavailable": 2112,
+        "coverage_percent": 16.12390786338364,
+        "end_to_end_percent": 16.12390786338364,
+        "vehicles_received": 149,
+        "vehicles_matched": 108
+      },
+      {
+        "operator": "MRT Feeder Bus",
+        "source": "rapid-bus-mrtfeeder",
+        "operator_key": "rapid-bus-mrtfeeder",
+        "passed": 1001,
+        "eligible": 1001,
+        "classified": 198,
+        "unavailable": 803,
+        "coverage_percent": 19.78021978021978,
+        "end_to_end_percent": 19.78021978021978,
+        "vehicles_received": 116,
+        "vehicles_matched": 102
+      },
+      {
+        "operator": "Rapid KL Bus",
+        "source": "rapid-bus-kl",
+        "operator_key": "rapid-bus-kl",
+        "passed": 282,
+        "eligible": 0,
+        "classified": 0,
+        "unavailable": 282,
+        "coverage_percent": "",
+        "end_to_end_percent": 0,
+        "vehicles_received": 67,
+        "vehicles_matched": 41
+      }
+    ],
+    "route": [
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "route": "101",
+        "passed": 445,
+        "eligible": 445,
+        "classified": 53,
+        "unavailable": 392,
+        "coverage_percent": 11.910112359550562,
+        "end_to_end_percent": 11.910112359550562,
+        "vehicles_received": 12,
+        "vehicles_matched": 10
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "route": "201",
+        "passed": 275,
+        "eligible": 275,
+        "classified": 32,
+        "unavailable": 243,
+        "coverage_percent": 11.636363636363637,
+        "end_to_end_percent": 11.636363636363637,
+        "vehicles_received": 6,
+        "vehicles_matched": 6
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "route": "302",
+        "passed": 222,
+        "eligible": 222,
+        "classified": 30,
+        "unavailable": 192,
+        "coverage_percent": 13.513513513513514,
+        "end_to_end_percent": 13.513513513513514,
+        "vehicles_received": 9,
+        "vehicles_matched": 8
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "route": "304",
+        "passed": 180,
+        "eligible": 180,
+        "classified": 22,
+        "unavailable": 158,
+        "coverage_percent": 12.222222222222221,
+        "end_to_end_percent": 12.222222222222221,
+        "vehicles_received": 5,
+        "vehicles_matched": 5
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "route": "202",
+        "passed": 159,
+        "eligible": 159,
+        "classified": 33,
+        "unavailable": 126,
+        "coverage_percent": 20.754716981132077,
+        "end_to_end_percent": 20.754716981132077,
+        "vehicles_received": 7,
+        "vehicles_matched": 7
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "route": "301",
+        "passed": 122,
+        "eligible": 122,
+        "classified": 25,
+        "unavailable": 97,
+        "coverage_percent": 20.491803278688526,
+        "end_to_end_percent": 20.491803278688526,
+        "vehicles_received": 5,
+        "vehicles_matched": 5
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "route": "401E",
+        "passed": 118,
+        "eligible": 118,
+        "classified": 13,
+        "unavailable": 105,
+        "coverage_percent": 11.016949152542374,
+        "end_to_end_percent": 11.016949152542374,
+        "vehicles_received": 6,
+        "vehicles_matched": 6
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "route": "102",
+        "passed": 115,
+        "eligible": 115,
+        "classified": 28,
+        "unavailable": 87,
+        "coverage_percent": 24.347826086956523,
+        "end_to_end_percent": 24.347826086956523,
+        "vehicles_received": 3,
+        "vehicles_matched": 3
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "route": "306",
+        "passed": 100,
+        "eligible": 100,
+        "classified": 24,
+        "unavailable": 76,
+        "coverage_percent": 24,
+        "end_to_end_percent": 24,
+        "vehicles_received": 4,
+        "vehicles_matched": 4
+      },
+      {
+        "operator": "Rapid KL Bus",
+        "source": "rapid-bus-kl",
+        "route": "200",
+        "passed": 95,
+        "eligible": 0,
+        "classified": 0,
+        "unavailable": 95,
+        "coverage_percent": "",
+        "end_to_end_percent": 0,
+        "vehicles_received": 3,
+        "vehicles_matched": 3
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "route": "601",
+        "passed": 93,
+        "eligible": 93,
+        "classified": 17,
+        "unavailable": 76,
+        "coverage_percent": 18.27956989247312,
+        "end_to_end_percent": 18.27956989247312,
+        "vehicles_received": 4,
+        "vehicles_matched": 4
+      },
+      {
+        "operator": "MRT Feeder Bus",
+        "source": "rapid-bus-mrtfeeder",
+        "route": "T401",
+        "passed": 77,
+        "eligible": 77,
+        "classified": 8,
+        "unavailable": 69,
+        "coverage_percent": 10.38961038961039,
+        "end_to_end_percent": 10.38961038961039,
+        "vehicles_received": 2,
+        "vehicles_matched": 2
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "route": "104",
+        "passed": 75,
+        "eligible": 75,
+        "classified": 10,
+        "unavailable": 65,
+        "coverage_percent": 13.333333333333334,
+        "end_to_end_percent": 13.333333333333334,
+        "vehicles_received": 2,
+        "vehicles_matched": 2
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "route": "801",
+        "passed": 69,
+        "eligible": 69,
+        "classified": 9,
+        "unavailable": 60,
+        "coverage_percent": 13.043478260869565,
+        "end_to_end_percent": 13.043478260869565,
+        "vehicles_received": 3,
+        "vehicles_matched": 3
+      },
+      {
+        "operator": "MRT Feeder Bus",
+        "source": "rapid-bus-mrtfeeder",
+        "route": "T462",
+        "passed": 53,
+        "eligible": 53,
+        "classified": 13,
+        "unavailable": 40,
+        "coverage_percent": 24.528301886792452,
+        "end_to_end_percent": 24.528301886792452,
+        "vehicles_received": 2,
+        "vehicles_matched": 2
+      }
+    ],
+    "vehicle": [
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "vehicle": "vehicle-1e9d9e59802b1e",
+        "passed": 79,
+        "eligible": 79,
+        "classified": 5,
+        "unavailable": 74,
+        "coverage_percent": 6.329113924050633,
+        "end_to_end_percent": 6.329113924050633,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "vehicle": "vehicle-bde654494cfed1",
+        "passed": 76,
+        "eligible": 76,
+        "classified": 5,
+        "unavailable": 71,
+        "coverage_percent": 6.578947368421052,
+        "end_to_end_percent": 6.578947368421052,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "vehicle": "vehicle-613a8bf79160e6",
+        "passed": 76,
+        "eligible": 76,
+        "classified": 10,
+        "unavailable": 66,
+        "coverage_percent": 13.157894736842104,
+        "end_to_end_percent": 13.157894736842104,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "vehicle": "vehicle-077197f8e56649",
+        "passed": 73,
+        "eligible": 73,
+        "classified": 3,
+        "unavailable": 70,
+        "coverage_percent": 4.109589041095891,
+        "end_to_end_percent": 4.109589041095891,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "vehicle": "vehicle-198f8e5f17a425",
+        "passed": 68,
+        "eligible": 68,
+        "classified": 6,
+        "unavailable": 62,
+        "coverage_percent": 8.823529411764707,
+        "end_to_end_percent": 8.823529411764707,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "vehicle": "vehicle-170238d43fd36f",
+        "passed": 62,
+        "eligible": 62,
+        "classified": 4,
+        "unavailable": 58,
+        "coverage_percent": 6.451612903225806,
+        "end_to_end_percent": 6.451612903225806,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "vehicle": "vehicle-b4e54a6748c2a2",
+        "passed": 60,
+        "eligible": 60,
+        "classified": 6,
+        "unavailable": 54,
+        "coverage_percent": 10,
+        "end_to_end_percent": 10,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "vehicle": "vehicle-31714a4cb51486",
+        "passed": 57,
+        "eligible": 57,
+        "classified": 3,
+        "unavailable": 54,
+        "coverage_percent": 5.2631578947368425,
+        "end_to_end_percent": 5.2631578947368425,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "vehicle": "vehicle-1292636f2d19fb",
+        "passed": 56,
+        "eligible": 56,
+        "classified": 8,
+        "unavailable": 48,
+        "coverage_percent": 14.285714285714286,
+        "end_to_end_percent": 14.285714285714286,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid KL Bus",
+        "source": "rapid-bus-kl",
+        "vehicle": "vehicle-1f2fd6532b74d9",
+        "passed": 53,
+        "eligible": 0,
+        "classified": 0,
+        "unavailable": 53,
+        "coverage_percent": "",
+        "end_to_end_percent": 0,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "vehicle": "vehicle-0c8edc3eb15eaf",
+        "passed": 52,
+        "eligible": 52,
+        "classified": 9,
+        "unavailable": 43,
+        "coverage_percent": 17.307692307692307,
+        "end_to_end_percent": 17.307692307692307,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "vehicle": "vehicle-31a3ba78487af7",
+        "passed": 52,
+        "eligible": 52,
+        "classified": 7,
+        "unavailable": 45,
+        "coverage_percent": 13.461538461538462,
+        "end_to_end_percent": 13.461538461538462,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "MRT Feeder Bus",
+        "source": "rapid-bus-mrtfeeder",
+        "vehicle": "vehicle-18bf6f75622c05",
+        "passed": 51,
+        "eligible": 51,
+        "classified": 3,
+        "unavailable": 48,
+        "coverage_percent": 5.882352941176471,
+        "end_to_end_percent": 5.882352941176471,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "vehicle": "vehicle-9390e0db809230",
+        "passed": 51,
+        "eligible": 51,
+        "classified": 8,
+        "unavailable": 43,
+        "coverage_percent": 15.686274509803921,
+        "end_to_end_percent": 15.686274509803921,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "vehicle": "vehicle-35c525db64a4b1",
+        "passed": 50,
+        "eligible": 50,
+        "classified": 4,
+        "unavailable": 46,
+        "coverage_percent": 8,
+        "end_to_end_percent": 8,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      }
+    ],
+    "trip": [
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "trip": "trip-2dffcc149e6675",
+        "passed": 79,
+        "eligible": 79,
+        "classified": 5,
+        "unavailable": 74,
+        "coverage_percent": 6.329113924050633,
+        "end_to_end_percent": 6.329113924050633,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "trip": "trip-285d2ff172bcea",
+        "passed": 76,
+        "eligible": 76,
+        "classified": 5,
+        "unavailable": 71,
+        "coverage_percent": 6.578947368421052,
+        "end_to_end_percent": 6.578947368421052,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "trip": "trip-16e30b6b567344",
+        "passed": 76,
+        "eligible": 76,
+        "classified": 10,
+        "unavailable": 66,
+        "coverage_percent": 13.157894736842104,
+        "end_to_end_percent": 13.157894736842104,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "trip": "trip-a24c5b68a69b6c",
+        "passed": 73,
+        "eligible": 73,
+        "classified": 3,
+        "unavailable": 70,
+        "coverage_percent": 4.109589041095891,
+        "end_to_end_percent": 4.109589041095891,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "trip": "trip-156405f1443036",
+        "passed": 68,
+        "eligible": 68,
+        "classified": 6,
+        "unavailable": 62,
+        "coverage_percent": 8.823529411764707,
+        "end_to_end_percent": 8.823529411764707,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "trip": "trip-109d87b2e4dee1",
+        "passed": 62,
+        "eligible": 62,
+        "classified": 4,
+        "unavailable": 58,
+        "coverage_percent": 6.451612903225806,
+        "end_to_end_percent": 6.451612903225806,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "trip": "trip-8bf3522ff307f8",
+        "passed": 60,
+        "eligible": 60,
+        "classified": 6,
+        "unavailable": 54,
+        "coverage_percent": 10,
+        "end_to_end_percent": 10,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "trip": "trip-d4f29cfae30a10",
+        "passed": 57,
+        "eligible": 57,
+        "classified": 3,
+        "unavailable": 54,
+        "coverage_percent": 5.2631578947368425,
+        "end_to_end_percent": 5.2631578947368425,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "trip": "trip-d9da1820684b72",
+        "passed": 56,
+        "eligible": 56,
+        "classified": 8,
+        "unavailable": 48,
+        "coverage_percent": 14.285714285714286,
+        "end_to_end_percent": 14.285714285714286,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid KL Bus",
+        "source": "rapid-bus-kl",
+        "trip": "trip-d19e798d629d34",
+        "passed": 53,
+        "eligible": 0,
+        "classified": 0,
+        "unavailable": 53,
+        "coverage_percent": "",
+        "end_to_end_percent": 0,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "trip": "trip-6e6e52f90f40aa",
+        "passed": 52,
+        "eligible": 52,
+        "classified": 9,
+        "unavailable": 43,
+        "coverage_percent": 17.307692307692307,
+        "end_to_end_percent": 17.307692307692307,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "trip": "trip-0109b7c1e6ac55",
+        "passed": 52,
+        "eligible": 52,
+        "classified": 7,
+        "unavailable": 45,
+        "coverage_percent": 13.461538461538462,
+        "end_to_end_percent": 13.461538461538462,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "MRT Feeder Bus",
+        "source": "rapid-bus-mrtfeeder",
+        "trip": "trip-a40f5ca03b9692",
+        "passed": 51,
+        "eligible": 51,
+        "classified": 3,
+        "unavailable": 48,
+        "coverage_percent": 5.882352941176471,
+        "end_to_end_percent": 5.882352941176471,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "trip": "trip-1c23d821c691d9",
+        "passed": 51,
+        "eligible": 51,
+        "classified": 8,
+        "unavailable": 43,
+        "coverage_percent": 15.686274509803921,
+        "end_to_end_percent": 15.686274509803921,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "trip": "trip-449e852ded1c04",
+        "passed": 50,
+        "eligible": 50,
+        "classified": 4,
+        "unavailable": 46,
+        "coverage_percent": 8,
+        "end_to_end_percent": 8,
+        "vehicles_received": 1,
+        "vehicles_matched": 1
+      }
+    ],
+    "stop": [
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-2f5970734e8834",
+        "passed": 29,
+        "eligible": 29,
+        "classified": 1,
+        "unavailable": 28,
+        "coverage_percent": 3.4482758620689653,
+        "end_to_end_percent": 3.4482758620689653
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-c505d79aa08c82",
+        "passed": 23,
+        "eligible": 23,
+        "classified": 3,
+        "unavailable": 20,
+        "coverage_percent": 13.043478260869565,
+        "end_to_end_percent": 13.043478260869565
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-3f36c0d5f32f53",
+        "passed": 21,
+        "eligible": 21,
+        "classified": 1,
+        "unavailable": 20,
+        "coverage_percent": 4.761904761904762,
+        "end_to_end_percent": 4.761904761904762
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-2875a88a9c9462",
+        "passed": 16,
+        "eligible": 16,
+        "classified": 0,
+        "unavailable": 16,
+        "coverage_percent": 0,
+        "end_to_end_percent": 0
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-def5fea9bd782e",
+        "passed": 15,
+        "eligible": 15,
+        "classified": 0,
+        "unavailable": 15,
+        "coverage_percent": 0,
+        "end_to_end_percent": 0
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-d69ffc2ef2d53b",
+        "passed": 15,
+        "eligible": 15,
+        "classified": 1,
+        "unavailable": 14,
+        "coverage_percent": 6.666666666666667,
+        "end_to_end_percent": 6.666666666666667
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-f3a558cb38a4f1",
+        "passed": 14,
+        "eligible": 14,
+        "classified": 0,
+        "unavailable": 14,
+        "coverage_percent": 0,
+        "end_to_end_percent": 0
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-f931c7abdc7e8e",
+        "passed": 14,
+        "eligible": 14,
+        "classified": 0,
+        "unavailable": 14,
+        "coverage_percent": 0,
+        "end_to_end_percent": 0
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-abb954bb3c4462",
+        "passed": 14,
+        "eligible": 14,
+        "classified": 0,
+        "unavailable": 14,
+        "coverage_percent": 0,
+        "end_to_end_percent": 0
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-b483fe5cb62d4b",
+        "passed": 13,
+        "eligible": 13,
+        "classified": 1,
+        "unavailable": 12,
+        "coverage_percent": 7.6923076923076925,
+        "end_to_end_percent": 7.6923076923076925
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-d1713262507c63",
+        "passed": 13,
+        "eligible": 13,
+        "classified": 1,
+        "unavailable": 12,
+        "coverage_percent": 7.6923076923076925,
+        "end_to_end_percent": 7.6923076923076925
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-bfac6c86702447",
+        "passed": 12,
+        "eligible": 12,
+        "classified": 0,
+        "unavailable": 12,
+        "coverage_percent": 0,
+        "end_to_end_percent": 0
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-79d3389309ca35",
+        "passed": 12,
+        "eligible": 12,
+        "classified": 0,
+        "unavailable": 12,
+        "coverage_percent": 0,
+        "end_to_end_percent": 0
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-e6f8c16c8f734a",
+        "passed": 10,
+        "eligible": 10,
+        "classified": 1,
+        "unavailable": 9,
+        "coverage_percent": 10,
+        "end_to_end_percent": 10
+      },
+      {
+        "operator": "Rapid Penang",
+        "source": "rapid-bus-penang",
+        "stop": "stop-af4ecac9ca1f34",
+        "passed": 10,
+        "eligible": 10,
+        "classified": 0,
+        "unavailable": 10,
+        "coverage_percent": 0,
+        "end_to_end_percent": 0
+      }
+    ]
+  },
+  "outputRows": {
+    "server": 3801,
+    "client": 3801,
+    "warm": 3765,
+    "cold": 0
+  }
+}

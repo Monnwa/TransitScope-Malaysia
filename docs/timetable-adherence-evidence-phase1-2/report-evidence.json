@@ -1,0 +1,5619 @@
+{
+  "models": {
+    "offline": {
+      "cycles": 21,
+      "vehicleRows": 2391,
+      "uniqueVehicles": 365,
+      "eligibleStopSnapshotAppearances": 13706,
+      "fetchInvocations": 0,
+      "httpRequestsSent": 0,
+      "httpKinds": {},
+      "standaloneGet": 0,
+      "standaloneSet": 0,
+      "evalCommandsAttempted": 0,
+      "mgetKeyParticipations": 0,
+      "requestsPerVehicleObservation": 0,
+      "requestsPerUniqueVehicle": 0,
+      "requestsPerFinalEligibleStop": 0,
+      "requestsPerEligibleStopAppearance": 0,
+      "request": {
+        "count": 0,
+        "latencyMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "successLatencyMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "timeout": {},
+        "failures": {}
+      },
+      "readRequest": {
+        "count": 0,
+        "latencyMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "successLatencyMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "timeout": {},
+        "failures": {}
+      },
+      "writeRequest": {
+        "count": 0,
+        "latencyMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "successLatencyMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "timeout": {},
+        "failures": {}
+      },
+      "operationFailures": {},
+      "operationsByStage": {},
+      "maxConcurrency": 0,
+      "connections": {
+        "attempts": 0,
+        "establishmentMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "tlsResumption": 0,
+        "requestsOnReusedSockets": 0,
+        "socketIdsPerProcess": [
+          0
+        ]
+      },
+      "wire": {
+        "sendToHeadersMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "dispatchWaitMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "bodyTransferMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        }
+      },
+      "json": {
+        "prepare": {
+          "stringifyCount": 183296,
+          "stringifyMs": 80.44400000001133,
+          "parseCount": 0,
+          "parseMs": 0
+        },
+        "other": {
+          "stringifyCount": 176089,
+          "stringifyMs": 47.16860000007637,
+          "parseCount": 0,
+          "parseMs": 0
+        },
+        "persist": {
+          "stringifyCount": 9788,
+          "stringifyMs": 28.124500000022636,
+          "parseCount": 0,
+          "parseMs": 0
+        },
+        "hydrate": {
+          "stringifyCount": 13309,
+          "stringifyMs": 14.947100000043065,
+          "parseCount": 0,
+          "parseMs": 0
+        }
+      },
+      "stages": {
+        "prepare": {
+          "n": 21,
+          "total": 2432.6918000000023,
+          "mean": 115.84246666666678,
+          "p50": 94.30689999999959,
+          "p95": 257.90539999999964,
+          "p99": 455.3579000000009,
+          "max": 455.3579000000009
+        },
+        "hydrate": {
+          "n": 21,
+          "total": 67.9467999999988,
+          "mean": 3.235561904761848,
+          "p50": 3.287199999999757,
+          "p95": 6.149699999999939,
+          "p99": 8.98280000000068,
+          "max": 8.98280000000068
+        },
+        "gps-classification": {
+          "n": 21,
+          "total": 1686.0365999999958,
+          "mean": 80.28745714285694,
+          "p50": 87.60440000000017,
+          "p95": 155.66769999999997,
+          "p99": 156.6185999999998,
+          "max": 156.6185999999998
+        },
+        "persist": {
+          "n": 21,
+          "total": 86.38900000000376,
+          "mean": 4.113761904762084,
+          "p50": 4.109900000001289,
+          "p95": 6.336600000000544,
+          "p99": 7.7237999999997555,
+          "max": 7.7237999999997555
+        }
+      },
+      "cycleWallMs": {
+        "n": 21,
+        "total": 4279.477199999996,
+        "mean": 203.78462857142836,
+        "p50": 189.65650000000005,
+        "p95": 359.3041999999996,
+        "p99": 616.5450000000001,
+        "max": 616.5450000000001
+      },
+      "cycleCpuMs": {
+        "n": 21,
+        "total": 5001,
+        "mean": 238.14285714285714,
+        "p50": 234,
+        "p95": 422,
+        "p99": 781,
+        "max": 781
+      },
+      "eventLoop": [
+        {
+          "p50Ms": 10.289151,
+          "p95Ms": 338.952191,
+          "p99Ms": 1053.294591,
+          "maxMs": 1053.294591
+        }
+      ],
+      "reads": {
+        "uniqueScopes": 0,
+        "participationDistribution": {},
+        "duplicateKeysWithinOneRequest": 0,
+        "hydratePrepared": 1814,
+        "hydrateCacheHits": 1114,
+        "observationsSuccessfullyReturned": 0,
+        "passagesSuccessfullyReturned": 0,
+        "returnedDocumentsInRejectedAggregates": 0,
+        "latestScopeHistories": {
+          "scopes": 279,
+          "observations": 1081,
+          "passages": 187,
+          "localFixes": 876
+        }
+      },
+      "writes": {
+        "acknowledgedCommandSuccess": 0,
+        "acknowledgedCommandConflicts": 0,
+        "successfulCommandsInRejectedAggregates": 0,
+        "commandsAfterOperationEnd": 0,
+        "bytesAttempted": 0,
+        "bytesReceived": 0,
+        "observerParseMs": 0
+      },
+      "retries": {
+        "casRetryBackendCalls": 0,
+        "conflictReads": 0,
+        "writeCallDurations": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "conflictReadDurations": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        }
+      },
+      "statuses": [
+        {
+          "round": 6,
+          "source": "rapid-bus-penang",
+          "mode": "REDIS_REST",
+          "state": "READY",
+          "retentionMinutes": 60,
+          "loaded": 230,
+          "saved": 684,
+          "rejected": 200,
+          "conflicts": 0,
+          "failures": 0
+        }
+      ],
+      "rawStorage": [
+        null
+      ],
+      "failedOperations": []
+    },
+    "sim300": {
+      "cycles": 21,
+      "vehicleRows": 2391,
+      "uniqueVehicles": 365,
+      "eligibleStopSnapshotAppearances": 13706,
+      "fetchInvocations": 216,
+      "httpRequestsSent": 0,
+      "httpKinds": {
+        "MGET": 79,
+        "EVAL-pipeline": 137
+      },
+      "standaloneGet": 0,
+      "standaloneSet": 0,
+      "evalCommandsAttempted": 1274,
+      "mgetKeyParticipations": 700,
+      "requestsPerVehicleObservation": 0.0903387703889586,
+      "requestsPerUniqueVehicle": 0.5917808219178082,
+      "requestsPerFinalEligibleStop": 0.06841938549255623,
+      "requestsPerEligibleStopAppearance": 0.015759521377498906,
+      "request": {
+        "count": 216,
+        "latencyMs": {
+          "n": 216,
+          "total": 66837.15000000004,
+          "mean": 309.43125000000015,
+          "p50": 310.09140000000116,
+          "p95": 314.97589999999946,
+          "p99": 315.8787000000011,
+          "max": 316.67239999999947
+        },
+        "successLatencyMs": {
+          "n": 216,
+          "total": 66837.15000000004,
+          "mean": 309.43125000000015,
+          "p50": 310.09140000000116,
+          "p95": 314.97589999999946,
+          "p99": 315.8787000000011,
+          "max": 316.67239999999947
+        },
+        "timeout": {},
+        "failures": {}
+      },
+      "readRequest": {
+        "count": 79,
+        "latencyMs": {
+          "n": 79,
+          "total": 24393.83529999999,
+          "mean": 308.7827253164556,
+          "p50": 309.8774000000012,
+          "p95": 315.22090000000026,
+          "p99": 315.7592000000004,
+          "max": 315.7592000000004
+        },
+        "successLatencyMs": {
+          "n": 79,
+          "total": 24393.83529999999,
+          "mean": 308.7827253164556,
+          "p50": 309.8774000000012,
+          "p95": 315.22090000000026,
+          "p99": 315.7592000000004,
+          "max": 315.7592000000004
+        },
+        "timeout": {},
+        "failures": {}
+      },
+      "writeRequest": {
+        "count": 137,
+        "latencyMs": {
+          "n": 137,
+          "total": 42443.3147,
+          "mean": 309.80521678832116,
+          "p50": 310.1170999999995,
+          "p95": 314.66799999999967,
+          "p99": 316.2330000000002,
+          "max": 316.67239999999947
+        },
+        "successLatencyMs": {
+          "n": 137,
+          "total": 42443.3147,
+          "mean": 309.80521678832116,
+          "p50": 310.1170999999995,
+          "p95": 314.66799999999967,
+          "p99": 316.2330000000002,
+          "max": 316.67239999999947
+        },
+        "timeout": {},
+        "failures": {}
+      },
+      "operationFailures": {},
+      "operationsByStage": {
+        "hydrate:read": 21,
+        "persist:compareAndSet": 20
+      },
+      "maxConcurrency": 3,
+      "connections": {
+        "attempts": 0,
+        "establishmentMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "tlsResumption": 0,
+        "requestsOnReusedSockets": 0,
+        "socketIdsPerProcess": [
+          0,
+          0
+        ]
+      },
+      "wire": {
+        "sendToHeadersMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "dispatchWaitMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "bodyTransferMs": {
+          "n": 216,
+          "total": 9.981999999971777,
+          "mean": 0.046212962962832296,
+          "p50": 0.037000000000261934,
+          "p95": 0.09280000000035216,
+          "p99": 0.38379999999961,
+          "max": 0.4193999999997686
+        }
+      },
+      "json": {
+        "prepare": {
+          "stringifyCount": 183549,
+          "stringifyMs": 111.40280000085477,
+          "parseCount": 0,
+          "parseMs": 0
+        },
+        "hydrate": {
+          "stringifyCount": 13388,
+          "stringifyMs": 14.019200000065211,
+          "parseCount": 388,
+          "parseMs": 2.4475000000020373
+        },
+        "other": {
+          "stringifyCount": 176089,
+          "stringifyMs": 49.0722999999698,
+          "parseCount": 0,
+          "parseMs": 0
+        },
+        "persist": {
+          "stringifyCount": 11199,
+          "stringifyMs": 48.80149999988771,
+          "parseCount": 274,
+          "parseMs": 6.261900000004971
+        }
+      },
+      "stages": {
+        "prepare": {
+          "n": 21,
+          "total": 2958.0754999999936,
+          "mean": 140.8607380952378,
+          "p50": 98.8125,
+          "p95": 442.64969999999994,
+          "p99": 460.14589999999953,
+          "max": 460.14589999999953
+        },
+        "hydrate": {
+          "n": 21,
+          "total": 11178.516800000001,
+          "mean": 532.3103238095239,
+          "p50": 314.21589999999924,
+          "p95": 1250.5950000000012,
+          "p99": 1250.8428999999996,
+          "max": 1250.8428999999996
+        },
+        "gps-classification": {
+          "n": 21,
+          "total": 1677.7585000000008,
+          "mean": 79.89326190476194,
+          "p50": 89.10590000000047,
+          "p95": 154.4520999999986,
+          "p99": 154.88720000000103,
+          "max": 154.88720000000103
+        },
+        "persist": {
+          "n": 21,
+          "total": 16819.3885,
+          "mean": 800.923261904762,
+          "p50": 934.4472999999998,
+          "p95": 1245.4840000000004,
+          "p99": 1246.9265000000014,
+          "max": 1246.9265000000014
+        }
+      },
+      "cycleWallMs": {
+        "n": 21,
+        "total": 32641.182599999993,
+        "mean": 1554.3420285714283,
+        "p50": 1430.1400999999987,
+        "p95": 3084.1317,
+        "p99": 3096.9588999999996,
+        "max": 3096.9588999999996
+      },
+      "cycleCpuMs": {
+        "n": 21,
+        "total": 5936,
+        "mean": 282.6666666666667,
+        "p50": 250,
+        "p95": 718,
+        "p99": 750,
+        "max": 750
+      },
+      "eventLoop": [
+        {
+          "p50Ms": 15.540223,
+          "p95Ms": 17.416191,
+          "p99Ms": 173.801471,
+          "maxMs": 2353.004543
+        },
+        {
+          "p50Ms": 15.523839,
+          "p95Ms": 17.580031,
+          "p99Ms": 164.626431,
+          "maxMs": 2323.644415
+        }
+      ],
+      "reads": {
+        "uniqueScopes": 279,
+        "participationDistribution": {
+          "1": 10,
+          "2": 199,
+          "3": 30,
+          "4": 20,
+          "5": 8,
+          "6": 2,
+          "7": 10
+        },
+        "duplicateKeysWithinOneRequest": 0,
+        "hydratePrepared": 1814,
+        "hydrateCacheHits": 1114,
+        "observationsSuccessfullyReturned": 584,
+        "passagesSuccessfullyReturned": 107,
+        "returnedDocumentsInRejectedAggregates": 0,
+        "latestScopeHistories": {
+          "scopes": 279,
+          "observations": 1081,
+          "passages": 187,
+          "localFixes": 876
+        }
+      },
+      "writes": {
+        "acknowledgedCommandSuccess": 1274,
+        "acknowledgedCommandConflicts": 0,
+        "successfulCommandsInRejectedAggregates": 0,
+        "commandsAfterOperationEnd": 0,
+        "bytesAttempted": 5503631,
+        "bytesReceived": 735803,
+        "observerParseMs": 5.912900000012087
+      },
+      "retries": {
+        "casRetryBackendCalls": 0,
+        "conflictReads": 0,
+        "writeCallDurations": {
+          "n": 20,
+          "total": 16760.822000000007,
+          "mean": 838.0411000000004,
+          "p50": 930.7721999999994,
+          "p95": 1242.5906000000014,
+          "p99": 1244.9518000000007,
+          "max": 1244.9518000000007
+        },
+        "conflictReadDurations": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        }
+      },
+      "statuses": [
+        {
+          "round": 2,
+          "source": "rapid-bus-penang",
+          "mode": "REDIS_REST",
+          "state": "READY",
+          "retentionMinutes": 60,
+          "loaded": 0,
+          "saved": 590,
+          "rejected": 186,
+          "conflicts": 0,
+          "failures": 0
+        },
+        {
+          "round": 6,
+          "source": "rapid-bus-penang",
+          "mode": "REDIS_REST",
+          "state": "READY",
+          "retentionMinutes": 60,
+          "loaded": 230,
+          "saved": 684,
+          "rejected": 200,
+          "conflicts": 0,
+          "failures": 0
+        }
+      ],
+      "rawStorage": [
+        null,
+        null
+      ],
+      "failedOperations": []
+    },
+    "sim1500": {
+      "cycles": 21,
+      "vehicleRows": 2391,
+      "uniqueVehicles": 365,
+      "eligibleStopSnapshotAppearances": 13706,
+      "fetchInvocations": 230,
+      "httpRequestsSent": 0,
+      "httpKinds": {
+        "MGET": 118,
+        "EVAL-pipeline": 112
+      },
+      "standaloneGet": 0,
+      "standaloneSet": 0,
+      "evalCommandsAttempted": 1087,
+      "mgetKeyParticipations": 1141,
+      "requestsPerVehicleObservation": 0.09619406106231702,
+      "requestsPerUniqueVehicle": 0.6301369863013698,
+      "requestsPerFinalEligibleStop": 0.07285397529299968,
+      "requestsPerEligibleStopAppearance": 0.016780971837151614,
+      "request": {
+        "count": 230,
+        "latencyMs": {
+          "n": 230,
+          "total": 293766.1778999999,
+          "mean": 1277.24425173913,
+          "p50": 1501.1025000000009,
+          "p95": 1514.5502000000015,
+          "p99": 1516.5920999999944,
+          "max": 1516.8775000000023
+        },
+        "successLatencyMs": {
+          "n": 126,
+          "total": 189976.61879999997,
+          "mean": 1507.7509428571425,
+          "p50": 1506.2405999999974,
+          "p95": 1514.8219000000026,
+          "p99": 1516.7331999999951,
+          "max": 1516.8775000000023
+        },
+        "timeout": {
+          "operation-2500ms": 104
+        },
+        "failures": {
+          "awaiting-headers": 104
+        }
+      },
+      "readRequest": {
+        "count": 118,
+        "latencyMs": {
+          "n": 118,
+          "total": 150017.59779999996,
+          "mean": 1271.3355745762708,
+          "p50": 1500.7562999999973,
+          "p95": 1514.3633000000045,
+          "p99": 1514.6507999999994,
+          "max": 1514.8219000000026
+        },
+        "successLatencyMs": {
+          "n": 63,
+          "total": 94949.68729999999,
+          "mean": 1507.1378936507936,
+          "p50": 1505.9294,
+          "p95": 1514.5502000000015,
+          "p99": 1514.8219000000026,
+          "max": 1514.8219000000026
+        },
+        "timeout": {
+          "operation-2500ms": 55
+        },
+        "failures": {
+          "awaiting-headers": 55
+        }
+      },
+      "writeRequest": {
+        "count": 112,
+        "latencyMs": {
+          "n": 112,
+          "total": 143748.58010000005,
+          "mean": 1283.469465178572,
+          "p50": 1503.1453000000001,
+          "p95": 1515.4736999999986,
+          "p99": 1516.7331999999951,
+          "max": 1516.8775000000023
+        },
+        "successLatencyMs": {
+          "n": 63,
+          "total": 95026.93150000004,
+          "mean": 1508.3639920634926,
+          "p50": 1507.184500000003,
+          "p95": 1515.8947999999982,
+          "p99": 1516.8775000000023,
+          "max": 1516.8775000000023
+        },
+        "timeout": {
+          "operation-2500ms": 49
+        },
+        "failures": {
+          "awaiting-headers": 49
+        }
+      },
+      "operationFailures": {
+        "hydrate:read": 21,
+        "persist:compareAndSet": 21
+      },
+      "operationsByStage": {
+        "hydrate:read": 21,
+        "persist:compareAndSet": 21
+      },
+      "maxConcurrency": 3,
+      "connections": {
+        "attempts": 0,
+        "establishmentMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "tlsResumption": 0,
+        "requestsOnReusedSockets": 0,
+        "socketIdsPerProcess": [
+          0,
+          0
+        ]
+      },
+      "wire": {
+        "sendToHeadersMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "dispatchWaitMs": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        "bodyTransferMs": {
+          "n": 126,
+          "total": 6.256800000031944,
+          "mean": 0.049657142857396384,
+          "p50": 0.02870000000257278,
+          "p95": 0.12219999999979336,
+          "p99": 0.39170000000012806,
+          "max": 0.4488000000001193
+        }
+      },
+      "json": {
+        "prepare": {
+          "stringifyCount": 183549,
+          "stringifyMs": 114.97739999970054,
+          "parseCount": 0,
+          "parseMs": 0
+        },
+        "hydrate": {
+          "stringifyCount": 118,
+          "stringifyMs": 0.2956999999805703,
+          "parseCount": 646,
+          "parseMs": 2.6452000000617772
+        },
+        "other": {
+          "stringifyCount": 176089,
+          "stringifyMs": 48.872500001125445,
+          "parseCount": 0,
+          "parseMs": 0
+        },
+        "persist": {
+          "stringifyCount": 5594,
+          "stringifyMs": 13.376800000229196,
+          "parseCount": 175,
+          "parseMs": 3.8136000000449712
+        }
+      },
+      "stages": {
+        "prepare": {
+          "n": 21,
+          "total": 3133.842099999996,
+          "mean": 149.230576190476,
+          "p50": 102.30259999999998,
+          "p95": 459.65400000000045,
+          "p99": 464.1949000000004,
+          "max": 464.1949000000004
+        },
+        "hydrate": {
+          "n": 21,
+          "total": 52685.76699999999,
+          "mean": 2508.846047619047,
+          "p50": 2509.3935999999994,
+          "p95": 2513.8078000000023,
+          "p99": 2514.4145999999964,
+          "max": 2514.4145999999964
+        },
+        "gps-classification": {
+          "n": 21,
+          "total": 1707.997599999987,
+          "mean": 81.33321904761843,
+          "p50": 91.40769999999975,
+          "p95": 156.60229999999865,
+          "p99": 169.0300999999963,
+          "max": 169.0300999999963
+        },
+        "persist": {
+          "n": 21,
+          "total": 52620.9657,
+          "mean": 2505.7602714285713,
+          "p50": 2504.054,
+          "p95": 2513.5612,
+          "p99": 2514.3850999999995,
+          "max": 2514.3850999999995
+        }
+      },
+      "cycleWallMs": {
+        "n": 21,
+        "total": 110165.66830000002,
+        "mean": 5245.984204761906,
+        "p50": 5204.9136,
+        "p95": 5631.771599999998,
+        "p99": 5636.752199999999,
+        "max": 5636.752199999999
+      },
+      "cycleCpuMs": {
+        "n": 21,
+        "total": 11938,
+        "mean": 568.4761904761905,
+        "p50": 360,
+        "p95": 1673,
+        "p99": 1906,
+        "max": 1906
+      },
+      "eventLoop": [
+        {
+          "p50Ms": 15.515647,
+          "p95Ms": 16.113663,
+          "p99Ms": 22.773759,
+          "maxMs": 2350.907391
+        },
+        {
+          "p50Ms": 15.515647,
+          "p95Ms": 16.089087,
+          "p99Ms": 21.364735,
+          "maxMs": 2403.336191
+        }
+      ],
+      "reads": {
+        "uniqueScopes": 223,
+        "participationDistribution": {
+          "1": 16,
+          "2": 32,
+          "3": 17,
+          "4": 22,
+          "5": 9,
+          "6": 12,
+          "7": 115
+        },
+        "duplicateKeysWithinOneRequest": 0,
+        "hydratePrepared": 1814,
+        "hydrateCacheHits": 0,
+        "observationsSuccessfullyReturned": 465,
+        "passagesSuccessfullyReturned": 0,
+        "returnedDocumentsInRejectedAggregates": 465,
+        "latestScopeHistories": {
+          "scopes": 279,
+          "observations": 0,
+          "passages": 0,
+          "localFixes": 876
+        }
+      },
+      "writes": {
+        "acknowledgedCommandSuccess": 123,
+        "acknowledgedCommandConflicts": 507,
+        "successfulCommandsInRejectedAggregates": 123,
+        "commandsAfterOperationEnd": 0,
+        "bytesAttempted": 3343132,
+        "bytesReceived": 883069,
+        "observerParseMs": 5.50679999996737
+      },
+      "retries": {
+        "casRetryBackendCalls": 0,
+        "conflictReads": 0,
+        "writeCallDurations": {
+          "n": 21,
+          "total": 52558.39879999998,
+          "mean": 2502.780895238094,
+          "p50": 2501.579899999997,
+          "p95": 2511.1039999999994,
+          "p99": 2511.4710000000014,
+          "max": 2511.4710000000014
+        },
+        "conflictReadDurations": {
+          "n": 0,
+          "total": 0,
+          "mean": null,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        }
+      },
+      "statuses": [
+        {
+          "round": 2,
+          "source": "rapid-bus-penang",
+          "mode": "REDIS_REST",
+          "state": "DEGRADED",
+          "retentionMinutes": 60,
+          "loaded": 0,
+          "saved": 0,
+          "rejected": 186,
+          "conflicts": 0,
+          "failures": 18
+        },
+        {
+          "round": 6,
+          "source": "rapid-bus-penang",
+          "mode": "REDIS_REST",
+          "state": "DEGRADED",
+          "retentionMinutes": 60,
+          "loaded": 0,
+          "saved": 0,
+          "rejected": 200,
+          "conflicts": 0,
+          "failures": 24
+        }
+      ],
+      "rawStorage": [
+        null,
+        null
+      ],
+      "failedOperations": [
+        {
+          "round": 0,
+          "source": "rapid-bus-kl",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 40,
+          "batchesExpected": 4,
+          "batchesStarted": 4,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2504.5146000000004,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 4,
+            "total": 1510.0014999999994,
+            "mean": 377.50037499999985,
+            "p50": 1.0895000000000437,
+            "p95": 1506.8934,
+            "p99": 1506.8934,
+            "max": 1506.8934
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.8289999999997235,
+              "ms": 1505.8681000000006,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1.0895000000000437,
+              "ms": 1506.1398,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1.1895999999997002,
+              "ms": 1506.1534000000001,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1506.8934,
+              "ms": 997.6041999999998,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 0,
+          "source": "rapid-bus-kl",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 33,
+          "batchesExpected": 4,
+          "batchesStarted": 4,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2508.3485,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 4,
+            "total": 1515.7568,
+            "mean": 378.9392,
+            "p50": 0.9277000000001863,
+            "p95": 1513.1854999999996,
+            "p99": 1513.1854999999996,
+            "max": 1513.1854999999996
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.3316999999997279,
+              "ms": 1512.5218000000013,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.9277000000001863,
+              "ms": 1512.5684,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1.3119000000006054,
+              "ms": 1512.3199999999997,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1513.1854999999996,
+              "ms": 995.1369000000013,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 0,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 113,
+          "batchesExpected": 12,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2511.731599999999,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4541.719699999998,
+            "mean": 756.9532833333329,
+            "p50": 0.20119999999951688,
+            "p95": 1513.9264999999996,
+            "p99": 1513.9264999999996,
+            "max": 1513.9264999999996
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.12290000000029977,
+              "ms": 1513.3171000000002,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.17079999999987194,
+              "ms": 1513.5102000000006,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.20119999999951688,
+              "ms": 1513.6435000000001,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1513.5581999999995,
+              "ms": 998.0884000000005,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1513.740099999999,
+              "ms": 997.9290000000001,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1513.9264999999996,
+              "ms": 997.7533999999996,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 0,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 59,
+          "batchesExpected": 6,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2501.9801000000007,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4512.923400000003,
+            "mean": 752.1539000000006,
+            "p50": 0.8867000000009284,
+            "p95": 1504.1954000000005,
+            "p99": 1504.1954000000005,
+            "max": 1504.1954000000005
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.19870000000082655,
+              "ms": 1502.8037999999997,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.5809000000008382,
+              "ms": 1503.0299999999988,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.8867000000009284,
+              "ms": 1503.1633999999995,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1503.2891999999993,
+              "ms": 998.649300000001,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1503.772500000001,
+              "ms": 998.1769999999997,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1504.1954000000005,
+              "ms": 997.7613999999994,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 0,
+          "source": "rapid-bus-penang",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 111,
+          "batchesExpected": 12,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2512.8030000000017,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4544.559000000001,
+            "mean": 757.4265000000001,
+            "p50": 0.15430000000014843,
+            "p95": 1514.8390000000018,
+            "p99": 1514.8390000000018,
+            "max": 1514.8390000000018
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.08029999999962456,
+              "ms": 1514.431199999999,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.12750000000050932,
+              "ms": 1514.5714999999982,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.15430000000014843,
+              "ms": 1514.6507999999994,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1514.6237999999994,
+              "ms": 998.133600000001,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1514.7340999999997,
+              "ms": 998.034599999999,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1514.8390000000018,
+              "ms": 997.9375,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 0,
+          "source": "rapid-bus-penang",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 102,
+          "batchesExpected": 11,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2500.175500000001,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4524.197099999998,
+            "mean": 754.0328499999996,
+            "p50": 1.0542999999997846,
+            "p95": 1507.8621999999996,
+            "p99": 1507.8621999999996,
+            "max": 1507.8621999999996
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.19389999999839347,
+              "ms": 1506.519400000001,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.6722999999983585,
+              "ms": 1506.6320000000014,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1.0542999999997846,
+              "ms": 1506.6640000000007,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1506.9500000000007,
+              "ms": 993.1697999999997,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1507.4644000000008,
+              "ms": 992.6684999999998,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1507.8621999999996,
+              "ms": 992.2808000000005,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 1,
+          "source": "rapid-bus-kl",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 46,
+          "batchesExpected": 5,
+          "batchesStarted": 5,
+          "completedBatches": 3,
+          "returnedDocuments": 21,
+          "ms": 2504.378399999998,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 5,
+            "total": 3013.430700000001,
+            "mean": 602.6861400000001,
+            "p50": 0.31160000000090804,
+            "p95": 1506.6224000000002,
+            "p99": 1506.6224000000002,
+            "max": 1506.6224000000002
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.07430000000022119,
+              "ms": 1505.7468999999983,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.23070000000006985,
+              "ms": 1506.2405999999974,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 6,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.31160000000090804,
+              "ms": 1506.4943999999996,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 6,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1506.1916999999994,
+              "ms": 998.1502,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1506.6224000000002,
+              "ms": 997.7295999999988,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 1,
+          "source": "rapid-bus-kl",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 37,
+          "batchesExpected": 4,
+          "batchesStarted": 4,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2511.1039999999994,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 4,
+            "total": 1515.9793000000027,
+            "mean": 378.9948250000007,
+            "p50": 0.47330000000147265,
+            "p95": 1514.533800000001,
+            "p99": 1514.533800000001,
+            "max": 1514.533800000001
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.19420000000172877,
+              "ms": 1514.1130999999987,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.47330000000147265,
+              "ms": 1514.2343999999975,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 3
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.7779999999984284,
+              "ms": 1513.9739000000009,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 4
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1514.533800000001,
+              "ms": 996.5468000000001,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 1,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 113,
+          "batchesExpected": 12,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 17,
+          "ms": 2511.7865999999995,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4503.4707999999955,
+            "mean": 750.5784666666659,
+            "p50": 0.29209999999875436,
+            "p95": 1501.2502999999997,
+            "p99": 1501.2502999999997,
+            "max": 1501.2502999999997
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.09349999999903957,
+              "ms": 1500.2610000000022,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 6,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.21719999999913853,
+              "ms": 1500.6344000000026,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 5,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.29209999999875436,
+              "ms": 1500.8415000000023,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 6,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1500.6538,
+              "ms": 1011.0721999999987,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1500.9638999999988,
+              "ms": 1010.7770000000019,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1501.2502999999997,
+              "ms": 1010.5010000000002,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 1,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 77,
+          "batchesExpected": 8,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2511.4710000000014,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4550.796900000005,
+            "mean": 758.4661500000008,
+            "p50": 0.7728000000024622,
+            "p95": 1516.8142000000007,
+            "p99": 1516.8142000000007,
+            "max": 1516.8142000000007
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.22190000000045984,
+              "ms": 1515.4736999999986,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 4
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.5439000000005763,
+              "ms": 1515.7314000000006,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 2
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.7728000000024622,
+              "ms": 1515.8947999999982,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 2
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1515.9985000000015,
+              "ms": 995.413700000001,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1516.445599999999,
+              "ms": 994.9796000000024,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1516.8142000000007,
+              "ms": 994.6198000000004,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 1,
+          "source": "rapid-bus-penang",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 109,
+          "batchesExpected": 11,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 25,
+          "ms": 2510.8401000000013,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4504.992300000013,
+            "mean": 750.8320500000021,
+            "p50": 0.3165000000008149,
+            "p95": 1501.787900000003,
+            "p99": 1501.787900000003,
+            "max": 1501.787900000003
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.08590000000185682,
+              "ms": 1500.7562999999973,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.2397000000019034,
+              "ms": 1501.0952999999972,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 6,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.3165000000008149,
+              "ms": 1501.3164000000033,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1501.0973000000013,
+              "ms": 1009.6848000000027,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1501.4650000000038,
+              "ms": 1009.3315999999977,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1501.787900000003,
+              "ms": 1009.0184000000008,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 1,
+          "source": "rapid-bus-penang",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 96,
+          "batchesExpected": 10,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2505.6147999999957,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4506.813499999982,
+            "mean": 751.1355833333304,
+            "p50": 0.8440999999947962,
+            "p95": 1502.104999999996,
+            "p99": 1502.104999999996,
+            "max": 1502.104999999996
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.23919999999634456,
+              "ms": 1500.847600000001,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.5348999999987427,
+              "ms": 1501.0608999999968,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.8440999999947962,
+              "ms": 1501.1025000000009,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1501.3395999999993,
+              "ms": 1004.2040999999954,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1501.7506999999969,
+              "ms": 1003.8102999999974,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1502.104999999996,
+              "ms": 1003.4650000000038,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "source": "rapid-bus-kl",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 46,
+          "batchesExpected": 5,
+          "batchesStarted": 5,
+          "completedBatches": 3,
+          "returnedDocuments": 27,
+          "ms": 2513.5864,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 5,
+            "total": 3009.5409000000072,
+            "mean": 601.9081800000015,
+            "p50": 0.35390000000188593,
+            "p95": 1504.653600000005,
+            "p99": 1504.653600000005,
+            "max": 1504.653600000005
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.06889999999839347,
+              "ms": 1503.8534,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.2551000000021304,
+              "ms": 1504.245799999997,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 8,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.35390000000188593,
+              "ms": 1504.4971000000005,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1504.2093999999997,
+              "ms": 1009.3231000000014,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1504.653600000005,
+              "ms": 1008.8945999999996,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "source": "rapid-bus-kl",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 35,
+          "batchesExpected": 4,
+          "batchesStarted": 4,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2499.5030999999944,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 4,
+            "total": 1507.3830999999918,
+            "mean": 376.84577499999796,
+            "p50": 1.0057999999989988,
+            "p95": 1504.9568,
+            "p99": 1504.9568,
+            "max": 1504.9568
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.20859999999811407,
+              "ms": 1504.504399999998,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1.0057999999989988,
+              "ms": 1504.1509000000005,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1.2118999999947846,
+              "ms": 1504.0112999999983,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1504.9568,
+              "ms": 994.5205999999962,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 110,
+          "batchesExpected": 11,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 21,
+          "ms": 2513.130799999999,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4510.59060000001,
+            "mean": 751.7651000000018,
+            "p50": 0.2775000000037835,
+            "p95": 1503.7159000000029,
+            "p99": 1503.7159000000029,
+            "max": 1503.7159000000029
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.06680000000051223,
+              "ms": 1502.7166999999972,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 5,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.18179999999847496,
+              "ms": 1503.0385000000024,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 8,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.2775000000037835,
+              "ms": 1503.300599999995,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 8,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1502.982600000003,
+              "ms": 1010.0847999999969,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1503.3660000000018,
+              "ms": 1009.7188999999998,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1503.7159000000029,
+              "ms": 1009.3803999999946,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 78,
+          "batchesExpected": 8,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2496.2837999999974,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4519.484899999996,
+            "mean": 753.2474833333326,
+            "p50": 0.7716000000000349,
+            "p95": 1506.3825999999972,
+            "p99": 1506.3825999999972,
+            "max": 1506.3825999999972
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.2073999999993248,
+              "ms": 1505.0169000000024,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.5120999999999185,
+              "ms": 1505.3314000000028,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.7716000000000349,
+              "ms": 1505.4493999999977,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1505.5881000000008,
+              "ms": 990.6367000000027,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1506.0230999999985,
+              "ms": 990.2151000000013,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1506.3825999999972,
+              "ms": 989.8657000000021,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "source": "rapid-bus-penang",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 108,
+          "batchesExpected": 11,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 25,
+          "ms": 2502.2495000000054,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4525.456800000029,
+            "mean": 754.2428000000049,
+            "p50": 0.30190000000584405,
+            "p95": 1508.7109000000055,
+            "p99": 1508.7109000000055,
+            "max": 1508.7109000000055
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.07050000000162981,
+              "ms": 1507.4769000000015,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 7,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.2017000000050757,
+              "ms": 1507.9801000000007,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.30190000000584405,
+              "ms": 1508.248599999999,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1507.8131000000067,
+              "ms": 994.3769999999931,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1508.3587000000043,
+              "ms": 993.8444000000018,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1508.7109000000055,
+              "ms": 993.5017999999982,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "source": "rapid-bus-penang",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 96,
+          "batchesExpected": 10,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2505.969799999999,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4542.984399999994,
+            "mean": 757.1640666666657,
+            "p50": 0.8813000000009197,
+            "p95": 1514.1921999999977,
+            "p99": 1514.1921999999977,
+            "max": 1514.1921999999977
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.22899999999935972,
+              "ms": 1512.8088999999964,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.5757999999987078,
+              "ms": 1512.9979999999996,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.8813000000009197,
+              "ms": 1513.1268999999957,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1513.3280999999988,
+              "ms": 992.5912000000026,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1513.7779999999984,
+              "ms": 992.1540999999997,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1514.1921999999977,
+              "ms": 991.7468999999983,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "source": "rapid-bus-kl",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 43,
+          "batchesExpected": 5,
+          "batchesStarted": 5,
+          "completedBatches": 3,
+          "returnedDocuments": 26,
+          "ms": 2512.802100000001,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 5,
+            "total": 3015.875900000002,
+            "mean": 603.1751800000004,
+            "p50": 1.185699999999997,
+            "p95": 1506.8578000000007,
+            "p99": 1506.8578000000007,
+            "max": 1506.8578000000007
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.6013000000002648,
+              "ms": 1505.3265000000001,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 8,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.9960000000000946,
+              "ms": 1505.6208000000006,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1.185699999999997,
+              "ms": 1505.9294,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 8,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1506.2351000000008,
+              "ms": 1006.5337,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1506.8578000000007,
+              "ms": 1005.9186,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "source": "rapid-bus-kl",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 37,
+          "batchesExpected": 4,
+          "batchesStarted": 4,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2493.7146999999995,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 4,
+            "total": 1515.8230999999996,
+            "mean": 378.9557749999999,
+            "p50": 0.7716000000000349,
+            "p95": 1513.6014999999998,
+            "p99": 1513.6014999999998,
+            "max": 1513.6014999999998
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.35350000000016735,
+              "ms": 1512.9200999999994,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.7716000000000349,
+              "ms": 1513.0785000000005,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1.0964999999996508,
+              "ms": 1512.9018999999998,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1513.6014999999998,
+              "ms": 980.0787999999993,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 108,
+          "batchesExpected": 11,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 23,
+          "ms": 2508.9026999999987,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4543.311299999994,
+            "mean": 757.218549999999,
+            "p50": 0.34909999999945285,
+            "p95": 1514.5806999999986,
+            "p99": 1514.5806999999986,
+            "max": 1514.5806999999986
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.10599999999976717,
+              "ms": 1513.4118999999992,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 8,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.24349999999867578,
+              "ms": 1513.8042999999998,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.34909999999945285,
+              "ms": 1514.116,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 5,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1513.7928999999986,
+              "ms": 995.0637999999999,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1514.2390999999989,
+              "ms": 994.6309000000001,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1514.5806999999986,
+              "ms": 994.2967000000008,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 82,
+          "batchesExpected": 9,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2499.980300000001,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4513.241800000005,
+            "mean": 752.2069666666675,
+            "p50": 0.5777000000016415,
+            "p95": 1504.4444000000003,
+            "p99": 1504.4444000000003,
+            "max": 1504.4444000000003
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.18800000000010186,
+              "ms": 1503.1453000000001,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.3989000000001397,
+              "ms": 1503.4459000000006,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.5777000000016415,
+              "ms": 1503.6956999999984,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 2
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1503.6137000000017,
+              "ms": 996.3216999999986,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1504.0191000000013,
+              "ms": 995.9279999999999,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1504.4444000000003,
+              "ms": 995.5114000000012,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "source": "rapid-bus-penang",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 109,
+          "batchesExpected": 11,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 27,
+          "ms": 2509.866900000001,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4521.025999999994,
+            "mean": 753.5043333333324,
+            "p50": 0.31309999999939464,
+            "p95": 1507.2083999999995,
+            "p99": 1507.2083999999995,
+            "max": 1507.2083999999995
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.07449999999880674,
+              "ms": 1505.9449999999997,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.21259999999892898,
+              "ms": 1506.4627,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.31309999999939464,
+              "ms": 1506.7410999999993,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1506.3509999999987,
+              "ms": 1003.4644000000008,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1506.866399999999,
+              "ms": 1002.963200000002,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1507.2083999999995,
+              "ms": 1002.630799999999,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "source": "rapid-bus-penang",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 96,
+          "batchesExpected": 10,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2509.1538999999975,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4512.8595999999925,
+            "mean": 752.1432666666655,
+            "p50": 0.7069999999985157,
+            "p95": 1504.1695999999974,
+            "p99": 1504.1695999999974,
+            "max": 1504.1695999999974
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.2261999999973341,
+              "ms": 1502.9943999999996,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.493399999999383,
+              "ms": 1503.1733999999997,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.7069999999985157,
+              "ms": 1503.3195000000014,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1503.4439999999995,
+              "ms": 1005.6515999999974,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1503.8194000000003,
+              "ms": 1005.288199999999,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1504.1695999999974,
+              "ms": 1004.9462999999996,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 4,
+          "source": "rapid-bus-kl",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 42,
+          "batchesExpected": 5,
+          "batchesStarted": 5,
+          "completedBatches": 3,
+          "returnedDocuments": 27,
+          "ms": 2504.0251000000026,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 5,
+            "total": 3026.1016000000054,
+            "mean": 605.220320000001,
+            "p50": 0.29200000000128057,
+            "p95": 1512.9890000000014,
+            "p99": 1512.9890000000014,
+            "max": 1512.9890000000014
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.06650000000081491,
+              "ms": 1512.267100000001,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.19420000000172877,
+              "ms": 1512.6254000000008,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.29200000000128057,
+              "ms": 1512.8244999999988,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 8,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1512.5599000000002,
+              "ms": 991.4319000000032,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1512.9890000000014,
+              "ms": 991.0126000000018,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 4,
+          "source": "rapid-bus-kl",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 33,
+          "batchesExpected": 4,
+          "batchesStarted": 4,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2499.1661999999997,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 4,
+            "total": 1516.473399999999,
+            "mean": 379.11834999999974,
+            "p50": 0.475800000000163,
+            "p95": 1515.0694999999978,
+            "p99": 1515.0694999999978,
+            "max": 1515.0694999999978
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.194100000000617,
+              "ms": 1514.6983999999975,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.475800000000163,
+              "ms": 1514.7255000000005,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.7340000000003783,
+              "ms": 1514.5118000000002,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1515.0694999999978,
+              "ms": 984.0637000000024,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 4,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 106,
+          "batchesExpected": 11,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 26,
+          "ms": 2508.4951,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4504.16,
+            "mean": 750.6933333333333,
+            "p50": 0.30129999999917345,
+            "p95": 1501.6247000000003,
+            "p99": 1501.6247000000003,
+            "max": 1501.6247000000003
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.08399999999892316,
+              "ms": 1500.3201000000008,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 8,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.2128000000011525,
+              "ms": 1500.8041999999987,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 8,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.30129999999917345,
+              "ms": 1501.1308000000026,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1500.7449000000015,
+              "ms": 1007.6964999999982,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1501.1922999999988,
+              "ms": 1007.2619000000013,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1501.6247000000003,
+              "ms": 1006.8389999999999,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 4,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 76,
+          "batchesExpected": 8,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2502.5498000000007,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4530.7098000000005,
+            "mean": 755.1183000000001,
+            "p50": 0.8159000000014203,
+            "p95": 1510.0878000000012,
+            "p99": 1510.0878000000012,
+            "max": 1510.0878000000012
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.30089999999836436,
+              "ms": 1508.7381000000023,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.5675999999984924,
+              "ms": 1508.9193000000014,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.8159000000014203,
+              "ms": 1509.0825000000004,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1509.3005000000012,
+              "ms": 993.1754999999976,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1509.6371,
+              "ms": 992.8528000000006,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1510.0878000000012,
+              "ms": 992.4124999999985,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 4,
+          "source": "rapid-bus-penang",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 108,
+          "batchesExpected": 11,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 28,
+          "ms": 2507.696899999999,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4545.392399999993,
+            "mean": 757.5653999999989,
+            "p50": 0.3186999999998079,
+            "p95": 1515.3095999999969,
+            "p99": 1515.3095999999969,
+            "max": 1515.3095999999969
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.08919999999852735,
+              "ms": 1514.1575000000012,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.22699999999895226,
+              "ms": 1514.5502000000015,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 8,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.3186999999998079,
+              "ms": 1514.8219000000026,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1514.5231999999996,
+              "ms": 993.1273000000001,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1514.9246999999996,
+              "ms": 992.7381999999998,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1515.3095999999969,
+              "ms": 992.3606,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 4,
+          "source": "rapid-bus-penang",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 93,
+          "batchesExpected": 10,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2501.7658999999985,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4530.826300000001,
+            "mean": 755.1377166666667,
+            "p50": 0.6494000000020606,
+            "p95": 1510.2252999999982,
+            "p99": 1510.2252999999982,
+            "max": 1510.2252999999982
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.1904999999969732,
+              "ms": 1509.0449000000008,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.42119999999704305,
+              "ms": 1509.2690000000002,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.6494000000020606,
+              "ms": 1509.395700000001,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1509.4976000000024,
+              "ms": 992.2119999999995,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1509.842300000004,
+              "ms": 991.8817999999956,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1510.2252999999982,
+              "ms": 991.5095000000001,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 5,
+          "source": "rapid-bus-kl",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 43,
+          "batchesExpected": 5,
+          "batchesStarted": 5,
+          "completedBatches": 3,
+          "returnedDocuments": 27,
+          "ms": 2508.061999999998,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 5,
+            "total": 3023.9927999999854,
+            "mean": 604.7985599999971,
+            "p50": 0.31599999999889405,
+            "p95": 1511.9275999999954,
+            "p99": 1511.9275999999954,
+            "max": 1511.9275999999954
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.062099999995552935,
+              "ms": 1511.1826,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.20969999999942956,
+              "ms": 1511.5578999999998,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.31599999999889405,
+              "ms": 1511.7508000000016,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1511.4773999999961,
+              "ms": 996.539499999999,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1511.9275999999954,
+              "ms": 996.1038000000044,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 5,
+          "source": "rapid-bus-kl",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 36,
+          "batchesExpected": 4,
+          "batchesStarted": 4,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2498.6573999999964,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 4,
+            "total": 1505.6523999999918,
+            "mean": 376.41309999999794,
+            "p50": 0.4978999999948428,
+            "p95": 1504.2059000000008,
+            "p99": 1504.2059000000008,
+            "max": 1504.2059000000008
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.19580000000132713,
+              "ms": 1503.8050000000003,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.4978999999948428,
+              "ms": 1503.8772000000026,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.7527999999947497,
+              "ms": 1503.6823000000004,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1504.2059000000008,
+              "ms": 994.4240999999965,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 5,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 102,
+          "batchesExpected": 11,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 28,
+          "ms": 2510.8542000000016,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4505.786600000007,
+            "mean": 750.9644333333345,
+            "p50": 0.3142999999981839,
+            "p95": 1502.0894000000044,
+            "p99": 1502.0894000000044,
+            "max": 1502.0894000000044
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.07340000000112923,
+              "ms": 1501.0517000000036,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.21560000000317814,
+              "ms": 1501.3617000000013,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.3142999999981839,
+              "ms": 1501.6242000000057,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1501.3459000000003,
+              "ms": 1009.4539000000004,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1501.7479999999996,
+              "ms": 1009.0630999999994,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1502.0894000000044,
+              "ms": 1008.7295999999988,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 5,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 74,
+          "batchesExpected": 8,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2499.0862999999954,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4535.92379999999,
+            "mean": 755.9872999999983,
+            "p50": 0.8701999999975669,
+            "p95": 1511.9248000000007,
+            "p99": 1511.9248000000007,
+            "max": 1511.9248000000007
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.266299999995681,
+              "ms": 1510.229800000001,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.5892999999996391,
+              "ms": 1510.5492999999988,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.8701999999975669,
+              "ms": 1510.804799999998,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1510.8589999999967,
+              "ms": 988.1687999999995,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1511.4141999999993,
+              "ms": 987.6267999999982,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1511.9248000000007,
+              "ms": 987.1262999999963,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 5,
+          "source": "rapid-bus-penang",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 107,
+          "batchesExpected": 11,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 29,
+          "ms": 2502.184199999996,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4513.915799999995,
+            "mean": 752.3192999999992,
+            "p50": 0.36119999999937136,
+            "p95": 1504.8194999999978,
+            "p99": 1504.8194999999978,
+            "max": 1504.8194999999978
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.07439999999769498,
+              "ms": 1503.689400000003,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.223599999997532,
+              "ms": 1504.0276000000013,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.36119999999937136,
+              "ms": 1504.2871999999988,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1504.013500000001,
+              "ms": 998.1228999999948,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1504.423600000002,
+              "ms": 997.7230999999956,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1504.8194999999978,
+              "ms": 997.3343999999997,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 5,
+          "source": "rapid-bus-penang",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 92,
+          "batchesExpected": 10,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2501.265299999999,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4518.3760999999795,
+            "mean": 753.0626833333299,
+            "p50": 0.5969999999942956,
+            "p95": 1506.1680999999953,
+            "p99": 1506.1680999999953,
+            "max": 1506.1680999999953
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.17269999999552965,
+              "ms": 1504.7957000000024,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.40090000000054715,
+              "ms": 1505.1262999999963,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.5969999999942956,
+              "ms": 1505.384100000003,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1505.2841999999946,
+              "ms": 995.9279999999999,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1505.7531999999992,
+              "ms": 995.469299999997,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1506.1680999999953,
+              "ms": 995.0616000000009,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 6,
+          "source": "rapid-bus-kl",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 41,
+          "batchesExpected": 5,
+          "batchesStarted": 5,
+          "completedBatches": 3,
+          "returnedDocuments": 29,
+          "ms": 2505.3001000000004,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 5,
+            "total": 3029.4086000000098,
+            "mean": 605.8817200000019,
+            "p50": 0.3294999999998254,
+            "p95": 1514.6056000000026,
+            "p99": 1514.6056000000026,
+            "max": 1514.6056000000026
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.07440000000497093,
+              "ms": 1513.8589999999967,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.2217000000018743,
+              "ms": 1514.2059999999983,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.3294999999998254,
+              "ms": 1514.3633000000045,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1514.1774000000005,
+              "ms": 991.0797999999995,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1514.6056000000026,
+              "ms": 990.6651999999958,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 6,
+          "source": "rapid-bus-kl",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 37,
+          "batchesExpected": 4,
+          "batchesStarted": 4,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2501.1367000000027,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 4,
+            "total": 1507.364300000001,
+            "mean": 376.8410750000003,
+            "p50": 0.6679000000003725,
+            "p95": 1505.2551999999996,
+            "p99": 1505.2551999999996,
+            "max": 1505.2551999999996
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.26009999999951106,
+              "ms": 1504.7260000000024,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.6679000000003725,
+              "ms": 1504.8334000000032,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1.1811000000016065,
+              "ms": 1504.3677000000025,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1505.2551999999996,
+              "ms": 995.8436000000002,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 6,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 102,
+          "batchesExpected": 11,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 29,
+          "ms": 2500.065699999999,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4514.864400000006,
+            "mean": 752.477400000001,
+            "p50": 0.385999999998603,
+            "p95": 1505.0838000000003,
+            "p99": 1505.0838000000003,
+            "max": 1505.0838000000003
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.07809999999881256,
+              "ms": 1503.9662000000026,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.25710000000253785,
+              "ms": 1504.3162999999986,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 9,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.385999999998603,
+              "ms": 1504.5324000000037,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1504.3340000000026,
+              "ms": 995.6820999999982,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1504.725400000003,
+              "ms": 995.3013999999966,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1505.0838000000003,
+              "ms": 994.9516999999978,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 6,
+          "source": "rapid-bus-mrtfeeder",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 75,
+          "batchesExpected": 8,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2509.8917999999976,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4554.44779999998,
+            "mean": 759.07463333333,
+            "p50": 0.9030999999959022,
+            "p95": 1517.937699999995,
+            "p99": 1517.937699999995,
+            "max": 1517.937699999995
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.2764999999999418,
+              "ms": 1516.5920999999944,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.6172999999980675,
+              "ms": 1516.7331999999951,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.9030999999959022,
+              "ms": 1516.8775000000023,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1517.1545999999944,
+              "ms": 992.6817999999985,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1517.5585999999967,
+              "ms": 992.2900000000009,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1517.937699999995,
+              "ms": 991.9193999999989,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 6,
+          "source": "rapid-bus-penang",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 107,
+          "batchesExpected": 11,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 30,
+          "ms": 2513.959800000004,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4514.067900000009,
+            "mean": 752.3446500000015,
+            "p50": 0.35900000000401633,
+            "p95": 1504.9118000000017,
+            "p99": 1504.9118000000017,
+            "max": 1504.9118000000017
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.06940000000031432,
+              "ms": 1503.6093000000037,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.2419000000008964,
+              "ms": 1504.0596000000005,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.35900000000401633,
+              "ms": 1504.3525999999983,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1503.989300000001,
+              "ms": 1009.9062000000049,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1504.496500000001,
+              "ms": 1009.4100000000035,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1504.9118000000017,
+              "ms": 1009.0031999999992,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 6,
+          "source": "rapid-bus-penang",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 93,
+          "batchesExpected": 10,
+          "batchesStarted": 6,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2501.579899999997,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 6,
+            "total": 4525.835599999991,
+            "mean": 754.3059333333318,
+            "p50": 0.9848999999958323,
+            "p95": 1508.363400000002,
+            "p99": 1508.363400000002,
+            "max": 1508.363400000002
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.2606999999989057,
+              "ms": 1507.063399999999,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.6244000000006054,
+              "ms": 1507.184500000003,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.9848999999958323,
+              "ms": 1507.1861000000063,
+              "cause": null,
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 1
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1507.6080999999976,
+              "ms": 993.9241000000038,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1507.9940999999963,
+              "ms": 993.5492999999988,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1508.363400000002,
+              "ms": 993.1883999999991,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        }
+      ]
+    },
+    "native": {
+      "cycles": 21,
+      "vehicleRows": 2391,
+      "uniqueVehicles": 365,
+      "eligibleStopSnapshotAppearances": 13706,
+      "fetchInvocations": 225,
+      "httpRequestsSent": 225,
+      "httpKinds": {
+        "MGET": 87,
+        "EVAL-pipeline": 138
+      },
+      "standaloneGet": 0,
+      "standaloneSet": 0,
+      "evalCommandsAttempted": 1286,
+      "mgetKeyParticipations": 773,
+      "requestsPerVehicleObservation": 0.09410288582183186,
+      "requestsPerUniqueVehicle": 0.6164383561643836,
+      "requestsPerFinalEligibleStop": 0.07127019322141273,
+      "requestsPerEligibleStopAppearance": 0.01641616810156136,
+      "request": {
+        "count": 225,
+        "latencyMs": {
+          "n": 225,
+          "total": 102416.53950000001,
+          "mean": 455.18462000000005,
+          "p50": 354.5623000000014,
+          "p95": 1207.034099999999,
+          "p99": 1590.2852999999996,
+          "max": 1698.8256000000001
+        },
+        "successLatencyMs": {
+          "n": 220,
+          "total": 99539.1945,
+          "mean": 452.4508840909091,
+          "p50": 354.5623000000014,
+          "p95": 1188.8933000000006,
+          "p99": 1577.9139000000005,
+          "max": 1698.8256000000001
+        },
+        "timeout": {
+          "operation-2500ms": 5
+        },
+        "failures": {
+          "awaiting-headers": 5
+        }
+      },
+      "readRequest": {
+        "count": 87,
+        "latencyMs": {
+          "n": 87,
+          "total": 39256.98389999999,
+          "mean": 451.2296999999999,
+          "p50": 309.9382000000005,
+          "p95": 1258.5624000000007,
+          "p99": 1590.2852999999996,
+          "max": 1590.2852999999996
+        },
+        "successLatencyMs": {
+          "n": 85,
+          "total": 38276.09479999999,
+          "mean": 450.3069976470587,
+          "p50": 309.9382000000005,
+          "p95": 1258.5624000000007,
+          "p99": 1590.2852999999996,
+          "max": 1590.2852999999996
+        },
+        "timeout": {
+          "operation-2500ms": 2
+        },
+        "failures": {
+          "awaiting-headers": 2
+        }
+      },
+      "writeRequest": {
+        "count": 138,
+        "latencyMs": {
+          "n": 138,
+          "total": 63159.55560000001,
+          "mean": 457.6779391304348,
+          "p50": 385.97859999999855,
+          "p95": 894.9569999999985,
+          "p99": 1603.2556000000004,
+          "max": 1698.8256000000001
+        },
+        "successLatencyMs": {
+          "n": 135,
+          "total": 61263.09970000002,
+          "mean": 453.8007385185187,
+          "p50": 393.3293999999987,
+          "p95": 864.3804999999993,
+          "p99": 1499.2064,
+          "max": 1698.8256000000001
+        },
+        "timeout": {
+          "operation-2500ms": 3
+        },
+        "failures": {
+          "awaiting-headers": 3
+        }
+      },
+      "operationFailures": {
+        "hydrate:read": 1,
+        "persist:read": 1,
+        "persist:compareAndSet": 1
+      },
+      "operationsByStage": {
+        "hydrate:read": 21,
+        "persist:compareAndSet": 20,
+        "persist:read": 1
+      },
+      "maxConcurrency": 3,
+      "connections": {
+        "attempts": 14,
+        "establishmentMs": {
+          "n": 14,
+          "total": 13275.2831,
+          "mean": 948.2345071428572,
+          "p50": 940.4291999999996,
+          "p95": 1100.4642000000022,
+          "p99": 1100.4642000000022,
+          "max": 1100.4642000000022
+        },
+        "tlsResumption": 0,
+        "requestsOnReusedSockets": 211,
+        "socketIdsPerProcess": [
+          6,
+          8
+        ]
+      },
+      "wire": {
+        "sendToHeadersMs": {
+          "n": 220,
+          "total": 86920.67019999996,
+          "mean": 395.09395545454527,
+          "p50": 336.0709999999999,
+          "p95": 685.1072999999997,
+          "p99": 893.899300000001,
+          "max": 1380.7865999999995
+        },
+        "dispatchWaitMs": {
+          "n": 225,
+          "total": 11553.6061,
+          "mean": 51.34936044444445,
+          "p50": 0.49020000000018626,
+          "p95": 894.2857000000004,
+          "p99": 979.0471000000007,
+          "max": 1100.794600000001
+        },
+        "bodyTransferMs": {
+          "n": 220,
+          "total": 1960.890899999984,
+          "mean": 8.913140454545381,
+          "p50": 0.23680000000240398,
+          "p95": 6.885900000001129,
+          "p99": 306.1265999999996,
+          "max": 306.5513999999994
+        }
+      },
+      "json": {
+        "prepare": {
+          "stringifyCount": 183549,
+          "stringifyMs": 109.74899999979516,
+          "parseCount": 0,
+          "parseMs": 0
+        },
+        "hydrate": {
+          "stringifyCount": 13091,
+          "stringifyMs": 13.59910000007767,
+          "parseCount": 425,
+          "parseMs": 2.684800000031828
+        },
+        "other": {
+          "stringifyCount": 176104,
+          "stringifyMs": 47.01779999990504,
+          "parseCount": 0,
+          "parseMs": 0
+        },
+        "persist": {
+          "stringifyCount": 9948,
+          "stringifyMs": 45.84960000006777,
+          "parseCount": 310,
+          "parseMs": 6.7594000000317465
+        }
+      },
+      "stages": {
+        "prepare": {
+          "n": 21,
+          "total": 3142.1264999999958,
+          "mean": 149.62507142857123,
+          "p50": 96.85069999999905,
+          "p95": 438.96140000000014,
+          "p99": 449.03539999999884,
+          "max": 449.03539999999884
+        },
+        "hydrate": {
+          "n": 21,
+          "total": 17253.5681,
+          "mean": 821.598480952381,
+          "p50": 393.2508000000016,
+          "p95": 2451.0311,
+          "p99": 2506.6506,
+          "max": 2506.6506
+        },
+        "gps-classification": {
+          "n": 21,
+          "total": 1656.8525999999902,
+          "mean": 78.89774285714239,
+          "p50": 85.61960000000181,
+          "p95": 152.58979999999792,
+          "p99": 154.1895000000004,
+          "max": 154.1895000000004
+        },
+        "persist": {
+          "n": 21,
+          "total": 24776.146800000013,
+          "mean": 1179.816514285715,
+          "p50": 1103.3781000000017,
+          "p95": 2503.5175000000017,
+          "p99": 2507.9966999999997,
+          "max": 2507.9966999999997
+        }
+      },
+      "cycleWallMs": {
+        "n": 21,
+        "total": 46836.50769999999,
+        "mean": 2230.30989047619,
+        "p50": 2091.790799999999,
+        "p95": 3696.613800000001,
+        "p99": 5127.337100000001,
+        "max": 5127.337100000001
+      },
+      "cycleCpuMs": {
+        "n": 21,
+        "total": 8719,
+        "mean": 415.1904761904762,
+        "p50": 312,
+        "p95": 1375,
+        "p99": 1375,
+        "max": 1375
+      },
+      "eventLoop": [
+        {
+          "p50Ms": 15.572991,
+          "p95Ms": 16.531455,
+          "p99Ms": 111.083519,
+          "maxMs": 2346.713087
+        },
+        {
+          "p50Ms": 15.646719,
+          "p95Ms": 16.572415,
+          "p99Ms": 101.318655,
+          "maxMs": 2317.352959
+        }
+      ],
+      "reads": {
+        "uniqueScopes": 279,
+        "participationDistribution": {
+          "1": 10,
+          "2": 163,
+          "3": 31,
+          "4": 53,
+          "5": 10,
+          "6": 2,
+          "7": 10
+        },
+        "duplicateKeysWithinOneRequest": 0,
+        "hydratePrepared": 1814,
+        "hydrateCacheHits": 1077,
+        "observationsSuccessfullyReturned": 720,
+        "passagesSuccessfullyReturned": 122,
+        "returnedDocumentsInRejectedAggregates": 59,
+        "latestScopeHistories": {
+          "scopes": 279,
+          "observations": 1056,
+          "passages": 187,
+          "localFixes": 876
+        }
+      },
+      "writes": {
+        "acknowledgedCommandSuccess": 1227,
+        "acknowledgedCommandConflicts": 36,
+        "successfulCommandsInRejectedAggregates": 70,
+        "commandsAfterOperationEnd": 0,
+        "bytesAttempted": 5481138,
+        "bytesReceived": 900341,
+        "observerParseMs": 7.052400000011403
+      },
+      "retries": {
+        "casRetryBackendCalls": 0,
+        "conflictReads": 1,
+        "writeCallDurations": {
+          "n": 20,
+          "total": 24356.794299999994,
+          "mean": 1217.8397149999996,
+          "p50": 1099.3855000000003,
+          "p95": 2144.2512000000006,
+          "p99": 2499.108699999997,
+          "max": 2499.108699999997
+        },
+        "conflictReadDurations": {
+          "n": 1,
+          "total": 359.8806000000004,
+          "mean": 359.8806000000004,
+          "p50": 359.8806000000004,
+          "p95": 359.8806000000004,
+          "p99": 359.8806000000004,
+          "max": 359.8806000000004
+        }
+      },
+      "statuses": [
+        {
+          "round": 2,
+          "source": "rapid-bus-penang",
+          "mode": "REDIS_REST",
+          "state": "READY",
+          "retentionMinutes": 60,
+          "loaded": 0,
+          "saved": 590,
+          "rejected": 186,
+          "conflicts": 0,
+          "failures": 0
+        },
+        {
+          "round": 6,
+          "source": "rapid-bus-penang",
+          "mode": "REDIS_REST",
+          "state": "DEGRADED",
+          "retentionMinutes": 60,
+          "loaded": 229,
+          "saved": 567,
+          "rejected": 200,
+          "conflicts": 36,
+          "failures": 3
+        }
+      ],
+      "rawStorage": [
+        null,
+        null
+      ],
+      "failedOperations": [
+        {
+          "round": 3,
+          "source": "rapid-bus-kl",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 43,
+          "batchesExpected": 5,
+          "batchesStarted": 5,
+          "completedBatches": 4,
+          "returnedDocuments": 29,
+          "ms": 2506.0266,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 5,
+            "total": 3172.9668,
+            "mean": 634.5933600000001,
+            "p50": 4.520599999999831,
+            "p95": 1582.6659,
+            "p99": 1582.6659,
+            "max": 1582.6659
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.6243000000004031,
+              "ms": 1590.2852999999996,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 8,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 4.119099999999889,
+              "ms": 1576.4101,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 4.520599999999831,
+              "ms": 1577.9139000000005,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 8,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1581.0369,
+              "ms": 924.8944000000001,
+              "cause": "operation-2500ms",
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1582.6659,
+              "ms": 298.65550000000076,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 3,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "source": "rapid-bus-kl",
+          "stage": "persist",
+          "method": "read",
+          "keys": 36,
+          "batchesExpected": 4,
+          "batchesStarted": 4,
+          "completedBatches": 3,
+          "returnedDocuments": 30,
+          "ms": 359.8806000000004,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 4,
+            "total": 305.18239999999787,
+            "mean": 76.29559999999947,
+            "p50": 0.5172999999995227,
+            "p95": 303.84169999999904,
+            "p99": 303.84169999999904,
+            "max": 303.84169999999904
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.15279999999984284,
+              "ms": 319.5591999999997,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.5172999999995227,
+              "ms": 303.01940000000104,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.6705999999994674,
+              "ms": 316.07960000000094,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 303.84169999999904,
+              "ms": 55.9947000000011,
+              "cause": "operation-2500ms",
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 6,
+          "source": "rapid-bus-penang",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 93,
+          "batchesExpected": 10,
+          "batchesStarted": 10,
+          "completedBatches": 7,
+          "returnedDocuments": 0,
+          "ms": 2499.108699999997,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 10,
+            "total": 11322.238499999989,
+            "mean": 1132.223849999999,
+            "p50": 896.8712999999989,
+            "p95": 2453.000799999998,
+            "p99": 2453.000799999998,
+            "max": 2453.000799999998
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.35169999999925494,
+              "ms": 894.9569999999985,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1.125,
+              "ms": 895.3747000000003,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1.8173999999999069,
+              "ms": 1381.993599999998,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 895.7732999999971,
+              "ms": 1603.2556000000004,
+              "cause": "operation-2500ms",
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 896.8712999999989,
+              "ms": 489.5191999999988,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1384.4002,
+              "ms": 665.3688999999977,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1386.777399999999,
+              "ms": 864.3804999999993,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 2050.2360999999983,
+              "ms": 402.5599000000002,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 2251.885299999998,
+              "ms": 247.15430000000197,
+              "cause": "operation-2500ms",
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 2453.000799999998,
+              "ms": 46.046000000002095,
+              "cause": "operation-2500ms",
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        }
+      ]
+    },
+    "legacy": {
+      "cycles": 21,
+      "vehicleRows": 2391,
+      "uniqueVehicles": 365,
+      "eligibleStopSnapshotAppearances": 13706,
+      "fetchInvocations": 228,
+      "httpRequestsSent": 226,
+      "httpKinds": {
+        "MGET": 90,
+        "EVAL-pipeline": 138
+      },
+      "standaloneGet": 0,
+      "standaloneSet": 0,
+      "evalCommandsAttempted": 1286,
+      "mgetKeyParticipations": 806,
+      "requestsPerVehicleObservation": 0.09535759096612297,
+      "requestsPerUniqueVehicle": 0.6246575342465753,
+      "requestsPerFinalEligibleStop": 0.0722204624643649,
+      "requestsPerEligibleStopAppearance": 0.01663505034291551,
+      "request": {
+        "count": 228,
+        "latencyMs": {
+          "n": 228,
+          "total": 108018.95029999998,
+          "mean": 473.7673258771929,
+          "p50": 338.927300000003,
+          "p95": 1323.4481999999998,
+          "p99": 1721.9417000000003,
+          "max": 1813.3647
+        },
+        "successLatencyMs": {
+          "n": 223,
+          "total": 102036.95219999997,
+          "mean": 457.56480807174876,
+          "p50": 338.5424000000021,
+          "p95": 1021.1589000000004,
+          "p99": 1720.2558,
+          "max": 1798.696899999999
+        },
+        "timeout": {
+          "operation-2500ms": 4,
+          "http-1800ms": 1
+        },
+        "failures": {
+          "awaiting-headers": 2,
+          "response-body": 1,
+          "before-send": 2
+        }
+      },
+      "readRequest": {
+        "count": 90,
+        "latencyMs": {
+          "n": 90,
+          "total": 42838.655300000006,
+          "mean": 475.98505888888894,
+          "p50": 317.3072999999995,
+          "p95": 1423.1916999999994,
+          "p99": 1813.3647,
+          "max": 1813.3647
+        },
+        "successLatencyMs": {
+          "n": 86,
+          "total": 38432.19440000001,
+          "mean": 446.88598139534895,
+          "p50": 312.9279000000006,
+          "p95": 1419.9233000000004,
+          "p99": 1721.9417000000003,
+          "max": 1721.9417000000003
+        },
+        "timeout": {
+          "operation-2500ms": 3,
+          "http-1800ms": 1
+        },
+        "failures": {
+          "awaiting-headers": 1,
+          "response-body": 1,
+          "before-send": 2
+        }
+      },
+      "writeRequest": {
+        "count": 138,
+        "latencyMs": {
+          "n": 138,
+          "total": 65180.29499999997,
+          "mean": 472.32097826086937,
+          "p50": 384.34419999999955,
+          "p95": 932.0851000000002,
+          "p99": 1598.2317000000003,
+          "max": 1798.696899999999
+        },
+        "successLatencyMs": {
+          "n": 137,
+          "total": 63604.75779999998,
+          "mean": 464.2683051094889,
+          "p50": 384.34419999999955,
+          "p95": 923.7924999999996,
+          "p99": 1598.2317000000003,
+          "max": 1798.696899999999
+        },
+        "timeout": {
+          "operation-2500ms": 1
+        },
+        "failures": {
+          "awaiting-headers": 1
+        }
+      },
+      "operationFailures": {
+        "hydrate:read": 2,
+        "persist:compareAndSet": 1,
+        "persist:read": 1
+      },
+      "operationsByStage": {
+        "hydrate:read": 21,
+        "persist:compareAndSet": 20,
+        "persist:read": 1
+      },
+      "maxConcurrency": 5,
+      "connections": {
+        "attempts": 19,
+        "establishmentMs": {
+          "n": 19,
+          "total": 19193.1346,
+          "mean": 1010.1649789473685,
+          "p50": 1014.8154999999997,
+          "p95": 1466.6588999999985,
+          "p99": 1466.6588999999985,
+          "max": 1466.6588999999985
+        },
+        "tlsResumption": 0,
+        "requestsOnReusedSockets": 209,
+        "socketIdsPerProcess": [
+          9,
+          8
+        ]
+      },
+      "wire": {
+        "sendToHeadersMs": {
+          "n": 224,
+          "total": 87932.24779999995,
+          "mean": 392.55467767857124,
+          "p50": 324.46110000000044,
+          "p95": 671.7020000000011,
+          "p99": 922.0861999999988,
+          "max": 1019.9300000000003
+        },
+        "dispatchWaitMs": {
+          "n": 226,
+          "total": 14457.599000000015,
+          "mean": 63.97167699115051,
+          "p50": 0.48610000000189757,
+          "p95": 905.9295999999995,
+          "p99": 1040.0047000000004,
+          "max": 1467.0772000000015
+        },
+        "bodyTransferMs": {
+          "n": 223,
+          "total": 3846.921800000001,
+          "mean": 17.25077040358745,
+          "p50": 0.23540000000139116,
+          "p95": 46.601299999998446,
+          "p99": 408.71730000000025,
+          "max": 531.6308000000008
+        }
+      },
+      "json": {
+        "prepare": {
+          "stringifyCount": 183549,
+          "stringifyMs": 108.58729999938987,
+          "parseCount": 0,
+          "parseMs": 0
+        },
+        "hydrate": {
+          "stringifyCount": 13196,
+          "stringifyMs": 13.562199999905715,
+          "parseCount": 454,
+          "parseMs": 3.29919999995127
+        },
+        "other": {
+          "stringifyCount": 176104,
+          "stringifyMs": 48.19129999847246,
+          "parseCount": 0,
+          "parseMs": 0
+        },
+        "persist": {
+          "stringifyCount": 9948,
+          "stringifyMs": 45.31470000011177,
+          "parseCount": 312,
+          "parseMs": 6.690099999990707
+        }
+      },
+      "stages": {
+        "prepare": {
+          "n": 21,
+          "total": 2978.1128999999964,
+          "mean": 141.81489999999982,
+          "p50": 98.82210000000123,
+          "p95": 445.46899999999914,
+          "p99": 479.5118000000002,
+          "max": 479.5118000000002
+        },
+        "hydrate": {
+          "n": 21,
+          "total": 17298.457099999996,
+          "mean": 823.7360523809522,
+          "p50": 368.96770000000106,
+          "p95": 1972.0802000000003,
+          "p99": 2512.803,
+          "max": 2512.803
+        },
+        "gps-classification": {
+          "n": 21,
+          "total": 1708.6689999999908,
+          "mean": 81.36519047619004,
+          "p50": 87.48559999999998,
+          "p95": 156.65179999999964,
+          "p99": 162.83009999999922,
+          "max": 162.83009999999922
+        },
+        "persist": {
+          "n": 21,
+          "total": 26289.1387,
+          "mean": 1251.8637476190477,
+          "p50": 1209.3205000000016,
+          "p95": 2502.1483,
+          "p99": 2505.701499999999,
+          "max": 2505.701499999999
+        }
+      },
+      "cycleWallMs": {
+        "n": 21,
+        "total": 48281.964100000005,
+        "mean": 2299.141147619048,
+        "p50": 1900.3032999999996,
+        "p95": 4795.154900000001,
+        "p99": 5124.1947,
+        "max": 5124.1947
+      },
+      "cycleCpuMs": {
+        "n": 21,
+        "total": 9500,
+        "mean": 452.3809523809524,
+        "p50": 297,
+        "p95": 1093,
+        "p99": 1219,
+        "max": 1219
+      },
+      "eventLoop": [
+        {
+          "p50Ms": 15.572991,
+          "p95Ms": 16.596991,
+          "p99Ms": 104.529919,
+          "maxMs": 2371.878911
+        },
+        {
+          "p50Ms": 15.605759,
+          "p95Ms": 16.711679,
+          "p99Ms": 105.316351,
+          "maxMs": 2376.073215
+        }
+      ],
+      "reads": {
+        "uniqueScopes": 279,
+        "participationDistribution": {
+          "1": 8,
+          "2": 164,
+          "3": 30,
+          "4": 27,
+          "5": 38,
+          "6": 2,
+          "7": 10
+        },
+        "duplicateKeysWithinOneRequest": 0,
+        "hydratePrepared": 1814,
+        "hydrateCacheHits": 1044,
+        "observationsSuccessfullyReturned": 733,
+        "passagesSuccessfullyReturned": 118,
+        "returnedDocumentsInRejectedAggregates": 51,
+        "latestScopeHistories": {
+          "scopes": 279,
+          "observations": 1056,
+          "passages": 187,
+          "localFixes": 876
+        }
+      },
+      "writes": {
+        "acknowledgedCommandSuccess": 1247,
+        "acknowledgedCommandConflicts": 36,
+        "successfulCommandsInRejectedAggregates": 30,
+        "commandsAfterOperationEnd": 0,
+        "bytesAttempted": 5484198,
+        "bytesReceived": 939066,
+        "observerParseMs": 7.785900000012589
+      },
+      "retries": {
+        "casRetryBackendCalls": 0,
+        "conflictReads": 1,
+        "writeCallDurations": {
+          "n": 20,
+          "total": 25303.36749999999,
+          "mean": 1265.1683749999995,
+          "p50": 1205.7250999999997,
+          "p95": 2217.1991,
+          "p99": 2498.4082000000008,
+          "max": 2498.4082000000008
+        },
+        "conflictReadDurations": {
+          "n": 1,
+          "total": 919.7790999999997,
+          "mean": 919.7790999999997,
+          "p50": 919.7790999999997,
+          "p95": 919.7790999999997,
+          "p99": 919.7790999999997,
+          "max": 919.7790999999997
+        }
+      },
+      "statuses": [
+        {
+          "round": 2,
+          "source": "rapid-bus-penang",
+          "mode": "REDIS_REST",
+          "state": "READY",
+          "retentionMinutes": 60,
+          "loaded": 33,
+          "saved": 557,
+          "rejected": 186,
+          "conflicts": 0,
+          "failures": 2
+        },
+        {
+          "round": 6,
+          "source": "rapid-bus-penang",
+          "mode": "REDIS_REST",
+          "state": "READY",
+          "retentionMinutes": 60,
+          "loaded": 229,
+          "saved": 660,
+          "rejected": 200,
+          "conflicts": 36,
+          "failures": 2
+        }
+      ],
+      "rawStorage": [
+        {
+          "documents": 235,
+          "observations": 590,
+          "passages": 107,
+          "orderErrors": 0,
+          "clockAuditStatus": "Superseded last-snapshot-only comparison; use corrected independent clockAudit."
+        },
+        {
+          "documents": 251,
+          "observations": 1244,
+          "passages": 260,
+          "orderErrors": 0,
+          "clockAuditStatus": "Superseded last-snapshot-only comparison; use corrected independent clockAudit."
+        }
+      ],
+      "failedOperations": [
+        {
+          "round": 0,
+          "source": "rapid-bus-kl",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 40,
+          "batchesExpected": 4,
+          "batchesStarted": 4,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2512.2457000000004,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 4,
+            "total": 1336.821100000001,
+            "mean": 334.20527500000026,
+            "p50": 4.0132000000003245,
+            "p95": 1327.8053,
+            "p99": 1327.8053,
+            "max": 1327.8053
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.5942000000004555,
+              "ms": 1423.1916999999994,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 4.0132000000003245,
+              "ms": 1323.4481999999998,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 4.408400000000256,
+              "ms": 1419.9233000000004,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1327.8053,
+              "ms": 1184.3960000000006,
+              "cause": "operation-2500ms",
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 0,
+          "source": "rapid-bus-kl",
+          "stage": "persist",
+          "method": "compareAndSet",
+          "keys": 33,
+          "batchesExpected": 4,
+          "batchesStarted": 4,
+          "completedBatches": 3,
+          "returnedDocuments": 0,
+          "ms": 2498.4082000000008,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 4,
+            "total": 925.4001000000007,
+            "mean": 231.3500250000002,
+            "p50": 0.8915999999999258,
+            "p95": 922.8244999999997,
+            "p99": 922.8244999999997,
+            "max": 922.8244999999997
+          },
+          "requests": [
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.3401000000003478,
+              "ms": 923.7924999999996,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 0.8915999999999258,
+              "ms": 921.5792000000001,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 1.3439000000007582,
+              "ms": 1021.1589000000004,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 10
+            },
+            {
+              "kind": "EVAL-pipeline",
+              "startAfterOperationMs": 922.8244999999997,
+              "ms": 1575.5372000000007,
+              "cause": "operation-2500ms",
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "source": "rapid-bus-kl",
+          "stage": "hydrate",
+          "method": "read",
+          "keys": 43,
+          "batchesExpected": 5,
+          "batchesStarted": 5,
+          "completedBatches": 3,
+          "returnedDocuments": 21,
+          "ms": 1813.9713000000002,
+          "parentAborted": false,
+          "queueWaitMs": {
+            "n": 5,
+            "total": 3460.655099999999,
+            "mean": 692.1310199999998,
+            "p50": 4.408099999999649,
+            "p95": 1726.6858000000002,
+            "p99": 1726.6858000000002,
+            "max": 1726.6858000000002
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.5919999999996435,
+              "ms": 1813.3647,
+              "cause": "http-1800ms",
+              "sent": true,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 4.016700000000128,
+              "ms": 1720.2558,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 4.408099999999649,
+              "ms": 1721.9417000000003,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 8,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1724.9524999999994,
+              "ms": 787.9759000000004,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 1726.6858000000002,
+              "ms": 317.3072999999995,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 3,
+              "casSuccess": 0
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "source": "rapid-bus-kl",
+          "stage": "persist",
+          "method": "read",
+          "keys": 36,
+          "batchesExpected": 4,
+          "batchesStarted": 4,
+          "completedBatches": 3,
+          "returnedDocuments": 30,
+          "ms": 919.7790999999997,
+          "parentAborted": true,
+          "queueWaitMs": {
+            "n": 4,
+            "total": 300.32480000000214,
+            "mean": 75.08120000000054,
+            "p50": 0.5032000000001062,
+            "p95": 299.03770000000077,
+            "p99": 299.03770000000077,
+            "max": 299.03770000000077
+          },
+          "requests": [
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.11000000000058208,
+              "ms": 598.1707000000006,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.5032000000001062,
+              "ms": 298.0599000000011,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 0.6739000000006854,
+              "ms": 301.16169999999966,
+              "cause": null,
+              "sent": true,
+              "returnedDocuments": 10,
+              "casSuccess": 0
+            },
+            {
+              "kind": "MGET",
+              "startAfterOperationMs": 299.03770000000077,
+              "ms": 620.7242999999999,
+              "cause": "operation-2500ms",
+              "sent": false,
+              "returnedDocuments": 0,
+              "casSuccess": 0
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "comparison": {
+    "offline": {
+      "eligible": 3157,
+      "classified": 130,
+      "reasons": {
+        "NO_GPS_HISTORY": 3022,
+        "INSUFFICIENT_EVIDENCE": 2,
+        "GPS_GAP_TOO_LARGE": 1,
+        "PASSAGE_TIME_UNAVAILABLE": 1,
+        "GPS_OUTLIER_REJECTED": 1
+      },
+      "progressRowsIdentical": 2391,
+      "comparedRows": 2391,
+      "snapshotClassificationDifferences": 0,
+      "rounds": [
+        {
+          "round": 0,
+          "eligible": 0,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 1,
+          "eligible": 2671,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 2,
+          "eligible": 3063,
+          "classified": 40,
+          "offline": 40,
+          "unexpected": 0
+        },
+        {
+          "round": 3,
+          "eligible": 0,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 4,
+          "eligible": 2367,
+          "classified": 61,
+          "offline": 61,
+          "unexpected": 0
+        },
+        {
+          "round": 5,
+          "eligible": 2448,
+          "classified": 80,
+          "offline": 80,
+          "unexpected": 0
+        },
+        {
+          "round": 6,
+          "eligible": 3157,
+          "classified": 130,
+          "offline": 130,
+          "unexpected": 0
+        }
+      ]
+    },
+    "sim300": {
+      "eligible": 3157,
+      "classified": 130,
+      "reasons": {
+        "NO_GPS_HISTORY": 3022,
+        "INSUFFICIENT_EVIDENCE": 2,
+        "GPS_GAP_TOO_LARGE": 1,
+        "PASSAGE_TIME_UNAVAILABLE": 1,
+        "GPS_OUTLIER_REJECTED": 1
+      },
+      "progressRowsIdentical": 2391,
+      "comparedRows": 2391,
+      "snapshotClassificationDifferences": 0,
+      "rounds": [
+        {
+          "round": 0,
+          "eligible": 0,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 1,
+          "eligible": 2671,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 2,
+          "eligible": 3063,
+          "classified": 40,
+          "offline": 40,
+          "unexpected": 0
+        },
+        {
+          "round": 3,
+          "eligible": 0,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 4,
+          "eligible": 2367,
+          "classified": 61,
+          "offline": 61,
+          "unexpected": 0
+        },
+        {
+          "round": 5,
+          "eligible": 2448,
+          "classified": 80,
+          "offline": 80,
+          "unexpected": 0
+        },
+        {
+          "round": 6,
+          "eligible": 3157,
+          "classified": 130,
+          "offline": 130,
+          "unexpected": 0
+        }
+      ]
+    },
+    "sim1500": {
+      "eligible": 3157,
+      "classified": 49,
+      "reasons": {
+        "NO_GPS_HISTORY": 3105,
+        "GPS_GAP_TOO_LARGE": 1,
+        "PASSAGE_TIME_UNAVAILABLE": 1,
+        "GPS_OUTLIER_REJECTED": 1
+      },
+      "progressRowsIdentical": 2391,
+      "comparedRows": 2391,
+      "snapshotClassificationDifferences": 206,
+      "rounds": [
+        {
+          "round": 0,
+          "eligible": 0,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 1,
+          "eligible": 2671,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 2,
+          "eligible": 3063,
+          "classified": 40,
+          "offline": 40,
+          "unexpected": 0
+        },
+        {
+          "round": 3,
+          "eligible": 0,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 4,
+          "eligible": 2367,
+          "classified": 0,
+          "offline": 61,
+          "unexpected": 0
+        },
+        {
+          "round": 5,
+          "eligible": 2448,
+          "classified": 16,
+          "offline": 80,
+          "unexpected": 0
+        },
+        {
+          "round": 6,
+          "eligible": 3157,
+          "classified": 49,
+          "offline": 130,
+          "unexpected": 0
+        }
+      ]
+    },
+    "native": {
+      "eligible": 3157,
+      "classified": 130,
+      "reasons": {
+        "NO_GPS_HISTORY": 3022,
+        "INSUFFICIENT_EVIDENCE": 2,
+        "GPS_GAP_TOO_LARGE": 1,
+        "PASSAGE_TIME_UNAVAILABLE": 1,
+        "GPS_OUTLIER_REJECTED": 1
+      },
+      "progressRowsIdentical": 2391,
+      "comparedRows": 2391,
+      "snapshotClassificationDifferences": 0,
+      "rounds": [
+        {
+          "round": 0,
+          "eligible": 0,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 1,
+          "eligible": 2671,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 2,
+          "eligible": 3063,
+          "classified": 40,
+          "offline": 40,
+          "unexpected": 0
+        },
+        {
+          "round": 3,
+          "eligible": 0,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 4,
+          "eligible": 2367,
+          "classified": 61,
+          "offline": 61,
+          "unexpected": 0
+        },
+        {
+          "round": 5,
+          "eligible": 2448,
+          "classified": 80,
+          "offline": 80,
+          "unexpected": 0
+        },
+        {
+          "round": 6,
+          "eligible": 3157,
+          "classified": 130,
+          "offline": 130,
+          "unexpected": 0
+        }
+      ]
+    },
+    "legacy": {
+      "eligible": 3157,
+      "classified": 130,
+      "reasons": {
+        "NO_GPS_HISTORY": 3022,
+        "INSUFFICIENT_EVIDENCE": 2,
+        "GPS_GAP_TOO_LARGE": 1,
+        "PASSAGE_TIME_UNAVAILABLE": 1,
+        "GPS_OUTLIER_REJECTED": 1
+      },
+      "progressRowsIdentical": 2391,
+      "comparedRows": 2391,
+      "snapshotClassificationDifferences": 0,
+      "rounds": [
+        {
+          "round": 0,
+          "eligible": 0,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 1,
+          "eligible": 2671,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 2,
+          "eligible": 3063,
+          "classified": 40,
+          "offline": 40,
+          "unexpected": 0
+        },
+        {
+          "round": 3,
+          "eligible": 0,
+          "classified": 0,
+          "offline": 0,
+          "unexpected": 0
+        },
+        {
+          "round": 4,
+          "eligible": 2367,
+          "classified": 61,
+          "offline": 61,
+          "unexpected": 0
+        },
+        {
+          "round": 5,
+          "eligible": 2448,
+          "classified": 80,
+          "offline": 80,
+          "unexpected": 0
+        },
+        {
+          "round": 6,
+          "eligible": 3157,
+          "classified": 130,
+          "offline": 130,
+          "unexpected": 0
+        }
+      ]
+    }
+  },
+  "serverLatency": "Unavailable: service does not expose SLOWLOG/LATENCY, INFO commandstats lacks per-command CPU. Network timings are not pure Redis CPU.",
+  "missingPassageAnalysis": {
+    "lost": 81,
+    "vehicles": 66,
+    "pairsFound": 81,
+    "pairsMeasuredBeforeRestart": 81,
+    "slowRemoteDocuments": 216,
+    "slowRemoteObservations": 216,
+    "slowRemotePassages": 8,
+    "lostPairsPresentInSlowRemoteStore": 3
+  },
+  "clockAudit": {
+    "documents": 257,
+    "observations": 1112,
+    "passages": 269,
+    "orderErrors": 0,
+    "originalClockOrCoordinateErrors": 0,
+    "method": "Membership in all original captured variants for the same source/vehicle/measurement time; repeated feed publication/receipt timestamps are not overwritten."
+  },
+  "cleanup": {
+    "ownedScopes": 279,
+    "remaining": 0
+  },
+  "readonlyServerProbes": {
+    "slowlog": {
+      "supported": false,
+      "http": 400
+    },
+    "latencyLatest": {
+      "supported": false,
+      "http": 400
+    },
+    "infoCommandstats": {
+      "commandCpuAvailable": false
+    },
+    "infoStats": {
+      "restConnectionMetricUsable": false,
+      "totalConnectionsReceived": 0
+    },
+    "serverTimingHeader": false
+  },
+  "perVehicleLocalHistoryComparison": {
+    "sim300": {
+      "preparedScopeAppearances": 1814,
+      "localFixCountEqual": 1814,
+      "localFixCountDifferent": 0
+    },
+    "sim1500": {
+      "preparedScopeAppearances": 1814,
+      "localFixCountEqual": 1814,
+      "localFixCountDifferent": 0
+    },
+    "native": {
+      "preparedScopeAppearances": 1814,
+      "localFixCountEqual": 1814,
+      "localFixCountDifferent": 0
+    },
+    "legacy": {
+      "preparedScopeAppearances": 1814,
+      "localFixCountEqual": 1814,
+      "localFixCountDifferent": 0
+    }
+  }
+}

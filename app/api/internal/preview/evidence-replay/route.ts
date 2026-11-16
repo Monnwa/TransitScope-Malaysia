@@ -1,12 +1,12 @@
-import { handleEvidenceReplay } from "@/lib/preview-evidence-replay-http";
-
-export const runtime = "nodejs";
+// The recorded-feed replay and its database integration are retained in lib for historical tests.
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
 
-export const POST = (request: Request) => handleEvidenceReplay(request);
-export const GET = POST;
-export const PATCH = POST;
-export const DELETE = POST;
-export const HEAD = POST;
-export const OPTIONS = POST;
+export function GET() {
+  return Response.json({ error: "Evidence replay is disabled in simulation mode." }, { status: 404, headers: { "Cache-Control": "no-store" } });
+}
+
+export const POST = GET;
+export const PATCH = GET;
+export const DELETE = GET;
+export const HEAD = GET;
+export const OPTIONS = GET;

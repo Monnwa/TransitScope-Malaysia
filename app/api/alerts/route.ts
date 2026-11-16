@@ -1,4 +1,10 @@
 import { NextResponse } from "next/server";
-import { getOfficialAlerts } from "@/lib/official-alerts";
-export const runtime = "nodejs"; export const dynamic = "force-dynamic"; export const maxDuration = 60;
-export async function GET() { return NextResponse.json(await getOfficialAlerts(), { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } }); }
+import { SIMULATED, simulationTime, timestamp } from "@/lib/simulation/clock";
+import { simulationAlerts } from "@/lib/simulation/scenarios";
+
+export const dynamic = "force-dynamic";
+
+export async function GET() {
+  const now = simulationTime();
+  return NextResponse.json({ dataMode: SIMULATED, alerts: simulationAlerts(now), retrievedAt: timestamp(now) }, { headers: { "Cache-Control": "no-store" } });
+}

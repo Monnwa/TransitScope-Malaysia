@@ -1,2 +1,8 @@
 import Dashboard from "@/components/dashboard";
-export default function Home() { return <Dashboard />; }
+import { simulationTime } from "@/lib/simulation/clock";
+
+export const dynamic = "force-dynamic";
+
+export default function Home() {
+  return <Dashboard initialTime={simulationTime()}/>;
+}

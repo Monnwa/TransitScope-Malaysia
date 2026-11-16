@@ -86,11 +86,11 @@ describe("protected replay validation", () => {
     }
   });
 
-  it("ignores replay inputs on the normal transit demo route", async () => {
-    const res = await getTransit(new NextRequest(`https://preview.example/api/transit?mode=demo&fixtureId=feeder&replayRunId=${randomUUID()}&fault=lost-ack`, { headers }));
+  it("ignores replay inputs on the simulation route even when legacy live mode is requested", async () => {
+    const res = await getTransit(new NextRequest(`https://preview.example/api/transit?mode=live&fixtureId=feeder&replayRunId=${randomUUID()}&fault=lost-ack`, { headers }));
     const data = await res.json();
     expect(res.status).toBe(200);
-    expect(data.demo).toBe(true);
+    expect(data.dataMode).toBe("SIMULATED");
     expect(data).not.toHaveProperty("replayRunId");
     expect(data).not.toHaveProperty("candidates");
   });
