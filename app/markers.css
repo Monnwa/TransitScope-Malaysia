@@ -10,3 +10,8 @@
 .bus-journey-stop{display:grid;place-items:center}
 .bus-journey-stop.journey-stop-selected span{width:15px;height:15px;background:#f2c500;box-shadow:0 0 0 2px #10243e}
 .bus-journey-stop:focus-visible,.bus-vehicle-icon:focus-visible{outline:2px solid #10243e;outline-offset:2px;border-radius:50%}
+
+/* Whole-image raster treatment only: roads, labels and POIs remain provider-authored. */
+.transit-light-tiles{filter:grayscale(.85) saturate(.3) contrast(.88) brightness(1.07)}
+.map.leaflet-container{background:#eef1f2}
+.map-legend .bus-route-legend{width:20px;height:3px;border-radius:2px;background:#1458b8}

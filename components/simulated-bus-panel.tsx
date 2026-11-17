@@ -6,6 +6,7 @@ import { arrivalClock, arrivalCountdown } from "@/lib/departure-board";
 import { SIMULATED, timestamp } from "@/lib/simulation/clock";
 import type { SimulatedBusJourney } from "@/lib/simulation/vehicles";
 import { stopStatusLabel } from "./passenger-copy";
+import { useOptionalBusCamera } from "./bus-camera-context";
 
 export type JourneyNavigation = { journeyId: string; action: number; sequence?: number };
 
@@ -18,6 +19,7 @@ export default function SimulatedBusPanel({ journey, navigation, onNavigate, onC
   onPreview: (preview: { vehicleId: string; start: number } | null) => void;
   children: ReactNode;
 }) {
+  const camera = useOptionalBusCamera();
   const [expanded, setExpanded] = useState(true);
   const [showPassed, setShowPassed] = useState(false);
   const panelId = useId();
@@ -48,7 +50,7 @@ export default function SimulatedBusPanel({ journey, navigation, onNavigate, onC
       <div className="bus-toolbar"><span className="bus-observation">{journey.vehicle.status}</span>
         <button className="bus-refresh" type="button" aria-label="Refresh bus journey" onClick={onRefresh}>↻ Refresh</button>
       </div>
-      <button className="bus-text-button bus-locate" type="button" onClick={() => { onPreview(null); onNavigate({ journeyId: journey.currentJourneyId, action: (navigation?.action ?? 0) + 1 }); }}>◎ Locate bus</button>
+      <button className="bus-text-button bus-locate" type="button" onClick={() => { onPreview(null); onNavigate({ journeyId: journey.currentJourneyId, action: (navigation?.action ?? 0) + 1 }); }}>◎ {camera?.state.mode === "FREE_EXPLORE" ? "Return to Vehicle" : "Locate bus"}</button>
       <section className="bus-departure-section" aria-label="Bus departure options">
         <h3>Journey options</h3>
         <div className="bus-departure-options" role="group" aria-label="Select bus departure">

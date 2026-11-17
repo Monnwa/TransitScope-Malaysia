@@ -67,7 +67,7 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   await preview.click();
   await expect(preview).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator(".selected-vehicle-route")).toHaveCount(1);
-  await bus.getByRole("button", { name: /Locate bus/ }).click();
+  await bus.getByRole("button", { name: /Locate bus|Return to Vehicle/ }).click();
   await expect(page.locator(".gps-route-remaining")).toHaveCount(1);
   const map = page.locator(".leaflet-container");
   await expect(map).toHaveAttribute("data-focused-latitude", /\d/);

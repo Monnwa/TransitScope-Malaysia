@@ -7,7 +7,8 @@ const t401 = "bus:T401:01";
 const t401Other = "bus:T401:02";
 const t402 = "bus:T402:01";
 
-async function prepareMap(page: Page, time: number) {
+async function prepareMap(page: Page, time: number, mobile: boolean) {
+  await page.setViewportSize(mobile ? { width: 375, height: 844 } : { width: 1265, height: 720 });
   await page.route(/^https:\/\/(?:[abc]\.)?tile\.openstreetmap\.org\//, route => route.fulfill({
     contentType: "image/svg+xml", body: '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"/>',
   }));
@@ -17,7 +18,7 @@ async function prepareMap(page: Page, time: number) {
   const map = page.locator(".leaflet-container");
   await expect(map.locator(".bus-vehicle-icon")).toHaveCount(4);
   await map.scrollIntoViewIfNeeded();
-  await map.getByRole("button", { name: "Zoom out" }).click();
+  await expect(map).toHaveAttribute("data-bus-view", "OVERVIEW");
   return map;
 }
 
@@ -56,7 +57,7 @@ test("shows only the selected bus journey stops and dismisses them with its sele
   const time = times.filter(time => busRecords(time).find(bus => bus.id === t401)!.tripId!.at(-1) !==
       busRecords(time).find(bus => bus.id === t401Other)!.tripId!.at(-1))
     .sort((a, b) => separation(b) - separation(a))[0];
-  const map = await prepareMap(page, time);
+  const map = await prepareMap(page, time, isMobile);
   const stops = map.locator(".bus-journey-stop");
   const routes = map.locator(".gps-route-completed, .gps-route-remaining, .selected-vehicle-route");
   const detail = page.getByRole("region", { name: "Bus journey detail" });
@@ -70,6 +71,8 @@ test("shows only the selected bus journey stops and dismisses them with its sele
   const otherDirection = busJourney(t401Other, time)!;
   expect(otherDirection.direction).not.toBe(outbound.direction);
 
+  let interactionTime = time;
+  const finishPan = () => page.clock.setFixedTime(new Date(interactionTime += 1000));
   for (const id of [t401, t401Other, t402]) {
     const journey = busJourney(id, time)!;
     const marker = map.getByTitle(journey.vehicle.name, { exact: true });
@@ -85,6 +88,8 @@ test("shows only the selected bus journey stops and dismisses them with its sele
     await expect(map.locator(".gps-route-completed")).toHaveCount(1);
     await expect(map.locator(".gps-route-remaining")).toHaveCount(1);
     await expect(map.locator(".selected-vehicle-route")).toHaveCount(0);
+    // Leaflet popup auto-pan uses Date.now; allow it to finish under the fixed clock.
+    await finishPan();
     await map.getByRole("button", { name: "Close popup" }).click({ timeout: 5000 });
     await expect(stops).toHaveCount(names.length);
     if (isMobile) {
@@ -97,7 +102,7 @@ test("shows only the selected bus journey stops and dismisses them with its sele
         const before = await relativeTop();
         await map.press("ArrowDown");
         // Let Leaflet finish its Date-based animation without crossing a simulation tick.
-        await page.clock.setFixedTime(new Date(time + 1000));
+        await finishPan();
         await expect.poll(relativeTop).toBeLessThan(before - 50);
         await expect(stops).toHaveCount(names.length);
       }
@@ -163,7 +168,7 @@ test("moves the selected bus without rotating its icon", async ({ page, isMobile
   expect(next.position).not.toEqual(first.position);
   expect(next.bearing).not.toBe(first.bearing);
 
-  const map = await prepareMap(page, start);
+  const map = await prepareMap(page, start, isMobile);
   await expect(map).not.toHaveClass(/leaflet-zoom-anim/);
   const assertUpright = () => expect.poll(async () => (await markerFrames(map)).map(frame => frame.angle)).toEqual([0, 0, 0, 0]);
   await assertUpright();
@@ -173,6 +178,7 @@ test("moves the selected bus without rotating its icon", async ({ page, isMobile
     await expect(map.getByRole("tooltip")).toHaveText(`${first.name} · SIMULATED`);
   }
   await activate(marker, isMobile);
+  await page.clock.setFixedTime(new Date(start + 1000));
   await expect(map.locator(".bus-vehicle-popup")).toContainText(first.name);
   await map.getByRole("button", { name: "Close popup" }).click();
   await expect(map.locator(".bus-vehicle-popup")).toHaveCount(0);
@@ -199,8 +205,9 @@ test("moves the selected bus without rotating its icon", async ({ page, isMobile
     next: { bearing: next.bearing, coordinates: next.position, frames: await markerFrames(map) } }));
 
   if (isMobile) await detail.getByRole("button", { name: "Collapse journey" }).tap();
+  const previousZoom = Number(await map.getAttribute("data-bus-zoom"));
   await map.getByRole("button", { name: "Zoom in" }).click();
-  await expect(map.locator(".leaflet-tile-loaded[src*='/13/']").first()).toBeAttached();
+  await expect(map).toHaveAttribute("data-bus-zoom", String(previousZoom + 1));
   await expect(map).not.toHaveClass(/leaflet-zoom-anim/);
   const relativeTop = () => marker.evaluate(element =>
     element.getBoundingClientRect().top - element.closest(".leaflet-container")!.getBoundingClientRect().top);

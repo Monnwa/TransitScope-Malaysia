@@ -6,12 +6,15 @@ import { Marker, Popup, Tooltip } from "react-leaflet";
 import { SIMULATED } from "@/lib/simulation/clock";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import { busMarkerGraphic } from "./bus-marker-graphic";
+import { useOptionalBusCamera } from "./bus-camera-context";
 
-export default function BusVehicleMarker({ record, active, onSelect }: {
+export default function BusVehicleMarker({ record, active, subdued = false, onSelect }: {
   record: TransitRecord & { position: NonNullable<TransitRecord["position"]> };
   active: boolean;
+  subdued?: boolean;
   onSelect: () => void;
 }) {
+  const camera = useOptionalBusCamera();
   const marker = useRef<L.Marker>(null);
   const icon = useMemo(() => L.divIcon({
     className: `transport-icon vehicle-icon bus-vehicle-icon${active ? " vehicle-selected" : ""}`,
@@ -24,8 +27,8 @@ export default function BusVehicleMarker({ record, active, onSelect }: {
   }, [active]);
 
   return <Marker ref={marker} position={record.position} title={record.name} icon={icon}
-    zIndexOffset={active ? 1100 : 250} eventHandlers={{ click: onSelect }}>
-    <Popup><div className="bus-vehicle-popup"><strong>{record.name}</strong><br/>{record.route}<br/>{SIMULATED}
+    opacity={subdued && !active ? .45 : 1} zIndexOffset={active ? 1100 : 250} eventHandlers={{ click: onSelect }}>
+    <Popup className={"bus-popup-owner-" + encodeURIComponent(record.id)} autoPan={camera ? false : undefined}><div className="bus-vehicle-popup" data-vehicle-id={record.id}><strong>{record.name}</strong><br/>{record.route}<br/>{SIMULATED}
       <br/>{record.status} · {record.speed} km/h</div></Popup>
     <Tooltip>{record.name} · {SIMULATED}</Tooltip>
   </Marker>;

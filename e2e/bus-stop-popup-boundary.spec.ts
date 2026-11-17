@@ -1,5 +1,6 @@
 import { expect, test, type Locator, type Page, type TestInfo } from "@playwright/test";
 import { join } from "node:path";
+import { setMapZoom } from "./map-zoom";
 
 const time = Date.parse("2026-11-14T04:00:00Z");
 const unit = "UNIT BERKUDA DBKL (UTARA)";
@@ -21,7 +22,7 @@ async function openMap(page: Page, mobile: boolean) {
   await expect(map.locator(".bus-vehicle-icon")).toHaveCount(4);
   await expect(map.locator(".bus-journey-stop")).toHaveCount(0);
   await map.scrollIntoViewIfNeeded();
-  await map.getByRole("button", { name: "Zoom out" }).click();
+  await setMapZoom(map, 12);
   await expect(map.locator(".leaflet-tile-loaded[src*='/12/']").first()).toBeAttached();
   await expect(map).not.toHaveClass(/leaflet-zoom-anim/);
   return map;

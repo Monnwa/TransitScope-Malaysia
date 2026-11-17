@@ -1,0 +1,49 @@
+.map-camera-frame{display:flex;flex-direction:column;gap:8px;min-width:0;scroll-margin-top:86px}
+.map-camera-bar{position:sticky;top:74px;z-index:1002;background:#fff;border:1px solid var(--line);border-radius:7px;padding:6px 8px;min-width:0;flex:none}
+.map-camera-controls{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px}
+.panel .map-camera-status{flex:1;min-width:140px;font-size:11px;line-height:1.4;color:#42566d}
+.map-camera-controls button{min-height:44px;border:1px solid #b8c9df;border-radius:6px;background:#fff;color:#1749a1;padding:7px 10px;font-size:12px;font-weight:700}
+.map-camera-controls .camera-return{background:#1749a1;color:#fff;border-color:#1749a1}
+.map-camera-controls button:disabled{color:#5e6e80;background:#f5f8fb;cursor:default}
+.map-camera-frame .map-wrap{flex:none}
+.map-camera-frame .map-legend{max-width:min(330px,calc(100% - 24px));bottom:22px}
+@media(max-width:720px){
+  .map-camera-frame{scroll-margin-top:8px}
+  .map-camera-bar{top:0;padding:5px 7px}
+  .panel .map-camera-status{flex-basis:100%;min-width:0;font-size:11px}
+  .map-camera-controls{gap:4px 6px}
+  .map-camera-controls button{padding:6px 9px;font-size:11px}
+  .two-col:has(.bus-sheet-expanded) .map-camera-frame{height:calc(50dvh - 12px);min-height:270px}
+  .two-col:has(.bus-sheet-expanded) .map-camera-frame .map-wrap{height:auto;flex:1;min-height:180px}
+  .bus-journey.bus-sheet-expanded{height:min(50dvh,560px)}
+  .bus-journey .bus-close{width:44px;height:44px}
+  .bus-journey .bus-sheet-toggle{min-height:44px}
+  .bus-journey .bus-locate{min-height:44px}
+}
+
+/* Allow grid/flex content to shrink at tablet sizes instead of inheriting table width. */
+.content,.two-col>.panel,.chart-grid>.panel{min-width:0}
+@media(min-width:721px) and (max-width:1000px){header .search{min-width:0}header .fresh{max-width:200px;flex-wrap:wrap}}
+@media(max-width:720px){
+  .bus-journey-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 8px}
+  .bus-journey .bus-header-actions{grid-column:2;grid-row:1;float:none}
+  .bus-journey-header .bus-eyebrow{grid-column:1;grid-row:1;align-self:center;margin:0}
+  .bus-journey-header h2,.bus-journey-header .bus-origin,.bus-journey-header .bus-destination,.bus-journey-header .bus-meta{grid-column:1/-1}
+}
+
+.map-camera-frame .bus-vehicle-popup,.map-camera-frame .journey-stop-popup{padding-right:18px}
+@media(max-width:720px){
+  .map-camera-frame .leaflet-touch .leaflet-bar a{width:44px;height:44px;line-height:44px}
+  .map-camera-frame .leaflet-container a.leaflet-popup-close-button{width:44px;height:44px;line-height:44px}
+}
+
+/* A popup supplies its own context; hide the noninteractive legend so its close target stays clear. */
+.map-camera-frame .map-wrap:has(.leaflet-popup) .map-legend{visibility:hidden;pointer-events:none}
+
+@media(min-width:1001px){
+  .two-col>.detail:has(.bus-journey){position:sticky;top:86px;align-self:start}
+  .detail .bus-journey{height:min(560px,calc(100dvh - 160px))}
+}
+
+.bus-journey-header .bus-route-badge{flex-shrink:0;white-space:nowrap}
+@media(min-width:1001px){.bus-journey-header h2{font-size:20px}}

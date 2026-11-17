@@ -14,6 +14,7 @@ import SimulatedBusPanel, { type JourneyNavigation } from "./simulated-bus-panel
 import UpcomingDepartures from "./upcoming-departures";
 import StationOperations from "./station-operations";
 import EstimatedTrainPanel from "./estimated-train-panel";
+import { BusCameraProvider } from "./bus-camera-context";
 
 const TransitMap = dynamic(() => import("./transit-map"), {
   ssr: false,
@@ -87,7 +88,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     });
   }
 
-  return <main>
+  return <BusCameraProvider selectedVehicleId={selectedId?.startsWith("bus:") ? selectedId : null} selectedRecordId={selectedId}><main>
     <a className="skip" href="#content">Skip to dashboard content</a>
     <header>
       <div className="brand"><span className="brand-mark">TS</span><div><strong>TransitScope</strong><small>Malaysia</small></div></div>
@@ -126,8 +127,12 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
           <div className="panel">
             <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length)}. Select a vehicle or stop to learn more.</p></div><button className="secondary" onClick={() => setResetSignal(signal => signal + 1)}>Fit to region</button></div>
             <div className="station-ops-quick"><button type="button" className="secondary" onClick={showHub}>Bandar Tasik Selatan status</button></div>
-            <TransitMap records={results} selected={record} onSelect={select} resetSignal={resetSignal} network={railNetwork}
-              journey={journey} navigation={navigation} trains={snapshot.trains} bikes={snapshot.linkBike.stations} now={now} onRefresh={refresh}/>
+            <TransitMap records={results} busRouteId={busRouteId} showBusRoutes={showSimulated && (!activeModes.length || activeModes.includes("Bus"))} selected={record} onSelect={select} resetSignal={resetSignal} network={railNetwork}
+              journey={journey} navigation={navigation} onLocate={() => {
+                if (!journey) return;
+                setPreview(null);
+                setNavigation({ journeyId: journey.currentJourneyId, action: (navigation?.action ?? 0) + 1 });
+              }} trains={snapshot.trains} bikes={snapshot.linkBike.stations} now={now} onRefresh={refresh}/>
           </div>
           <aside id="station-detail" tabIndex={-1} className="detail panel" aria-label="Selected transport detail">
             {journey && record ? <SimulatedBusPanel key={record.id} journey={journey} navigation={navigation} onNavigate={setNavigation}
@@ -186,7 +191,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
         </section>
       </section>
     </div>
-  </main>;
+  </main></BusCameraProvider>;
 }
 
 function toggle<T>(items: T[], item: T) {

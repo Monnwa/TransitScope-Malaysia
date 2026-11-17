@@ -3,22 +3,25 @@
 import "leaflet/dist/leaflet.css";
 import "@/app/markers.css";
 import "@/app/estimated-trains.css";
+import "@/app/map-camera.css";
 import L from "leaflet";
 import { Fragment, useEffect, useState } from "react";
-import { CircleMarker, MapContainer, Marker, Polyline, Popup, TileLayer, Tooltip, useMap, useMapEvent } from "react-leaflet";
+import { CircleMarker, MapContainer, Marker, Pane, Polyline, Popup, TileLayer, Tooltip, useMapEvent } from "react-leaflet";
 import type { RailNetwork } from "@/lib/rail-model";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import { splitRoutePath } from "@/lib/route-projection";
 import type { SimulatedBusJourney, SimulatedTrain } from "@/lib/simulation/vehicles";
 import type { SimulatedBikeStation } from "@/lib/simulation/scenarios";
 import { SIMULATED } from "@/lib/simulation/clock";
-import { JourneyMapNavigation, JourneyStopMarkers, MovingRoute } from "./journey-map-layers";
+import { JourneyStopMarkers, MovingRoute } from "./journey-map-layers";
 import BusVehicleMarker from "./bus-vehicle-marker";
-import type { BusMapJourney } from "./bus-journey-panel";
 import type { JourneyNavigation } from "./simulated-bus-panel";
 import EstimatedTrainControls from "./estimated-train-controls";
 import EstimatedTrainLayer from "./estimated-train-layer";
 import LinkBikeLayer from "./linkbike-layer";
+import BusRouteLayers from "./bus-route-layers";
+import BusMapCamera from "./bus-map-camera";
+import { lightBasemap } from "@/lib/map-basemap";
 
 const center: [number, number] = [3.142, 101.699];
 
@@ -30,32 +33,23 @@ function DismissBusOnBackground({ dismiss }: { dismiss?: () => void }) {
   return null;
 }
 
-function MapView({ signal, selected }: { signal: number; selected?: TransitRecord }) {
-  const map = useMap();
-  useEffect(() => { if (signal) map.setView(center, 13); }, [signal, map]);
-  useEffect(() => {
-    if (!selected?.position || selected.mode === "Shared bike") return;
-    if (!map.getBounds().contains(selected.position)) map.panTo(selected.position, { animate: false });
-    if (selected.mode === "Bus" && selected.recordKind === "vehicle") {
-      map.getContainer().scrollIntoView({ block: window.innerWidth <= 720 ? "start" : "center", behavior: "instant" });
-    }
-  }, [selected?.id, map]);
-  return null;
-}
-
-export default function TransitMap({ records, selected, onSelect, resetSignal, network, journey, navigation, trains, bikes, now, onRefresh }: {
+export default function TransitMap({ records, busRouteId, showBusRoutes, selected, onSelect, resetSignal, network, journey, navigation, onLocate, trains, bikes, now, onRefresh }: {
   records: TransitRecord[];
+  busRouteId: string;
+  showBusRoutes: boolean;
   selected?: TransitRecord;
   onSelect: (record: TransitRecord | null) => void;
   resetSignal: number;
   network: RailNetwork;
   journey: SimulatedBusJourney | null;
   navigation: JourneyNavigation | null;
+  onLocate: () => void;
   trains: SimulatedTrain[];
   bikes: SimulatedBikeStation[];
   now: number;
   onRefresh: () => void;
 }) {
+  const [cameraControlsHost, setCameraControlsHost] = useState<HTMLDivElement | null>(null);
   const [hidden, setHidden] = useState<string[]>([]);
   const [highlighted, setHighlighted] = useState<string[]>([]);
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
@@ -88,18 +82,11 @@ export default function TransitMap({ records, selected, onSelect, resetSignal, n
     (record.mode === "Bus" ? record.recordKind === "vehicle" : record.mode !== "Shared bike" && record.recordKind !== "vehicle"))
     .sort((a, b) => Number(!!a.railLines) - Number(!!b.railLines));
   const selectedJourney = journey && selected?.id === journey.vehicle.id && visibleIds.has(journey.vehicle.id) ? journey : null;
+  const emphasizedRouteId = selectedJourney?.routeId ?? busRouteId;
+  const quietRail = showBusRoutes && highlighted.length === 0;
   const segments = selectedJourney && !selectedJourney.isPreview ?
     splitRoutePath(selectedJourney.path, selectedJourney.segment, selectedJourney.position) : null;
   const activeNavigation = navigation?.journeyId === selectedJourney?.journeyId ? navigation : null;
-  const selectedStop = selectedJourney?.stops.find(stop => stop.sequence === activeNavigation?.sequence);
-  const mapJourney: BusMapJourney | null = selectedJourney ? {
-    vehicleId: selectedJourney.vehicle.id, path: selectedJourney.path, tripId: selectedJourney.journeyId,
-    navigation: activeNavigation?.action, locate: activeNavigation && !selectedStop ? activeNavigation.action : undefined,
-    selectedStop: selectedStop ? { ...selectedStop, key: `${selectedJourney.journeyId}:${selectedStop.id}`, journeyKey: selectedJourney.journeyId,
-      vehicleId: selectedJourney.vehicle.id, routeName: selectedJourney.routeId, confidence: SIMULATED } : null,
-    lastSeen: { position: selectedJourney.position, timestamp: selectedJourney.vehicle.reportedAt, available: true, name: selectedJourney.vehicle.name },
-  } : null;
-
   return <section className="rail-map-group">
     <fieldset className="rail-filters"><legend>Train lines</legend>
       {network.lines.map(line => <span key={line.id} className="rail-filter-item">
@@ -114,52 +101,61 @@ export default function TransitMap({ records, selected, onSelect, resetSignal, n
       <label><input type="checkbox" checked={showLinkBike} onChange={event => setShowLinkBike(event.target.checked)}/>Show LinkBike stations</label>
       <span>{SIMULATED}</span><div ref={setLinkBikeControlsHost}/>
     </div>
+    <div className="map-camera-frame">
+    <div className="map-camera-bar" ref={setCameraControlsHost}/>
     <div className="map-wrap" aria-label="Interactive transport map">
       <MapContainer center={center} zoom={13} scrollWheelZoom className="map">
-        <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
-        <MapView signal={resetSignal} selected={selected}/>
+        <TileLayer {...lightBasemap}/>
+        <BusMapCamera selected={selected} vehicleVisible={visibleIds.has(selected?.id ?? "")} selectedRouteId={busRouteId}
+          enabled={showBusRoutes} resetSignal={resetSignal} journey={journey} navigation={navigation}
+          controlsHost={cameraControlsHost} onLocate={onLocate}/>
         <DismissBusOnBackground dismiss={journey ? () => onSelect(null) : undefined}/>
-        <JourneyMapNavigation journey={mapJourney}/>
+        <BusRouteLayers selectedRouteId={busRouteId} emphasizedRouteId={emphasizedRouteId} enabled={showBusRoutes}/>
         {network.lines.filter(line => !hidden.includes(line.id)).flatMap(line => line.paths.map((path, index) => {
           const active = highlighted.includes(line.id);
           const dimmed = highlighted.length > 0 && !active;
           return <Fragment key={`${line.id}:${index}`}>
-            <Polyline positions={path} interactive={false} pathOptions={{ color: "#fff", weight: active ? 10 : 7, opacity: dimmed ? .3 : .95 }}/>
+            <Polyline positions={path} interactive={false} pathOptions={{ color: "#fff", weight: active ? 10 : quietRail ? 4 : 7, opacity: dimmed ? .3 : quietRail ? .6 : .95 }}/>
             <Polyline className={`rail-alignment ${line.id.replace(/[^a-zA-Z0-9]/g, "-")}`} positions={path}
-              pathOptions={{ color: line.colour, weight: active ? 6 : 4, opacity: dimmed ? .3 : 1 }}
+              pathOptions={{ color: line.colour, weight: active ? 6 : quietRail ? 2.5 : 4, opacity: dimmed ? .3 : quietRail ? .45 : 1, dashArray: quietRail ? "2 5" : undefined }}
               eventHandlers={{ click: () => toggleHighlight(line.id) }}><Popup>{line.name}<br/>{SIMULATED}</Popup></Polyline>
           </Fragment>;
         }))}
+        <Pane name="bus-journey-route" style={{ zIndex: 450 }}>
         {segments && selectedJourney && <MovingRoute path={selectedJourney.path} fallback={segments}/>}
         {selectedJourney?.isPreview && <Polyline className="selected-vehicle-route" positions={selectedJourney.path}
           pathOptions={{ color: "#2563eb", weight: 5, dashArray: "8 5" }}><Tooltip>Simulated departure preview</Tooltip></Polyline>}
+        </Pane>
+        <Pane name="bus-markers" style={{ zIndex: 625 }}>
         {selectedJourney && <JourneyStopMarkers key={selectedJourney.journeyId} journey={selectedJourney} navigation={activeNavigation}/>}
         {stationsAndBuses.map(record => {
           const { position } = record;
           if (!position) return null;
           if (record.recordKind === "vehicle") {
             return <BusVehicleMarker key={record.id} record={{ ...record, position }}
-              active={selected?.id === record.id} onSelect={() => onSelect(record)}/>;
+              active={selected?.id === record.id} subdued={!!emphasizedRouteId && record.routeId !== emphasizedRouteId} onSelect={() => onSelect(record)}/>;
           }
           const popup = <Popup><strong>{record.name}</strong><br/>{record.lineNames?.join(" · ") || record.route}<br/>{SIMULATED}
             {record.interchange && <><br/>Interchange</>}
           </Popup>;
           const stationColours = (record.railLines ?? []).flatMap(id => lineById.get(id)?.colour ?? []);
           const dimmed = record.railLines?.length && highlighted.length > 0 && !record.railLines.some(id => highlighted.includes(id));
-          return <CircleMarker key={record.id} center={position} radius={record.interchange ? 8 : 6}
+          return <CircleMarker key={record.id} center={position} radius={quietRail ? record.interchange ? 6 : 4 : record.interchange ? 8 : 6}
             className="rail-station" pane="markerPane" pathOptions={{ color: stationColours[0] ?? "#2563eb",
-              fillColor: stationColours[1] ?? "#fff", weight: 3, fillOpacity: dimmed ? .3 : 1, opacity: dimmed ? .3 : 1 }}
+              fillColor: stationColours[1] ?? "#fff", weight: quietRail ? 2 : 3, fillOpacity: dimmed ? .3 : quietRail ? .35 : 1, opacity: dimmed ? .3 : quietRail ? .45 : 1 }}
             eventHandlers={{ click: () => onSelect(record) }}><Tooltip>{record.name}</Tooltip>{popup}</CircleMarker>;
         })}
+        </Pane>
         {showTrains && <EstimatedTrainLayer trains={visibleTrains} selected={selected?.id} onSelect={onSelect} highlighted={highlighted}/>}
         {showLinkBike && linkBikeControlsHost && <LinkBikeLayer stations={bikes} records={visible} controlsHost={linkBikeControlsHost} onSelect={onSelect}/>}
         {userPosition && <Marker position={userPosition} icon={L.divIcon({ className: "transport-icon user-icon", html: "<span></span>", iconSize: [22, 22], iconAnchor: [11, 11] })}><Popup>Your current location</Popup></Marker>}
       </MapContainer>
-      <div className="map-legend" aria-label="Map legend"><span>Train lines and stations</span><span>◉ Interchange</span>
+      <div className="map-legend" aria-label="Map legend">{showBusRoutes && <span><i className="bus-route-legend"/>{emphasizedRouteId ? "Bus route " + emphasizedRouteId : "Simulated Klang Valley buses: T401 · T402"}</span>}<span>Train lines and stations</span><span>◉ Interchange</span>
         <span>🚌 Bus / 🚆 Train</span><span>● Your location</span><span>○ Station / stop</span>
         {selectedJourney && <span><i className="bus-journey-stop-dot"/> Selected journey stops</span>}
         {segments && <span>Grey: route behind · Blue: route ahead</span>}
       </div>
+    </div>
     </div>
   </section>;
 }
