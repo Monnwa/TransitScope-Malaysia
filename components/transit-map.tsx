@@ -5,14 +5,15 @@ import "@/app/markers.css";
 import "@/app/estimated-trains.css";
 import L from "leaflet";
 import { Fragment, useEffect, useState } from "react";
-import { CircleMarker, MapContainer, Marker, Polyline, Popup, TileLayer, Tooltip, useMap } from "react-leaflet";
+import { CircleMarker, MapContainer, Marker, Polyline, Popup, TileLayer, Tooltip, useMap, useMapEvent } from "react-leaflet";
 import type { RailNetwork } from "@/lib/rail-model";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import { splitRoutePath } from "@/lib/route-projection";
 import type { SimulatedBusJourney, SimulatedTrain } from "@/lib/simulation/vehicles";
 import type { SimulatedBikeStation } from "@/lib/simulation/scenarios";
 import { SIMULATED } from "@/lib/simulation/clock";
-import { JourneyMapNavigation, JourneyStopMarker, MovingRoute } from "./journey-map-layers";
+import { JourneyMapNavigation, JourneyStopMarkers, MovingRoute } from "./journey-map-layers";
+import BusVehicleMarker from "./bus-vehicle-marker";
 import type { BusMapJourney } from "./bus-journey-panel";
 import type { JourneyNavigation } from "./simulated-bus-panel";
 import EstimatedTrainControls from "./estimated-train-controls";
@@ -21,12 +22,12 @@ import LinkBikeLayer from "./linkbike-layer";
 
 const center: [number, number] = [3.142, 101.699];
 
-function busIcon(record: TransitRecord, selected: boolean) {
-  return L.divIcon({
-    className: `transport-icon vehicle-icon ${selected ? "vehicle-selected" : ""}`,
-    html: `<span style="--marker:#2563eb" aria-hidden="true"><i class="vehicle-glyph" style="transform:rotate(${(record.bearing ?? 0) - 90}deg)">🚌</i></span>`,
-    iconSize: [30, 30], iconAnchor: [15, 15],
+function DismissBusOnBackground({ dismiss }: { dismiss?: () => void }) {
+  useMapEvent("click", ({ originalEvent }: L.LeafletMouseEvent) => {
+    const target = originalEvent.target;
+    if (target instanceof Element && !target.closest(".leaflet-interactive, .leaflet-popup, .leaflet-control")) dismiss?.();
   });
+  return null;
 }
 
 function MapView({ signal, selected }: { signal: number; selected?: TransitRecord }) {
@@ -45,7 +46,7 @@ function MapView({ signal, selected }: { signal: number; selected?: TransitRecor
 export default function TransitMap({ records, selected, onSelect, resetSignal, network, journey, navigation, trains, bikes, now, onRefresh }: {
   records: TransitRecord[];
   selected?: TransitRecord;
-  onSelect: (record: TransitRecord) => void;
+  onSelect: (record: TransitRecord | null) => void;
   resetSignal: number;
   network: RailNetwork;
   journey: SimulatedBusJourney | null;
@@ -83,9 +84,10 @@ export default function TransitMap({ records, selected, onSelect, resetSignal, n
   const visible = records.filter(record => !record.railLines?.length || record.railLines.some(id => !hidden.includes(id)));
   const visibleIds = new Set(visible.map(record => record.id));
   const visibleTrains = trains.filter(train => visibleIds.has(train.id));
-  const stopsAndBuses = visible.filter(record => record.position && record.mode !== "Shared bike" &&
-    (record.recordKind !== "vehicle" || record.mode === "Bus")).sort((a, b) => Number(!!a.railLines) - Number(!!b.railLines));
-  const selectedJourney = journey && visibleIds.has(journey.vehicle.id) ? journey : null;
+  const stationsAndBuses = visible.filter(record => record.position &&
+    (record.mode === "Bus" ? record.recordKind === "vehicle" : record.mode !== "Shared bike" && record.recordKind !== "vehicle"))
+    .sort((a, b) => Number(!!a.railLines) - Number(!!b.railLines));
+  const selectedJourney = journey && selected?.id === journey.vehicle.id && visibleIds.has(journey.vehicle.id) ? journey : null;
   const segments = selectedJourney && !selectedJourney.isPreview ?
     splitRoutePath(selectedJourney.path, selectedJourney.segment, selectedJourney.position) : null;
   const activeNavigation = navigation?.journeyId === selectedJourney?.journeyId ? navigation : null;
@@ -116,6 +118,7 @@ export default function TransitMap({ records, selected, onSelect, resetSignal, n
       <MapContainer center={center} zoom={13} scrollWheelZoom className="map">
         <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
         <MapView signal={resetSignal} selected={selected}/>
+        <DismissBusOnBackground dismiss={journey ? () => onSelect(null) : undefined}/>
         <JourneyMapNavigation journey={mapJourney}/>
         {network.lines.filter(line => !hidden.includes(line.id)).flatMap(line => line.paths.map((path, index) => {
           const active = highlighted.includes(line.id);
@@ -130,20 +133,20 @@ export default function TransitMap({ records, selected, onSelect, resetSignal, n
         {segments && selectedJourney && <MovingRoute path={selectedJourney.path} fallback={segments}/>}
         {selectedJourney?.isPreview && <Polyline className="selected-vehicle-route" positions={selectedJourney.path}
           pathOptions={{ color: "#2563eb", weight: 5, dashArray: "8 5" }}><Tooltip>Simulated departure preview</Tooltip></Polyline>}
-        {mapJourney && <JourneyStopMarker journey={mapJourney}/>}
-        {stopsAndBuses.map(record => {
-          const active = selected?.id === record.id;
+        {selectedJourney && <JourneyStopMarkers key={selectedJourney.journeyId} journey={selectedJourney} navigation={activeNavigation}/>}
+        {stationsAndBuses.map(record => {
+          const { position } = record;
+          if (!position) return null;
+          if (record.recordKind === "vehicle") {
+            return <BusVehicleMarker key={record.id} record={{ ...record, position }}
+              active={selected?.id === record.id} onSelect={() => onSelect(record)}/>;
+          }
           const popup = <Popup><strong>{record.name}</strong><br/>{record.lineNames?.join(" · ") || record.route}<br/>{SIMULATED}
             {record.interchange && <><br/>Interchange</>}
-            {record.recordKind === "vehicle" && <><br/>{record.status} · {record.speed} km/h</>}
           </Popup>;
-          if (record.recordKind === "vehicle") {
-            return <Marker key={record.id} position={record.position!} title={record.name} icon={busIcon(record, active)}
-              zIndexOffset={active ? 1100 : 0} eventHandlers={{ click: () => onSelect(record) }}>{popup}<Tooltip>{record.name} · {SIMULATED}</Tooltip></Marker>;
-          }
           const stationColours = (record.railLines ?? []).flatMap(id => lineById.get(id)?.colour ?? []);
           const dimmed = record.railLines?.length && highlighted.length > 0 && !record.railLines.some(id => highlighted.includes(id));
-          return <CircleMarker key={record.id} center={record.position!} radius={record.interchange ? 8 : 6}
+          return <CircleMarker key={record.id} center={position} radius={record.interchange ? 8 : 6}
             className="rail-station" pane="markerPane" pathOptions={{ color: stationColours[0] ?? "#2563eb",
               fillColor: stationColours[1] ?? "#fff", weight: 3, fillOpacity: dimmed ? .3 : 1, opacity: dimmed ? .3 : 1 }}
             eventHandlers={{ click: () => onSelect(record) }}><Tooltip>{record.name}</Tooltip>{popup}</CircleMarker>;
@@ -154,6 +157,7 @@ export default function TransitMap({ records, selected, onSelect, resetSignal, n
       </MapContainer>
       <div className="map-legend" aria-label="Map legend"><span>Train lines and stations</span><span>◉ Interchange</span>
         <span>🚌 Bus / 🚆 Train</span><span>● Your location</span><span>○ Station / stop</span>
+        {selectedJourney && <span><i className="bus-journey-stop-dot"/> Selected journey stops</span>}
         {segments && <span>Grey: route behind · Blue: route ahead</span>}
       </div>
     </div>
