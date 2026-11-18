@@ -47,3 +47,22 @@
 
 .bus-journey-header .bus-route-badge{flex-shrink:0;white-space:nowrap}
 @media(min-width:1001px){.bus-journey-header h2{font-size:20px}}
+
+/* Bus-only bubble displacement leaves Leaflet's positioning transform untouched. */
+.map-camera-frame .leaflet-popup[class*="bus-popup-owner-"]{margin-left:var(--bus-popup-shift,0px)}
+.map-camera-frame .leaflet-popup[class*="bus-popup-owner-"] .leaflet-popup-tip-container{transform:translateX(calc(-1 * var(--bus-popup-shift,0px)))}
+.map-camera-frame .leaflet-popup[class*="bus-popup-owner-"] .leaflet-popup-content{max-width:var(--bus-popup-max-content,none)}
+@media(max-width:720px){
+  .map-camera-frame .rail-station-popup{padding-right:26px;width:max-content;max-width:min(248px,calc(100vw - 120px));white-space:normal;overflow-wrap:anywhere}
+}
+
+/* Rail-only intrinsic sizing keeps real portal content measurable before Leaflet's passive update. */
+.map-camera-frame .rail-station-popup-shell .rail-station-popup{width:max-content;max-width:300px}
+.map-camera-frame .rail-station-popup-shell .leaflet-popup-content{min-width:max-content}
+.map-camera-frame .rail-station-popup-shell{translate:var(--rail-popup-x,0px) var(--rail-popup-y,0px)}
+.map-camera-frame .rail-station-popup-shell .leaflet-popup-tip-container{left:var(--rail-tip-left,0px);width:var(--rail-tip-width,24px);height:var(--rail-tip-height,13px);margin:0;top:100%;bottom:auto;overflow:visible;pointer-events:none}
+.map-camera-frame .rail-station-popup-shell .leaflet-popup-tip{width:100%;height:100%;padding:0;margin:0;border:0;transform:none;box-shadow:none;background:#fff;clip-path:polygon(var(--rail-tip-base-left,0%) 0%,var(--rail-tip-base-right,100%) 0%,var(--rail-tip-apex,50%) 100%)}
+.map-camera-frame .rail-station-popup-shell[data-rail-placement="below"] .leaflet-popup-tip-container{top:auto;bottom:100%}
+.map-camera-frame .rail-station-popup-shell[data-rail-placement="below"] .leaflet-popup-tip{clip-path:polygon(var(--rail-tip-base-left,0%) 100%,var(--rail-tip-base-right,100%) 100%,var(--rail-tip-apex,50%) 0%)}
+@media(max-width:720px){.map-camera-frame .rail-station-popup-shell .rail-station-popup{max-width:min(248px,calc(100vw - 120px))}}
+

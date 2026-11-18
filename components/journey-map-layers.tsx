@@ -50,6 +50,7 @@ export function JourneyMapNavigation({journey}:{journey?:BusMapJourney|null}){
   },[journey?.selectedStop?.key,map]);
   return null;
 }
+
 type Stop = SimulatedBusJourney["stops"][number];
 
 function JourneyStopPin({ stop, routeId, selected, action }: {
@@ -66,7 +67,7 @@ function JourneyStopPin({ stop, routeId, selected, action }: {
   return <Marker ref={marker} position={stop.position} icon={icon} title={name}
     zIndexOffset={selected ? 100 : 0} bubblingMouseEvents={false}>
     <Tooltip>{name}{selected ? " · Selected stop" : ""}</Tooltip>
-    <Popup closeOnClick={false} maxWidth={245} minWidth={170}>
+    <Popup pane="popupPane" className="journey-stop-popup-shell" closeOnClick={false} maxWidth={245} minWidth={170}>
       <div className="journey-stop-popup" role="status">
         <strong>{name}</strong><span>Route {routeId} · {stop.classification}</span>
         <span>Arrival {arrivalClock(stop.arrival)} · Departure {arrivalClock(stop.departure)} MYT</span>
@@ -79,6 +80,6 @@ function JourneyStopPin({ stop, routeId, selected, action }: {
 export function JourneyStopMarkers({ journey, navigation }: {
   journey: SimulatedBusJourney; navigation: JourneyNavigation | null;
 }) {
-  return journey.stops.map(stop => <JourneyStopPin key={stop.id} stop={stop}
-    routeId={journey.routeId} selected={stop.sequence === navigation?.sequence} action={navigation?.action}/>);
+  return <>{journey.stops.map(stop => <JourneyStopPin key={stop.id} stop={stop}
+    routeId={journey.routeId} selected={stop.sequence === navigation?.sequence} action={navigation?.action}/>)}</>;
 }

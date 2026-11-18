@@ -7,6 +7,7 @@ import { SIMULATED } from "@/lib/simulation/clock";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import { busMarkerGraphic } from "./bus-marker-graphic";
 import { useOptionalBusCamera } from "./bus-camera-context";
+import { useBusPopupPresentation } from "./bus-popup-presentation";
 
 export default function BusVehicleMarker({ record, active, subdued = false, onSelect }: {
   record: TransitRecord & { position: NonNullable<TransitRecord["position"]> };
@@ -16,6 +17,9 @@ export default function BusVehicleMarker({ record, active, subdued = false, onSe
 }) {
   const camera = useOptionalBusCamera();
   const marker = useRef<L.Marker>(null);
+  const popup = useRef<L.Popup>(null);
+  const owner = "bus-popup-owner-" + encodeURIComponent(record.id);
+  useBusPopupPresentation(popup, marker, owner);
   const icon = useMemo(() => L.divIcon({
     className: `transport-icon vehicle-icon bus-vehicle-icon${active ? " vehicle-selected" : ""}`,
     html: busMarkerGraphic,
@@ -28,7 +32,7 @@ export default function BusVehicleMarker({ record, active, subdued = false, onSe
 
   return <Marker ref={marker} position={record.position} title={record.name} icon={icon}
     opacity={subdued && !active ? .45 : 1} zIndexOffset={active ? 1100 : 250} eventHandlers={{ click: onSelect }}>
-    <Popup className={"bus-popup-owner-" + encodeURIComponent(record.id)} autoPan={camera ? false : undefined}><div className="bus-vehicle-popup" data-vehicle-id={record.id}><strong>{record.name}</strong><br/>{record.route}<br/>{SIMULATED}
+    <Popup ref={popup} pane="popupPane" className={owner} autoPan={camera ? false : undefined}><div className="bus-vehicle-popup" data-vehicle-id={record.id}><strong>{record.name}</strong><br/>{record.route}<br/>{SIMULATED}
       <br/>{record.status} · {record.speed} km/h</div></Popup>
     <Tooltip>{record.name} · {SIMULATED}</Tooltip>
   </Marker>;

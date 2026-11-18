@@ -21,6 +21,8 @@ import EstimatedTrainLayer from "./estimated-train-layer";
 import LinkBikeLayer from "./linkbike-layer";
 import BusRouteLayers from "./bus-route-layers";
 import BusMapCamera from "./bus-map-camera";
+import RailStationPopup from "./rail-station-popup";
+import PopupControlAvoidance from "./popup-control-avoidance";
 import { lightBasemap } from "@/lib/map-basemap";
 
 const center: [number, number] = [3.142, 101.699];
@@ -106,6 +108,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
     <div className="map-wrap" aria-label="Interactive transport map">
       <MapContainer center={center} zoom={13} scrollWheelZoom className="map">
         <TileLayer {...lightBasemap}/>
+        <PopupControlAvoidance selectedRecordId={selected?.id} journeyVehicleId={selectedJourney?.vehicle.id}/>
         <BusMapCamera selected={selected} vehicleVisible={visibleIds.has(selected?.id ?? "")} selectedRouteId={busRouteId}
           enabled={showBusRoutes} resetSignal={resetSignal} journey={journey} navigation={navigation}
           controlsHost={cameraControlsHost} onLocate={onLocate}/>
@@ -135,9 +138,11 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
             return <BusVehicleMarker key={record.id} record={{ ...record, position }}
               active={selected?.id === record.id} subdued={!!emphasizedRouteId && record.routeId !== emphasizedRouteId} onSelect={() => onSelect(record)}/>;
           }
-          const popup = <Popup><strong>{record.name}</strong><br/>{record.lineNames?.join(" · ") || record.route}<br/>{SIMULATED}
+          const rail = ["MRT", "LRT", "Monorail", "KTM"].includes(record.mode);
+          const content = <><strong>{record.name}</strong><br/>{record.lineNames?.join(" · ") || record.route}<br/>{SIMULATED}
             {record.interchange && <><br/>Interchange</>}
-          </Popup>;
+          </>;
+          const popup = rail ? <RailStationPopup record={record} selectedRecordId={selected?.id}/> : <Popup pane="popupPane">{content}</Popup>;
           const stationColours = (record.railLines ?? []).flatMap(id => lineById.get(id)?.colour ?? []);
           const dimmed = record.railLines?.length && highlighted.length > 0 && !record.railLines.some(id => highlighted.includes(id));
           return <CircleMarker key={record.id} center={position} radius={quietRail ? record.interchange ? 6 : 4 : record.interchange ? 8 : 6}
