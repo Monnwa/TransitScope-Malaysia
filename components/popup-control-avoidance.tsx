@@ -4,7 +4,7 @@ import L from "leaflet";
 import { useLayoutEffect, useRef } from "react";
 import { useMap } from "react-leaflet";
 
-type Lease = { popup: L.Popup; owner: string; kind: "journey" | "rail"; recordId?: string;
+type Lease = { popup: L.Popup; owner: string; kind: "journey" | "rail" | "micromobility"; recordId?: string;
   selectionAtOpen?: string; confirmed: boolean; revision: number };
 
 /** One presentation lease for the map's existing control; never a map camera. */
@@ -25,6 +25,8 @@ export default function PopupControlAvoidance({ selectedRecordId, journeyVehicle
       if (rail) return { kind: "rail" as const, owner: rail, recordId: decodeURIComponent(rail.slice("rail-popup-owner-".length)) };
       if (classes.includes("journey-stop-popup-shell")) return { kind: "journey" as const,
         owner: "journey-stop-" + L.Util.stamp(popup), recordId: latest.current.journeyVehicleId };
+      if (classes.includes("micromobility-popup-shell")) return { kind: "micromobility" as const,
+        owner: "micromobility-" + L.Util.stamp(popup) };
       return null;
     };
     const current = (lease: Lease) => active === lease && lease.revision === revision && lease.popup.isOpen() &&
@@ -54,7 +56,7 @@ export default function PopupControlAvoidance({ selectedRecordId, journeyVehicle
       const lease = active;
       if (!lease || !current(lease)) return;
       const element = lease.popup.getElement()!, zoom = control.getContainer();
-      if (!zoom || !element.querySelector(lease.kind === "rail" ? ".rail-station-popup" : ".journey-stop-popup")) return;
+      if (!zoom || !element.querySelector(lease.kind === "rail" ? ".rail-station-popup" : lease.kind === "journey" ? ".journey-stop-popup" : ".micromobility-popup")) return;
       if (lease.kind === "journey" && innerWidth > 720) { position(original); clearConflict(); return; }
       const mapBox = map.getContainer().getBoundingClientRect();
       const clip = { left: Math.max(0, mapBox.left), right: Math.min(innerWidth, mapBox.right),

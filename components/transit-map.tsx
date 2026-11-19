@@ -19,6 +19,7 @@ import type { JourneyNavigation } from "./simulated-bus-panel";
 import EstimatedTrainControls from "./estimated-train-controls";
 import EstimatedTrainLayer from "./estimated-train-layer";
 import LinkBikeLayer from "./linkbike-layer";
+import MicromobilityLayer from "./micromobility-layer";
 import BusRouteLayers from "./bus-route-layers";
 import BusMapCamera from "./bus-map-camera";
 import RailStationPopup from "./rail-station-popup";
@@ -60,6 +61,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
   const [highlighted, setHighlighted] = useState<string[]>([]);
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const [linkBikeControlsHost, setLinkBikeControlsHost] = useState<HTMLDivElement | null>(null);
+  const [linkBikeVisible, setLinkBikeVisible] = useState(true);
   useEffect(() => {
     const lines = selected?.railLines;
     if (lines?.length) {
@@ -162,7 +164,8 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
         <Pane name="simulated-trains" style={{ zIndex: 590 }}>
           <EstimatedTrainLayer trains={visibleTrains} selected={selected?.id} onSelect={onSelect} highlighted={highlighted}/>
         </Pane>
-        {linkBikeControlsHost && <LinkBikeLayer stations={bikes} records={visible} controlsHost={linkBikeControlsHost} onSelect={onSelect}/>}
+        {linkBikeControlsHost && <MicromobilityLayer controlsHost={linkBikeControlsHost} linkBikeVisible={linkBikeVisible} onLinkBikeVisibilityChange={setLinkBikeVisible}/>}
+        {linkBikeControlsHost && linkBikeVisible && <LinkBikeLayer stations={bikes} records={visible} controlsHost={linkBikeControlsHost} onSelect={onSelect}/>}
         {userPosition && <Marker position={userPosition} icon={L.divIcon({ className: "transport-icon user-icon", html: "<span></span>", iconSize: [22, 22], iconAnchor: [11, 11] })}><Popup>Your current location</Popup></Marker>}
       </MapContainer>
       <div className="map-legend" aria-label="Map legend">{showBusRoutes && <span><i className="bus-route-legend"/>{emphasizedRouteId ? "Bus route " + emphasizedRouteId : "Simulated Klang Valley buses: T401 · T402"}</span>}<span>Train lines and stations</span><span>◉ Interchange</span>

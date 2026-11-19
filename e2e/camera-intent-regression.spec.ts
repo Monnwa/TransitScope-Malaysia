@@ -12,7 +12,7 @@ async function prepare(page: Page, mobile: boolean) {
   await page.route("**/*", route => {
     const url = new URL(route.request().url());
     if (url.hostname === "tile.openstreetmap.org") return route.fulfill({ contentType: "image/svg+xml", body: '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><path fill="#eff2f0" d="M0 0h256v256H0z"/></svg>' });
-    if (url.hostname === "127.0.0.1" && !url.pathname.startsWith("/api/")) return route.continue();
+    if (url.hostname === "127.0.0.1" && (!url.pathname.startsWith("/api/") || url.pathname === "/api/micromobility/stations")) return route.continue();
     external.push(url.href); return route.abort();
   });
   await page.goto("/"); const map = page.locator(".leaflet-container");
