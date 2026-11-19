@@ -144,6 +144,8 @@ for (const kind of ["T401", "T402", "journey-stop", "rail-station"] as const) {
             if (index < 0) continue;
             await page.getByRole("row").filter({ has: page.getByRole("cell", { name, exact: true }) })
               .getByRole("button", { name: "View details" }).click();
+            // Preserve the overlap fixture's native-marker entry point after automatic result popup opening.
+            await expect(popup).toHaveCount(1); await close(page, popup, isMobile);
             await map.scrollIntoViewIfNeeded(); await setMapZoom(map, 12);
             await map.locator(".rail-station").nth(index).click({ timeout: 5000 });
             await expect(popup).toHaveCount(1); await expect(popup).toContainText(name);

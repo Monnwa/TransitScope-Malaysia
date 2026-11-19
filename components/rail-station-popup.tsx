@@ -34,6 +34,7 @@ export default function RailStationPopup({ record, selectedRecordId, searchReque
   const latest = useRef(selectedRecordId); latest.current = selectedRecordId;
   const reconcile = useRef<() => void>(() => {});
   const owner = "rail-popup-owner-" + encodeURIComponent(record.id);
+  const searchContentReady = useStationSearchNavigation(map, popupRef, record, searchRequest);
 
   useLayoutEffect(() => {
     const popupFromRef = popupRef.current;
@@ -182,16 +183,15 @@ export default function RailStationPopup({ record, selectedRecordId, searchReque
       if (latest.current === record.id) active.confirmed = true;
       else if (active.confirmed || latest.current !== active.selectionAtOpen) release();
     };
-    layout.current = place;
+    layout.current = () => { place(); searchContentReady.current(); };
     popup.on("add", open).on("remove", release);
     if (popup.isOpen()) open();
     return () => {
       release(); popup.off("add", open).off("remove", release);
       layout.current = () => {}; reconcile.current = () => {};
     };
-  }, [map, owner, record.id]);
+  }, [map, owner, record.id, searchContentReady]);
   useLayoutEffect(() => { reconcile.current(); }, [selectedRecordId]);
-  useStationSearchNavigation(map, popupRef, record, searchRequest);
 
   return <Popup ref={popupRef} pane="popupPane" className={"rail-station-popup-shell " + owner} autoPan={true}>
     <RailContent layout={layout}><strong>{record.name}</strong><br/>{record.lineNames?.join(" · ") || record.route}<br/>{SIMULATED}

@@ -48,6 +48,7 @@ function fixture() {
   const map = {
     getContainer: () => container,
     eachLayer: vi.fn((visit: (layer: L.Layer) => void) => visit(marker)),
+    hasLayer: (layer: L.Layer) => layer === marker,
     getMinZoom: () => 0, getMaxZoom: () => 18, getZoom: () => 13,
     getSize: () => L.point(700, 500), project: vi.fn(() => L.point(200, 200)), unproject: () => L.latLng(trx.position!),
     stop: vi.fn(), closePopup: vi.fn(), setView: vi.fn(), fire: vi.fn(),
@@ -136,5 +137,20 @@ describe("native station navigation lifecycle", () => {
       { initialProps: { request: { stationId: trx.id, revision: 1 } } });
     view.rerender({ request: { stationId: trx.id, revision: 2 } }); expect(open).toHaveBeenCalledTimes(2);
     view.rerender({ request: { stationId: single.id, revision: 3 } }); expect(open).toHaveBeenCalledTimes(2);
+  });
+  it("uses real popup content readiness for a one-shot viewport adjustment and retires stale readiness", () => {
+    const { map, popup, container } = fixture();
+    const element = document.createElement("div"); element.innerHTML = '<div class="rail-station-popup">Station content</div>';
+    container.append(element);
+    vi.spyOn(popup, "getElement").mockReturnValue(element);
+    vi.spyOn(popup, "isOpen").mockReturnValue(true);
+    vi.spyOn(element, "getBoundingClientRect").mockReturnValue({ height: 320 } as DOMRect);
+    const request = { stationId: trx.id, revision: 1 };
+    const view = renderHook(({ active }) => useStationSearchNavigation(map, { current: popup }, trx, active),
+      { initialProps: { active: request as typeof request | null } });
+    expect(map.setView).toHaveBeenCalledOnce();
+    const ready = view.result.current.current;
+    act(() => ready()); act(() => ready()); expect(map.setView).toHaveBeenCalledTimes(2);
+    view.rerender({ active: null }); act(() => ready()); expect(map.setView).toHaveBeenCalledTimes(2);
   });
 });

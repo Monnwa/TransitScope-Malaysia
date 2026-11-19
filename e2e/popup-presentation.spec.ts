@@ -193,6 +193,9 @@ for (const name of ["Taman Midah", "Maluri", "KL Sentral"]) {
       }).map(r => r.querySelector("td")!.textContent!.trim()));
       const index = names.indexOf(name); expect(index).toBeGreaterThanOrEqual(0);
       await page.getByRole("row").filter({ has: page.getByRole("cell", { name, exact: true }) }).getByRole("button", { name: "View details" }).click();
+      // View details now opens the native popup. Retire it before testing a separate marker click at zoom 12.
+      const automatic = map.locator(".leaflet-popup").filter({ has: page.locator(".rail-station-popup") });
+      await expect(automatic).toHaveCount(1); await close(automatic);
       await map.scrollIntoViewIfNeeded(); await setMapZoom(map, 12);
       await map.locator(".rail-station").nth(index).click();
       const popup = map.locator(".leaflet-popup").filter({ has: page.locator(".rail-station-popup") });

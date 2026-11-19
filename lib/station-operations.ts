@@ -41,7 +41,7 @@ function normalise(value: string) {
   return value.normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 }
 
-function stationKey(value: string) {
+export function stationKey(value: string) {
   return normalise(value).replace(/^(?:(?:stesen|station|hentian|mrt|lrt|ktm|komuter) )+/, "")
     .replace(/ (?:stesen|station|hentian)$/, "");
 }
@@ -51,7 +51,7 @@ export function isBandarTasikSelatan(record: TransitRecord) {
     name && ["bandar tasik selatan", "terminal bersepadu selatan", "tbs"].includes(stationKey(name)));
 }
 
-function stationAliases(record: TransitRecord) {
+export function stationAliases(record: TransitRecord) {
   const names = [record.name, record.station ?? ""].map(stationKey);
   if (isBandarTasikSelatan(record)) names.push("bandar tasik selatan", "terminal bersepadu selatan", "tbs");
   if (names.includes("putrajaya sentral")) names.push("putrajaya cyberjaya", "putrajaya and cyberjaya");

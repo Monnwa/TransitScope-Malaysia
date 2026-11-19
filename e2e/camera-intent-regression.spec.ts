@@ -1,5 +1,7 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { busRecords } from "../lib/simulation/vehicles";
+import { railNetwork } from "../lib/simulation/network";
+import { renderedStationPosition } from "./map-station";
 
 const start = Date.parse("2026-11-14T04:00:00Z");
 async function frames(page: Page) { await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))); }
@@ -41,10 +43,16 @@ test("rail selection survives layout and manual exploration, while clear, Overvi
     await page.getByRole("row", { name: new RegExp("^" + name + " ") }).getByRole("button", { name: "View details" }).click();
     await map.scrollIntoViewIfNeeded(); await frames(page);
     await expect(map).toHaveAttribute("data-camera-state", "OVERVIEW"); await expect(map).toHaveAttribute("data-camera-intent", "selection");
-    expect(Number(await map.getAttribute("data-camera-latitude"))).toBeCloseTo(latitude, 4);
-    expect(Number(await map.getAttribute("data-camera-longitude"))).toBeCloseTo(longitude, 4);
+    await expect(map.locator(".rail-station-popup")).toHaveCount(1);
+    await expect(map.locator(".rail-station-popup strong")).toHaveText(name);
+    // The camera now reserves space for the automatic popup; verify the actual station point instead of the offset camera center.
+    const index = railNetwork.stations.findIndex(station => station.name === name);
+    const point = await renderedStationPosition(map.locator(".rail-station").nth(index));
+    expect(point.latitude).toBeCloseTo(latitude, 4);
+    expect(point.longitude).toBeCloseTo(longitude, 4);
+    const selectedView = await camera(map);
     await page.evaluate(() => { window.dispatchEvent(new Event("scroll")); window.dispatchEvent(new Event("resize")); }); await frames(page);
-    expect(Number(await map.getAttribute("data-camera-latitude"))).toBeCloseTo(latitude, 4);
+    expect(await camera(map)).toEqual(selectedView);
   }
   await page.screenshot({ path: info.outputPath("rail-selection-synthetic-tiles.png"), scale: "css" });
   await map.focus(); await map.press("ArrowRight"); await page.clock.setFixedTime(new Date(start + 1000)); await frames(page);

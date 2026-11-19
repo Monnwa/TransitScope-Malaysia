@@ -62,6 +62,14 @@ export default function BusMapCamera(props: Props) {
     stableView.current = { center: map.getCenter(), zoom: map.getZoom() };
     publish();
   }, [map, publish]);
+  const retireStationPopups = useCallback((keepId?: string) => {
+    const expectedOwner = keepId ? "rail-popup-owner-" + encodeURIComponent(keepId) : undefined;
+    guard.run(() => map.eachLayer(layer => {
+      if (!(layer instanceof L.Popup)) return;
+      const owner = layer.options.className?.split(" ").find(name => name.startsWith("rail-popup-owner-"));
+      if (owner && owner !== expectedOwner) map.closePopup(layer);
+    }));
+  }, [map, guard]);
   const area = useCallback(() => {
     const box = map.getContainer().getBoundingClientRect();
     const obstructions = Array.from(document.querySelectorAll(
@@ -99,13 +107,15 @@ export default function BusMapCamera(props: Props) {
     const size = map.getSize();
     guard.run(() => {
       map.stop();
+      // A station popup must not autopan back to its old anchor during an explicit overview zoom.
+      retireStationPopups();
       if (current.enabled) map.fitBounds(busRouteViewport(current.selectedRouteId), {
         paddingTopLeft: [safe.left, safe.top], paddingBottomRight: [size.x - safe.right, size.y - safe.bottom], maxZoom: 14, animate: false,
       });
       else if (current.resetSignal) map.setView([3.142, 101.699], 13, { animate: false });
     });
     publish();
-  }, [map, area, guard, publish]);
+  }, [map, area, guard, publish, retireStationPopups]);
   const follow = useCallback(function followLatest() {
     cancelFollow();
     if (latest.current.state.mode !== "VEHICLE_FOCUS") return;
@@ -171,12 +181,13 @@ export default function BusMapCamera(props: Props) {
 
   useEffect(() => {
     const selected = props.selected;
+    retireStationPopups(selected?.id);
     if (!selected) return;
     if (selected.mode === "Bus" && selected.recordKind === "vehicle") scrollToMap();
     else if (selected.mode !== "Shared bike" && validPoint(selected.position) && !map.getBounds().contains(selected.position!)) {
       guard.run(() => map.panTo(selected.position!, { animate: false }));
     }
-  }, [props.selected?.id, state.vehicleId, map, guard, scrollToMap]);
+  }, [props.selected?.id, state.vehicleId, map, guard, scrollToMap, retireStationPopups]);
   useEffect(() => { publish(); }, [state, publish]);
 
   useEffect(() => {
