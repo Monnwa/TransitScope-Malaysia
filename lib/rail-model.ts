@@ -6,8 +6,8 @@ export const rapidRailMeta: Record<string, { id: string; name: string; colour: s
   PYL: { id: "MRT2", name: "MRT Putrajaya Line (MRT2)", colour: "#F2C500", mode: "MRT" },
   KJ: { id: "LRT-KJ", name: "LRT Kelana Jaya Line", colour: "#E75480", mode: "LRT" },
   AG: { id: "LRT-AG", name: "LRT Ampang Line", colour: "#E87524", mode: "LRT" },
-  PH: { id: "LRT-PH", name: "LRT Sri Petaling Line", colour: "#7651A8", mode: "LRT" },
-  MR: { id: "MONORAIL", name: "KL Monorail", colour: "#2878B5", mode: "Monorail" },
+  PH: { id: "LRT-PH", name: "LRT Sri Petaling Line", colour: "#8B5A3C", mode: "LRT" },
+  MR: { id: "MONORAIL", name: "KL Monorail", colour: "#8BCB88", mode: "Monorail" },
 };
 const normalized = (name: string) => name.toUpperCase().replace(/\b(STESEN|STATION|MRT|LRT|KTM)\b/g, "").replace(/[^A-Z0-9]/g, "");
 export function mergeRailStations(records: TransitRecord[]): TransitRecord[] {

@@ -5,7 +5,7 @@ import "@/app/markers.css";
 import "@/app/estimated-trains.css";
 import "@/app/map-camera.css";
 import L from "leaflet";
-import { Fragment, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, Popup, TileLayer, Tooltip, useMapEvent } from "react-leaflet";
 import type { RailNetwork } from "@/lib/rail-model";
 import type { Record as TransitRecord } from "@/lib/transit-data";
@@ -27,10 +27,12 @@ import PopupControlAvoidance from "./popup-control-avoidance";
 import { lightBasemap } from "@/lib/map-basemap";
 import MapSearchOverlay from "./map-search-overlay";
 import type { StationSearchRequest } from "@/lib/station-search";
+import { stationRailLines } from "@/lib/rail-route-style";
+import RailRouteLayers from "./rail-route-layers";
 
 const center: [number, number] = [3.142, 101.699];
 
-function DismissBusOnBackground({ dismiss }: { dismiss?: () => void }) {
+function DismissSelectionOnBackground({ dismiss }: { dismiss?: () => void }) {
   useMapEvent("click", ({ originalEvent }: L.LeafletMouseEvent) => {
     const target = originalEvent.target;
     if (target instanceof Element && !target.closest(".leaflet-interactive, .leaflet-popup, .leaflet-control")) dismiss?.();
@@ -58,17 +60,19 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
 }) {
   const [cameraControlsHost, setCameraControlsHost] = useState<HTMLDivElement | null>(null);
   const [hidden, setHidden] = useState<string[]>([]);
-  const [highlighted, setHighlighted] = useState<string[]>([]);
+  const [routeHighlight, setRouteHighlight] = useState<string[]>([]);
+  const stationLines = useMemo(() => stationRailLines(selected, network.lines), [selected, network.lines]);
+  const highlighted = stationLines.length ? stationLines : routeHighlight;
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const [linkBikeControlsHost, setLinkBikeControlsHost] = useState<HTMLDivElement | null>(null);
   const [linkBikeVisible, setLinkBikeVisible] = useState(true);
   useEffect(() => {
-    const lines = selected?.railLines;
+    const lines = stationLines;
     if (lines?.length) {
-      setHighlighted(lines);
       setHidden(current => current.filter(id => !lines.includes(id)));
     }
-  }, [selected?.id]);
+    setRouteHighlight([]);
+  }, [stationLines, selected?.id]);
   useEffect(() => {
     if (!stationSearch) return;
     const lines = network.stations.find(station => station.id === stationSearch.stationId)?.railLines;
@@ -77,15 +81,15 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
   useEffect(() => {
     if (!resetSignal) return;
     setHidden([]);
-    setHighlighted([]);
+    setRouteHighlight([]);
   }, [resetSignal]);
   useEffect(() => {
     navigator.geolocation?.getCurrentPosition(result => setUserPosition([result.coords.latitude, result.coords.longitude]), () => undefined,
       { maximumAge: 60_000, timeout: 10_000 });
   }, []);
 
-  const lineById = new Map(network.lines.map(line => [line.id, line]));
-  const toggleHighlight = (id: string) => setHighlighted(current => current.length === 1 && current[0] === id ? [] : [id]);
+  const lineById = useMemo(() => new Map(network.lines.map(line => [line.id, line])), [network.lines]);
+  const toggleHighlight = useCallback((id: string) => setRouteHighlight(current => current.length === 1 && current[0] === id ? [] : [id]), []);
   const visible = records.filter(record => !record.railLines?.length || record.railLines.some(id => !hidden.includes(id)));
   const visibleIds = new Set(visible.map(record => record.id));
   const visibleTrains = trains.filter(train => visibleIds.has(train.id));
@@ -121,18 +125,10 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
         <BusMapCamera selected={selected} vehicleVisible={visibleIds.has(selected?.id ?? "")} selectedRouteId={busRouteId}
           enabled={showBusRoutes} resetSignal={resetSignal} journey={journey} navigation={navigation}
           controlsHost={cameraControlsHost} onLocate={onLocate}/>
-        <DismissBusOnBackground dismiss={journey ? () => onSelect(null) : undefined}/>
+        <DismissSelectionOnBackground dismiss={selected ? () => onSelect(null) : undefined}/>
         <BusRouteLayers selectedRouteId={busRouteId} emphasizedRouteId={emphasizedRouteId} enabled={showBusRoutes}/>
-        {network.lines.filter(line => !hidden.includes(line.id)).flatMap(line => line.paths.map((path, index) => {
-          const active = highlighted.includes(line.id);
-          const dimmed = highlighted.length > 0 && !active;
-          return <Fragment key={`${line.id}:${index}`}>
-            <Polyline positions={path} interactive={false} pathOptions={{ color: "#fff", weight: active ? 10 : quietRail ? 4 : 7, opacity: dimmed ? .3 : quietRail ? .6 : .95 }}/>
-            <Polyline className={`rail-alignment ${line.id.replace(/[^a-zA-Z0-9]/g, "-")}`} positions={path}
-              pathOptions={{ color: line.colour, weight: active ? 6 : quietRail ? 2.5 : 4, opacity: dimmed ? .3 : quietRail ? .45 : 1, dashArray: quietRail ? "2 5" : undefined }}
-              eventHandlers={{ click: () => toggleHighlight(line.id) }}><Popup>{line.name}<br/>{SIMULATED}</Popup></Polyline>
-          </Fragment>;
-        }))}
+        <RailRouteLayers lines={network.lines} hidden={hidden} highlighted={highlighted} stationLines={stationLines}
+          quietRail={quietRail} onHighlight={toggleHighlight}/>
         <Pane name="bus-journey-route" style={{ zIndex: 450 }}>
         {segments && selectedJourney && <MovingRoute path={selectedJourney.path} fallback={segments}/>}
         {selectedJourney?.isPreview && <Polyline className="selected-vehicle-route" positions={selectedJourney.path}
@@ -157,7 +153,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
           return <CircleMarker key={record.id} center={position} radius={quietRail ? record.interchange ? 6 : 4 : record.interchange ? 8 : 6}
             className="rail-station" pane="markerPane" pathOptions={{ color: stationColours[0] ?? "#2563eb",
               fillColor: stationColours[1] ?? "#fff", weight: quietRail ? 2 : 3, fillOpacity: dimmed ? .3 : quietRail ? .35 : 1, opacity: dimmed ? .3 : quietRail ? .45 : 1 }}
-            eventHandlers={{ click: () => onSelect(record) }}><Tooltip>{record.name}</Tooltip>{popup}</CircleMarker>;
+            eventHandlers={{ click: () => onSelect(record), popupclose: () => { if (rail && selected?.id === record.id) onSelect(null); } }}><Tooltip>{record.name}</Tooltip>{popup}</CircleMarker>;
         })}
         </Pane>
         {/* Keep station hit targets accessible when auto-enabled trains share their coordinates. */}
