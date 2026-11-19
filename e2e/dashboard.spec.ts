@@ -154,3 +154,61 @@ test("mobile dashboard keeps the bus sheet and horizontal layout usable", async 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   checkDashboard();
 });
+
+test("map search fits the map and preserves keyboard, dragging and zoom controls", async ({ page, baseURL }, testInfo) => {
+  const checkDashboard = await watchDashboard(page, baseURL!);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const wrap = page.locator(".map-wrap");
+  const search = wrap.getByRole("textbox", { name: "Search vehicles, routes or stations" });
+  const map = wrap.locator(".leaflet-container");
+  await expect(map).toBeVisible();
+  await search.scrollIntoViewIfNeeded();
+  await expect(page.locator("header input")).toHaveCount(0);
+  await expect(page.getByRole("textbox", { name: "Search vehicles, routes or stations" })).toHaveCount(1);
+
+  const bounds = await wrap.boundingBox();
+  const inputBounds = await search.boundingBox();
+  const zoomBounds = await wrap.locator(".leaflet-control-zoom").boundingBox();
+  expect(bounds).not.toBeNull();
+  expect(inputBounds).not.toBeNull();
+  expect(zoomBounds).not.toBeNull();
+  const mobile = page.viewportSize()!.width <= 720;
+  const inset = mobile ? 12 : 16;
+  expect(inputBounds!.x - bounds!.x).toBeCloseTo(inset, 0);
+  expect(inputBounds!.y - bounds!.y).toBeCloseTo(inset, 0);
+  expect(inputBounds!.width).toBeCloseTo(mobile ? bounds!.width - 24 : Math.min(400, bounds!.width - 32), 0);
+  expect(zoomBounds!.y).toBeGreaterThan(inputBounds!.y + inputBounds!.height);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+
+  const pane = map.locator(".leaflet-map-pane");
+  const transform = await pane.getAttribute("style");
+  await search.fill("T402");
+  await search.press("Home");
+  await search.press("ArrowRight");
+  await search.press("ArrowDown");
+  await expect(pane).toHaveAttribute("style", transform!);
+  await expect(page.locator("#records tbody tr")).not.toHaveCount(0);
+  await expect(page.locator("#records tbody")).not.toContainText("Bus T401-01");
+  await search.press("ControlOrMeta+a");
+  await search.press("Backspace");
+  await expect(search).toHaveValue("");
+  await expect(page.getByRole("row", { name: /Bus T401-01/ })).toBeAttached();
+
+  // Drag an unobstructed part of the map, outside the input and legend.
+  await map.scrollIntoViewIfNeeded();
+  const mapBounds = (await map.boundingBox())!;
+  await page.mouse.move(mapBounds.x + mapBounds.width * .8, mapBounds.y + mapBounds.height * .65);
+  await page.mouse.down();
+  await page.mouse.move(mapBounds.x + mapBounds.width * .8 - 65, mapBounds.y + mapBounds.height * .65 - 45, { steps: 12 });
+  await page.mouse.up();
+  await expect(pane).not.toHaveAttribute("style", transform!);
+  const proxy = map.locator(".leaflet-proxy");
+  const beforeZoom = await proxy.getAttribute("style");
+  await map.getByRole("button", { name: "Zoom in", exact: true }).click();
+  await expect(proxy).not.toHaveAttribute("style", beforeZoom!);
+  await expect(map.getByRole("link", { name: "OpenStreetMap" })).toBeVisible();
+  await expect(wrap.getByLabel("Map legend")).toBeVisible();
+  await wrap.screenshot({ path: testInfo.outputPath("map-search.png") });
+  checkDashboard();
+});

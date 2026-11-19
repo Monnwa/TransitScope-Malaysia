@@ -1,0 +1,56 @@
+.map-wrap {
+  /* Leaflet clips its own tiles; overlays can extend beyond the map if needed. */
+  overflow: visible;
+  isolation: isolate;
+}
+
+.map-wrap .map {
+  border-radius: inherit;
+  z-index: 0;
+}
+
+.map-search {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: min(400px, calc(100% - 32px));
+  z-index: 1000;
+}
+
+.map-search .search {
+  display: block;
+  max-width: none;
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 2px 10px #10243e26;
+}
+
+.map-search input {
+  min-width: 0;
+  background: var(--panel);
+  color: var(--ink);
+}
+
+/* Keep both zoom buttons below the search at every map width. */
+.map-wrap .leaflet-top.leaflet-left {
+  top: 76px;
+  left: 6px;
+}
+
+@media (max-width: 720px) {
+  .map-search {
+    top: 12px;
+    left: 12px;
+    width: calc(100% - 24px);
+  }
+
+  .map-search input {
+    /* Avoid automatic input zoom on mobile browsers. */
+    font-size: 16px;
+  }
+
+  .map-wrap .leaflet-top.leaflet-left {
+    top: 72px;
+    left: 2px;
+  }
+}

@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 import "@/app/markers.css";
 import "@/app/estimated-trains.css";
 import L from "leaflet";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, type ReactNode } from "react";
 import { CircleMarker, MapContainer, Marker, Polyline, Popup, TileLayer, Tooltip, useMap } from "react-leaflet";
 import type { RailNetwork } from "@/lib/rail-model";
 import type { Record as TransitRecord } from "@/lib/transit-data";
@@ -42,12 +42,13 @@ function MapView({ signal, selected }: { signal: number; selected?: TransitRecor
   return null;
 }
 
-export default function TransitMap({ records, selected, onSelect, resetSignal, network, journey, navigation, trains, bikes, now, onRefresh }: {
+export default function TransitMap({ records, selected, onSelect, resetSignal, network, search, journey, navigation, trains, bikes, now, onRefresh }: {
   records: TransitRecord[];
   selected?: TransitRecord;
   onSelect: (record: TransitRecord) => void;
   resetSignal: number;
   network: RailNetwork;
+  search: ReactNode;
   journey: SimulatedBusJourney | null;
   navigation: JourneyNavigation | null;
   trains: SimulatedTrain[];
@@ -113,6 +114,8 @@ export default function TransitMap({ records, selected, onSelect, resetSignal, n
       <span>{SIMULATED}</span><div ref={setLinkBikeControlsHost}/>
     </div>
     <div className="map-wrap" aria-label="Interactive transport map">
+      {/* A sibling of Leaflet keeps input events away from map dragging and keyboard controls. */}
+      <div className="map-search">{search}</div>
       <MapContainer center={center} zoom={13} scrollWheelZoom className="map">
         <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
         <MapView signal={resetSignal} selected={selected}/>
