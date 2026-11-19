@@ -23,8 +23,12 @@ export default function SearchableStationPopup({ id, position, request, contentS
   const map = useMap();
   const popup = useRef<L.Popup>(null);
   const ready = useStationSearchNavigation(map, popup, { id, position }, request, contentSelector);
-  const className = request ? [props.className, "station-search-native-popup"].filter(Boolean).join(" ") : props.className;
-  return <Popup {...props} ref={popup} className={className} closeOnClick={request ? false : props.closeOnClick} autoPan={request ? false : props.autoPan}
+  const searchOptions = request ? {
+    className: [props.className, "station-search-native-popup"].filter(Boolean).join(" "),
+    closeOnClick: false,
+    autoPan: false,
+  } : {};
+  return <Popup {...props} {...searchOptions} ref={popup}
     eventHandlers={{ ...eventHandlers, remove: event => {
     eventHandlers?.remove?.(event);
     if (request) onSearchClose?.(request);
