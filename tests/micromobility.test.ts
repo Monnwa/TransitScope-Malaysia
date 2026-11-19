@@ -2,8 +2,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/api/micromobility/stations/route";
 import { adaptLinkBikeStation, micromobilitySnapshot, newMicromobilityStations } from "@/lib/micromobility-data";
-import { MICROMOBILITY_OPERATORS, inMicromobilityCoverage, locationLabel, micromobilityStationSchema, stationCounts } from "@/lib/micromobility";
+import { MICROMOBILITY_OPERATORS, inMicromobilityCoverage, locationLabel, micromobilityStationSchema, stationCounts, generateInventory, simulatedInventorySchema } from "@/lib/micromobility";
 import { linkBikeSnapshot } from "@/lib/simulation/scenarios";
+import { auditStationDistances, MICROMOBILITY_SPACING_EXCEPTIONS, stationDistance } from "@/lib/micromobility-geography";
+import beforeAudit from "@/docs/micromobility-audit-before.json";
 
 describe("micromobility data integrity", () => {
   it("supports all four operators with stable, unique identities and independently selected coordinates", () => {
@@ -70,8 +72,8 @@ describe("micromobility API", () => {
     expect(data.operators).toEqual([operator]);
   });
   it("combines state and case-insensitive area filters", async () => {
-    const data = await (await request("?operator=BEAM&state=Penang&area=george%20town")).json();
-    expect(data.stations).toHaveLength(2);
+    const data = await (await request("?operator=BEAM&state=Penang&area=jelutong")).json();
+    expect(data.stations).toHaveLength(1);
     expect(data.stations.every((s: { state: string }) => s.state === "Penang")).toBe(true);
   });
   it("returns an honest successful empty result", async () => {
@@ -81,5 +83,90 @@ describe("micromobility API", () => {
   });
   it.each(["?operator=UNKNOWN", "?operator=beam", "?state=Johor", "?area=", "?area=%3Cscript%3E", "?latitude=3", "?operator=TRYKE&operator=BEAM", "?area=" + "a".repeat(81)])("rejects malformed query %s", async query => {
     expect((await request(query)).status).toBe(400);
+  });
+});
+
+describe("deterministic demonstration inventory", () => {
+  it.each(["HELLORIDE", "TRYKE", "BEAM"])("provides bounded, explicitly simulated inventory for every %s station", operator => {
+    for (const station of newMicromobilityStations.filter(s => s.operator === operator)) {
+      expect(simulatedInventorySchema.safeParse(station.simulatedInventory).success).toBe(true);
+      expect(station.simulatedInventory).toEqual(generateInventory(station.id));
+      expect(station.simulatedInventory?.inventoryOrigin).toBe("SIMULATED");
+      expect(station.availableBikes).toBeNull(); expect(station.availableDocks).toBeNull();
+    }
+  });
+  it("does not depend on request time or random numbers and includes diverse values and zeros", () => {
+    const random = vi.spyOn(Math, "random").mockImplementation(() => { throw new Error("Inventory must not use randomness"); });
+    try {
+      const first = newMicromobilityStations.map(s => generateInventory(s.id));
+      vi.useFakeTimers(); vi.setSystemTime(new Date("2030-01-01"));
+      expect(newMicromobilityStations.map(s => generateInventory(s.id))).toEqual(first);
+      expect(new Set(first.map(i => `${i.availableBicycles}/${i.totalDocks}`)).size).toBeGreaterThan(20);
+      expect(first.some(i => i.availableBicycles === 0)).toBe(true);
+      expect(random).not.toHaveBeenCalled();
+    } finally { random.mockRestore(); vi.useRealTimers(); }
+  });
+  it.each([{availableBicycles:-1,totalDocks:20}, {availableBicycles:21,totalDocks:20}, {availableBicycles:1.5,totalDocks:20},
+    {availableBicycles:1,totalDocks:9}, {availableBicycles:1,totalDocks:31}, {availableBicycles:1,totalDocks:20.5}])("rejects unsafe inventory %j", inventory => {
+    expect(simulatedInventorySchema.safeParse({...inventory,inventoryOrigin:"SIMULATED"}).success).toBe(false);
+  });
+  it("requires simulation provenance and inventory for new operators", () => {
+    const station = newMicromobilityStations[0];
+    expect(micromobilityStationSchema.safeParse({...station,simulatedInventory:undefined}).success).toBe(false);
+    expect(micromobilityStationSchema.safeParse({...station,simulatedInventory:{...station.simulatedInventory,inventoryOrigin:"SOURCE_VERIFIED"}}).success).toBe(false);
+  });
+  it("keeps source-backed location evidence separate from simulated inventory", () => {
+    for (const station of newMicromobilityStations.filter(s => s.dataOrigin === "SOURCE_VERIFIED")) {
+      expect(station.verificationStatus).toBe("APPROXIMATE_LOCATION");
+      expect(station.simulatedInventory?.inventoryOrigin).toBe("SIMULATED");
+    }
+    expect(micromobilitySnapshot().stations.filter(s => s.operator === "LINKBIKE").every(s => s.simulatedInventory === undefined)).toBe(true);
+  });
+  it("returns identical inventory on repeated API requests", async () => {
+    const request = new Request("http://localhost/api/micromobility/stations?operator=TRYKE");
+    expect(await (await GET(request)).json()).toEqual(await (await GET(request)).json());
+  });
+});
+
+describe("geographic distribution audit", () => {
+  it("uses a symmetric Haversine distance in metres", () => {
+    const a={latitude:0,longitude:0}, b={latitude:0,longitude:1};
+    expect(stationDistance(a,a)).toBe(0);
+    expect(stationDistance(a,b)).toBeCloseTo(111195.08, 1);
+    expect(stationDistance(a,b)).toBe(stationDistance(b,a));
+  });
+  it("has no duplicates or sub-300 metre pairs across the new operators", () => {
+    const audit=auditStationDistances(newMicromobilityStations,micromobilitySnapshot().stations);
+    expect(audit.summary.exactDuplicates).toBe(0);
+    expect(audit.summary.pairsUnder300m).toBe(0);
+    expect(audit.summary.minimumSameOperatorMetres).toBeGreaterThanOrEqual(300);
+    expect(audit.summary.minimumCrossOperatorMetres).toBeGreaterThanOrEqual(300);
+    expect(audit.summary.minimumCrossOperatorIncludingLinkBikeMetres).toBeGreaterThanOrEqual(300);
+    expect(MICROMOBILITY_SPACING_EXCEPTIONS).toEqual([]);
+  });
+  it("substantially reduces the original measured concentration", () => {
+    const after=auditStationDistances(newMicromobilityStations).summary;
+    expect(beforeAudit.summary.pairsUnder100m).toBe(32);
+    expect(after.pairsUnder100m).toBe(0); expect(after.pairsUnder200m).toBe(0);
+    expect(after.minimumCrossOperatorMetres).toBeGreaterThan(beforeAudit.summary.minimumCrossOperatorMetres * 5);
+  });
+  it.each(["HELLORIDE", "TRYKE", "BEAM"])("retains 16 %s identities and covers Klang Valley, Penang Island and the mainland", operator => {
+    const stations=newMicromobilityStations.filter(s=>s.operator===operator);
+    expect(stations.map(s=>s.id).sort()).toEqual(beforeAudit.rows.filter(s=>s.operator===operator).map(s=>s.id).sort());
+    expect(stations.filter(s=>s.state!=="Penang")).toHaveLength(11);
+    expect(stations.filter(s=>s.state==="Penang")).toHaveLength(5);
+    expect(stations.filter(s=>s.state==="Penang" && s.longitude>100.35)).toHaveLength(1);
+    expect(stations.filter(s=>s.state==="Penang" && s.longitude<100.35)).toHaveLength(4);
+    expect(stations.some(s=>s.area==="Cyberjaya")).toBe(true);
+  });
+  it("preserves both source-backed approximate points, their IDs, names and evidence", () => {
+    for (const before of beforeAudit.rows.filter(s=>s.dataOrigin==="SOURCE_VERIFIED")) {
+      const current=newMicromobilityStations.find(s=>s.id===before.id)!;
+      expect(current).toMatchObject({id:before.id,name:before.name,latitude:before.latitude,longitude:before.longitude,
+        dataOrigin:before.dataOrigin,verificationStatus:before.verificationStatus,sourceUrl:before.sourceUrl,sourceDescription:before.sourceDescription});
+    }
+  });
+  it.each([{state:"Selangor"}, {area:"Unknown locality"}, {latitude:5.7}, {longitude:100.6}, {latitude:5.4,longitude:100.34}])("rejects incorrect coverage, area or state assignment %j", patch => {
+    expect(micromobilityStationSchema.safeParse({...newMicromobilityStations[0],...patch}).success).toBe(false);
   });
 });

@@ -41,15 +41,17 @@ test("all micromobility layers, independent toggles, coverage and popup provenan
     await expect(page.locator(selector)).toHaveCount(count);
   }
   await page.getByRole("button", {name:"Zoom to HelloRide",exact:true}).click();
-  await expect(page.locator('[title="HelloRide · Armenian Street surroundings"]')).toHaveCount(1);
+  await expect(page.locator('[title="HelloRide · Penang Times Square surroundings"]')).toHaveCount(1);
   // Keyboard selection works even when the all-coverage view has dense points.
-  const synthetic = page.locator('[title="HelloRide · Armenian Street surroundings"]');
+  const synthetic = page.locator('[title="HelloRide · Penang Times Square surroundings"]');
   await synthetic.focus(); await synthetic.press("Enter");
   const popup = page.getByRole("region", { name:"HelloRide location details" });
   // section with accessible name has region semantics.
   await expect(popup).toBeVisible(); await expect(popup).toContainText("SYNTHETIC DEMONSTRATION LOCATION");
   await expect(popup).toContainText("DEMONSTRATION_ONLY"); await expect(popup).toContainText("Not available");
-  await expect(popup).not.toContainText("Available bicycles");
+  await expect(popup).toContainText("Available bicycles");
+  await expect(popup).toContainText("Total docks");
+  await expect(popup).toContainText("SIMULATED INVENTORY");
   await containedPopup(page, popup);
   await page.screenshot({ path:info.outputPath("synthetic-popup.png") });
   await page.getByRole("button", {name:"Close popup",exact:true}).click();
@@ -67,6 +69,29 @@ test("all micromobility layers, independent toggles, coverage and popup provenan
   const linkbike = await request.get("/api/micromobility/linkbike");
   expect((await linkbike.json()).stations).toHaveLength(27);
   expect(errors).toEqual([]);
+});
+
+test("all new operator popups display deterministic simulated inventory like LinkBike", async ({page,request},info) => {
+  await page.goto("/");
+  await expect(page.locator(".micromobility-marker")).toHaveCount(48);
+  const data=await (await request.get("/api/micromobility/stations")).json();
+  for (const operator of ["HELLORIDE","TRYKE","BEAM"]) {
+    const station=data.stations.find((s:{operator:string;id:string})=>s.operator===operator && s.id.endsWith(operator==="TRYKE"?":millennium":":george-town"));
+    await page.getByTitle(station.name,{exact:true}).press("Enter");
+    const popup=page.locator(".micromobility-popup");
+    const inventory=popup.getByRole("definition");
+    await expect(popup.getByText("Available bicycles",{exact:true})).toBeVisible();
+    await expect(inventory.nth(0)).toHaveText(String(station.simulatedInventory.availableBicycles));
+    await expect(popup.getByText("Total docks",{exact:true})).toBeVisible();
+    await expect(inventory.nth(1)).toHaveText(String(station.simulatedInventory.totalDocks));
+    await expect(popup).toContainText("SIMULATED INVENTORY");
+    const disclaimer=popup.getByText("Available bicycles and total docks are simulated for demonstration purposes and do not represent actual operator inventory or real-time availability.",{exact:true});
+    await disclaimer.scrollIntoViewIfNeeded(); await expect(disclaimer).toBeVisible();
+    await expect(popup).toContainText(station.verificationStatus);
+    await containedPopup(page,popup);
+    await page.screenshot({path:info.outputPath(`${operator.toLowerCase()}-inventory.png`)});
+    await page.getByRole("button",{name:"Close popup",exact:true}).click(); await expect(popup).toHaveCount(0);
+  }
 });
 
 test("new data failure and retry leave LinkBike functional", async ({page}) => {

@@ -4,7 +4,7 @@ import { memo, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { divIcon } from "leaflet";
 import { LayerGroup, Marker, Pane, Popup, useMap } from "react-leaflet";
-import { MICROMOBILITY_DISCLAIMER, NEW_MICROMOBILITY_OPERATORS, OPERATOR_STYLE, locationLabel, micromobilityResponseSchema, stationCounts, type MicromobilityOperator, type MicromobilityResponse, type MicromobilityStation } from "@/lib/micromobility";
+import { MICROMOBILITY_DISCLAIMER, SIMULATED_INVENTORY_DISCLAIMER, NEW_MICROMOBILITY_OPERATORS, OPERATOR_STYLE, locationLabel, micromobilityResponseSchema, stationCounts, type MicromobilityOperator, type MicromobilityResponse, type MicromobilityStation } from "@/lib/micromobility";
 import { useOptionalBusCamera } from "./bus-camera-context";
 import "@/app/micromobility.css";
 
@@ -39,7 +39,13 @@ const StationLayer = memo(function StationLayer({ operator, stations }: { operat
           if (camera) camera.guard.run(fit); else fit();
         });
       } }}><section className="micromobility-popup" aria-label={`${style.name} location details`}>
-      <h3>{station.name}</h3><p className="micromobility-classification">{locationLabel(station)}</p>
+      <h3>{station.name}</h3>
+      {station.simulatedInventory && <div className="micromobility-inventory">
+        <dl aria-label="Simulated inventory"><dt>Available bicycles</dt><dd>{station.simulatedInventory.availableBicycles}</dd>
+          <dt>Total docks</dt><dd>{station.simulatedInventory.totalDocks}</dd></dl>
+        <p className="micromobility-classification">SIMULATED INVENTORY</p><p>{SIMULATED_INVENTORY_DISCLAIMER}</p>
+      </div>}
+      <p className="micromobility-classification">{locationLabel(station)}</p>
       <dl><dt>Operator</dt><dd>{style.name}</dd><dt>Area / state</dt><dd>{station.area} · {station.state}</dd>
         <dt>Data origin</dt><dd>{station.dataOrigin}</dd><dt>Verification</dt><dd>{station.verificationStatus}</dd>
         <dt>Operation</dt><dd>Unverified</dd><dt>Live availability</dt><dd>Not available</dd></dl>

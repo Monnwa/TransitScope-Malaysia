@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { inStationLocality } from "./micromobility-localities";
 
 export const MICROMOBILITY_OPERATORS = ["LINKBIKE", "HELLORIDE", "TRYKE", "BEAM"] as const;
 export const NEW_MICROMOBILITY_OPERATORS = ["HELLORIDE", "TRYKE", "BEAM"] as const;
@@ -10,11 +11,25 @@ export const OPERATOR_STYLE = {
   BEAM: { name: "Beam Mobility", colour: "#7e22ce", letter: "B" },
 } as const;
 export const MICROMOBILITY_DISCLAIMER = "These locations are used for demonstration and coverage visualization only. They do not confirm active operator stations, designated parking areas or real-time vehicle availability.";
+export const SIMULATED_INVENTORY_DISCLAIMER = "Available bicycles and total docks are simulated for demonstration purposes and do not represent actual operator inventory or real-time availability.";
+
+export const simulatedInventorySchema = z.object({
+  availableBicycles: z.number().int().min(0), totalDocks: z.number().int().min(10).max(30), inventoryOrigin: z.literal("SIMULATED"),
+}).refine(inventory => inventory.availableBicycles <= inventory.totalDocks, "Bicycles exceed simulated dock capacity");
+
+/** FNV-1a over the stable station ID. No clock, network, or request-time randomness. */
+export function generateInventory(stationId: string): z.infer<typeof simulatedInventorySchema> {
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < stationId.length; index++) hash = Math.imul(hash ^ stationId.charCodeAt(index), 0x01000193) >>> 0;
+  const totalDocks = 10 + hash % 21;
+  const availableBicycles = hash % 6 === 0 ? 0 : (hash >>> 8) % (totalDocks + 1);
+  return { availableBicycles, totalDocks, inventoryOrigin: "SIMULATED" };
+}
 
 export function inMicromobilityCoverage(latitude: number, longitude: number) {
   return Number.isFinite(latitude) && Number.isFinite(longitude) && (
     latitude >= 2.85 && latitude <= 3.30 && longitude >= 101.45 && longitude <= 101.85 ||
-    latitude >= 5.25 && latitude <= 5.50 && longitude >= 100.24 && longitude <= 100.36);
+    latitude >= 5.25 && latitude <= 5.50 && longitude >= 100.18 && longitude <= 100.53);
 }
 
 export const micromobilityStationSchema = z.object({
@@ -24,10 +39,13 @@ export const micromobilityStationSchema = z.object({
   dataOrigin: z.enum(["SOURCE_VERIFIED", "SYNTHETIC"]),
   verificationStatus: z.enum(["VERIFIED_LOCATION", "APPROXIMATE_LOCATION", "DEMONSTRATION_ONLY"]),
   isSimulation: z.literal(true), availableBikes: z.null(), availableDocks: z.null(), operationalStatus: z.literal("UNVERIFIED"),
+  simulatedInventory: simulatedInventorySchema.optional(),
   sourceName: z.string().optional(), sourceUrl: z.string().url().optional(), sourceDescription: z.string().optional(),
   notes: z.string().min(1),
 }).superRefine((station, context) => {
   if (!inMicromobilityCoverage(station.latitude, station.longitude)) context.addIssue({ code: "custom", message: "Outside demonstration coverage" });
+  if (!inStationLocality(station.area, station.state, station.latitude, station.longitude)) context.addIssue({ code: "custom", message: "Station does not match its named locality and state" });
+  if (station.operator !== "LINKBIKE" && !station.simulatedInventory) context.addIssue({ code: "custom", message: "New operators require explicitly simulated inventory" });
   if (station.dataOrigin === "SYNTHETIC" && station.verificationStatus !== "DEMONSTRATION_ONLY") {
     context.addIssue({ code: "custom", message: "Synthetic locations must be demonstration only" });
   }

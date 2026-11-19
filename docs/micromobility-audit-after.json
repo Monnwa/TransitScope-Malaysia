@@ -1,0 +1,1418 @@
+{
+  "stage": "after",
+  "baselineCommit": "447dc59e2c38a030a59e7a2c342d8a442e9c8e6b",
+  "units": "metres",
+  "method": "Haversine, mean Earth radius 6371008.8 m",
+  "scope": "48 new-operator stations; nearest cross-operator distances also consider the 27 unchanged LinkBike locations",
+  "summary": {
+    "stations": 48,
+    "exactDuplicates": 0,
+    "pairsUnder100m": 0,
+    "pairsUnder200m": 0,
+    "pairsUnder300m": 0,
+    "minimumSameOperatorMetres": 714.3969540842895,
+    "minimumCrossOperatorMetres": 353.6539482413787,
+    "minimumCrossOperatorIncludingLinkBikeMetres": 310.1580777692369
+  },
+  "rows": [
+    {
+      "id": "helloride:coverage:klcc",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · KLCC Park surroundings",
+      "latitude": 3.1537,
+      "longitude": 101.7124,
+      "area": "Kuala Lumpur City Centre",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 8,
+        "totalDocks": 18,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:bukit-bintang",
+        "distanceMetres": 850.9441083489055
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:klcc",
+        "distanceMetres": 630.6588942413897
+      }
+    },
+    {
+      "id": "helloride:coverage:bukit-bintang",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · Bukit Bintang pedestrian area",
+      "latitude": 3.1464,
+      "longitude": 101.7101,
+      "area": "Bukit Bintang",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 0,
+        "totalDocks": 28,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:klcc",
+        "distanceMetres": 850.9441083489055
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:bukit-bintang",
+        "distanceMetres": 377.75345904240214
+      }
+    },
+    {
+      "id": "helloride:coverage:trx",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · TRX public plaza surroundings",
+      "latitude": 3.1425,
+      "longitude": 101.7187,
+      "area": "TRX",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 1,
+        "totalDocks": 10,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:bukit-bintang",
+        "distanceMetres": 1048.7026170293163
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:trx",
+        "distanceMetres": 353.6539482413787
+      }
+    },
+    {
+      "id": "helloride:coverage:kl-sentral",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · KL Sentral forecourt surroundings",
+      "latitude": 3.1328,
+      "longitude": 101.686,
+      "area": "KL Sentral",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 0,
+        "totalDocks": 25,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:bangsar",
+        "distanceMetres": 1694.288304522005
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:kl-sentral",
+        "distanceMetres": 512.2600575041205
+      }
+    },
+    {
+      "id": "helloride:coverage:bangsar",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · Bangsar community area",
+      "latitude": 3.13,
+      "longitude": 101.671,
+      "area": "Bangsar",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 13,
+        "totalDocks": 16,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:kl-sentral",
+        "distanceMetres": 1694.288304522005
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:kl-sentral",
+        "distanceMetres": 1334.622549034184
+      }
+    },
+    {
+      "id": "helloride:coverage:pj",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · Taman Jaya park surroundings",
+      "latitude": 3.104,
+      "longitude": 101.6478,
+      "area": "Petaling Jaya",
+      "state": "Selangor",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 11,
+        "totalDocks": 21,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:sunway",
+        "distanceMetres": 3335.671602904632
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:bangsar",
+        "distanceMetres": 2041.9388196880598
+      }
+    },
+    {
+      "id": "helloride:coverage:subang",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · SS15 community surroundings",
+      "latitude": 3.0754,
+      "longitude": 101.5865,
+      "area": "Subang Jaya",
+      "state": "Selangor",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 4,
+        "totalDocks": 21,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:sunway",
+        "distanceMetres": 6170.109142885156
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:subang",
+        "distanceMetres": 1325.6100560412701
+      }
+    },
+    {
+      "id": "helloride:coverage:sunway",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · SS2 public square surroundings",
+      "latitude": 3.1185,
+      "longitude": 101.6215,
+      "area": "SS2",
+      "state": "Selangor",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 4,
+        "totalDocks": 17,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:pj",
+        "distanceMetres": 3335.671602904632
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:pj",
+        "distanceMetres": 1510.0136817432178
+      }
+    },
+    {
+      "id": "helloride:coverage:cyberjaya",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · DPulze public frontage surroundings",
+      "latitude": 2.9228,
+      "longitude": 101.6502,
+      "area": "Cyberjaya",
+      "state": "Selangor",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 23,
+        "totalDocks": 26,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:ayer8",
+        "distanceMetres": 2518.7854661619654
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:cyberjaya",
+        "distanceMetres": 934.9361811319762
+      }
+    },
+    {
+      "id": "helloride:coverage:ayer8",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · Putrajaya Sentral forecourt surroundings",
+      "latitude": 2.9316,
+      "longitude": 101.6711,
+      "area": "Putrajaya",
+      "state": "Putrajaya",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 0,
+        "totalDocks": 10,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:cyberjaya",
+        "distanceMetres": 2518.7854661619654
+      },
+      "nearestOtherOperator": {
+        "id": "tryke:coverage:ayer8",
+        "distanceMetres": 1416.8902865242137
+      }
+    },
+    {
+      "id": "helloride:coverage:millennium",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · Alamanda public entrance surroundings",
+      "latitude": 2.9389,
+      "longitude": 101.7109,
+      "area": "Putrajaya",
+      "state": "Putrajaya",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 24,
+        "totalDocks": 26,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:ayer8",
+        "distanceMetres": 4493.679681913496
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:ayer8",
+        "distanceMetres": 3063.050106005375
+      }
+    },
+    {
+      "id": "helloride:coverage:george-town",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · Penang Times Square surroundings",
+      "latitude": 5.4135,
+      "longitude": 100.325,
+      "area": "George Town",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 7,
+        "totalDocks": 21,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:gurney",
+        "distanceMetres": 2240.7132948860976
+      },
+      "nearestOtherOperator": {
+        "id": "linkbike:sim:12",
+        "distanceMetres": 610.5023178278502
+      }
+    },
+    {
+      "id": "helloride:coverage:gurney",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · Gurney Bay park surroundings",
+      "latitude": 5.4315,
+      "longitude": 100.3159,
+      "area": "Gurney Drive",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 15,
+        "totalDocks": 27,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:george-town",
+        "distanceMetres": 2240.7132948860976
+      },
+      "nearestOtherOperator": {
+        "id": "linkbike:sim:19",
+        "distanceMetres": 310.1580777692369
+      }
+    },
+    {
+      "id": "helloride:coverage:tanjung-tokong",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · Batu Ferringhi town surroundings",
+      "latitude": 5.4738,
+      "longitude": 100.2484,
+      "area": "Batu Ferringhi",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 13,
+        "totalDocks": 13,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:gurney",
+        "distanceMetres": 8828.917112481924
+      },
+      "nearestOtherOperator": {
+        "id": "tryke:coverage:tanjung-tokong",
+        "distanceMetres": 4205.31850029941
+      }
+    },
+    {
+      "id": "helloride:coverage:bayan-lepas",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · Queensbay public entrance surroundings",
+      "latitude": 5.3332,
+      "longitude": 100.3061,
+      "area": "Queensbay",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 0,
+        "totalDocks": 22,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:george-town",
+        "distanceMetres": 9170.84241156651
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:bayan-lepas",
+        "distanceMetres": 2452.6783310213305
+      }
+    },
+    {
+      "id": "helloride:coverage:esplanade",
+      "operator": "HELLORIDE",
+      "name": "HelloRide · Penang Sentral forecourt surroundings",
+      "latitude": 5.3949,
+      "longitude": 100.3663,
+      "area": "Butterworth",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 16,
+        "totalDocks": 21,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current HelloRide operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "helloride:coverage:george-town",
+        "distanceMetres": 5017.991785620272
+      },
+      "nearestOtherOperator": {
+        "id": "linkbike:sim:24",
+        "distanceMetres": 3343.3145522825607
+      }
+    },
+    {
+      "id": "tryke:coverage:klcc",
+      "operator": "TRYKE",
+      "name": "TRYKE · Titiwangsa park entrance surroundings",
+      "latitude": 3.1776,
+      "longitude": 101.7062,
+      "area": "Titiwangsa",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 1,
+        "totalDocks": 17,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:bukit-bintang",
+        "distanceMetres": 1391.5044812851363
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:klcc",
+        "distanceMetres": 2182.218673971528
+      }
+    },
+    {
+      "id": "tryke:coverage:bukit-bintang",
+      "operator": "TRYKE",
+      "name": "TRYKE · Chow Kit public-area surroundings",
+      "latitude": 3.1675,
+      "longitude": 101.6988,
+      "area": "Chow Kit",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 4,
+        "totalDocks": 16,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:klcc",
+        "distanceMetres": 1391.5044812851363
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:klcc",
+        "distanceMetres": 1850.152942736308
+      }
+    },
+    {
+      "id": "tryke:coverage:trx",
+      "operator": "TRYKE",
+      "name": "TRYKE · Merdeka Square surroundings",
+      "latitude": 3.1477,
+      "longitude": 101.6935,
+      "area": "Merdeka Square",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 8,
+        "totalDocks": 23,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:bukit-bintang",
+        "distanceMetres": 2278.942483001293
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:bukit-bintang",
+        "distanceMetres": 1528.6430784328995
+      }
+    },
+    {
+      "id": "tryke:coverage:kl-sentral",
+      "operator": "TRYKE",
+      "name": "TRYKE · Mid Valley forecourt surroundings",
+      "latitude": 3.1178,
+      "longitude": 101.6776,
+      "area": "Mid Valley",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 10,
+        "totalDocks": 16,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:trx",
+        "distanceMetres": 3764.3516747688764
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:kl-sentral",
+        "distanceMetres": 1412.3238232469944
+      }
+    },
+    {
+      "id": "tryke:coverage:bangsar",
+      "operator": "TRYKE",
+      "name": "TRYKE · Mont Kiara public-area surroundings",
+      "latitude": 3.1659,
+      "longitude": 101.6529,
+      "area": "Mont Kiara",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 4,
+        "totalDocks": 11,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:pj",
+        "distanceMetres": 4817.419506481205
+      },
+      "nearestOtherOperator": {
+        "id": "helloride:coverage:bangsar",
+        "distanceMetres": 4469.201336352129
+      }
+    },
+    {
+      "id": "tryke:coverage:pj",
+      "operator": "TRYKE",
+      "name": "TRYKE · Damansara Uptown public-area surroundings",
+      "latitude": 3.1346,
+      "longitude": 101.6229,
+      "area": "Damansara Utama",
+      "state": "Selangor",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 0,
+        "totalDocks": 10,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:bangsar",
+        "distanceMetres": 4817.419506481205
+      },
+      "nearestOtherOperator": {
+        "id": "helloride:coverage:sunway",
+        "distanceMetres": 1796.9763824635463
+      }
+    },
+    {
+      "id": "tryke:coverage:subang",
+      "operator": "TRYKE",
+      "name": "TRYKE · Shah Alam civic square surroundings",
+      "latitude": 3.0724,
+      "longitude": 101.5183,
+      "area": "Shah Alam",
+      "state": "Selangor",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 10,
+        "totalDocks": 24,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:sunway",
+        "distanceMetres": 9872.254617284134
+      },
+      "nearestOtherOperator": {
+        "id": "helloride:coverage:subang",
+        "distanceMetres": 7579.937262617813
+      }
+    },
+    {
+      "id": "tryke:coverage:sunway",
+      "operator": "TRYKE",
+      "name": "TRYKE · Sunway public access surroundings",
+      "latitude": 3.0738,
+      "longitude": 101.6072,
+      "area": "Sunway",
+      "state": "Selangor",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 6,
+        "totalDocks": 10,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:pj",
+        "distanceMetres": 6981.782413817041
+      },
+      "nearestOtherOperator": {
+        "id": "helloride:coverage:subang",
+        "distanceMetres": 2305.3003739134797
+      }
+    },
+    {
+      "id": "tryke:coverage:cyberjaya",
+      "operator": "TRYKE",
+      "name": "TRYKE · Tamarind Square surroundings",
+      "latitude": 2.9186,
+      "longitude": 101.6367,
+      "area": "Cyberjaya",
+      "state": "Selangor",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 11,
+        "totalDocks": 12,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:ayer8",
+        "distanceMetres": 4265.524936735304
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:cyberjaya",
+        "distanceMetres": 1062.5535587694171
+      }
+    },
+    {
+      "id": "tryke:coverage:ayer8",
+      "operator": "TRYKE",
+      "name": "TRYKE · Ayer@8 promenade surroundings",
+      "latitude": 2.9195,
+      "longitude": 101.6751,
+      "area": "Putrajaya",
+      "state": "Putrajaya",
+      "dataOrigin": "SOURCE_VERIFIED",
+      "verificationStatus": "APPROXIMATE_LOCATION",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 9,
+        "totalDocks": 25,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "sourceName": "Perbadanan Putrajaya · Smart Putrajaya",
+      "sourceUrl": "https://smart.putrajaya.my/en/initiatives/tryke-micromobility/",
+      "sourceDescription": "The authority names Ayer@8 in Phase 1 as a TRYKE virtual parking station. Reviewed 19 November 2026. The page does not publish exact parking coordinates or live status.",
+      "notes": "Source-backed named location; representative public-area position only. Exact parking position and current operation are unverified.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:millennium",
+        "distanceMetres": 714.3969540842895
+      },
+      "nearestOtherOperator": {
+        "id": "helloride:coverage:ayer8",
+        "distanceMetres": 1416.8902865242137
+      }
+    },
+    {
+      "id": "tryke:coverage:millennium",
+      "operator": "TRYKE",
+      "name": "TRYKE · Millennium Monument surroundings",
+      "latitude": 2.9208,
+      "longitude": 101.6814,
+      "area": "Putrajaya",
+      "state": "Putrajaya",
+      "dataOrigin": "SOURCE_VERIFIED",
+      "verificationStatus": "APPROXIMATE_LOCATION",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 1,
+        "totalDocks": 15,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "sourceName": "Perbadanan Putrajaya · Smart Putrajaya",
+      "sourceUrl": "https://smart.putrajaya.my/en/initiatives/tryke-micromobility/",
+      "sourceDescription": "The authority names Millennium Monument in Phase 2 as a TRYKE virtual parking station. Reviewed 19 November 2026. The page does not publish exact parking coordinates or live status.",
+      "notes": "Source-backed named location; representative public-area position only. Exact parking position and current operation are unverified.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:ayer8",
+        "distanceMetres": 714.3969540842895
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:ayer8",
+        "distanceMetres": 903.7080639007914
+      }
+    },
+    {
+      "id": "tryke:coverage:george-town",
+      "operator": "TRYKE",
+      "name": "TRYKE · Karpal Singh Drive promenade surroundings",
+      "latitude": 5.3979,
+      "longitude": 100.329,
+      "area": "Karpal Singh Drive",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 5,
+        "totalDocks": 14,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:gurney",
+        "distanceMetres": 5280.320708632628
+      },
+      "nearestOtherOperator": {
+        "id": "linkbike:sim:15",
+        "distanceMetres": 910.3577595442202
+      }
+    },
+    {
+      "id": "tryke:coverage:gurney",
+      "operator": "TRYKE",
+      "name": "TRYKE · Youth Park public entrance surroundings",
+      "latitude": 5.4319,
+      "longitude": 100.2957,
+      "area": "Youth Park",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 6,
+        "totalDocks": 18,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:tanjung-tokong",
+        "distanceMetres": 3796.1455552403436
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:gurney",
+        "distanceMetres": 973.5240875597154
+      }
+    },
+    {
+      "id": "tryke:coverage:tanjung-tokong",
+      "operator": "TRYKE",
+      "name": "TRYKE · Tanjung Bungah market surroundings",
+      "latitude": 5.4644,
+      "longitude": 100.2852,
+      "area": "Tanjung Bungah",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 0,
+        "totalDocks": 13,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:gurney",
+        "distanceMetres": 3796.1455552403436
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:gurney",
+        "distanceMetres": 2863.8860963439415
+      }
+    },
+    {
+      "id": "tryke:coverage:bayan-lepas",
+      "operator": "TRYKE",
+      "name": "TRYKE · SPICE forecourt surroundings",
+      "latitude": 5.3291,
+      "longitude": 100.2796,
+      "area": "Bayan Lepas",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 13,
+        "totalDocks": 13,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:george-town",
+        "distanceMetres": 9404.025895780103
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:bayan-lepas",
+        "distanceMetres": 840.5296095057978
+      }
+    },
+    {
+      "id": "tryke:coverage:esplanade",
+      "operator": "TRYKE",
+      "name": "TRYKE · Bukit Mertajam town square surroundings",
+      "latitude": 5.3633,
+      "longitude": 100.4618,
+      "area": "Bukit Mertajam",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 7,
+        "totalDocks": 13,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current TRYKE operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "tryke:coverage:george-town",
+        "distanceMetres": 15196.721556517385
+      },
+      "nearestOtherOperator": {
+        "id": "beam:coverage:esplanade",
+        "distanceMetres": 8058.052955263748
+      }
+    },
+    {
+      "id": "beam:coverage:klcc",
+      "operator": "BEAM",
+      "name": "Beam Mobility · Avenue K public entrance surroundings",
+      "latitude": 3.1593,
+      "longitude": 101.7133,
+      "area": "Kuala Lumpur City Centre",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 2,
+        "totalDocks": 11,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:bukit-bintang",
+        "distanceMetres": 1737.136191279531
+      },
+      "nearestOtherOperator": {
+        "id": "helloride:coverage:klcc",
+        "distanceMetres": 630.6588942413897
+      }
+    },
+    {
+      "id": "beam:coverage:bukit-bintang",
+      "operator": "BEAM",
+      "name": "Beam Mobility · Jalan Alor public-area surroundings",
+      "latitude": 3.145,
+      "longitude": 101.707,
+      "area": "Bukit Bintang",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 29,
+        "totalDocks": 29,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:trx",
+        "distanceMetres": 1182.1180601197389
+      },
+      "nearestOtherOperator": {
+        "id": "helloride:coverage:bukit-bintang",
+        "distanceMetres": 377.75345904240214
+      }
+    },
+    {
+      "id": "beam:coverage:trx",
+      "operator": "BEAM",
+      "name": "Beam Mobility · TRX southern plaza surroundings",
+      "latitude": 3.1402,
+      "longitude": 101.7165,
+      "area": "TRX",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 0,
+        "totalDocks": 25,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:bukit-bintang",
+        "distanceMetres": 1182.1180601197389
+      },
+      "nearestOtherOperator": {
+        "id": "helloride:coverage:trx",
+        "distanceMetres": 353.6539482413787
+      }
+    },
+    {
+      "id": "beam:coverage:kl-sentral",
+      "operator": "BEAM",
+      "name": "Beam Mobility · Brickfields Little India surroundings",
+      "latitude": 3.1293,
+      "longitude": 101.683,
+      "area": "Brickfields",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 9,
+        "totalDocks": 30,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:bangsar",
+        "distanceMetres": 2892.098877993296
+      },
+      "nearestOtherOperator": {
+        "id": "helloride:coverage:kl-sentral",
+        "distanceMetres": 512.2600575041205
+      }
+    },
+    {
+      "id": "beam:coverage:bangsar",
+      "operator": "BEAM",
+      "name": "Beam Mobility · Bangsar South forecourt surroundings",
+      "latitude": 3.1105,
+      "longitude": 101.665,
+      "area": "Bangsar South",
+      "state": "Kuala Lumpur",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 9,
+        "totalDocks": 12,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:kl-sentral",
+        "distanceMetres": 2892.098877993296
+      },
+      "nearestOtherOperator": {
+        "id": "tryke:coverage:kl-sentral",
+        "distanceMetres": 1617.4258379500982
+      }
+    },
+    {
+      "id": "beam:coverage:pj",
+      "operator": "BEAM",
+      "name": "Beam Mobility · Jaya One public-area surroundings",
+      "latitude": 3.1185,
+      "longitude": 101.6351,
+      "area": "Petaling Jaya",
+      "state": "Selangor",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 0,
+        "totalDocks": 19,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:bangsar",
+        "distanceMetres": 3436.9371484010653
+      },
+      "nearestOtherOperator": {
+        "id": "helloride:coverage:sunway",
+        "distanceMetres": 1510.0136817432178
+      }
+    },
+    {
+      "id": "beam:coverage:subang",
+      "operator": "BEAM",
+      "name": "Beam Mobility · SS18 community surroundings",
+      "latitude": 3.0636,
+      "longitude": 101.5882,
+      "area": "Subang Jaya",
+      "state": "Selangor",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 0,
+        "totalDocks": 13,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:sunway",
+        "distanceMetres": 4040.0174180911995
+      },
+      "nearestOtherOperator": {
+        "id": "helloride:coverage:subang",
+        "distanceMetres": 1325.6100560412701
+      }
+    },
+    {
+      "id": "beam:coverage:sunway",
+      "operator": "BEAM",
+      "name": "Beam Mobility · Puchong Jaya public frontage surroundings",
+      "latitude": 3.0441,
+      "longitude": 101.6189,
+      "area": "Puchong",
+      "state": "Selangor",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 6,
+        "totalDocks": 30,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:subang",
+        "distanceMetres": 4040.0174180911995
+      },
+      "nearestOtherOperator": {
+        "id": "tryke:coverage:sunway",
+        "distanceMetres": 3548.8309775368975
+      }
+    },
+    {
+      "id": "beam:coverage:cyberjaya",
+      "operator": "BEAM",
+      "name": "Beam Mobility · MMU public entrance surroundings",
+      "latitude": 2.9262,
+      "longitude": 101.6425,
+      "area": "Cyberjaya",
+      "state": "Selangor",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 5,
+        "totalDocks": 18,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:ayer8",
+        "distanceMetres": 4800.259503070094
+      },
+      "nearestOtherOperator": {
+        "id": "helloride:coverage:cyberjaya",
+        "distanceMetres": 934.9361811319762
+      }
+    },
+    {
+      "id": "beam:coverage:ayer8",
+      "operator": "BEAM",
+      "name": "Beam Mobility · Precinct 2 public-area surroundings",
+      "latitude": 2.9277,
+      "longitude": 101.6857,
+      "area": "Putrajaya",
+      "state": "Putrajaya",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 8,
+        "totalDocks": 18,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:millennium",
+        "distanceMetres": 4274.222343609239
+      },
+      "nearestOtherOperator": {
+        "id": "tryke:coverage:millennium",
+        "distanceMetres": 903.7080639007914
+      }
+    },
+    {
+      "id": "beam:coverage:millennium",
+      "operator": "BEAM",
+      "name": "Beam Mobility · Seri Gemilang promenade surroundings",
+      "latitude": 2.8896,
+      "longitude": 101.6806,
+      "area": "Putrajaya",
+      "state": "Putrajaya",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 10,
+        "totalDocks": 11,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:ayer8",
+        "distanceMetres": 4274.222343609239
+      },
+      "nearestOtherOperator": {
+        "id": "tryke:coverage:ayer8",
+        "distanceMetres": 3380.3712721020206
+      }
+    },
+    {
+      "id": "beam:coverage:george-town",
+      "operator": "BEAM",
+      "name": "Beam Mobility · Jelutong public-area surroundings",
+      "latitude": 5.3875,
+      "longitude": 100.3123,
+      "area": "Jelutong",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 0,
+        "totalDocks": 13,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:gurney",
+        "distanceMetres": 6223.838077776234
+      },
+      "nearestOtherOperator": {
+        "id": "tryke:coverage:george-town",
+        "distanceMetres": 2180.6336140433646
+      }
+    },
+    {
+      "id": "beam:coverage:gurney",
+      "operator": "BEAM",
+      "name": "Beam Mobility · Botanic Gardens entrance surroundings",
+      "latitude": 5.4393,
+      "longitude": 100.291,
+      "area": "Botanic Gardens",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 0,
+        "totalDocks": 16,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:tanjung-tokong",
+        "distanceMetres": 3166.37935824945
+      },
+      "nearestOtherOperator": {
+        "id": "tryke:coverage:gurney",
+        "distanceMetres": 973.5240875597154
+      }
+    },
+    {
+      "id": "beam:coverage:tanjung-tokong",
+      "operator": "BEAM",
+      "name": "Beam Mobility · Straits Quay public entrance surroundings",
+      "latitude": 5.4575,
+      "longitude": 100.313,
+      "area": "Tanjung Tokong",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 3,
+        "totalDocks": 15,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:gurney",
+        "distanceMetres": 3166.37935824945
+      },
+      "nearestOtherOperator": {
+        "id": "linkbike:sim:16",
+        "distanceMetres": 2299.903643682769
+      }
+    },
+    {
+      "id": "beam:coverage:bayan-lepas",
+      "operator": "BEAM",
+      "name": "Beam Mobility · Bayan Baru community surroundings",
+      "latitude": 5.3246,
+      "longitude": 100.2857,
+      "area": "Bayan Lepas",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 1,
+        "totalDocks": 27,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:george-town",
+        "distanceMetres": 7588.8542991821905
+      },
+      "nearestOtherOperator": {
+        "id": "tryke:coverage:bayan-lepas",
+        "distanceMetres": 840.5296095057978
+      }
+    },
+    {
+      "id": "beam:coverage:esplanade",
+      "operator": "BEAM",
+      "name": "Beam Mobility · Seberang Jaya public frontage surroundings",
+      "latitude": 5.3989,
+      "longitude": 100.3984,
+      "area": "Seberang Jaya",
+      "state": "Penang",
+      "dataOrigin": "SYNTHETIC",
+      "verificationStatus": "DEMONSTRATION_ONLY",
+      "isSimulation": true,
+      "availableBikes": null,
+      "availableDocks": null,
+      "operationalStatus": "UNVERIFIED",
+      "simulatedInventory": {
+        "availableBicycles": 12,
+        "totalDocks": 26,
+        "inventoryOrigin": "SIMULATED"
+      },
+      "notes": "Synthetic demonstration location only. This point does not confirm current Beam Mobility operations or approved parking.",
+      "nearestSameOperator": {
+        "id": "beam:coverage:george-town",
+        "distanceMetres": 9615.436999644051
+      },
+      "nearestOtherOperator": {
+        "id": "helloride:coverage:esplanade",
+        "distanceMetres": 3581.266676291249
+      }
+    }
+  ],
+  "closePairs": []
+}
