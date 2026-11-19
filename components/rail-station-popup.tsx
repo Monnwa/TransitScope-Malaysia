@@ -193,7 +193,8 @@ export default function RailStationPopup({ record, selectedRecordId, searchReque
   }, [map, owner, record.id, searchContentReady]);
   useLayoutEffect(() => { reconcile.current(); }, [selectedRecordId]);
 
-  return <Popup ref={popupRef} pane="popupPane" className={"rail-station-popup-shell " + owner} autoPan={true}>
+  return <Popup ref={popupRef} pane="popupPane" className={"rail-station-popup-shell " + owner} autoPan={true}
+    closeOnClick={searchRequest?.stationId === record.id ? false : undefined}>
     <RailContent layout={layout}><strong>{record.name}</strong><br/>{record.lineNames?.join(" · ") || record.route}<br/>{SIMULATED}
       {record.interchange && <><br/>Interchange</>}
     </RailContent>

@@ -3,9 +3,11 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { divIcon } from "leaflet";
-import { LayerGroup, Marker, Pane, Popup, useMap } from "react-leaflet";
+import { LayerGroup, Marker, Pane, useMap } from "react-leaflet";
 import { MICROMOBILITY_DISCLAIMER, SIMULATED_INVENTORY_DISCLAIMER, NEW_MICROMOBILITY_OPERATORS, OPERATOR_STYLE, locationLabel, micromobilityResponseSchema, stationCounts, type MicromobilityOperator, type MicromobilityResponse, type MicromobilityStation } from "@/lib/micromobility";
 import { useOptionalBusCamera } from "./bus-camera-context";
+import SearchableStationPopup from "./searchable-station-popup";
+import { showMicromobilityMarker, type StationSearchRequest } from "@/lib/station-search";
 import "@/app/micromobility.css";
 
 // Stable icons avoid replacing marker DOM on the dashboard's one-second clock.
@@ -15,14 +17,20 @@ const icons = new Map(NEW_MICROMOBILITY_OPERATORS.flatMap(operator => (["SYNTHET
     html: `<span aria-hidden="true">${style.letter}</span>`, iconSize: [26, 26], iconAnchor: [13, 13] })] as const;
 })));
 
-const StationLayer = memo(function StationLayer({ operator, stations }: { operator: typeof NEW_MICROMOBILITY_OPERATORS[number]; stations: MicromobilityStation[] }) {
+const StationLayer = memo(function StationLayer({ operator, stations, request, onSearchClose }: {
+  operator: typeof NEW_MICROMOBILITY_OPERATORS[number]; stations: MicromobilityStation[];
+  request: StationSearchRequest | null; onSearchClose?: (request: StationSearchRequest) => void;
+}) {
   const style = OPERATOR_STYLE[operator];
   const map = useMap();
   const camera = useOptionalBusCamera();
   return <LayerGroup>{stations.map(station => <Marker key={station.id} position={[station.latitude, station.longitude]} autoPanOnFocus={false}
     title={station.name} icon={icons.get(`${operator}:${station.dataOrigin}`)}>
-    <Popup pane="popupPane" className="micromobility-popup-shell" maxWidth={240} minWidth={160} maxHeight={180} autoPan={false}
+    <SearchableStationPopup id={station.id} position={[station.latitude, station.longitude]} request={request}
+      contentSelector=".micromobility-popup" onSearchClose={onSearchClose}
+      pane="popupPane" className="micromobility-popup-shell" maxWidth={240} minWidth={160} maxHeight={180} autoPan={false}
       eventHandlers={{ add: event => {
+        if (request) return;
         camera?.dispatch({ type: "MANUAL" });
         const popup = event.target;
         requestAnimationFrame(() => {
@@ -51,12 +59,16 @@ const StationLayer = memo(function StationLayer({ operator, stations }: { operat
         <dt>Operation</dt><dd>Unverified</dd><dt>Live availability</dt><dd>Not available</dd></dl>
       {station.sourceUrl && <p><a href={station.sourceUrl} target="_blank" rel="noopener noreferrer">{station.sourceName}</a><br/>{station.sourceDescription}</p>}
       <p>{station.notes}</p><p>{MICROMOBILITY_DISCLAIMER}</p>
-    </section></Popup>
+    </section></SearchableStationPopup>
   </Marker>)}</LayerGroup>;
 });
 
-export default function MicromobilityLayer({ controlsHost, linkBikeVisible, onLinkBikeVisibilityChange }: {
+export default function MicromobilityLayer({ controlsHost, linkBikeVisible, onLinkBikeVisibilityChange, searchActive,
+  searchRequest, onSearchClose, onData }: {
   controlsHost: HTMLElement; linkBikeVisible: boolean; onLinkBikeVisibilityChange: (visible: boolean) => void;
+  searchActive: boolean; searchRequest?: StationSearchRequest | null;
+  onSearchClose?: (request: StationSearchRequest) => void;
+  onData?: (data: MicromobilityResponse) => void;
 }) {
   const map = useMap();
   const camera = useOptionalBusCamera();
@@ -74,10 +86,13 @@ export default function MicromobilityLayer({ controlsHost, linkBikeVisible, onLi
     fetch("/api/micromobility/stations", { signal: controller.signal, cache: "no-store" }).then(async response => {
       if (!response.ok) throw new Error("Unavailable");
       const result = micromobilityResponseSchema.parse(await response.json());
-      if (active) setData(result);
+      if (active) {
+        setData(result);
+        onData?.(result);
+      }
     }).catch(() => { if (active) setError(true); }).finally(() => window.clearTimeout(timeout));
     return () => { active = false; controller.abort(); window.clearTimeout(timeout); };
-  }, [attempt]);
+  }, [attempt, onData]);
 
   function zoom(stations: MicromobilityStation[]) {
     if (!stations.length) return;
@@ -96,7 +111,7 @@ export default function MicromobilityLayer({ controlsHost, linkBikeVisible, onLi
               setHidden(current => event.target.checked ? current.filter(id => id !== operator) : [...current, operator])}/>
             <i style={{ background: style.colour }}/>{style.name}: {data ? total : "…"}</label>
           <small>{data ? `${sourceBacked} source-backed · ${synthetic} synthetic` : "Loading locations…"}</small>
-          {operator !== "LINKBIKE" && <button type="button" className="secondary" disabled={!total} onClick={() => zoom(data?.stations.filter(s => s.operator === operator) ?? [])}>Zoom to {style.name}</button>}
+          {operator !== "LINKBIKE" && <button type="button" className="secondary" disabled={!total || searchActive} onClick={() => zoom(data?.stations.filter(s => s.operator === operator) ?? [])}>Zoom to {style.name}</button>}
         </div>;
       })}</div>
       <p role="status">{error ? "New operator locations unavailable. LinkBike remains independent." : data ?
@@ -106,8 +121,13 @@ export default function MicromobilityLayer({ controlsHost, linkBikeVisible, onLi
       <p>{MICROMOBILITY_DISCLAIMER}</p>
     </fieldset>, controlsHost)}
     <Pane name="micromobility-coverage" style={{ zIndex: 580 }}>
-      {layers.filter(({ operator }) => !hidden.includes(operator)).map(({ operator, stations }) =>
-        <StationLayer key={operator} operator={operator} stations={stations}/>)}
+      {layers.map(({ operator, stations }) => {
+        const request = searchRequest?.type === "MICROMOBILITY_STATION" && searchRequest.operator === operator ? searchRequest : null;
+        const visible = searchActive ? stations.filter(station => showMicromobilityMarker(
+          !hidden.includes(operator), true, station.id === request?.stationId)) : !hidden.includes(operator) ? stations : [];
+        return visible.length > 0 && <StationLayer key={operator} operator={operator} stations={visible}
+          request={request} onSearchClose={onSearchClose}/>;
+      })}
     </Pane>
   </>;
 }

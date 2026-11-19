@@ -5,8 +5,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { filterRecords, type Mode, type Record as TransitRecord, type Status } from "@/lib/transit-data";
 import { simulationSnapshot } from "@/lib/simulation";
-import { MINUTE, SIMULATED, simulationTime } from "@/lib/simulation/clock";
-import { busRoutes, railNetwork } from "@/lib/simulation/network";
+import { EPOCH, MINUTE, SIMULATED, simulationTime } from "@/lib/simulation/clock";
+import { busRoutes, busStops, railNetwork } from "@/lib/simulation/network";
+import { linkBikeSnapshot } from "@/lib/simulation/scenarios";
 import { busJourney } from "@/lib/simulation/vehicles";
 import { isBandarTasikSelatan } from "@/lib/station-operations";
 import { passengerName, resultCountLabel } from "./passenger-copy";
@@ -15,8 +16,11 @@ import UpcomingDepartures from "./upcoming-departures";
 import StationOperations from "./station-operations";
 import EstimatedTrainPanel from "./estimated-train-panel";
 import { BusCameraProvider } from "./bus-camera-context";
-import { normaliseSearchText, resolveExactStation } from "@/lib/station-search";
+import { buildStationSearchIndex, findStations, normaliseSearchText, resolveExactStation } from "@/lib/station-search";
+import { adaptLinkBikeStation, type MicromobilityResponse } from "@/lib/micromobility";
+import { busStopSearchResponseSchema, type SearchBusStop } from "@/lib/bus-stop-search";
 import useStationSearch from "./use-station-search";
+import StationSearchInput from "./station-search-input";
 
 const TransitMap = dynamic(() => import("./transit-map"), {
   ssr: false,
@@ -27,6 +31,21 @@ const colours: Record<Mode, string> = { Bus: "#2563eb", MRT: "#7c3aed", LRT: "#e
 const modes = Object.keys(colours) as Mode[];
 const statuses: Status[] = ["In service", "At stop", "Station available"];
 const formats = new Intl.DateTimeFormat("en-MY", { dateStyle: "medium", timeStyle: "medium", timeZone: "Asia/Kuala_Lumpur" });
+const linkBikeSearchStations = linkBikeSnapshot(EPOCH).stations.map(adaptLinkBikeStation);
+const localBusStops = new Map<string, SearchBusStop>();
+for (const record of busStops) {
+  const sourceId = record.stopRefs?.[0]?.split(":").at(-1);
+  if (!sourceId || !record.position || !record.routeId) continue;
+  const id = `bus-stop:rapid-bus-mrtfeeder:${sourceId}`;
+  const prior = localBusStops.get(id);
+  const route = { id: record.routeId, name: record.routeId };
+  if (prior) {
+    if (!prior.routes.some(item => item.id === route.id)) prior.routes.push(route);
+  } else {
+    localBusStops.set(id, { id, sourceId, name: record.name, position: record.position, operator: record.operator,
+      feed: "MRT Feeder Bus", aliases: [], routes: [route], simulatedPosition: true });
+  }
+}
 
 export default function Dashboard({ initialTime }: { initialTime: number }) {
   const [now, setNow] = useState(initialTime);
@@ -41,6 +60,8 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   const [alertId, setAlertId] = useState<string | null>(null);
   const [alertFilter, setAlertFilter] = useState("All");
   const [resetSignal, setResetSignal] = useState(0);
+  const [micromobility, setMicromobility] = useState<MicromobilityResponse | null>(null);
+  const [staticBus, setStaticBus] = useState<{ stops: SearchBusStop[]; unavailable: string[] } | null>(null);
 
   const refresh = () => setNow(simulationTime());
   useEffect(() => {
@@ -49,6 +70,23 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     return () => window.clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/bus-stops", { signal: controller.signal }).then(async response => {
+      const data = busStopSearchResponseSchema.parse(await response.json());
+      if (!controller.signal.aborted) setStaticBus(data);
+    }).catch(() => {
+      if (!controller.signal.aborted) setStaticBus({ stops: [], unavailable: ["bus"] });
+    });
+    return () => controller.abort();
+  }, []);
+
+  const searchIndex = useMemo(() => {
+    const stops = new Map(localBusStops);
+    for (const stop of staticBus?.stops ?? []) stops.set(stop.id, stop);
+    return buildStationSearchIndex(railNetwork, [...stops.values()], micromobility?.stations ?? linkBikeSearchStations);
+  }, [staticBus, micromobility]);
+  const stationResults = useMemo(() => findStations(searchIndex, query), [searchIndex, query]);
   const snapshot = useMemo(() => simulationSnapshot(now), [now]);
   const exactStation = useMemo(() => resolveExactStation(query, railNetwork), [query]);
   const filterQuery = exactStation?.name ?? normaliseSearchText(query);
@@ -138,8 +176,11 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
             <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length)}. Select a vehicle or stop to learn more.</p></div><button className="secondary" onClick={() => setResetSignal(signal => signal + 1)}>Fit to region</button></div>
             <div className="station-ops-quick"><button type="button" className="secondary" onClick={showHub}>Bandar Tasik Selatan status</button></div>
             <TransitMap records={results} busRouteId={busRouteId} showBusRoutes={showSimulated && (!activeModes.length || activeModes.includes("Bus"))} selected={record} onSelect={select} resetSignal={resetSignal} network={railNetwork}
-              stationSearch={stationSearch.request}
-              search={<label className="search"><span>Search vehicles, routes or stations</span><input value={query} onChange={event => { stationSearch.cancel(); setQuery(event.target.value); }} placeholder="e.g. bus number or station"/></label>}
+              stationSearch={stationSearch.request} searchActive={query.trim().length > 0} onSearchPopupClose={stationSearch.dismiss}
+              onMicromobilityData={setMicromobility}
+              search={<StationSearchInput query={query} results={stationResults} request={stationSearch.request}
+                loading={!staticBus} limited={Boolean(staticBus?.unavailable.length)}
+                onChange={value => { stationSearch.cancel(); setQuery(value); }} onSelect={stationSearch.selectEntity}/>}
               journey={journey} navigation={navigation} onLocate={() => {
                 if (!journey) return;
                 setPreview(null);

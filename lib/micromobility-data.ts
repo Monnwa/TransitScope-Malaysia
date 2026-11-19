@@ -1,6 +1,6 @@
-import { linkBikeSnapshot, type SimulatedBikeStation } from "./simulation/scenarios";
+import { linkBikeSnapshot } from "./simulation/scenarios";
 import { EPOCH } from "./simulation/clock";
-import { MICROMOBILITY_DISCLAIMER, MICROMOBILITY_OPERATORS, NEW_MICROMOBILITY_OPERATORS, OPERATOR_STYLE, generateInventory, micromobilityStationSchema, type MicromobilityResponse, type MicromobilityStation } from "./micromobility";
+import { MICROMOBILITY_DISCLAIMER, MICROMOBILITY_OPERATORS, NEW_MICROMOBILITY_OPERATORS, OPERATOR_STYLE, adaptLinkBikeStation, generateInventory, micromobilityStationSchema, type MicromobilityResponse, type MicromobilityStation } from "./micromobility";
 import { MICROMOBILITY_LOCALITIES } from "./micromobility-localities";
 
 // Hand-selected public landmark surroundings, NOT parking coordinates. Layouts
@@ -83,16 +83,7 @@ export const newMicromobilityStations: MicromobilityStation[] = NEW_MICROMOBILIT
     });
   }));
 
-// Isolated read-only adapter: preserve the existing API, original coordinates,
-// station identities, popup, and its separate simulated inventory unchanged.
-export function adaptLinkBikeStation(station: SimulatedBikeStation): MicromobilityStation {
-  return micromobilityStationSchema.parse({ id: station.station_id, operator: "LINKBIKE", name: station.station_name,
-    latitude: station.latitude, longitude: station.longitude, area: "George Town", state: "Penang",
-    dataOrigin: "SYNTHETIC", verificationStatus: "DEMONSTRATION_ONLY", isSimulation: true,
-    availableBikes: null, availableDocks: null, operationalStatus: "UNVERIFIED",
-    notes: "Existing LinkBike simulation scenario. Location is synthetic; the original LinkBike API and simulated inventory remain separate.",
-  });
-}
+export { adaptLinkBikeStation } from "./micromobility";
 
 export function micromobilitySnapshot(): MicromobilityResponse {
   const stations = [...linkBikeSnapshot(EPOCH).stations.map(adaptLinkBikeStation), ...newMicromobilityStations];

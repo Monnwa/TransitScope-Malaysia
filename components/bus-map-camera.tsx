@@ -155,7 +155,7 @@ export default function BusMapCamera(props: Props) {
     lastRequest.current = state.request;
     cancelFollow();
     if (state.command.kind === "overview") {
-      if (state.viewIntent === "bus") overview();
+      if (state.mode === "OVERVIEW" && state.viewIntent === "bus") overview();
       return;
     }
     scrollToMap();
@@ -194,15 +194,17 @@ export default function BusMapCamera(props: Props) {
     const container = map.getContainer();
     let pointerIntent = false;
     const manual = () => { cancelFollow(); cancelPopup(); dispatch({ type: "MANUAL" }); guard.run(() => map.stop()); };
-    const excluded = (target: EventTarget | null) => target instanceof Element && !!target.closest(".leaflet-popup,.leaflet-marker-icon,.leaflet-control-attribution");
+    const excluded = (target: EventTarget | null) => target instanceof Element && !!target.closest(".leaflet-popup,.leaflet-marker-icon,.leaflet-control-attribution,.map-search-host");
     const down = (event: PointerEvent) => { pointerIntent = !excluded(event.target); };
     const up = () => { pointerIntent = false; };
-    const popupOrForm = (target: EventTarget | null) => target instanceof Element && !!target.closest(".leaflet-popup,input,select,textarea");
+    const popupOrForm = (target: EventTarget | null) => target instanceof Element && !!target.closest(".leaflet-popup,.map-search-host,input,select,textarea");
     const wheel = (event: WheelEvent) => { if (event.deltaY && !popupOrForm(event.target) && map.scrollWheelZoom.enabled()) manual(); };
     const click = (event: MouseEvent) => { if (event.target instanceof Element && event.target.closest(".leaflet-control-zoom a")) manual(); };
     const doubleClick = (event: MouseEvent) => { if (!excluded(event.target)) manual(); };
     const key = (event: KeyboardEvent) => {
       if (!map.keyboard.enabled() || !leafletNavigationKey(event)) return;
+      // The search overlay handles autocomplete keys before they reach Leaflet's document listener.
+      if (event.target instanceof Element && event.target.closest(".map-search-host")) return;
       const interactive = event.target instanceof Element && event.target.closest(
         '.leaflet-popup,input,select,textarea,button,a,summary,[contenteditable]:not([contenteditable="false"]),[role="textbox"],[role="combobox"],[role="slider"],[role="spinbutton"],[role="button"],[role="menuitem"]',
       );

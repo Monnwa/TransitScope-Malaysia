@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { inStationLocality } from "./micromobility-localities";
+import type { SimulatedBikeStation } from "./simulation/scenarios";
 
 export const MICROMOBILITY_OPERATORS = ["LINKBIKE", "HELLORIDE", "TRYKE", "BEAM"] as const;
 export const NEW_MICROMOBILITY_OPERATORS = ["HELLORIDE", "TRYKE", "BEAM"] as const;
@@ -54,6 +55,15 @@ export const micromobilityStationSchema = z.object({
   }
 });
 export type MicromobilityStation = z.infer<typeof micromobilityStationSchema>;
+
+export function adaptLinkBikeStation(station: SimulatedBikeStation): MicromobilityStation {
+  return micromobilityStationSchema.parse({ id: station.station_id, operator: "LINKBIKE", name: station.station_name,
+    latitude: station.latitude, longitude: station.longitude, area: "George Town", state: "Penang",
+    dataOrigin: "SYNTHETIC", verificationStatus: "DEMONSTRATION_ONLY", isSimulation: true,
+    availableBikes: null, availableDocks: null, operationalStatus: "UNVERIFIED",
+    notes: "Existing LinkBike simulation scenario. Location is synthetic; the original LinkBike API and simulated inventory remain separate.",
+  });
+}
 
 export const micromobilityResponseSchema = z.object({
   status: z.literal("SIMULATED"), coverage: z.array(z.string()), operators: z.array(z.enum(MICROMOBILITY_OPERATORS)),

@@ -38,15 +38,92 @@
   color: var(--ink);
 }
 
+.station-search {
+  position: relative;
+}
+
+.station-search:has(.station-search-clear) input {
+  padding-right: 38px;
+}
+
+.station-search-clear {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 22px;
+}
+
+.station-search-results {
+  margin-top: 4px;
+  max-height: min(240px, 34dvh);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 2px 10px #10243e26;
+}
+
+.station-search-results [role="option"] {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  padding: 8px 10px;
+  text-align: left;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.station-search-results [role="option"]:hover,
+.station-search-results [aria-selected="true"] {
+  background: var(--blue-soft);
+}
+
+.station-search-results small,
+.station-search-results p {
+  color: var(--muted);
+}
+
+.station-search-results p {
+  padding: 8px 10px;
+}
+
+.station-search-results [data-type="RAIL_STATION"] b {
+  color: #6b21a8;
+}
+
+.station-search-results [data-type="BUS_STOP"] b {
+  color: #1d4ed8;
+}
+
+.station-search-results [data-type="MICROMOBILITY_STATION"] b {
+  color: #166534;
+}
+
 /* Keep both zoom buttons below the search at every map width. */
 .map-wrap .leaflet-top.leaflet-left {
   top: 76px;
   left: 6px;
 }
 
-/* Native popups and their zoom-control placement take priority while open. */
-.map-wrap:has(.leaflet-popup) .leaflet-top.leaflet-left {
+/* Give ordinary map popups room while keeping the active search input clear. */
+.map-wrap:has(.leaflet-popup):not(:has(.station-search-clear)) .leaflet-top.leaflet-left {
   top: 0;
+}
+
+/* A retiring Leaflet popup cannot intercept a new search result tap. */
+.map-wrap .station-search-native-popup[style*="opacity: 0;"],
+.map-wrap .station-search-native-popup[style*="opacity: 0;"] * {
+  pointer-events: none;
 }
 
 @media (max-width: 720px) {
@@ -66,7 +143,7 @@
     left: 2px;
   }
 
-  .map-wrap:has(.leaflet-popup) .leaflet-top.leaflet-left {
+  .map-wrap:has(.leaflet-popup):not(:has(.station-search-clear)) .leaflet-top.leaflet-left {
     top: 0;
   }
 }

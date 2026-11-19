@@ -12,7 +12,8 @@ async function watchDashboard(page: Page, baseURL: string) {
       // Stand in for map tiles so the smoke test works offline.
       return route.fulfill({ contentType: "image/svg+xml", body: '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"/>' });
     }
-    if (url.origin === origin && (!url.pathname.startsWith("/api/") || url.pathname === "/api/micromobility/stations")) return route.continue();
+    if (url.origin === origin && (!url.pathname.startsWith("/api/") ||
+      ["/api/micromobility/stations", "/api/bus-stops"].includes(url.pathname))) return route.continue();
     unexpectedRequests.push(url.href);
     return route.abort();
   });

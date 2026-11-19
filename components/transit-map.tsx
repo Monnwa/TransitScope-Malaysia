@@ -27,6 +27,8 @@ import PopupControlAvoidance from "./popup-control-avoidance";
 import { lightBasemap } from "@/lib/map-basemap";
 import MapSearchOverlay from "./map-search-overlay";
 import type { StationSearchRequest } from "@/lib/station-search";
+import type { MicromobilityResponse } from "@/lib/micromobility";
+import SearchableStationPopup from "./searchable-station-popup";
 import { stationRailLines } from "@/lib/rail-route-style";
 import RailRouteLayers from "./rail-route-layers";
 
@@ -35,12 +37,14 @@ const center: [number, number] = [3.142, 101.699];
 function DismissSelectionOnBackground({ dismiss }: { dismiss?: () => void }) {
   useMapEvent("click", ({ originalEvent }: L.LeafletMouseEvent) => {
     const target = originalEvent.target;
+    if (originalEvent.composedPath?.().some(node => node instanceof Element && node.classList.contains("map-search-host"))) return;
     if (target instanceof Element && !target.closest(".leaflet-interactive, .leaflet-popup, .leaflet-control")) dismiss?.();
   });
   return null;
 }
 
-export default function TransitMap({ records, busRouteId, showBusRoutes, selected, onSelect, resetSignal, network, search, stationSearch, journey, navigation, onLocate, trains, bikes, now, onRefresh }: {
+export default function TransitMap({ records, busRouteId, showBusRoutes, selected, onSelect, resetSignal, network, search, stationSearch,
+  searchActive = false, onSearchPopupClose, onMicromobilityData, journey, navigation, onLocate, trains, bikes, now, onRefresh }: {
   records: TransitRecord[];
   busRouteId: string;
   showBusRoutes: boolean;
@@ -50,6 +54,9 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
   network: RailNetwork;
   search?: ReactNode;
   stationSearch?: StationSearchRequest | null;
+  searchActive?: boolean;
+  onSearchPopupClose?: (request: StationSearchRequest) => void;
+  onMicromobilityData?: (data: MicromobilityResponse) => void;
   journey: SimulatedBusJourney | null;
   navigation: JourneyNavigation | null;
   onLocate: () => void;
@@ -66,6 +73,8 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const [linkBikeControlsHost, setLinkBikeControlsHost] = useState<HTMLDivElement | null>(null);
   const [linkBikeVisible, setLinkBikeVisible] = useState(true);
+  const railRequest = stationSearch && (!stationSearch.type || stationSearch.type === "RAIL_STATION") ? stationSearch : null;
+  const busRequest = stationSearch?.type === "BUS_STOP" ? stationSearch : null;
   useEffect(() => {
     const lines = stationLines;
     if (lines?.length) {
@@ -74,10 +83,10 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
     setRouteHighlight([]);
   }, [stationLines, selected?.id]);
   useEffect(() => {
-    if (!stationSearch) return;
-    const lines = network.stations.find(station => station.id === stationSearch.stationId)?.railLines;
+    if (!railRequest) return;
+    const lines = network.stations.find(station => station.id === railRequest.stationId)?.railLines;
     if (lines?.length) setHidden(current => current.filter(id => !lines.includes(id)));
-  }, [stationSearch, network]);
+  }, [railRequest, network]);
   useEffect(() => {
     if (!resetSignal) return;
     setHidden([]);
@@ -90,7 +99,9 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
 
   const lineById = useMemo(() => new Map(network.lines.map(line => [line.id, line])), [network.lines]);
   const toggleHighlight = useCallback((id: string) => setRouteHighlight(current => current.length === 1 && current[0] === id ? [] : [id]), []);
-  const visible = records.filter(record => !record.railLines?.length || record.railLines.some(id => !hidden.includes(id)));
+  const mapRecords = railRequest && selected?.id === railRequest.stationId && !records.some(record => record.id === selected.id)
+    ? [...records, selected] : records;
+  const visible = mapRecords.filter(record => !record.railLines?.length || record.railLines.some(id => !hidden.includes(id)));
   const visibleIds = new Set(visible.map(record => record.id));
   const visibleTrains = trains.filter(train => visibleIds.has(train.id));
   const stationsAndBuses = visible.filter(record => record.position &&
@@ -125,7 +136,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
         <BusMapCamera selected={selected} vehicleVisible={visibleIds.has(selected?.id ?? "")} selectedRouteId={busRouteId}
           enabled={showBusRoutes} resetSignal={resetSignal} journey={journey} navigation={navigation}
           controlsHost={cameraControlsHost} onLocate={onLocate}/>
-        <DismissSelectionOnBackground dismiss={selected ? () => onSelect(null) : undefined}/>
+        <DismissSelectionOnBackground dismiss={selected || stationSearch ? () => onSelect(null) : undefined}/>
         <BusRouteLayers selectedRouteId={busRouteId} emphasizedRouteId={emphasizedRouteId} enabled={showBusRoutes}/>
         <RailRouteLayers lines={network.lines} hidden={hidden} highlighted={highlighted} stationLines={stationLines}
           quietRail={quietRail} onHighlight={toggleHighlight}/>
@@ -136,6 +147,21 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
         </Pane>
         <Pane name="bus-markers" style={{ zIndex: 625 }}>
         {selectedJourney && <JourneyStopMarkers key={selectedJourney.journeyId} journey={selectedJourney} navigation={activeNavigation}/>}
+        {busRequest && <CircleMarker key={busRequest.stationId} center={busRequest.stop.position} radius={7}
+          className="bus-search-stop" pathOptions={{ color: "#fff", fillColor: "#2563eb", fillOpacity: 1, weight: 2 }}>
+          <Tooltip>{busRequest.stop.name}</Tooltip>
+          <SearchableStationPopup id={busRequest.stationId} position={busRequest.stop.position} request={busRequest}
+            contentSelector=".journey-stop-popup" onSearchClose={onSearchPopupClose} pane="popupPane"
+            className="journey-stop-popup-shell bus-search-popup" maxWidth={245} minWidth={170} maxHeight={165} autoPan={false}>
+            <div className="journey-stop-popup" aria-label="Bus stop details">
+              <strong>{busRequest.stop.name}</strong>
+              <span>Bus stop · {busRequest.stop.sourceId}</span>
+              <span>{busRequest.stop.feed}{busRequest.stop.area && ` · ${busRequest.stop.area}`}</span>
+              {busRequest.stop.routes.length > 0 && <span>Routes · {busRequest.stop.routes.map(route => route.name).join(", ")}</span>}
+              <span>{busRequest.stop.simulatedPosition ? "Simulation map position" : "Static GTFS"}</span>
+            </div>
+          </SearchableStationPopup>
+        </CircleMarker>}
         {stationsAndBuses.map(record => {
           const { position } = record;
           if (!position) return null;
@@ -147,7 +173,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
           const content = <><strong>{record.name}</strong><br/>{record.lineNames?.join(" · ") || record.route}<br/>{SIMULATED}
             {record.interchange && <><br/>Interchange</>}
           </>;
-          const popup = rail ? <RailStationPopup record={record} selectedRecordId={selected?.id} searchRequest={stationSearch}/> : <Popup pane="popupPane">{content}</Popup>;
+          const popup = rail ? <RailStationPopup record={record} selectedRecordId={selected?.id} searchRequest={railRequest}/> : <Popup pane="popupPane">{content}</Popup>;
           const stationColours = (record.railLines ?? []).flatMap(id => lineById.get(id)?.colour ?? []);
           const dimmed = record.railLines?.length && highlighted.length > 0 && !record.railLines.some(id => highlighted.includes(id));
           return <CircleMarker key={record.id} center={position} radius={quietRail ? record.interchange ? 6 : 4 : record.interchange ? 8 : 6}
@@ -160,8 +186,12 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
         <Pane name="simulated-trains" style={{ zIndex: 590 }}>
           <EstimatedTrainLayer trains={visibleTrains} selected={selected?.id} onSelect={onSelect} highlighted={highlighted}/>
         </Pane>
-        {linkBikeControlsHost && <MicromobilityLayer controlsHost={linkBikeControlsHost} linkBikeVisible={linkBikeVisible} onLinkBikeVisibilityChange={setLinkBikeVisible}/>}
-        {linkBikeControlsHost && linkBikeVisible && <LinkBikeLayer stations={bikes} records={visible} controlsHost={linkBikeControlsHost} onSelect={onSelect}/>}
+        {linkBikeControlsHost && <MicromobilityLayer controlsHost={linkBikeControlsHost} linkBikeVisible={linkBikeVisible}
+          onLinkBikeVisibilityChange={setLinkBikeVisible} searchActive={searchActive} searchRequest={stationSearch}
+          onSearchClose={onSearchPopupClose} onData={onMicromobilityData}/>}
+        {linkBikeControlsHost && <LinkBikeLayer stations={bikes} records={visible} controlsHost={linkBikeControlsHost}
+          onSelect={onSelect} layerVisible={linkBikeVisible} searchActive={searchActive} searchRequest={stationSearch}
+          onSearchClose={onSearchPopupClose}/>}
         {userPosition && <Marker position={userPosition} icon={L.divIcon({ className: "transport-icon user-icon", html: "<span></span>", iconSize: [22, 22], iconAnchor: [11, 11] })}><Popup>Your current location</Popup></Marker>}
       </MapContainer>
       <div className="map-legend" aria-label="Map legend">{showBusRoutes && <span><i className="bus-route-legend"/>{emphasizedRouteId ? "Bus route " + emphasizedRouteId : "Simulated Klang Valley buses: T401 · T402"}</span>}<span>Train lines and stations</span><span>◉ Interchange</span>
