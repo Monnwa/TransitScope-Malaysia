@@ -93,7 +93,6 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     <header>
       <div className="brand"><span className="brand-mark">TS</span><div><strong>TransitScope</strong><small>Malaysia</small></div></div>
       <label className="region">Region<select aria-label="Region"><option>Malaysia</option></select></label>
-      <label className="search"><span>Search vehicles, routes or stations</span><input value={query} onChange={event => setQuery(event.target.value)} placeholder="e.g. bus number or station"/></label>
       <div className="fresh"><b>{SIMULATED}</b><span>Updated {formats.format(now)}</span></div>
       <button className="icon-button" aria-label="Refresh transport information" onClick={refresh}>↻</button>
     </header>
@@ -128,6 +127,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
             <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length)}. Select a vehicle or stop to learn more.</p></div><button className="secondary" onClick={() => setResetSignal(signal => signal + 1)}>Fit to region</button></div>
             <div className="station-ops-quick"><button type="button" className="secondary" onClick={showHub}>Bandar Tasik Selatan status</button></div>
             <TransitMap records={results} busRouteId={busRouteId} showBusRoutes={showSimulated && (!activeModes.length || activeModes.includes("Bus"))} selected={record} onSelect={select} resetSignal={resetSignal} network={railNetwork}
+              search={<label className="search"><span>Search vehicles, routes or stations</span><input value={query} onChange={event => setQuery(event.target.value)} placeholder="e.g. bus number or station"/></label>}
               journey={journey} navigation={navigation} onLocate={() => {
                 if (!journey) return;
                 setPreview(null);

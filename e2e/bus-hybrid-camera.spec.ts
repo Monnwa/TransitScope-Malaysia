@@ -38,8 +38,13 @@ async function barePoint(map: Locator) {
     const box = element.getBoundingClientRect();
     for (let y = 70; y < Math.min(box.height - 90, innerHeight - box.top - 70); y += 20) {
       for (let x = 70; x < box.width - 40; x += 20) {
-        const hit = document.elementFromPoint(box.left + x, box.top + y);
-        if (hit?.closest(".leaflet-container") === element && !hit.closest(".leaflet-interactive,.leaflet-control,.leaflet-popup,.map-legend")) return { x: box.left + x, y: box.top + y };
+        // Chrome can retarget a touch near an input to that input. Keep the
+        // entire finger target on bare map, beyond the new search overlay.
+        const bare = [[0, 0], [-16, 0], [16, 0], [0, -16], [0, 16]].every(([dx, dy]) => {
+          const hit = document.elementFromPoint(box.left + x + dx, box.top + y + dy);
+          return hit?.closest(".leaflet-container") === element && !hit.closest(".leaflet-interactive,.leaflet-control,.leaflet-popup,.map-search,.map-legend");
+        });
+        if (bare) return { x: box.left + x, y: box.top + y };
       }
     }
     throw Error("No unobstructed map gesture target");

@@ -7,6 +7,7 @@ import { useMap } from "react-leaflet";
 import { busRouteViewport } from "@/lib/bus-map-routes";
 import { cameraAnchor, cameraArea, followDecision, leafletNavigationKey, withinCameraArea } from "@/lib/map-camera";
 import { validPoint, type GeoPoint } from "@/lib/route-projection";
+import { visibleMapArea } from "@/lib/journey-stop-selection";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import type { SimulatedBusJourney } from "@/lib/simulation/vehicles";
 import type { JourneyNavigation } from "./simulated-bus-panel";
@@ -64,9 +65,16 @@ export default function BusMapCamera(props: Props) {
   const area = useCallback(() => {
     const box = map.getContainer().getBoundingClientRect();
     const obstructions = Array.from(document.querySelectorAll(
-      "header,.bus-journey,.detail,.map-camera-bar,.map-legend,.leaflet-control-zoom,.leaflet-control-attribution",
+      "header,.bus-journey,.detail,.map-camera-bar,.map-search,.map-legend,.leaflet-control-zoom,.leaflet-control-attribution",
     )).filter(element => getComputedStyle(element).visibility !== "hidden").map(element => element.getBoundingClientRect());
-    return cameraArea(box, { width: innerWidth, height: innerHeight }, obstructions);
+    const viewport = { width: innerWidth, height: innerHeight };
+    const safe = cameraArea(box, viewport, obstructions);
+    if (safe) return safe;
+    // A compact mobile map can fit the 36px bus without the usual 16px inset.
+    const compact = visibleMapArea(box, viewport, obstructions);
+    return compact.right - compact.left >= 40 && compact.bottom - compact.top >= 40
+      ? { left: compact.left - box.left, right: compact.right - box.left,
+          top: compact.top - box.top, bottom: compact.bottom - box.top } : null;
   }, [map]);
   const scrollToMap = useCallback(() => {
     const frame = map.getContainer().closest(".map-camera-frame");
@@ -222,7 +230,8 @@ export default function BusMapCamera(props: Props) {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const box = map.getContainer().getBoundingClientRect(), sheet = document.querySelector(".bus-journey")?.getBoundingClientRect();
-        const signature = [box.x, box.y, box.width, box.height, sheet?.top, sheet?.height, innerWidth, innerHeight].join(":");
+        const popupOpen = !!map.getContainer().querySelector(".leaflet-popup");
+        const signature = [box.x, box.y, box.width, box.height, sheet?.top, sheet?.height, innerWidth, innerHeight, popupOpen].join(":");
         if (signature === previous) return;
         previous = signature;
         const { center, zoom } = stableView.current, mode = latest.current.state.mode;
@@ -243,11 +252,15 @@ export default function BusMapCamera(props: Props) {
       });
     };
     const observer = new ResizeObserver(layout);
+    const popupObserver = new MutationObserver(() => {
+      if (latest.current.state.mode === "VEHICLE_FOCUS") layout();
+    }), popupPane = map.getPane("popupPane");
+    if (popupPane) popupObserver.observe(popupPane, { childList: true });
     [map.getContainer(), props.controlsHost, ...Array.from(document.querySelectorAll(".bus-journey,.map-legend,header"))].forEach(element => { if (element) observer.observe(element); });
     window.addEventListener("resize", layout);
     window.addEventListener("scroll", layout, { passive: true });
     layout();
-    return () => { cancelAnimationFrame(frame); observer.disconnect(); window.removeEventListener("resize", layout); window.removeEventListener("scroll", layout); };
+    return () => { cancelAnimationFrame(frame); observer.disconnect(); popupObserver.disconnect(); window.removeEventListener("resize", layout); window.removeEventListener("scroll", layout); };
   }, [map, props.controlsHost, state.vehicleId, guard, overview, position, area, centerPoint, currentPopup, publish]);
 
   const queuePopup = useCallback((popup: L.Popup) => {

@@ -5,7 +5,7 @@ import "@/app/markers.css";
 import "@/app/estimated-trains.css";
 import "@/app/map-camera.css";
 import L from "leaflet";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, type ReactNode } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, Popup, TileLayer, Tooltip, useMapEvent } from "react-leaflet";
 import type { RailNetwork } from "@/lib/rail-model";
 import type { Record as TransitRecord } from "@/lib/transit-data";
@@ -24,6 +24,7 @@ import BusMapCamera from "./bus-map-camera";
 import RailStationPopup from "./rail-station-popup";
 import PopupControlAvoidance from "./popup-control-avoidance";
 import { lightBasemap } from "@/lib/map-basemap";
+import MapSearchOverlay from "./map-search-overlay";
 
 const center: [number, number] = [3.142, 101.699];
 
@@ -35,7 +36,7 @@ function DismissBusOnBackground({ dismiss }: { dismiss?: () => void }) {
   return null;
 }
 
-export default function TransitMap({ records, busRouteId, showBusRoutes, selected, onSelect, resetSignal, network, journey, navigation, onLocate, trains, bikes, now, onRefresh }: {
+export default function TransitMap({ records, busRouteId, showBusRoutes, selected, onSelect, resetSignal, network, search, journey, navigation, onLocate, trains, bikes, now, onRefresh }: {
   records: TransitRecord[];
   busRouteId: string;
   showBusRoutes: boolean;
@@ -43,6 +44,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
   onSelect: (record: TransitRecord | null) => void;
   resetSignal: number;
   network: RailNetwork;
+  search?: ReactNode;
   journey: SimulatedBusJourney | null;
   navigation: JourneyNavigation | null;
   onLocate: () => void;
@@ -107,6 +109,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
     <div className="map-camera-bar" ref={setCameraControlsHost}/>
     <div className="map-wrap" aria-label="Interactive transport map">
       <MapContainer center={center} zoom={13} scrollWheelZoom className="map">
+        {search && <MapSearchOverlay>{search}</MapSearchOverlay>}
         <TileLayer {...lightBasemap}/>
         <PopupControlAvoidance selectedRecordId={selected?.id} journeyVehicleId={selectedJourney?.vehicle.id}/>
         <BusMapCamera selected={selected} vehicleVisible={visibleIds.has(selected?.id ?? "")} selectedRouteId={busRouteId}
