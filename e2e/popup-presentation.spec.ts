@@ -206,7 +206,7 @@ test("LinkBike fit, station intent, availability popup and train markers remain 
   test.setTimeout(120_000);
   for (const width of isMobile ? [375, 390] : [1101]) {
     const { map, external } = await prepare(page, width);
-    await page.getByLabel("Show simulated train positions").check();
+    await expect(page.getByRole("checkbox", { name: "Show simulated train positions" })).toHaveCount(0);
     await expect(map.locator(".estimated-train-icon")).not.toHaveCount(0);
     const train = map.locator(".estimated-train-icon").first();
     await map.scrollIntoViewIfNeeded();
@@ -220,7 +220,7 @@ test("LinkBike fit, station intent, availability popup and train markers remain 
     await expect(trainPopup).toContainText("SIMULATED");
     await evidence(page, info, "train-" + width, trainPopup);
     await close(trainPopup);
-    await page.getByLabel("Show LinkBike stations", { exact: true }).check();
+    await expect(page.getByRole("checkbox", { name: "Show LinkBike stations" })).toHaveCount(0);
     await page.getByRole("button", { name: "Zoom to LinkBike stations", exact: true }).click(); await map.scrollIntoViewIfNeeded(); await frames(page);
     await expect(map).toHaveAttribute("data-camera-state", "FREE_EXPLORE");
     await expect(map.locator(".linkbike-marker")).not.toHaveCount(0);

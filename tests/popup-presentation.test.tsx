@@ -226,8 +226,8 @@ describe("K.5D popup presentation with actual React-Leaflet layers", () => {
     const rail = layers(map).find(layer => layer instanceof L.CircleMarker && layer.options.className === "rail-station") as L.CircleMarker;
     const popup = await open(rail, ".rail-station-popup"); standardPane(map, popup);
     expect(popup.getElement()?.querySelector(".rail-station-popup")).toHaveTextContent("SIMULATED");
-    const check = document.querySelector<HTMLInputElement>(".linkbike-controls input")!;
-    act(() => check.click()); drain();
+    expect(view.queryByRole("checkbox", { name: "Show LinkBike stations" })).toBeNull();
+    drain();
     const bike = layers(map).find(layer => layer instanceof L.Marker && String(layer.options.icon?.options.className).includes("linkbike")) as L.Marker;
     expect(bike).toBeDefined();
     act(() => { bike.openPopup(); }); drain();

@@ -32,7 +32,7 @@ export default function EstimatedTrainLayer({ trains, selected, onSelect, highli
       icon={icon(anchor.colour, members.length, active)} opacity={dimmed ? .4 : 1} zIndexOffset={active ? 1300 : 800}
       eventHandlers={{ click: () => { if (members.length === 1) onSelect(anchor); } }}>
       <Tooltip>{title} · SIMULATED</Tooltip>
-      <Popup autoPan={false} maxHeight={180} maxWidth={270}>
+      <Popup pane="popupPane" autoPan={false} maxHeight={180} maxWidth={270}>
         <div className="estimated-train-popup"><strong>SIMULATED</strong>
           {members.map(train => <button type="button" key={train.id} onClick={() => onSelect(train)}>
             {train.name}<br/>{train.lineName}<br/>Towards {train.destination}{train.nextStation && <><br/>Next {train.nextStation.name}</>}

@@ -17,17 +17,17 @@ let nextFrame: number;
 let svgDescriptor: PropertyDescriptor | undefined;
 
 function Capture() { camera = useBusCamera(); return null; }
-function Harness({ now = time, initialId = first }: { now?: number; initialId?: string | null }) {
+function Harness({ now = time, initialId = first, empty = false }: { now?: number; initialId?: string | null; empty?: boolean }) {
   const [id, setId] = useState(initialId);
   const snapshot = simulationSnapshot(now);
   const selected = snapshot.records.find(record => record.id === id);
   const journey = id?.startsWith("bus:") ? busJourney(id, now) : null;
   return <BusCameraProvider selectedVehicleId={id?.startsWith("bus:") ? id : null} selectedRecordId={id}>
     <Capture/>
-    <TransitMap records={snapshot.records} busRouteId="" showBusRoutes selected={selected}
+    <TransitMap records={empty ? [] : snapshot.records} busRouteId="" showBusRoutes selected={selected}
       onSelect={record => setId(record?.id ?? null)} resetSignal={0} network={railNetwork}
-      journey={journey ?? null} navigation={null} onLocate={() => {}} trains={snapshot.trains}
-      bikes={snapshot.linkBike.stations} now={now} onRefresh={() => {}}/>
+      journey={journey ?? null} navigation={null} onLocate={() => {}} trains={empty ? [] : snapshot.trains}
+      bikes={empty ? [] : snapshot.linkBike.stations} now={now} onRefresh={() => {}}/>
   </BusCameraProvider>;
 }
 function drain() {
@@ -89,6 +89,31 @@ afterEach(() => {
 });
 
 describe("actual React-Leaflet popup pane integration", () => {
+  it("renders trains and LinkBike stations immediately without visibility checkboxes", async () => {
+    const view = render(<Harness initialId={null}/>);
+    const map = await mounted();
+    await waitFor(() => expect(document.querySelectorAll(".linkbike-marker")).toHaveLength(27));
+    expect(document.querySelectorAll(".estimated-train-icon").length).toBeGreaterThan(0);
+    const train = layers(map).find(layer => layer instanceof L.Marker && String(layer.options.icon?.options.className).includes("estimated-train")) as L.Marker;
+    expect(train.options.pane).toBe("simulated-trains");
+    expect(train.getPopup()?.options.pane).toBe("popupPane");
+    expect(view.queryByRole("checkbox", { name: "Show simulated train positions" })).toBeNull();
+    expect(view.queryByRole("checkbox", { name: "Show LinkBike stations" })).toBeNull();
+    expect(view.getByRole("button", { name: "Refresh train positions" })).toBeVisible();
+    expect(view.getByRole("button", { name: "Zoom to LinkBike stations" })).toBeVisible();
+    expect(document.querySelector(".linkbike-controls")).toHaveTextContent("SIMULATED");
+  });
+
+  it("keeps the enabled layers honest when no train or bike data is available", async () => {
+    const view = render(<Harness initialId={null} empty/>);
+    await waitFor(() => expect(document.querySelector(".linkbike-map-status")).toHaveTextContent("0 simulated LinkBike stations"));
+    drain();
+    expect(view.getByRole("region", { name: "Simulated train positions" })).toHaveTextContent("0 simulated trains displayed");
+    expect(document.querySelectorAll(".estimated-train-icon,.linkbike-marker")).toHaveLength(0);
+    expect(view.queryByRole("button", { name: "Zoom to LinkBike stations" })).toBeNull();
+    expect(document.querySelector(".linkbike-controls")).toHaveTextContent("SIMULATED");
+  });
+
   it("binds the vehicle popup to its original marker while escaping inherited bus pane", async () => {
     render(<Harness/>); const map = await mounted(), marker = vehicle(map);
     expect(marker.options.pane).toBe("bus-markers");

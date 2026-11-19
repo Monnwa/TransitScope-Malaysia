@@ -57,8 +57,6 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
   const [hidden, setHidden] = useState<string[]>([]);
   const [highlighted, setHighlighted] = useState<string[]>([]);
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
-  const [showTrains, setShowTrains] = useState(false);
-  const [showLinkBike, setShowLinkBike] = useState(false);
   const [linkBikeControlsHost, setLinkBikeControlsHost] = useState<HTMLDivElement | null>(null);
   useEffect(() => {
     const lines = selected?.railLines;
@@ -100,10 +98,9 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
       </span>)}
       <button className="secondary" onClick={onRefresh}>Reload train lines</button>
     </fieldset>
-    <EstimatedTrainControls enabled={showTrains} onToggle={setShowTrains} now={now} count={visibleTrains.length} trains={trains} lines={network.lines} onRefresh={onRefresh}/>
-    <div className="linkbike-controls">
-      <label><input type="checkbox" checked={showLinkBike} onChange={event => setShowLinkBike(event.target.checked)}/>Show LinkBike stations</label>
-      <span>{SIMULATED}</span><div ref={setLinkBikeControlsHost}/>
+    <EstimatedTrainControls now={now} count={visibleTrains.length} trains={trains} lines={network.lines} onRefresh={onRefresh}/>
+    <div className="linkbike-controls" ref={setLinkBikeControlsHost}>
+      <span>{SIMULATED}</span>
     </div>
     <div className="map-camera-frame">
     <div className="map-camera-bar" ref={setCameraControlsHost}/>
@@ -154,8 +151,11 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
             eventHandlers={{ click: () => onSelect(record) }}><Tooltip>{record.name}</Tooltip>{popup}</CircleMarker>;
         })}
         </Pane>
-        {showTrains && <EstimatedTrainLayer trains={visibleTrains} selected={selected?.id} onSelect={onSelect} highlighted={highlighted}/>}
-        {showLinkBike && linkBikeControlsHost && <LinkBikeLayer stations={bikes} records={visible} controlsHost={linkBikeControlsHost} onSelect={onSelect}/>}
+        {/* Keep station hit targets accessible when auto-enabled trains share their coordinates. */}
+        <Pane name="simulated-trains" style={{ zIndex: 590 }}>
+          <EstimatedTrainLayer trains={visibleTrains} selected={selected?.id} onSelect={onSelect} highlighted={highlighted}/>
+        </Pane>
+        {linkBikeControlsHost && <LinkBikeLayer stations={bikes} records={visible} controlsHost={linkBikeControlsHost} onSelect={onSelect}/>}
         {userPosition && <Marker position={userPosition} icon={L.divIcon({ className: "transport-icon user-icon", html: "<span></span>", iconSize: [22, 22], iconAnchor: [11, 11] })}><Popup>Your current location</Popup></Marker>}
       </MapContainer>
       <div className="map-legend" aria-label="Map legend">{showBusRoutes && <span><i className="bus-route-legend"/>{emphasizedRouteId ? "Bus route " + emphasizedRouteId : "Simulated Klang Valley buses: T401 · T402"}</span>}<span>Train lines and stations</span><span>◉ Interchange</span>
