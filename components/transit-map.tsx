@@ -25,6 +25,7 @@ import RailStationPopup from "./rail-station-popup";
 import PopupControlAvoidance from "./popup-control-avoidance";
 import { lightBasemap } from "@/lib/map-basemap";
 import MapSearchOverlay from "./map-search-overlay";
+import type { StationSearchRequest } from "@/lib/station-search";
 
 const center: [number, number] = [3.142, 101.699];
 
@@ -36,7 +37,7 @@ function DismissBusOnBackground({ dismiss }: { dismiss?: () => void }) {
   return null;
 }
 
-export default function TransitMap({ records, busRouteId, showBusRoutes, selected, onSelect, resetSignal, network, search, journey, navigation, onLocate, trains, bikes, now, onRefresh }: {
+export default function TransitMap({ records, busRouteId, showBusRoutes, selected, onSelect, resetSignal, network, search, stationSearch, journey, navigation, onLocate, trains, bikes, now, onRefresh }: {
   records: TransitRecord[];
   busRouteId: string;
   showBusRoutes: boolean;
@@ -45,6 +46,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
   resetSignal: number;
   network: RailNetwork;
   search?: ReactNode;
+  stationSearch?: StationSearchRequest | null;
   journey: SimulatedBusJourney | null;
   navigation: JourneyNavigation | null;
   onLocate: () => void;
@@ -65,6 +67,11 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
       setHidden(current => current.filter(id => !lines.includes(id)));
     }
   }, [selected?.id]);
+  useEffect(() => {
+    if (!stationSearch) return;
+    const lines = network.stations.find(station => station.id === stationSearch.stationId)?.railLines;
+    if (lines?.length) setHidden(current => current.filter(id => !lines.includes(id)));
+  }, [stationSearch, network]);
   useEffect(() => {
     if (!resetSignal) return;
     setHidden([]);
@@ -142,7 +149,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
           const content = <><strong>{record.name}</strong><br/>{record.lineNames?.join(" · ") || record.route}<br/>{SIMULATED}
             {record.interchange && <><br/>Interchange</>}
           </>;
-          const popup = rail ? <RailStationPopup record={record} selectedRecordId={selected?.id}/> : <Popup pane="popupPane">{content}</Popup>;
+          const popup = rail ? <RailStationPopup record={record} selectedRecordId={selected?.id} searchRequest={stationSearch}/> : <Popup pane="popupPane">{content}</Popup>;
           const stationColours = (record.railLines ?? []).flatMap(id => lineById.get(id)?.colour ?? []);
           const dimmed = record.railLines?.length && highlighted.length > 0 && !record.railLines.some(id => highlighted.includes(id));
           return <CircleMarker key={record.id} center={position} radius={quietRail ? record.interchange ? 6 : 4 : record.interchange ? 8 : 6}

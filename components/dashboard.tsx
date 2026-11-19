@@ -15,6 +15,7 @@ import UpcomingDepartures from "./upcoming-departures";
 import StationOperations from "./station-operations";
 import EstimatedTrainPanel from "./estimated-train-panel";
 import { BusCameraProvider } from "./bus-camera-context";
+import { resolveStationResult, type StationSearchRequest } from "@/lib/station-search";
 
 const TransitMap = dynamic(() => import("./transit-map"), {
   ssr: false,
@@ -34,6 +35,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   const [activeStatus, setStatuses] = useState<Status[]>([]);
   const [showSimulated, setShowSimulated] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [stationSearch, setStationSearch] = useState<StationSearchRequest | null>(null);
   const [navigation, setNavigation] = useState<JourneyNavigation | null>(null);
   const [preview, setPreview] = useState<{ vehicleId: string; start: number } | null>(null);
   const [alertId, setAlertId] = useState<string | null>(null);
@@ -62,9 +64,20 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   const filteredAlerts = snapshot.alerts.filter(item => alertFilter === "All" || item.category === alertFilter || item.modes.includes(alertFilter as Mode));
 
   function select(item: TransitRecord | null) {
+    setStationSearch(null);
     setSelectedId(item?.id ?? null);
     setNavigation(null);
     setPreview(null);
+  }
+
+  function selectResult(item: TransitRecord) {
+    // Only explicit search results request station navigation; ordinary browsing keeps its camera behavior.
+    if (!query.trim()) { select(item); return; }
+    const station = resolveStationResult(item, railNetwork);
+    setSelectedId(station?.id ?? item.id);
+    setNavigation(null);
+    setPreview(null);
+    setStationSearch(current => station ? { stationId: station.id, revision: (current?.revision ?? 0) + 1 } : null);
   }
 
   function reset() {
@@ -127,7 +140,8 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
             <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length)}. Select a vehicle or stop to learn more.</p></div><button className="secondary" onClick={() => setResetSignal(signal => signal + 1)}>Fit to region</button></div>
             <div className="station-ops-quick"><button type="button" className="secondary" onClick={showHub}>Bandar Tasik Selatan status</button></div>
             <TransitMap records={results} busRouteId={busRouteId} showBusRoutes={showSimulated && (!activeModes.length || activeModes.includes("Bus"))} selected={record} onSelect={select} resetSignal={resetSignal} network={railNetwork}
-              search={<label className="search"><span>Search vehicles, routes or stations</span><input value={query} onChange={event => setQuery(event.target.value)} placeholder="e.g. bus number or station"/></label>}
+              stationSearch={stationSearch}
+              search={<label className="search"><span>Search vehicles, routes or stations</span><input value={query} onChange={event => { setQuery(event.target.value); setStationSearch(null); }} placeholder="e.g. bus number or station"/></label>}
               journey={journey} navigation={navigation} onLocate={() => {
                 if (!journey) return;
                 setPreview(null);
@@ -161,7 +175,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
             <tbody>{results.map(item => <tr key={item.id}><td><strong>{passengerName(item.name)}</strong></td>
               <td><span className="mode-dot" style={{ background: colours[item.mode] }}/> {item.mode}</td>
               <td>{item.lineNames?.join(" · ") || item.route || item.station}</td><td>{item.status}</td><td><b className="mode-badge">{SIMULATED}</b></td>
-              <td>{item.reportedAt ? formats.format(now) : "—"}</td><td><button className="link-button" onClick={() => select(item)}>View details</button></td>
+              <td>{item.reportedAt ? formats.format(now) : "—"}</td><td><button className="link-button" onClick={() => selectResult(item)}>View details</button></td>
             </tr>)}</tbody></table></div>
           {results.length === 0 && <div className="empty"><strong>No matching vehicles or stops</strong><p>Change the filters or restore defaults.</p><button className="secondary" onClick={reset}>Restore defaults</button></div>}
         </section>

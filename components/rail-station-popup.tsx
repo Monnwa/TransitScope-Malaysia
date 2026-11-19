@@ -5,6 +5,8 @@ import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { Popup, useMap } from "react-leaflet";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import { SIMULATED } from "@/lib/simulation/clock";
+import type { StationSearchRequest } from "@/lib/station-search";
+import useStationSearchNavigation from "./use-station-search-navigation";
 
 function nativeAnchor(value: unknown): value is { lat: number; lng: number } {
   return typeof value === "object" && value !== null && "lat" in value && "lng" in value &&
@@ -27,7 +29,7 @@ function RailContent({ layout, children }: { layout: React.RefObject<() => void>
   return <div className="rail-station-popup">{children}</div>;
 }
 
-export default function RailStationPopup({ record, selectedRecordId }: { record: TransitRecord; selectedRecordId?: string }) {
+export default function RailStationPopup({ record, selectedRecordId, searchRequest }: { record: TransitRecord; selectedRecordId?: string; searchRequest?: StationSearchRequest | null }) {
   const map = useMap(), popupRef = useRef<L.Popup>(null), layout = useRef<() => void>(() => {});
   const latest = useRef(selectedRecordId); latest.current = selectedRecordId;
   const reconcile = useRef<() => void>(() => {});
@@ -189,6 +191,7 @@ export default function RailStationPopup({ record, selectedRecordId }: { record:
     };
   }, [map, owner, record.id]);
   useLayoutEffect(() => { reconcile.current(); }, [selectedRecordId]);
+  useStationSearchNavigation(map, popupRef, record, searchRequest);
 
   return <Popup ref={popupRef} pane="popupPane" className={"rail-station-popup-shell " + owner} autoPan={true}>
     <RailContent layout={layout}><strong>{record.name}</strong><br/>{record.lineNames?.join(" · ") || record.route}<br/>{SIMULATED}

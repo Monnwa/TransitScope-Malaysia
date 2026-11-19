@@ -173,7 +173,7 @@ export default function BusMapCamera(props: Props) {
     const selected = props.selected;
     if (!selected) return;
     if (selected.mode === "Bus" && selected.recordKind === "vehicle") scrollToMap();
-    else if (selected.mode !== "Shared bike" && selected.position && !map.getBounds().contains(selected.position)) {
+    else if (selected.mode !== "Shared bike" && validPoint(selected.position) && !map.getBounds().contains(selected.position!)) {
       guard.run(() => map.panTo(selected.position!, { animate: false }));
     }
   }, [props.selected?.id, state.vehicleId, map, guard, scrollToMap]);
