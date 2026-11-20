@@ -23,10 +23,16 @@ test("all micromobility layers and popup provenance work without the coverage pa
   const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
   await page.goto("/");
   const panel = page.locator("#map > .panel").first();
+  const map = panel.locator(".leaflet-container");
+  const search = page.getByRole("textbox", { name: "Search vehicles, routes or stations" });
+  await expect(search).toBeVisible();
   await expect(panel.getByRole("heading", { name: "Transport map" })).toBeVisible();
   await expect(panel.getByText(/\d+ results/)).toBeVisible();
   await expect(panel.getByRole("button", { name: "Fit to region" })).toBeVisible();
-  await expect(panel.getByRole("button", { name: "Bandar Tasik Selatan status" })).toBeVisible();
+  await expect(panel.getByRole("button", { name: "Bandar Tasik Selatan status", exact: true })).toHaveCount(0);
+  await expect(panel.locator(".station-ops-quick")).toHaveCount(0);
+  await expect(panel.locator(".panel-title + .rail-map-group")).toHaveCount(1);
+  await expect(panel.getByRole("region", { name: "Simulated train positions" })).toBeVisible();
   await expect(panel.getByRole("button", { name: "Refresh train positions" })).toBeVisible();
   await expect(panel.getByText("Availability by line", { exact: true })).toBeVisible();
   await expect(panel.locator(".micromobility-coverage, .linkbike-controls, .linkbike-map-status")).toHaveCount(0);
@@ -34,16 +40,64 @@ test("all micromobility layers and popup provenance work without the coverage pa
   await expect(panel).not.toContainText(/Micromobility coverage|coverage locations|simulated LinkBike stations on the map|Dashed markers|Live vehicle availability|used for demonstration and coverage visualization/);
   await expect(page.locator(".linkbike-marker")).toHaveCount(27);
   for (const operator of ["helloride", "tryke", "beam"]) await expect(page.locator(`.micromobility-${operator}`)).toHaveCount(16);
-  await expect(page.locator(".micromobility-marker.synthetic")).toHaveCount(46);
-  await expect(page.locator(".micromobility-marker.source-backed")).toHaveCount(2);
+  const markers = map.locator(".bike-station-marker");
+  await expect(markers).toHaveCount(75);
+  const styles = await markers.evaluateAll(elements => elements.map(marker => {
+    const icon = marker.querySelector("svg[aria-hidden='true']")!;
+    const { width, height, borderRadius, borderStyle, backgroundColor } = getComputedStyle(marker);
+    const frame = marker.getBoundingClientRect();
+    const symbol = icon.getBoundingClientRect();
+    return { classes: Array.from(marker.classList), artwork: icon.innerHTML, color: backgroundColor,
+      width, height, borderRadius, borderStyle, iconWidth: symbol.width, iconHeight: symbol.height,
+      centered: Math.abs(symbol.left + symbol.right - frame.left - frame.right) < 0.1 &&
+        Math.abs(symbol.top + symbol.bottom - frame.top - frame.bottom) < 0.1 };
+  }));
+  expect(new Set(styles.map(style => style.artwork)).size).toBe(1);
+  expect(styles[0].artwork).toContain("<circle");
+  for (const [className, color] of Object.entries({
+    "linkbike-marker": "rgb(113, 63, 18)", "micromobility-helloride": "rgb(3, 105, 161)",
+    "micromobility-tryke": "rgb(194, 65, 12)", "micromobility-beam": "rgb(126, 34, 206)",
+  })) {
+    const operator = styles.filter(style => style.classes.includes(className));
+    expect(operator).not.toHaveLength(0);
+    for (const style of operator) expect(style).toMatchObject({
+      color, width: "26px", height: "26px", borderRadius: "50%", iconWidth: 16, iconHeight: 16, centered: true,
+    });
+  }
+  for (const [classification, borderStyle, count] of [["synthetic", "dashed", 46], ["source-backed", "solid", 2]] as const) {
+    const classified = styles.filter(style => style.classes.includes(classification));
+    expect(classified).toHaveLength(count);
+    expect(new Set(classified.map(style => style.borderStyle))).toEqual(new Set([borderStyle]));
+  }
   await expect(panel.locator(".rail-alignment")).toHaveCount(8);
   const controlGap = await panel.locator(".estimated-train-controls + .map-camera-frame").evaluate(frame =>
     frame.getBoundingClientRect().top - frame.previousElementSibling!.getBoundingClientRect().bottom);
   expect(controlGap).toBeLessThanOrEqual(8);
-  await expect(page.locator('[title="HelloRide · Penang Times Square surroundings"]')).toHaveCount(1);
-  // Keyboard selection works even when the all-coverage view has dense points.
-  const synthetic = page.locator('[title="HelloRide · Penang Times Square surroundings"]');
-  await synthetic.focus(); await synthetic.press("Enter");
+  await panel.screenshot({ path: info.outputPath("initial-map.png") });
+  async function zoomOutTo(target: number) {
+    const zoomOut = map.getByRole("button", { name: "Zoom out" });
+    for (let level = Number(await map.getAttribute("data-camera-zoom")); level > target; level--) {
+      await zoomOut.click();
+      await expect(map).toHaveAttribute("data-camera-zoom", String(level - 1));
+    }
+  }
+
+  async function openMarker(name: string) {
+    await search.fill(name);
+    await page.getByRole("listbox", { name: "Station search results" }).getByRole("option")
+      .filter({ has: page.getByText(name, { exact: true }) }).click();
+    await page.getByRole("button", { name: "Close popup", exact: true }).click();
+    await page.getByRole("button", { name: "Clear station search" }).click();
+    await expect(markers).toHaveCount(75);
+    const marker = map.getByTitle(name, { exact: true });
+    if (isMobile) {
+      // Bring the marker away from the legend after the search popup pans the map.
+      await zoomOutTo(15);
+      await marker.tap();
+    } else await marker.click();
+  }
+
+  await openMarker("HelloRide · Penang Times Square surroundings");
   const popup = page.getByRole("region", { name:"HelloRide location details" });
   // section with accessible name has region semantics.
   await expect(popup).toBeVisible(); await expect(popup).toContainText("SYNTHETIC DEMONSTRATION LOCATION");
@@ -55,8 +109,18 @@ test("all micromobility layers and popup provenance work without the coverage pa
   await page.screenshot({ path:info.outputPath("synthetic-popup.png") });
   await page.getByRole("button", {name:"Close popup",exact:true}).click();
   await expect(popup).toHaveCount(0);
-  const backed = page.locator('[title="TRYKE · Millennium Monument surroundings"]');
-  await backed.focus(); await backed.press("Enter");
+  if (!isMobile) {
+    await zoomOutTo(14);
+    await expect.poll(() => markers.evaluateAll(elements => {
+      const bounds = elements[0].closest(".leaflet-container")!.getBoundingClientRect();
+      return elements.filter(element => {
+        const marker = element.getBoundingClientRect();
+        return marker.left >= bounds.left && marker.right <= bounds.right && marker.top >= bounds.top && marker.bottom <= bounds.bottom;
+      }).length;
+    })).toBeGreaterThan(3);
+    await map.screenshot({ path: info.outputPath("zoomed-bike-markers.png") });
+  }
+  await openMarker("TRYKE · Millennium Monument surroundings");
   const sourcePopup = page.getByRole("region", {name:"TRYKE location details"});
   await expect(sourcePopup).toContainText("SOURCE-BACKED LOCATION · APPROXIMATE POSITION");
   await expect(sourcePopup.getByRole("link")).toHaveAttribute("href", "https://smart.putrajaya.my/en/initiatives/tryke-micromobility/");

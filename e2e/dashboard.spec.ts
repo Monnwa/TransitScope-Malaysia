@@ -114,8 +114,10 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   await expect(bus.getByText(`${lat.toFixed(5)}, ${lng.toFixed(5)}`, { exact: true })).toBeVisible();
   await bus.getByRole("button", { name: "Close bus journey" }).click();
 
-  await search.fill("");
-  await page.getByRole("button", { name: "Bandar Tasik Selatan status" }).click();
+  await expect(page.getByRole("button", { name: "Bandar Tasik Selatan status", exact: true })).toHaveCount(0);
+  await search.fill("Bandar Tasik Selatan");
+  await page.getByRole("listbox", { name: "Station search results" }).getByRole("option")
+    .filter({ has: page.getByText("Bandar Tasik Selatan", { exact: true }) }).click();
   const detail = page.getByRole("complementary", { name: "Selected transport detail" });
   await expect(detail.getByRole("heading", { name: "Station operations" })).toBeVisible();
   const board = detail.getByRole("region", { name: "Upcoming Departures" });

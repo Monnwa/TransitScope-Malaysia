@@ -4,10 +4,6 @@
   margin: 14px 0 18px;
 }
 
-.station-ops-quick {
-  margin: 0 0 9px;
-}
-
 .station-ops-heading, .station-ops-direction {
   display: flex;
   align-items: center;

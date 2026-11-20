@@ -1,20 +1,18 @@
 "use client";
 
 import { memo, useEffect, useMemo, useState } from "react";
-import { divIcon } from "leaflet";
 import { LayerGroup, Marker, Pane, useMap } from "react-leaflet";
 import { MICROMOBILITY_DISCLAIMER, SIMULATED_INVENTORY_DISCLAIMER, NEW_MICROMOBILITY_OPERATORS, OPERATOR_STYLE, locationLabel, micromobilityResponseSchema, type MicromobilityResponse, type MicromobilityStation } from "@/lib/micromobility";
 import { useOptionalBusCamera } from "./bus-camera-context";
 import SearchableStationPopup from "./searchable-station-popup";
 import { showMicromobilityMarker, type StationSearchRequest } from "@/lib/station-search";
-import "@/app/micromobility.css";
+import { bikeStationIcon } from "./bike-station-icon";
 
 // Stable icons avoid replacing marker DOM on the dashboard's one-second clock.
-const icons = new Map(NEW_MICROMOBILITY_OPERATORS.flatMap(operator => (["SYNTHETIC", "SOURCE_VERIFIED"] as const).map(origin => {
-  const style = OPERATOR_STYLE[operator];
-  return [`${operator}:${origin}`, divIcon({ className: `micromobility-marker micromobility-${operator.toLowerCase()} ${origin === "SYNTHETIC" ? "synthetic" : "source-backed"}`,
-    html: `<span aria-hidden="true">${style.letter}</span>`, iconSize: [26, 26], iconAnchor: [13, 13] })] as const;
-})));
+const icons = new Map(NEW_MICROMOBILITY_OPERATORS.flatMap(operator => (["SYNTHETIC", "SOURCE_VERIFIED"] as const).map(origin => [
+  `${operator}:${origin}`,
+  bikeStationIcon(`micromobility-marker micromobility-${operator.toLowerCase()} ${origin === "SYNTHETIC" ? "synthetic" : "source-backed"}`),
+] as const)));
 
 const StationLayer = memo(function StationLayer({ operator, stations, request, onSearchClose }: {
   operator: typeof NEW_MICROMOBILITY_OPERATORS[number]; stations: MicromobilityStation[];

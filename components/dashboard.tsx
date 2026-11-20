@@ -9,7 +9,6 @@ import { EPOCH, MINUTE, SIMULATED, simulationTime } from "@/lib/simulation/clock
 import { busRoutes, busStops, railNetwork } from "@/lib/simulation/network";
 import { linkBikeSnapshot } from "@/lib/simulation/scenarios";
 import { busJourney } from "@/lib/simulation/vehicles";
-import { isBandarTasikSelatan } from "@/lib/station-operations";
 import { passengerName, resultCountLabel } from "./passenger-copy";
 import SimulatedBusPanel, { type JourneyNavigation } from "./simulated-bus-panel";
 import UpcomingDepartures from "./upcoming-departures";
@@ -149,15 +148,6 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     setResetSignal(signal => signal + 1);
   }
 
-  function showHub() {
-    select(railNetwork.stations.find(isBandarTasikSelatan) ?? null);
-    requestAnimationFrame(() => {
-      const detail = document.getElementById("station-detail");
-      detail?.focus({ preventScroll: true });
-      detail?.scrollIntoView({ block: "nearest" });
-    });
-  }
-
   return <BusCameraProvider selectedVehicleId={selectedId?.startsWith("bus:") ? selectedId : null} selectedRecordId={selectedId}><main>
     <a className="skip" href="#content">Skip to dashboard content</a>
     <header>
@@ -195,7 +185,6 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
         <section className="two-col" id="map">
           <div className="panel">
             <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length)}. Select a vehicle or stop to learn more.</p></div><button className="secondary" onClick={() => setResetSignal(signal => signal + 1)}>Fit to region</button></div>
-            <div className="station-ops-quick"><button type="button" className="secondary" onClick={showHub}>Bandar Tasik Selatan status</button></div>
             <TransitMap records={results} busRouteId={busRouteId} showBusRoutes={showSimulated && transport.bus} selected={record} onSelect={select} resetSignal={resetSignal}
               railLines={transport.railLines} showSharedBike={transport.sharedBike}
               stationSearch={stationSearch.request} searchActive={query.trim().length > 0} onSearchPopupClose={stationSearch.dismiss}
@@ -209,7 +198,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
                 setNavigation({ journeyId: journey.currentJourneyId, action: (navigation?.action ?? 0) + 1 });
               }} trains={snapshot.trains} bikes={snapshot.linkBike.stations} now={now} onRefresh={refresh}/>
           </div>
-          <aside id="station-detail" tabIndex={-1} className="detail panel" aria-label="Selected transport detail">
+          <aside className="detail panel" aria-label="Selected transport detail">
             {journey && record ? <SimulatedBusPanel key={record.id} journey={journey} navigation={navigation} onNavigate={setNavigation}
               onPreview={setPreview} onClose={() => select(null)} onRefresh={refresh}><Details record={record}/></SimulatedBusPanel>
               : train ? <EstimatedTrainPanel train={train} now={now} onClose={() => select(null)}/>

@@ -1,14 +1,14 @@
 "use client";
 
-import { divIcon } from "leaflet";
 import { LayerGroup, Marker } from "react-leaflet";
 import { bikeRecords, type SimulatedBikeStation } from "@/lib/simulation/scenarios";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import { showMicromobilityMarker, type StationSearchRequest } from "@/lib/station-search";
 import "@/app/linkbike.css";
+import { bikeStationIcon } from "./bike-station-icon";
 import SearchableStationPopup from "./searchable-station-popup";
 
-const icon = divIcon({ className: "linkbike-marker", html: "<span aria-hidden='true'>B</span>", iconSize: [28, 28], iconAnchor: [14, 14] });
+const icon = bikeStationIcon("linkbike-marker");
 
 export default function LinkBikeLayer({ stations, records, onSelect, searchActive,
   searchRequest, onSearchClose }: {

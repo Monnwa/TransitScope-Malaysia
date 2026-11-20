@@ -1,5 +1,4 @@
-.linkbike-marker { display:grid; place-items:center; border:2px solid white; border-radius:6px; background:#713f12; color:white; font-weight:800; box-shadow:0 0 0 1px #713f12,0 2px 5px #0005; }
-.linkbike-marker:focus-visible { outline:3px solid #172554; outline-offset:3px; }
+.linkbike-marker { background:#713f12; }
 .linkbike-popup h3 { font-size:1rem; margin:0; }
 .linkbike-popup dl { display:grid; grid-template-columns:1fr 1fr; gap:.35rem .55rem; margin:0; }
 .linkbike-popup dt { font-weight:600; }
