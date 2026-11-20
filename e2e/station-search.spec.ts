@@ -51,15 +51,8 @@ test("search selects merged TRX, opens native popup, repeats and replaces select
   await page.getByRole("row").filter({ has: page.getByRole("cell", { name: "Tun Razak Exchange", exact: true }) })
     .getByRole("button", { name: "View details" }).click();
   await expect(popup(page)).toContainText("Tun Razak Exchange");
-  await page.getByRole("checkbox", { name: "Show MRT Kajang Line (MRT1)", exact: true }).uncheck();
-  await page.getByRole("checkbox", { name: "Show MRT Putrajaya Line (MRT2)", exact: true }).uncheck();
-  await expect(map.locator(".rail-station")).toHaveCount(0);
-  await expect(popup(page)).toHaveCount(0);
-  await page.getByRole("row").filter({ has: page.getByRole("cell", { name: "Tun Razak Exchange", exact: true }) })
-    .getByRole("button", { name: "View details" }).click();
   await expect(map.locator(".rail-station")).toHaveCount(1);
-  await expect(popup(page)).toHaveCount(1);
-  await expect(popup(page)).toContainText("Tun Razak Exchange");
+  await expect(map.locator(".rail-alignment")).toHaveCount(8);
   await choose(page, "Taman Midah");
   await expect(popup(page)).not.toContainText("Tun Razak Exchange");
   await search(page).fill("");

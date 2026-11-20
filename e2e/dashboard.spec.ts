@@ -23,7 +23,7 @@ async function watchDashboard(page: Page, baseURL: string) {
   };
 }
 
-test("train and LinkBike layers render by default and respect dashboard and rail filters", async ({ page, baseURL }, testInfo) => {
+test("train and LinkBike layers render by default and respect dashboard filters", async ({ page, baseURL }, testInfo) => {
   const checkDashboard = await watchDashboard(page, baseURL!);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.clock.setFixedTime(new Date("2026-11-14T04:00:00.000Z"));
@@ -36,7 +36,7 @@ test("train and LinkBike layers render by default and respect dashboard and rail
   // Bike stations are in Penang, outside the initial Klang Valley camera view.
   // Their actual marker elements must already exist without a toggle or zoom action.
   await expect(map.locator(".linkbike-marker")).toHaveCount(27);
-  await expect(page.locator(".linkbike-controls")).toContainText("SIMULATED");
+  await expect(page.getByRole("region", { name: "Micromobility coverage · SIMULATED" })).toContainText("75 coverage locations");
   await expect(page.getByRole("region", { name: "Simulated train positions" }).getByRole("status")).toContainText("simulated trains displayed");
   await page.locator(".rail-map-group").screenshot({ path: testInfo.outputPath("default-map-layers.png") });
 
@@ -44,11 +44,7 @@ test("train and LinkBike layers render by default and respect dashboard and rail
   await search.fill("Train MRT1-01");
   await expect(map.locator(".estimated-train-icon")).toHaveCount(1);
   await expect(map.locator(".linkbike-marker")).toHaveCount(0);
-  const kajang = page.getByRole("checkbox", { name: "Show MRT Kajang Line (MRT1)", exact: true });
-  await kajang.uncheck();
-  await expect(map.locator(".estimated-train-icon")).toHaveCount(0);
-  await kajang.check();
-  await expect(map.locator(".estimated-train-icon")).toHaveCount(1);
+  await expect(map.locator(".rail-alignment")).toHaveCount(8);
   await search.fill("");
   await page.getByRole("button", { name: "Shared bike", exact: true }).click();
   await expect(map.locator(".estimated-train-icon")).toHaveCount(0);
@@ -129,10 +125,7 @@ test("dashboard shares simulated data across overlays, details and filters", asy
 
   await expect(page.locator(".rail-alignment.MRT1")).toHaveAttribute("stroke", "#006B3F");
   await expect(page.locator(".rail-alignment.MRT2")).toHaveAttribute("stroke", "#F2C500");
-  const rail = page.getByRole("checkbox", { name: "Show MRT Kajang Line (MRT1)", exact: true });
-  await rail.uncheck();
-  await expect(page.locator(".rail-alignment.MRT1")).toHaveCount(0);
-  await rail.check();
+  await expect(page.locator(".rail-map-group").getByRole("checkbox")).toHaveCount(0);
   await expect(page.getByRole("checkbox", { name: "Show simulated train positions" })).toHaveCount(0);
   await expect(page.locator(".estimated-train-icon").first()).toBeAttached();
   await search.fill("Train MRT1-01");

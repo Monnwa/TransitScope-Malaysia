@@ -27,6 +27,9 @@ test('rail opacity, colours, station/search selection and non-rail regressions',
   await page.clock.setFixedTime(new Date('2026-11-17T09:41:25Z'));
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');
+  await expect(page.getByRole('group', { name: 'Train lines', exact: true })).toHaveCount(0);
+  await expect(page.locator('.rail-map-group').getByRole('checkbox')).toHaveCount(0);
+  await expect(page.locator('.rail-alignment')).toHaveCount(8);
   await expectRoutes(page);
   await expect(page.locator('.linkbike-marker')).toHaveCount(27);
   await expect(page.locator('.micromobility-marker')).toHaveCount(48);
@@ -35,11 +38,6 @@ test('rail opacity, colours, station/search selection and non-rail regressions',
   expect(busStyles).toHaveLength(2);
   for (const [id, colour] of Object.entries(colours)) {
     await expect(page.locator(`.rail-alignment.${id}`).first()).toHaveAttribute('stroke', colour);
-    const label = id === 'MONORAIL' ? 'KL Monorail' : id === 'LRT-PH' ? 'LRT Sri Petaling Line' : 'LRT Kelana Jaya Line';
-    const swatch = page.locator('.rail-filter-item').filter({ has: page.getByRole('button', { name: label, exact: true }) }).locator('i');
-    expect(await swatch.evaluate(element => element.style.background.toLowerCase())).toBe(await page.locator(`.rail-alignment.${id}`).first().evaluate(element => {
-      const probe = document.createElement('i'); probe.style.background = element.getAttribute('stroke')!; return probe.style.background.toLowerCase();
-    }));
   }
   await page.locator('.leaflet-container').scrollIntoViewIfNeeded();
   await page.screenshot({ path: info.outputPath('initial-full-opacity-colours.png') });

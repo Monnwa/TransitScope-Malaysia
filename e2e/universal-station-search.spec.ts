@@ -51,15 +51,16 @@ test("rail autocomplete suppresses all micromobility markers and highlights the 
   await expect(page.locator(".rail-station-popup")).toContainText("Tun Razak Exchange");
   await expect(map(page)).toHaveAttribute("data-station-search-id", "rail:tun-razak-exchange:MRT1");
   await expect(map(page)).toHaveAttribute("data-station-search-type", "RAIL_STATION");
-  await expect(page.locator('.line-legend[aria-pressed="true"]')).toHaveText([
-    "MRT Kajang Line (MRT1)", "MRT Putrajaya Line (MRT2)",
-  ]);
+  await expect(map(page).locator('.rail-alignment[stroke-opacity="1"]')).toHaveCount(2);
+  await expect(map(page).locator(".rail-alignment.MRT1")).toHaveAttribute("stroke-opacity", "1");
+  await expect(map(page).locator(".rail-alignment.MRT2")).toHaveAttribute("stroke-opacity", "1");
+  await expect(map(page).locator('.rail-alignment[stroke-opacity="0.18"]')).toHaveCount(6);
   await expect(markers(page)).toHaveCount(0);
   await expectReadablePopup(page, page.locator(".rail-station-popup-shell"));
   await page.screenshot({ path: info.outputPath("rail-search.png") });
   await map(page).getByRole("button", { name: "Close popup" }).click();
   await expect(markers(page)).toHaveCount(0);
-  await expect(page.locator('.line-legend[aria-pressed="true"]')).toHaveCount(0);
+  await expect(map(page).locator('.rail-alignment[stroke-opacity="1"]')).toHaveCount(8);
 });
 
 test("static bus search navigates by real stop ID and retains route details", async ({ page, isMobile }, info) => {
@@ -92,19 +93,15 @@ test("static bus search navigates by real stop ID and retains route details", as
   await expect(map(page)).toHaveAttribute("data-station-search-type", "BUS_STOP");
   await expect(map(page)).toHaveAttribute("data-station-search-id", stop!.id);
   await expectPosition(map(page).locator(".bus-search-stop"), stop!.position);
-  await expect(page.locator('.line-legend[aria-pressed="true"]')).toHaveCount(0);
+  await expect(map(page).locator('.rail-alignment[stroke-opacity="1"]')).toHaveCount(8);
   await expect(markers(page)).toHaveCount(0);
   await expectReadablePopup(page, popup);
   await page.screenshot({ path: info.outputPath("bus-stop-search.png") });
 });
 
-test("all micromobility popups open with a single marker and clearing restores operator settings", async ({ page, isMobile }, info) => {
+test("all micromobility popups open with a single marker and clearing restores all operators", async ({ page, isMobile }, info) => {
   test.setTimeout(60_000);
   const stations = await prepare(page);
-  const hidden = page.getByRole("checkbox", { name: "Show HelloRide" });
-  await hidden.uncheck();
-  const normallyVisible = stations.filter(station => station.operator !== "HELLORIDE").length;
-  await expect(markers(page)).toHaveCount(normallyVisible);
   await input(page).fill("no matching station zz");
   await expect(page.getByText("No matching stations or stops.")).toBeVisible({ timeout: 35_000 });
   await expect(markers(page)).toHaveCount(0);
@@ -144,9 +141,11 @@ test("all micromobility popups open with a single marker and clearing restores o
     element.getAttribute("data-camera-latitude"), element.getAttribute("data-camera-longitude"), element.getAttribute("data-camera-zoom"),
   ]);
   await page.getByRole("button", { name: "Clear station search" }).click();
-  await expect(markers(page)).toHaveCount(normallyVisible);
-  await expect(hidden).not.toBeChecked();
-  await expect(page.locator(".micromobility-helloride")).toHaveCount(0);
+  await expect(markers(page)).toHaveCount(stations.length);
+  await expect(map(page).locator(".linkbike-marker")).toHaveCount(27);
+  for (const operator of ["helloride", "tryke", "beam"]) {
+    await expect(map(page).locator(`.micromobility-${operator}`)).toHaveCount(16);
+  }
   expect(await map(page).evaluate(element => [
     element.getAttribute("data-camera-latitude"), element.getAttribute("data-camera-longitude"), element.getAttribute("data-camera-zoom"),
   ])).toEqual(viewport);

@@ -80,13 +80,11 @@ describe("universal station index", () => {
 
 describe("micromobility search marker visibility", () => {
   it.each([
-    [true, false, false, true],
-    [false, false, false, false],
-    [true, true, false, false],
-    [false, true, false, false],
-    [true, true, true, true],
-    [false, true, true, true],
-  ])("with layer visible=%s, search active=%s, and selected=%s, marker visible=%s", (layer, active, selected, visible) => {
-    expect(showMicromobilityMarker(layer, active, selected)).toBe(visible);
+    [false, false, true],
+    [false, true, true],
+    [true, false, false],
+    [true, true, true],
+  ])("with search active=%s and selected=%s, marker visible=%s", (active, selected, visible) => {
+    expect(showMicromobilityMarker(active, selected)).toBe(visible);
   });
 });

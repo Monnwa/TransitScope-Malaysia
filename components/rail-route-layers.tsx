@@ -8,11 +8,11 @@ import { SIMULATED } from "@/lib/simulation/clock";
 import "@/app/rail-routes.css";
 
 /** Keep path updates independent of the simulation clock and moving vehicle layers. */
-export default memo(function RailRouteLayers({ lines, hidden, highlighted, stationLines, quietRail, onHighlight }: {
-  lines: RailLine[]; hidden: string[]; highlighted: string[]; stationLines: string[];
+export default memo(function RailRouteLayers({ lines, highlighted, stationLines, quietRail, onHighlight }: {
+  lines: RailLine[]; highlighted: string[]; stationLines: string[];
   quietRail: boolean; onHighlight: (id: string) => void;
 }) {
-  return lines.filter(line => !hidden.includes(line.id)).flatMap(line => line.paths.map((path, index) => {
+  return lines.flatMap(line => line.paths.map((path, index) => {
     const active = highlighted.includes(line.id);
     const opacity = railRouteOpacity(line.id, stationLines);
     return <Fragment key={`${line.id}:${index}`}>

@@ -18,29 +18,39 @@ async function containedPopup(page: import("@playwright/test").Page, popup: impo
   });
 }
 
-test("all micromobility layers, independent toggles, coverage and popup provenance", async ({ page, request, isMobile }, info) => {
+test("all micromobility layers, coverage, zoom and popup provenance", async ({ page, request, isMobile }, info) => {
   await page.setViewportSize(isMobile ? { width:375, height:844 } : { width:1440, height:1000 });
   const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
   await page.goto("/");
-  const controls = page.getByRole("group", { name: "Micromobility coverage · SIMULATED" });
-  await expect(controls).toContainText("75 coverage locations · 2 source-backed");
-  for (const name of ["LinkBike", "HelloRide", "TRYKE", "Beam Mobility"]) await expect(page.getByRole("checkbox", { name:`Show ${name}`, exact:true })).toBeChecked();
+  const coverage = page.getByRole("region", { name: "Micromobility coverage · SIMULATED" });
+  await expect(coverage).toContainText("75 coverage locations · 2 source-backed (approximate positions) · 73 synthetic");
+  await expect(page.getByRole("group", { name: "Micromobility coverage · SIMULATED" })).toHaveCount(0);
+  await expect(page.locator(".rail-map-group").getByRole("checkbox")).toHaveCount(0);
+  await expect(coverage.locator(".micromobility-operator strong")).toHaveText([
+    "LinkBike: 27", "HelloRide: 16", "TRYKE: 16", "Beam Mobility: 16",
+  ]);
+  await expect(coverage.locator(".micromobility-operator small")).toHaveText([
+    "0 source-backed · 27 synthetic", "0 source-backed · 16 synthetic",
+    "2 source-backed · 14 synthetic", "0 source-backed · 16 synthetic",
+  ]);
   await expect(page.locator(".linkbike-marker")).toHaveCount(27);
   for (const operator of ["helloride", "tryke", "beam"]) await expect(page.locator(`.micromobility-${operator}`)).toHaveCount(16);
   await expect(page.locator(".micromobility-marker.synthetic")).toHaveCount(46);
   await expect(page.locator(".micromobility-marker.source-backed")).toHaveCount(2);
   const map = page.locator(".leaflet-container");
-  const before = await map.getAttribute("data-camera-zoom");
-  const railCount = await page.locator(".rail-station").count();
-  for (const [name, selector, count] of [["HelloRide", ".micromobility-helloride",16], ["TRYKE", ".micromobility-tryke",16], ["Beam Mobility", ".micromobility-beam",16], ["LinkBike", ".linkbike-marker",27]] as const) {
-    await page.getByRole("checkbox", {name:`Show ${name}`,exact:true}).uncheck();
-    await expect(page.locator(selector)).toHaveCount(0);
-    await expect(page.locator(".rail-station")).toHaveCount(railCount);
-    expect(await map.getAttribute("data-camera-zoom")).toBe(before);
-    await page.getByRole("checkbox", {name:`Show ${name}`,exact:true}).check();
-    await expect(page.locator(selector)).toHaveCount(count);
+  for (const [name, selector] of [
+    ["LinkBike stations", ".linkbike-marker"], ["TRYKE", ".micromobility-tryke"],
+    ["Beam Mobility", ".micromobility-beam"], ["HelloRide", ".micromobility-helloride"],
+  ]) {
+    await page.getByRole("button", { name: `Zoom to ${name}`, exact: true }).click();
+    await expect.poll(() => map.evaluate((element, markerSelector) => {
+      const bounds = element.getBoundingClientRect();
+      return Array.from(element.querySelectorAll(markerSelector)).every(marker => {
+        const box = marker.getBoundingClientRect();
+        return box.left >= bounds.left && box.right <= bounds.right && box.top >= bounds.top && box.bottom <= bounds.bottom;
+      });
+    }, selector)).toBe(true);
   }
-  await page.getByRole("button", {name:"Zoom to HelloRide",exact:true}).click();
   await expect(page.locator('[title="HelloRide · Penang Times Square surroundings"]')).toHaveCount(1);
   // Keyboard selection works even when the all-coverage view has dense points.
   const synthetic = page.locator('[title="HelloRide · Penang Times Square surroundings"]');
@@ -110,7 +120,7 @@ test("loading coverage counts does not shift the transport map", async ({page}) 
   await page.route("**/api/micromobility/stations", async route => { await pending; await route.continue(); });
   await page.goto("/");
   await expect(page.locator(".linkbike-marker")).toHaveCount(27);
-  const controls = page.getByRole("group", {name:"Micromobility coverage · SIMULATED"});
+  const controls = page.getByRole("region", {name:"Micromobility coverage · SIMULATED"});
   await expect(controls).toContainText("Loading micromobility coverage");
   const before = await controls.boundingBox();
   release();

@@ -66,30 +66,18 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
   onRefresh: () => void;
 }) {
   const [cameraControlsHost, setCameraControlsHost] = useState<HTMLDivElement | null>(null);
-  const [hidden, setHidden] = useState<string[]>([]);
   const [routeHighlight, setRouteHighlight] = useState<string[]>([]);
   const stationLines = useMemo(() => stationRailLines(selected, network.lines), [selected, network.lines]);
   const highlighted = stationLines.length ? stationLines : routeHighlight;
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const [linkBikeControlsHost, setLinkBikeControlsHost] = useState<HTMLDivElement | null>(null);
-  const [linkBikeVisible, setLinkBikeVisible] = useState(true);
   const railRequest = stationSearch && (!stationSearch.type || stationSearch.type === "RAIL_STATION") ? stationSearch : null;
   const busRequest = stationSearch?.type === "BUS_STOP" ? stationSearch : null;
   useEffect(() => {
-    const lines = stationLines;
-    if (lines?.length) {
-      setHidden(current => current.filter(id => !lines.includes(id)));
-    }
     setRouteHighlight([]);
   }, [stationLines, selected?.id]);
   useEffect(() => {
-    if (!railRequest) return;
-    const lines = network.stations.find(station => station.id === railRequest.stationId)?.railLines;
-    if (lines?.length) setHidden(current => current.filter(id => !lines.includes(id)));
-  }, [railRequest, network]);
-  useEffect(() => {
     if (!resetSignal) return;
-    setHidden([]);
     setRouteHighlight([]);
   }, [resetSignal]);
   useEffect(() => {
@@ -101,10 +89,9 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
   const toggleHighlight = useCallback((id: string) => setRouteHighlight(current => current.length === 1 && current[0] === id ? [] : [id]), []);
   const mapRecords = railRequest && selected?.id === railRequest.stationId && !records.some(record => record.id === selected.id)
     ? [...records, selected] : records;
-  const visible = mapRecords.filter(record => !record.railLines?.length || record.railLines.some(id => !hidden.includes(id)));
-  const visibleIds = new Set(visible.map(record => record.id));
+  const visibleIds = new Set(mapRecords.map(record => record.id));
   const visibleTrains = trains.filter(train => visibleIds.has(train.id));
-  const stationsAndBuses = visible.filter(record => record.position &&
+  const stationsAndBuses = mapRecords.filter(record => record.position &&
     (record.mode === "Bus" ? record.recordKind === "vehicle" : record.mode !== "Shared bike" && record.recordKind !== "vehicle"))
     .sort((a, b) => Number(!!a.railLines) - Number(!!b.railLines));
   const selectedJourney = journey && selected?.id === journey.vehicle.id && visibleIds.has(journey.vehicle.id) ? journey : null;
@@ -114,18 +101,8 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
     splitRoutePath(selectedJourney.path, selectedJourney.segment, selectedJourney.position) : null;
   const activeNavigation = navigation?.journeyId === selectedJourney?.journeyId ? navigation : null;
   return <section className="rail-map-group">
-    <fieldset className="rail-filters"><legend>Train lines</legend>
-      {network.lines.map(line => <span key={line.id} className="rail-filter-item">
-        <label><input type="checkbox" aria-label={`Show ${line.name}`} checked={!hidden.includes(line.id)} onChange={() =>
-          setHidden(current => current.includes(line.id) ? current.filter(id => id !== line.id) : [...current, line.id])}/><i style={{ background: line.colour }}/></label>
-        <button className="line-legend" aria-pressed={highlighted.includes(line.id)} onClick={() => toggleHighlight(line.id)}>{line.name}</button>
-      </span>)}
-      <button className="secondary" onClick={onRefresh}>Reload train lines</button>
-    </fieldset>
     <EstimatedTrainControls now={now} count={visibleTrains.length} trains={trains} lines={network.lines} onRefresh={onRefresh}/>
-    <div className="linkbike-controls" ref={setLinkBikeControlsHost}>
-      <span>{SIMULATED}</span>
-    </div>
+    <div className="linkbike-controls" ref={setLinkBikeControlsHost}/>
     <div className="map-camera-frame">
     <div className="map-camera-bar" ref={setCameraControlsHost}/>
     <div className="map-wrap" aria-label="Interactive transport map">
@@ -138,7 +115,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
           controlsHost={cameraControlsHost} onLocate={onLocate}/>
         <DismissSelectionOnBackground dismiss={selected || stationSearch ? () => onSelect(null) : undefined}/>
         <BusRouteLayers selectedRouteId={busRouteId} emphasizedRouteId={emphasizedRouteId} enabled={showBusRoutes}/>
-        <RailRouteLayers lines={network.lines} hidden={hidden} highlighted={highlighted} stationLines={stationLines}
+        <RailRouteLayers lines={network.lines} highlighted={highlighted} stationLines={stationLines}
           quietRail={quietRail} onHighlight={toggleHighlight}/>
         <Pane name="bus-journey-route" style={{ zIndex: 450 }}>
         {segments && selectedJourney && <MovingRoute path={selectedJourney.path} fallback={segments}/>}
@@ -186,11 +163,11 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
         <Pane name="simulated-trains" style={{ zIndex: 590 }}>
           <EstimatedTrainLayer trains={visibleTrains} selected={selected?.id} onSelect={onSelect} highlighted={highlighted}/>
         </Pane>
-        {linkBikeControlsHost && <MicromobilityLayer controlsHost={linkBikeControlsHost} linkBikeVisible={linkBikeVisible}
-          onLinkBikeVisibilityChange={setLinkBikeVisible} searchActive={searchActive} searchRequest={stationSearch}
+        {linkBikeControlsHost && <MicromobilityLayer controlsHost={linkBikeControlsHost}
+          searchActive={searchActive} searchRequest={stationSearch}
           onSearchClose={onSearchPopupClose} onData={onMicromobilityData}/>}
-        {linkBikeControlsHost && <LinkBikeLayer stations={bikes} records={visible} controlsHost={linkBikeControlsHost}
-          onSelect={onSelect} layerVisible={linkBikeVisible} searchActive={searchActive} searchRequest={stationSearch}
+        {linkBikeControlsHost && <LinkBikeLayer stations={bikes} records={mapRecords} controlsHost={linkBikeControlsHost}
+          onSelect={onSelect} searchActive={searchActive} searchRequest={stationSearch}
           onSearchClose={onSearchPopupClose}/>}
         {userPosition && <Marker position={userPosition} icon={L.divIcon({ className: "transport-icon user-icon", html: "<span></span>", iconSize: [22, 22], iconAnchor: [11, 11] })}><Popup>Your current location</Popup></Marker>}
       </MapContainer>

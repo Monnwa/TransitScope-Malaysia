@@ -101,9 +101,9 @@ export function findStations(index: IndexedStation[], query: string): SearchEnti
     .slice(0, limit).map(({ entity }) => entity);
 }
 
-/** Operator checkboxes govern background markers, while an active result can reveal its own marker. */
-export function showMicromobilityMarker(layerVisible: boolean, searchActive: boolean, selected: boolean) {
-  return searchActive ? selected : layerVisible;
+/** An active search hides ordinary markers and keeps the selected result visible. */
+export function showMicromobilityMarker(searchActive: boolean, selected: boolean) {
+  return !searchActive || selected;
 }
 export const STATION_SEARCH_COMPLETION_MS = 350;
 

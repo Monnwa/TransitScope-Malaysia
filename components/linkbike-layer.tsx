@@ -12,10 +12,10 @@ import SearchableStationPopup from "./searchable-station-popup";
 
 const icon = divIcon({ className: "linkbike-marker", html: "<span aria-hidden='true'>B</span>", iconSize: [28, 28], iconAnchor: [14, 14] });
 
-export default function LinkBikeLayer({ stations, records, controlsHost, onSelect, layerVisible, searchActive,
+export default function LinkBikeLayer({ stations, records, controlsHost, onSelect, searchActive,
   searchRequest, onSearchClose }: {
   stations: SimulatedBikeStation[]; records: TransitRecord[]; controlsHost: HTMLElement; onSelect: (record: TransitRecord) => void;
-  layerVisible: boolean; searchActive: boolean; searchRequest?: StationSearchRequest | null;
+  searchActive: boolean; searchRequest?: StationSearchRequest | null;
   onSearchClose?: (request: StationSearchRequest) => void;
 }) {
   const map = useMap();
@@ -23,12 +23,12 @@ export default function LinkBikeLayer({ stations, records, controlsHost, onSelec
   const request = searchRequest?.type === "MICROMOBILITY_STATION" && searchRequest.operator === "LINKBIKE" ? searchRequest : null;
   const visible = stations.flatMap(station => {
     const selected = station.station_id === request?.stationId;
-    if (!showMicromobilityMarker(layerVisible, searchActive, selected)) return [];
+    if (!showMicromobilityMarker(searchActive, selected)) return [];
     const record = records.find(item => item.id === station.station_id) ?? (selected ? bikeRecords([station])[0] : undefined);
     return record?.position ? [{ record, station, position: record.position }] : [];
   });
   return <LayerGroup>
-    {layerVisible && createPortal(<div className="linkbike-map-status">
+    {createPortal(<div className="linkbike-map-status">
       <span role="status">{visible.length} simulated LinkBike stations on the map</span>
       {visible.length > 0 && <button type="button" className="secondary" onClick={() => {
         camera?.dispatch({ type: "MANUAL" });

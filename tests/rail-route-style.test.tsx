@@ -63,7 +63,7 @@ describe("actual React-Leaflet rail paths", () => {
   it("updates both casing and coloured strokes without remounting paths or losing canonical colours", () => {
     const onHighlight = vi.fn();
     const tree = (selected?: TransitRecord, quietRail = true) => <MapContainer center={[3.14, 101.7]} zoom={12}>
-      <RailRouteLayers lines={railNetwork.lines} hidden={[]} highlighted={linesFor(selected)} stationLines={linesFor(selected)} quietRail={quietRail} onHighlight={onHighlight}/>
+      <RailRouteLayers lines={railNetwork.lines} highlighted={linesFor(selected)} stationLines={linesFor(selected)} quietRail={quietRail} onHighlight={onHighlight}/>
     </MapContainer>;
     const view = render(tree());
     const routes = () => [...view.container.querySelectorAll('path.rail-alignment')];

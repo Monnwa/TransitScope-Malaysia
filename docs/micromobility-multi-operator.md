@@ -26,23 +26,29 @@ Every unified record has `isSimulation: true`, `operationalStatus: UNVERIFIED`, 
 
 ## Map behavior
 
-The existing micromobility control area contains independent operator checkboxes, all enabled initially, colour swatches, data-derived counts, source/synthetic subtotals, and disclosure. LinkBike retains its original zoom action and popup. New operators have explicit zoom actions across all their locations; toggles never fit/reset the viewport. Penang points are retained outside the initial viewport. Coverage points remain an independent overlay rather than changing existing transit records, search, indicators, or dashboard filters.
+The micromobility coverage summary shows colour swatches, data-derived counts, source-backed and synthetic subtotals, and provenance. All four operators render by default. An active search hides ordinary markers and reveals the selected micromobility result. Clearing search restores normal marker visibility. LinkBike retains its original zoom action and popup. The other operators have explicit zoom actions across all their locations. Penang points are retained outside the initial viewport.
 
 HelloRide is blue, TRYKE orange, Beam purple. Synthetic markers have dashed borders; source-backed markers have solid borders and an outer ring. A dedicated pane below rail hit targets prevents new markers intercepting existing station selection. Popups stay in Leaflet's popup pane, disclose provenance and precision, link evidence, and show deterministic demonstration inventory with an explicit disclaimer. Their inventory fields use LinkBike's wording, two-column definition list and integer formatting. Popup content scrolls within a compact mobile size. The existing control-avoidance system handles their zoom controls; a one-time immediate fit through the camera guard prevents scroll recovery from cancelling popup placement. Static marker layers remain stable across simulation-clock updates. Loading placeholders reserve count/summary space so API completion cannot shift the map.
 
 ## Validation and baseline
 
-Current automated coverage includes 59 data/API/geography tests and eight desktop/mobile browser tests. Browser tests cover all defaults, operator toggles, preserved rail marker counts and camera zoom, popup classifications, source URLs, popup containment and control overlap, Penang retention, separate simulated inventory, API integration, error/retry behavior, loading-layout stability, and LinkBike regression. Existing camera/dashboard network allowlists explicitly permit the new same-origin endpoint.
+Current automated coverage includes 59 data/API/geography tests and eight desktop/mobile browser tests. Browser tests cover default coverage for every operator, coverage counts, operator zoom, popup classifications, source URLs, popup containment and control overlap, Penang retention, separate simulated inventory, API integration, error/retry behavior, loading-layout stability, and LinkBike regression. The Universal Station Search browser suite verifies that searching hides ordinary markers, that selection shows only the matching micromobility marker, and that clearing a search restores the markers for all four operators.
 
 Original release acceptance: `pnpm typecheck`, `pnpm lint`, and `pnpm build` passed. Its complete active Playwright suite against the optimized build passed **95 tests**, with **7 existing device-specific skips**. Current refinement results are recorded in the refinement audit and completion report. The full unit-suite baseline exceptions below remain visible.
 
-Before the original implementation, the full Vitest suite had 571 passes / 3 failures (574 tests). After the original implementation it had 605 passes / the same 3 failures (608 tests). The inventory/distribution refinement has 630 passes / the same 3 failures (633 tests). All 21 LinkBike tests pass. The existing failures are in `tests/rail-station-popup-recovery.test.tsx`, under `Rail coordinate validation before projection or placement writes`:
+Before the original implementation, the full Vitest suite had 571 passes and 3 failures. It had 605 passes and the same 3 failures after the original implementation, then 630 passes and the same 3 failures after the inventory and distribution refinement.
+
+### Known issue — rail station popup recovery
+
+The three cases in `tests/rail-station-popup-recovery.test.tsx` under `Rail coordinate validation before projection or placement writes` fail on baseline commit `2facc1f35acb0b3b5720c4eb147d72386a3900aa` and after the layer controls were removed. Run `pnpm exec vitest run tests/rail-station-popup-recovery.test.tsx` to reproduce them.
 
 - `accepts a missing-native-anchor fallback only from the bound, mapped, record-consistent CircleMarker`
 - `rejects a fallback inconsistent with the current station record`
 - `rejects a native anchor inconsistent with the current source`
 
-These failures match the existing documented native-anchor contract conflicts and were not altered. The retired suites excluded by Vitest/Playwright configuration remain excluded; they are not claimed as executed.
+These failures match the previously documented native-anchor contract conflicts. The full suite after the control removal recorded 656 passes and these three failures. All 21 LinkBike unit tests passed.
+
+### Local build and deployment
 
 OneDrive's generated-cache `EINVAL readlink` issue required clearing `.next` before subsequent local builds. This changes no application/deployment configuration. Local QA uses the optimized `pnpm start` server and installed Edge via the existing Playwright executable-path override. Generated files, credentials, local environment files, and TypeScript build info are excluded from the feature commit.
 

@@ -4,7 +4,7 @@ import { memo, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { divIcon } from "leaflet";
 import { LayerGroup, Marker, Pane, useMap } from "react-leaflet";
-import { MICROMOBILITY_DISCLAIMER, SIMULATED_INVENTORY_DISCLAIMER, NEW_MICROMOBILITY_OPERATORS, OPERATOR_STYLE, locationLabel, micromobilityResponseSchema, stationCounts, type MicromobilityOperator, type MicromobilityResponse, type MicromobilityStation } from "@/lib/micromobility";
+import { MICROMOBILITY_DISCLAIMER, SIMULATED_INVENTORY_DISCLAIMER, NEW_MICROMOBILITY_OPERATORS, OPERATOR_STYLE, locationLabel, micromobilityResponseSchema, stationCounts, type MicromobilityResponse, type MicromobilityStation } from "@/lib/micromobility";
 import { useOptionalBusCamera } from "./bus-camera-context";
 import SearchableStationPopup from "./searchable-station-popup";
 import { showMicromobilityMarker, type StationSearchRequest } from "@/lib/station-search";
@@ -63,9 +63,9 @@ const StationLayer = memo(function StationLayer({ operator, stations, request, o
   </Marker>)}</LayerGroup>;
 });
 
-export default function MicromobilityLayer({ controlsHost, linkBikeVisible, onLinkBikeVisibilityChange, searchActive,
+export default function MicromobilityLayer({ controlsHost, searchActive,
   searchRequest, onSearchClose, onData }: {
-  controlsHost: HTMLElement; linkBikeVisible: boolean; onLinkBikeVisibilityChange: (visible: boolean) => void;
+  controlsHost: HTMLElement;
   searchActive: boolean; searchRequest?: StationSearchRequest | null;
   onSearchClose?: (request: StationSearchRequest) => void;
   onData?: (data: MicromobilityResponse) => void;
@@ -75,7 +75,6 @@ export default function MicromobilityLayer({ controlsHost, linkBikeVisible, onLi
   const [data, setData] = useState<MicromobilityResponse | null>(null);
   const [error, setError] = useState(false);
   const [attempt, setAttempt] = useState(0);
-  const [hidden, setHidden] = useState<MicromobilityOperator[]>([]);
   const layers = useMemo(() => NEW_MICROMOBILITY_OPERATORS.map(operator => ({ operator,
     stations: data?.stations.filter(station => station.operator === operator) ?? [] })), [data]);
   useEffect(() => {
@@ -102,14 +101,12 @@ export default function MicromobilityLayer({ controlsHost, linkBikeVisible, onLi
   }
   const counts = stationCounts(data?.stations ?? []);
   return <>
-    {createPortal(<fieldset className="micromobility-controls"><legend>Micromobility coverage · SIMULATED</legend>
+    {createPortal(<section className="micromobility-coverage" aria-labelledby="micromobility-coverage-heading">
+      <h3 id="micromobility-coverage-heading">Micromobility coverage · SIMULATED</h3>
       <div className="micromobility-operators">{counts.map(({ operator, total, sourceBacked, synthetic }) => {
         const style = OPERATOR_STYLE[operator];
         return <div key={operator} className="micromobility-operator">
-          <label><input type="checkbox" aria-label={`Show ${style.name}`} checked={operator === "LINKBIKE" ? linkBikeVisible : !hidden.includes(operator)}
-            onChange={event => operator === "LINKBIKE" ? onLinkBikeVisibilityChange(event.target.checked) :
-              setHidden(current => event.target.checked ? current.filter(id => id !== operator) : [...current, operator])}/>
-            <i style={{ background: style.colour }}/>{style.name}: {data ? total : "…"}</label>
+          <strong><i aria-hidden="true" style={{ background: style.colour }}/>{style.name}: {data ? total : "…"}</strong>
           <small>{data ? `${sourceBacked} source-backed · ${synthetic} synthetic` : "Loading locations…"}</small>
           {operator !== "LINKBIKE" && <button type="button" className="secondary" disabled={!total || searchActive} onClick={() => zoom(data?.stations.filter(s => s.operator === operator) ?? [])}>Zoom to {style.name}</button>}
         </div>;
@@ -119,12 +116,13 @@ export default function MicromobilityLayer({ controlsHost, linkBikeVisible, onLi
       {error && <button type="button" className="secondary" onClick={() => setAttempt(value => value + 1)}>Retry micromobility locations</button>}
       <p>Dashed markers: synthetic · Solid markers: source-backed. Live vehicle availability: Not available.</p>
       <p>{MICROMOBILITY_DISCLAIMER}</p>
-    </fieldset>, controlsHost)}
+    </section>, controlsHost)}
     <Pane name="micromobility-coverage" style={{ zIndex: 580 }}>
       {layers.map(({ operator, stations }) => {
         const request = searchRequest?.type === "MICROMOBILITY_STATION" && searchRequest.operator === operator ? searchRequest : null;
-        const visible = searchActive ? stations.filter(station => showMicromobilityMarker(
-          !hidden.includes(operator), true, station.id === request?.stationId)) : !hidden.includes(operator) ? stations : [];
+        const visible = searchActive
+          ? stations.filter(station => showMicromobilityMarker(searchActive, station.id === request?.stationId))
+          : stations;
         return visible.length > 0 && <StationLayer key={operator} operator={operator} stations={visible}
           request={request} onSearchClose={onSearchClose}/>;
       })}
