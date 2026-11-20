@@ -5,7 +5,7 @@ import "@/app/markers.css";
 import "@/app/estimated-trains.css";
 import "@/app/map-camera.css";
 import L from "leaflet";
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { CircleMarker, MapContainer, Marker, Pane, Polyline, Popup, TileLayer, Tooltip, useMapEvent } from "react-leaflet";
 import type { RailLine } from "@/lib/rail-model";
 import type { Record as TransitRecord } from "@/lib/transit-data";
@@ -29,7 +29,7 @@ import MapSearchOverlay from "./map-search-overlay";
 import type { StationSearchRequest } from "@/lib/station-search";
 import type { MicromobilityResponse } from "@/lib/micromobility";
 import SearchableStationPopup from "./searchable-station-popup";
-import { stationRailLines } from "@/lib/rail-route-style";
+import { railRouteStyle, stationRailLines } from "@/lib/rail-route-style";
 import RailRouteLayers from "./rail-route-layers";
 import { brtSunway, expandedServiceById } from "@/lib/expanded-services";
 
@@ -121,7 +121,8 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
     <EstimatedTrainControls now={now} count={visibleTrains.length} trains={trains} lines={railLines} onRefresh={onRefresh}/>
     <div className="map-camera-frame">
     <div className="map-camera-bar" ref={setCameraControlsHost}/>
-    <div className="map-wrap" aria-label="Interactive transport map" data-alert-navigation={stationSearch?.alert ? "active" : undefined}>
+    <div className="map-wrap" aria-label="Interactive transport map" data-alert-navigation={stationSearch?.alert ? "active" : undefined}
+      style={{ "--rail-opacity-duration": `${railRouteStyle.transitionMs}ms` } as CSSProperties}>
       <MapContainer center={center} zoom={13} scrollWheelZoom className="map">
         {search && <MapSearchOverlay>{search}</MapSearchOverlay>}
         <TileLayer {...lightBasemap}/>
@@ -131,8 +132,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
           controlsHost={cameraControlsHost} onLocate={onLocate} focusedRailRoute={focusedRoute}/>
         <DismissSelectionOnBackground dismiss={selected || stationSearch ? () => onSelect(null) : undefined}/>
         <BusRouteLayers selectedRouteId={busRouteId} emphasizedRouteId={emphasizedRouteId} enabled={showBusRoutes}/>
-        <RailRouteLayers lines={railLines} highlighted={highlighted} stationLines={stationLines}
-          quietRail={quietRail} onHighlight={toggleHighlight}/>
+        <RailRouteLayers lines={railLines} highlighted={highlighted} stationLines={stationLines} onHighlight={toggleHighlight}/>
         <Pane name="bus-journey-route" style={{ zIndex: 450 }}>
         {segments && selectedJourney && <MovingRoute path={selectedJourney.path} fallback={segments}
           activeColour={selectedJourney.routeId === brtSunway.id ? brtSunway.colour : undefined}/>}

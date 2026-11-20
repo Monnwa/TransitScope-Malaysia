@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { setMapZoom } from "./map-zoom";
 
 const colours = { MONORAIL: '#8BCB88', 'LRT-PH': '#8B5A3C', 'LRT-KJ': '#E75480' };
 const search = (page: Page) => page.getByRole('textbox', { name: 'Search vehicles, routes or stations' });
@@ -22,7 +23,7 @@ async function choose(page: Page, name: string) {
 
 test('rail opacity, colours, station/search selection and non-rail regressions', async ({ page, isMobile }, info) => {
   test.setTimeout(90_000);
-  await page.setViewportSize(isMobile ? { width: 375, height: 844 } : { width: 1440, height: 1000 });
+  await page.setViewportSize(isMobile ? { width: 375, height: 844 } : { width: 1440, height: 900 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.clock.setFixedTime(new Date('2026-11-17T09:41:25Z'));
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
@@ -69,7 +70,22 @@ test('rail opacity, colours, station/search selection and non-rail regressions',
   await page.screenshot({ path: info.outputPath('interchange-putra-heights.png') });
   await choose(page, 'Tun Razak Exchange');
   await expectRoutes(page, ['MRT1', 'MRT2']);
-  await popup(page).getByRole('button', { name: 'Close popup' }).click();
+  const map = page.locator('.leaflet-container');
+  await map.scrollIntoViewIfNeeded();
+  const background = await map.evaluate(element => {
+    const rect = element.getBoundingClientRect();
+    for (let y = 20; y < rect.height - 20; y += 15) {
+      for (let x = rect.width - 15; x > 10; x -= 15) {
+        const left = rect.left + x, top = rect.top + y;
+        if (document.elementFromPoint(left, top) === element) return { x: left, y: top };
+      }
+    }
+    return null;
+  });
+  expect(background).not.toBeNull();
+  if (isMobile) await page.touchscreen.tap(background!.x, background!.y);
+  else await page.mouse.click(background!.x, background!.y);
+  await expect(popup(page)).toHaveCount(0);
   await expectRoutes(page);
   await expect(page.locator('.rail-station')).toHaveCount(1);
   await page.locator('.rail-station').click({ timeout: 5000 });
@@ -87,4 +103,26 @@ test('rail opacity, colours, station/search selection and non-rail regressions',
   expect(await page.locator('.bus-network-route').evaluateAll(paths => paths.map(path => [path.getAttribute('stroke'), path.getAttribute('stroke-opacity')]))).toEqual(busStyles);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(errors).toEqual([]);
+});
+
+test('rail weights stay constant through zoom, and only opacity transitions', async ({ page, isMobile }) => {
+  await page.setViewportSize(isMobile ? { width: 390, height: 844 } : { width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/');
+  const map = page.locator('.leaflet-container');
+  const track = map.locator('.rail-alignment.MRT1');
+  const casing = map.locator('.rail-route-casing').first();
+  for (const zoom of [10, 14]) {
+    await setMapZoom(map, zoom);
+    await expect(track).toHaveCSS('stroke-width', '4px');
+    await expect(casing).toHaveCSS('stroke-width', '7px');
+  }
+  for (const path of [track, casing]) {
+    await expect(path).toHaveCSS('stroke-linejoin', 'round');
+    await expect(path).toHaveCSS('stroke-linecap', 'round');
+    await expect(path).toHaveCSS('transition-property', 'stroke-opacity');
+    await expect(path).toHaveCSS('transition-duration', '0.18s');
+  }
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const path of [track, casing]) await expect(path).toHaveCSS('transition-duration', '0s');
 });

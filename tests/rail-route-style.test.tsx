@@ -3,8 +3,9 @@ import { cleanup, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MapContainer } from "react-leaflet";
 import { railNetwork } from "@/lib/simulation/network";
+import { railMapPaths } from "@/lib/rail-map-geometry";
 import { rapidRailMeta } from "@/lib/rail-model";
-import { railRouteOpacity, stationRailLines } from "@/lib/rail-route-style";
+import { erlSharedTrack, railRouteOpacity, railRouteStyle, stationRailLines } from "@/lib/rail-route-style";
 import RailRouteLayers from "@/components/rail-route-layers";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 
@@ -62,8 +63,9 @@ describe("actual React-Leaflet rail paths", () => {
   });
   it("updates both casing and coloured strokes without remounting paths or losing canonical colours", () => {
     const onHighlight = vi.fn();
-    const tree = (selected?: TransitRecord, quietRail = true) => <MapContainer center={[3.14, 101.7]} zoom={12}>
-      <RailRouteLayers lines={railNetwork.lines} highlighted={linesFor(selected)} stationLines={linesFor(selected)} quietRail={quietRail} onHighlight={onHighlight}/>
+    const originalGeometry = structuredClone(railNetwork.lines.map(railMapPaths));
+    const tree = (selected?: TransitRecord, lines = railNetwork.lines) => <MapContainer center={[3.14, 101.7]} zoom={12}>
+      <RailRouteLayers lines={lines} highlighted={linesFor(selected)} stationLines={linesFor(selected)} onHighlight={onHighlight}/>
     </MapContainer>;
     const view = render(tree());
     const routes = () => [...view.container.querySelectorAll('path.rail-alignment')];
@@ -72,23 +74,46 @@ describe("actual React-Leaflet rail paths", () => {
     for (const path of [...initial, ...casings()]) {
       expect(path).toHaveAttribute('stroke-opacity', '1');
       expect(path).not.toHaveAttribute('stroke-dasharray');
+      expect(path).toHaveAttribute('stroke-linecap', 'round');
+      expect(path).toHaveAttribute('stroke-linejoin', 'round');
+    }
+    expect(casings()).toHaveLength(initial.length - 1);
+    for (const path of casings()) {
+      expect(path).toHaveAttribute('stroke-width', '7');
+      expect(path.closest('.leaflet-rail-route-casings-pane')).toHaveStyle({ zIndex: '399' });
     }
     const express = view.container.querySelector('.erl-klia-ekspres')!;
     const transit = view.container.querySelector('.erl-klia-transit')!;
     expect(express.getAttribute('d')).toBe(transit.getAttribute('d'));
-    expect(Number(express.getAttribute('stroke-width'))).toBeGreaterThan(Number(transit.getAttribute('stroke-width')));
-    view.rerender(tree(station('Raja Chulan'), false));
-    expect(routes()[0]).toBe(initial[0]);
+    expect(express).toHaveAttribute('stroke-width', '5.5');
+    expect(transit).toHaveAttribute('stroke-width', '2.5');
+    expect(erlSharedTrack.expressWeight).toBeLessThan(railRouteStyle.casing.weight);
+    expect(express.compareDocumentPosition(transit) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    view.rerender(tree(station('Raja Chulan')));
+    expect(routes()).toEqual(expect.arrayContaining(initial));
     for (const path of routes()) {
       const line = railNetwork.lines.find(line => path.classList.contains(line.id.replace(/[^a-zA-Z0-9]/g, '-')))!;
       expect(path).toHaveAttribute('stroke', line.colour);
       expect(path).toHaveAttribute('stroke-opacity', line.id === 'MONORAIL' ? '1' : '0.18');
+      if (path !== express && path !== transit) expect(path).toHaveAttribute('stroke-width', '4');
     }
     expect(casings().some(path => path.getAttribute('stroke-opacity') === '0.18')).toBe(true);
-    view.rerender(tree(station('Putra Heights'), false));
+    view.rerender(tree(station('Putra Heights')));
     for (const id of ['LRT-KJ', 'LRT-PH']) expect(view.container.querySelector('.' + id)).toHaveAttribute('stroke-opacity', '1');
     expect(view.container.querySelector('.MONORAIL')).toHaveAttribute('stroke-opacity', '0.18');
     view.rerender(tree());
     for (const path of [...routes(), ...casings()]) expect(path).toHaveAttribute('stroke-opacity', '1');
+
+    for (const [visible, hidden] of [[express, transit], [transit, express]]) {
+      view.rerender(tree(undefined, railNetwork.lines.filter(line => !hidden.classList.contains(line.id))));
+      const visiblePath = view.container.querySelector('.' + visible.classList[1])!;
+      expect(visiblePath).toHaveAttribute('stroke-width', '4');
+      expect(casings()).toHaveLength(routes().length);
+      view.rerender(tree());
+      const restoredExpress = view.container.querySelector('.erl-klia-ekspres')!;
+      const restoredTransit = view.container.querySelector('.erl-klia-transit')!;
+      expect(restoredExpress.compareDocumentPosition(restoredTransit) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    }
+    expect(railNetwork.lines.map(railMapPaths)).toEqual(originalGeometry);
   });
 });

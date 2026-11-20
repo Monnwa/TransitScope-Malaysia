@@ -1,9 +1,22 @@
 import type { RailLine } from "./rail-model";
 import type { Record as TransitRecord } from "./transit-data";
 
-export const DEFAULT_RAIL_OPACITY = 1;
-export const SELECTED_ROUTE_OPACITY = 1;
-export const DIMMED_ROUTE_OPACITY = 0.18;
+export const railRouteStyle = {
+  track: { weight: 4, lineCap: "round", lineJoin: "round" },
+  casing: { weight: 7, color: "#fff" },
+  smoothFactor: 0.4,
+  opacity: { normal: 1, selected: 1, dimmed: 0.18 },
+  transitionMs: 180,
+} as const;
+
+// The two ERL services trace the same corridor. Both strokes fit inside the
+// regular casing, and either service alone uses the regular track and casing.
+export const erlSharedTrack = {
+  express: "erl-klia-ekspres",
+  transit: "erl-klia-transit",
+  expressWeight: 5.5,
+  transitWeight: 2.5,
+} as const;
 
 /** Use merged station identities and canonical route IDs, never station names. */
 export function stationRailLines(selected: TransitRecord | undefined, lines: RailLine[]): string[] {
@@ -13,5 +26,6 @@ export function stationRailLines(selected: TransitRecord | undefined, lines: Rai
 }
 
 export function railRouteOpacity(lineId: string, stationLines: string[]): number {
-  return !stationLines.length ? DEFAULT_RAIL_OPACITY : stationLines.includes(lineId) ? SELECTED_ROUTE_OPACITY : DIMMED_ROUTE_OPACITY;
+  const { normal, selected, dimmed } = railRouteStyle.opacity;
+  return !stationLines.length ? normal : stationLines.includes(lineId) ? selected : dimmed;
 }

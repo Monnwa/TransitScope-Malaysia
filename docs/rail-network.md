@@ -1,5 +1,17 @@
 # Unified railway network
 
+## Rail alignment rendering
+
+The dashboard draws the Kajang, Putrajaya, Kelana Jaya, Ampang, Sri Petaling and Monorail alignments from the [Prasarana Rapid Rail GTFS](https://api.data.gov.my/gtfs-static/prasarana?category=rapid-rail-kl) (CC BY 4.0). [The display snapshot](../lib/data/legacy-rail-alignments.json) records the shape IDs. The Kajang shape is clipped at the existing shape vertex nearest published terminal KG04 (Kwasa Damansara), about 20 metres from the stop point. The feed includes points north of that terminal.
+
+KTM Port Klang and Seremban use railway way members in [OpenStreetMap relation 2565937](https://www.openstreetmap.org/relation/2565937/history) (version 102) and [relation 8390976](https://www.openstreetmap.org/relation/8390976/history) (version 83). The snapshot joins consecutive ways at their shared OSM node IDs. Both snapshots form one connected path. The data is © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright), ODbL. Shah Alam and ERL continue to use their existing shapes.
+
+The map keeps the published vertices and uses Leaflet's light screen-space simplification with a factor of 0.4. Simulation schedules, train motion, station markers and station membership still use the existing records. At close zoom, some older simulated trains and station markers can sit away from the surveyed or mapped track. This is particularly visible in the southern Putrajaya corridor.
+
+Rail strokes are 4 CSS pixels with a 7 CSS pixel white casing, round caps and round joins. All casings sit below all coloured rail paths to keep white strokes from breaking other routes at crossings. Selected routes rise above adjacent paths at the same width. Default and selected station routes use full opacity. Other routes fade to 0.18 over 180 ms, with immediate changes under reduced motion.
+
+When both ERL services are visible, a 2.5 pixel turquoise Transit stroke sits inside a 5.5 pixel purple Ekspres stroke, with one standard 7 pixel casing. Either service alone uses a 4 pixel stroke with a 7 pixel casing.
+
 ## Dashboard expansion, 20 November 2026
 
 | Service | Canonical ID | Mode and service stops | Map colour | Simulated fleet |

@@ -1,4 +1,4 @@
-.rail-alignment,.rail-route-casing{transition:stroke-opacity 180ms ease}
+.rail-alignment,.rail-route-casing{transition:stroke-opacity var(--rail-opacity-duration) ease}
 @media(prefers-reduced-motion:reduce){.rail-alignment,.rail-route-casing{transition:none}}
 
 .expanded-route-legend {
