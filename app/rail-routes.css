@@ -29,3 +29,9 @@
   height: 9px;
   border-radius: 50%;
 }
+
+@media (max-width: 720px) {
+  .published-station-summary { font-size: 11px; line-height: 1.25; }
+  .published-station-summary strong { font-size: 13px; }
+  .published-station-summary .mode-dot { width: 7px; height: 7px; }
+}

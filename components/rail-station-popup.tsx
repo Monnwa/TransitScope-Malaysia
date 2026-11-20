@@ -196,14 +196,19 @@ export default function RailStationPopup({ record, selectedRecordId, searchReque
 
   return <Popup ref={popupRef} pane="popupPane" className={"rail-station-popup-shell " + owner} autoPan={true}
     closeOnClick={searchRequest?.stationId === record.id ? false : undefined}>
-    <RailContent layout={layout}><strong>{record.name}</strong><br/>{record.stationProvenance?.length ? record.lineNames?.map((name, index) => {
-      const service = expandedServiceById.get(record.railLines?.[index] ?? "");
-      return <span key={record.railLines?.[index] ?? name}>{index > 0 && " · "}
-        {service && <><i className="mode-dot" style={{ background: service.colour }}/> </>}{name}</span>;
-    }) : record.lineNames?.join(" · ") || record.route}<br/>{SIMULATED}
-      {!!record.stationProvenance?.length && <><br/>{!record.interchange && `${record.mode === "Bus" ? "BRT" : record.mode} station · `}
-        {record.stationProvenance.map(stop => stop.code).join(" · ")} · Published station data</>}
+    <RailContent layout={layout}>{record.stationProvenance?.length ? <div className="published-station-summary">
+      <strong>{record.name}</strong>
+      <div>{record.lineNames?.map((name, index) => {
+        const service = expandedServiceById.get(record.railLines?.[index] ?? "");
+        return <span key={record.railLines?.[index] ?? name}>{index > 0 && " · "}
+          {service && <><i className="mode-dot" style={{ background: service.colour }}/> </>}{name}</span>;
+      })}</div>
+      <div>{record.interchange ? "Interchange" : `${record.mode === "Bus" ? "BRT" : record.mode} station`} · {record.stationProvenance.map(stop => stop.code).join(" · ")}</div>
+      <div>{SIMULATED} · Published station data</div>
+    </div> : <>
+      <strong>{record.name}</strong><br/>{record.lineNames?.join(" · ") || record.route}<br/>{SIMULATED}
       {record.interchange && <><br/>Interchange</>}
+    </>}
     </RailContent>
   </Popup>;
 }
