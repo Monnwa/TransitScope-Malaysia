@@ -42,7 +42,7 @@ async function barePoint(map: Locator) {
         // entire finger target on bare map, beyond the new search overlay.
         const bare = [[0, 0], [-16, 0], [16, 0], [0, -16], [0, 16]].every(([dx, dy]) => {
           const hit = document.elementFromPoint(box.left + x + dx, box.top + y + dy);
-          return hit?.closest(".leaflet-container") === element && !hit.closest(".leaflet-interactive,.leaflet-control,.leaflet-popup,.map-search,.map-legend");
+          return hit?.closest(".leaflet-container") === element && !hit.closest(".leaflet-interactive,.leaflet-control,.leaflet-popup,.map-search");
         });
         if (bare) return { x: box.left + x, y: box.top + y };
       }
@@ -86,7 +86,7 @@ test("explicit focus follows, manual drag suspends, Return resumes and route int
   await screenshot(page, info, "overview");
   await selectBus(page);
   await expect(map).toHaveAttribute("data-camera-state", "OVERVIEW");
-  const glyph = await map.getByTitle("Bus T401-01", { exact: true }).locator("svg").elementHandle();
+  const glyph = await map.getByTitle("Bus T401-01", { exact: true }).locator(".bus-vehicle-glyph").elementHandle();
   const controls = page.getByRole("group", { name: "Map camera" });
   await controls.getByRole("button", { name: "Locate bus", exact: true }).click();
   await expect(map).toHaveAttribute("data-camera-state", "VEHICLE_FOCUS");
@@ -115,7 +115,7 @@ test("explicit focus follows, manual drag suspends, Return resumes and route int
   await expect(map).toHaveAttribute("data-camera-state", "VEHICLE_FOCUS");
   await vehicleUnobstructed(map);
   expect(await map.evaluate((node, old) => node === old, mapNode)).toBe(true);
-  expect(await map.getByTitle("Bus T401-01", { exact: true }).locator("svg").evaluate((node, old) => node === old, glyph)).toBe(true);
+  expect(await map.getByTitle("Bus T401-01", { exact: true }).locator(".bus-vehicle-glyph").evaluate((node, old) => node === old, glyph)).toBe(true);
 
   await drag(page, map, isMobile);
   await page.clock.setFixedTime(new Date(movingTimes[0] + 1000));
@@ -246,7 +246,7 @@ test("selecting a different bus does not transfer following without Return", asy
 });
 
 
-test("closing a focused bus popup keeps the whole vehicle clear of the restored legend", async ({ page, isMobile }) => {
+test("closing a focused bus popup keeps the whole vehicle accessible", async ({ page, isMobile }) => {
   const map = await prepare(page, isMobile);
   await selectBus(page);
   const controls = page.getByRole("group", { name: "Map camera" });
@@ -257,7 +257,7 @@ test("closing a focused bus popup keeps the whole vehicle clear of the restored 
   await expect(map.locator(".bus-vehicle-popup")).toBeVisible();
   await map.getByRole("button", { name: "Close popup", exact: true }).click();
   await expect(map.locator(".bus-vehicle-popup")).toHaveCount(0);
-  await expect(page.getByLabel("Map legend", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Map legend", { exact: true })).toHaveCount(0);
   await expect(map).toHaveAttribute("data-camera-state", "VEHICLE_FOCUS");
   await expect.poll(() => marker.evaluate(element => {
     const b = element.getBoundingClientRect();

@@ -6,7 +6,6 @@
 .map-camera-controls .camera-return{background:#1749a1;color:#fff;border-color:#1749a1}
 .map-camera-controls button:disabled{color:#5e6e80;background:#f5f8fb;cursor:default}
 .map-camera-frame .map-wrap{flex:none}
-.map-camera-frame .map-legend{max-width:min(330px,calc(100% - 24px));bottom:22px}
 @media(max-width:720px){
   .map-camera-frame{scroll-margin-top:8px}
   .map-camera-bar{top:0;padding:5px 7px}
@@ -37,8 +36,6 @@
   .map-camera-frame .leaflet-container a.leaflet-popup-close-button{width:44px;height:44px;line-height:44px}
 }
 
-/* A popup supplies its own context; hide the noninteractive legend so its close target stays clear. */
-.map-camera-frame .map-wrap:has(.leaflet-popup) .map-legend{visibility:hidden;pointer-events:none}
 
 @media(min-width:1001px){
   .two-col>.detail:has(.bus-journey){position:sticky;top:86px;align-self:start}

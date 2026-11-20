@@ -31,6 +31,7 @@ import type { MicromobilityResponse } from "@/lib/micromobility";
 import SearchableStationPopup from "./searchable-station-popup";
 import { railRouteStyle, stationRailLines } from "@/lib/rail-route-style";
 import RailRouteLayers from "./rail-route-layers";
+import RouteIndicators from "./route-indicators";
 import { brtSunway, expandedServiceById } from "@/lib/expanded-services";
 import type { UserLocation } from "@/lib/nearby-transit";
 
@@ -114,9 +115,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
       active={selected?.id === record.id} subdued={!!emphasizedRouteId && record.routeId !== emphasizedRouteId} onSelect={() => onSelect(record)}/>;
   }
   const brtVisible = showBusRoutes && (!busRouteId || busRouteId === brtSunway.id) || nearbyBusRoutes.includes(brtSunway.id);
-  const expandedRailLines = useMemo(() => railLines.filter(line => expandedServiceById.has(line.id)), [railLines]);
   const quietRail = showBusRoutes && highlighted.length === 0;
-  const railModes = [...new Set(railLines.map(line => line.mode))];
   const segments = selectedJourney && !selectedJourney.isPreview ?
     splitRoutePath(selectedJourney.path, selectedJourney.segment, selectedJourney.position) : null;
   const activeNavigation = navigation?.journeyId === selectedJourney?.journeyId ? navigation : null;
@@ -223,21 +222,8 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
           onSearchClose={onSearchPopupClose}/>}
         {userLocation && <Marker position={userLocation.position} icon={userIcon} interactive={false} keyboard={false}/>}
       </MapContainer>
-      <div className="map-legend" aria-label="Map legend">
-        {showBusRoutes && emphasizedRouteId !== brtSunway.id && <span><i className="bus-route-legend"/>{emphasizedRouteId ? "Bus route " + emphasizedRouteId : "Simulated Klang Valley buses: T401 · T402"}</span>}
-        {railModes.length > 0 && <><span>{railModes.length === 5 ? "Train" : railModes.join(" · ")} lines and stations</span><span>◉ Interchange</span></>}
-        {(showBusRoutes || railModes.length > 0) && <span>{showBusRoutes && "🚌 Bus"}{showBusRoutes && railModes.length > 0 && " / "}{railModes.length > 0 && "🚆 Train"}</span>}
-        {userLocation && <span><i className="user-location-legend"/> Your location</span>}{(showBusRoutes || railLines.length > 0) && <span>○ Station / stop</span>}
-        {selectedJourney && <span><i className="bus-journey-stop-dot"/> Selected journey stops</span>}
-        {segments && <span>Grey: route behind · {selectedJourney?.routeId === brtSunway.id ? "Green" : "Blue"}: route ahead</span>}
-      </div>
     </div>
     </div>
-    {(brtVisible || expandedRailLines.length > 0) && <div className="expanded-route-legend" aria-label="Expanded route legend">
-      {expandedRailLines.map(line => <button key={line.id} type="button" className="map-legend-route"
-        aria-label={`Focus ${line.name}`} onClick={() => { onSelect(null); setFocusedRoute({ line }); }}>
-        <i style={{ backgroundColor: line.colour }}/>{line.name}</button>)}
-      {brtVisible && <span><i style={{ backgroundColor: brtSunway.colour }}/>{brtSunway.name}</span>}
-    </div>}
+    <RouteIndicators lines={railLines} showBrt={brtVisible} onFocus={line => { onSelect(null); setFocusedRoute({ line }); }}/>
   </section>;
 }

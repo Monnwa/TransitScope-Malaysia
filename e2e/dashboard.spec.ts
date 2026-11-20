@@ -244,7 +244,7 @@ test("map search fits the map and preserves keyboard, dragging and zoom controls
   await expect(search).toHaveValue("");
   await expect(page.getByRole("row", { name: /Bus T401-01/ })).toBeAttached();
 
-  // Drag an unobstructed part of the map, outside the input and legend.
+  // Drag an unobstructed part of the map, outside the input.
   await map.scrollIntoViewIfNeeded();
   const mapBounds = (await map.boundingBox())!;
   await page.mouse.move(mapBounds.x + mapBounds.width * .8, mapBounds.y + mapBounds.height * .65);
@@ -261,7 +261,7 @@ test("map search fits the map and preserves keyboard, dragging and zoom controls
     return { x: Math.round(input.x - mapBox.x), y: Math.round(input.y - mapBox.y) };
   }).toEqual({ x: inset, y: inset });
   await expect(map.getByRole("link", { name: "OpenStreetMap" })).toBeVisible();
-  await expect(wrap.getByLabel("Map legend")).toBeVisible();
+  await expect(wrap.getByLabel("Map legend")).toHaveCount(0);
   await wrap.screenshot({ path: testInfo.outputPath("map-search.png") });
   checkDashboard();
 });

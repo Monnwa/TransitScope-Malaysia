@@ -15,19 +15,17 @@ function mapWithBus(bearing: number | null | undefined, active: boolean) {
 
 function uprightMarkup(container: HTMLElement) {
   const icon = container.querySelector(".bus-vehicle-icon")!;
-  const svg = icon.querySelector("svg")!;
-  const cue = svg.querySelector(".bus-forward-cue")!;
-  const [x, y] = cue.getAttribute("d")!.match(/^M([\d.]+) ([\d.]+)/)!.slice(1).map(Number);
-  const [left, top, width, height] = svg.getAttribute("viewBox")!.split(" ").map(Number);
-  expect([x - (left + width / 2), y - (top + height / 2)]).toEqual([0, -14]);
-  expect(svg.querySelector("[transform]")).toBeNull();
+  const graphic = icon.querySelector("img")!;
+  expect(graphic).toHaveAttribute("src", "/markers/oncoming-bus.png");
+  expect(graphic).toHaveAttribute("alt", "");
+  expect(graphic).not.toHaveAttribute("style");
   expect(icon.getAttribute("style")).not.toMatch(/rotate\(/);
-  return svg.outerHTML;
+  return graphic.outerHTML;
 }
 
 describe("the rendered Leaflet bus marker", () => {
   it.each([0, 45, 90, 135, 180, 225, 270, 315, undefined, null, NaN, Infinity, 361])(
-    "faces screen-up at bearing %s in both selection states",
+    "uses the upright Oncoming Bus at bearing %s in both selection states",
     bearing => {
       const { container, rerender } = render(mapWithBus(bearing, false));
       const unselected = uprightMarkup(container);

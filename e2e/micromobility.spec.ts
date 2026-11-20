@@ -91,7 +91,7 @@ test("all micromobility layers and popup provenance work without the coverage pa
     await expect(markers).toHaveCount(75);
     const marker = map.getByTitle(name, { exact: true });
     if (isMobile) {
-      // Bring the marker away from the legend after the search popup pans the map.
+      // Bring the marker further into view after the search popup pans the map.
       await zoomOutTo(15);
       await marker.tap();
     } else await marker.click();

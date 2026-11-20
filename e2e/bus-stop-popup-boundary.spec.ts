@@ -162,7 +162,7 @@ test.describe("stop popup at mobile map boundaries", () => {
       const before = await relativeCentre(map, pin);
       expect(Math.abs(before.x - target.x)).toBeLessThanOrEqual(2);
       expect(Math.abs(before.y - target.y)).toBeLessThanOrEqual(2);
-      // The map legend can cover the bottom pin. Leaflet also supports keyboard activation.
+      // Leaflet also supports keyboard activation for the bottom pin.
       await pin.press("Enter");
       await page.clock.setFixedTime(new Date(time + 1000));
       const popup = map.locator(".leaflet-popup").filter({ has: page.locator(".journey-stop-popup") });

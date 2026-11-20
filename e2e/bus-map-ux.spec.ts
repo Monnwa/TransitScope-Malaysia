@@ -29,14 +29,13 @@ async function activate(locator: Locator, isMobile: boolean) {
 
 async function markerFrames(map: Locator) {
   return map.locator(".bus-vehicle-icon:not(.brt-vehicle-icon)").evaluateAll(elements => elements.map(element => {
-    const cue = element.querySelector<SVGPathElement>(".bus-forward-cue")!;
-    const matrix = cue.getScreenCTM()!;
-    const tip = cue.getPointAtLength(0).matrixTransform(matrix);
-    const centre = new DOMPoint(16, 16).matrixTransform(matrix);
-    const transform = new DOMMatrixReadOnly(getComputedStyle(element).transform);
+    const glyph = element.querySelector<HTMLImageElement>(".bus-vehicle-glyph")!;
+    const matrix = (target: Element) => new DOMMatrixReadOnly(getComputedStyle(target).transform);
+    const transform = matrix(element);
+    const glyphTransform = transform.multiply(matrix(glyph));
     return {
       title: element.getAttribute("title"),
-      angle: Math.round((Math.atan2(tip.x - centre.x, centre.y - tip.y) * 180 / Math.PI + 360) % 360) % 360,
+      angle: Math.round(Math.atan2(glyphTransform.b, glyphTransform.a) * 180 / Math.PI),
       position: [transform.m41, transform.m42],
     };
   }));
@@ -96,7 +95,7 @@ test("shows only the selected bus journey stops and dismisses them with its sele
       const collapse = detail.getByRole("button", { name: "Collapse journey" });
       if (await collapse.isVisible()) await collapse.tap();
       if (id === t401) {
-        // Pan the southern vehicles clear of the legend on the smaller viewport.
+        // Bring the southern vehicles further into the smaller viewport.
         const relativeTop = () => marker.evaluate(element =>
           element.getBoundingClientRect().top - element.closest(".leaflet-container")!.getBoundingClientRect().top);
         const before = await relativeTop();

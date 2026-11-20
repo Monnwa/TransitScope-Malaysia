@@ -46,7 +46,7 @@ async function putAt(page: Page, map: Locator, pin: Locator, x: number, y: numbe
         for (let x = b.left + 70; x < b.right - 60; x += 20) {
           const hit = document.elementFromPoint(x, y);
           if (hit?.closest(".leaflet-container") === element &&
-            !hit.closest(".leaflet-interactive,.leaflet-control,.leaflet-popup,.transport-icon,.map-legend")) return { x, y };
+            !hit.closest(".leaflet-interactive,.leaflet-control,.leaflet-popup,.transport-icon")) return { x, y };
         }
       throw Error("No bare map surface for a real drag");
     });

@@ -33,7 +33,7 @@ export default function useStationSearchNavigation(map: L.Map, popupRef: RefObje
     const run = (operation: () => void) => guard ? guard.run(operation) : operation();
     const focus = (popupHeight = 0) => {
       const box = container.getBoundingClientRect();
-      const obstructions = Array.from(document.querySelectorAll("header,.map-search,.map-legend,.leaflet-control-zoom,.leaflet-control-attribution"))
+      const obstructions = Array.from(document.querySelectorAll("header,.map-search,.leaflet-control-zoom,.leaflet-control-attribution"))
         .filter(element => getComputedStyle(element).visibility !== "hidden").map(element => element.getBoundingClientRect());
       const safe = cameraArea(box, { width: innerWidth, height: innerHeight }, obstructions);
       if (!safe) { report("station-viewport-unavailable"); return false; }

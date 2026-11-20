@@ -74,7 +74,7 @@ export default function BusMapCamera(props: Props) {
   const area = useCallback(() => {
     const box = map.getContainer().getBoundingClientRect();
     const obstructions = Array.from(document.querySelectorAll(
-      "header,.bus-journey,.detail,.map-camera-bar,.map-search,.map-legend,.leaflet-control-zoom,.leaflet-control-attribution",
+      "header,.bus-journey,.detail,.map-camera-bar,.map-search,.leaflet-control-zoom,.leaflet-control-attribution",
     )).filter(element => getComputedStyle(element).visibility !== "hidden").map(element => element.getBoundingClientRect());
     const viewport = { width: innerWidth, height: innerHeight };
     const safe = cameraArea(box, viewport, obstructions);
@@ -282,7 +282,7 @@ export default function BusMapCamera(props: Props) {
       if (latest.current.state.mode === "VEHICLE_FOCUS") layout();
     }), popupPane = map.getPane("popupPane");
     if (popupPane) popupObserver.observe(popupPane, { childList: true });
-    [map.getContainer(), props.controlsHost, ...Array.from(document.querySelectorAll(".bus-journey,.map-legend,header"))].forEach(element => { if (element) observer.observe(element); });
+    [map.getContainer(), props.controlsHost, ...Array.from(document.querySelectorAll(".bus-journey,header"))].forEach(element => { if (element) observer.observe(element); });
     window.addEventListener("resize", layout);
     window.addEventListener("scroll", layout, { passive: true });
     layout();

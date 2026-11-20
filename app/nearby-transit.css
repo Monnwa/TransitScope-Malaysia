@@ -101,7 +101,6 @@
   background: #fff;
 }
 
-.user-location-legend { background: var(--blue); }
 
 @media (max-width: 720px) {
   .nearby-heading { flex-wrap: wrap; gap: 9px; }

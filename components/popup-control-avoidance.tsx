@@ -67,7 +67,7 @@ export default function PopupControlAvoidance({ selectedRecordId, journeyVehicle
         if (/^(hidden|clip|auto|scroll)$/.test(c.overflowY)) { clip.top = Math.max(clip.top, b.top); clip.bottom = Math.min(clip.bottom, b.bottom); }
       }
       if (clip.right <= clip.left || clip.bottom <= clip.top) return;
-      const obstacles = [element, ...Array.from(document.querySelectorAll(".leaflet-control,.bus-journey,header,.map-camera-bar,.map-legend"))]
+      const obstacles = [element, ...Array.from(document.querySelectorAll(".leaflet-control,.bus-journey,header,.map-camera-bar"))]
         .filter(e => e !== zoom && !zoom.contains(e) && !e.contains(zoom))
         .filter(e => { const c = getComputedStyle(e); return c.display !== "none" && c.visibility !== "hidden"; })
         .map(e => e.getBoundingClientRect()).filter(r => r.width > 0 && r.height > 0);
