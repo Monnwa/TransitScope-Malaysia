@@ -39,8 +39,8 @@ const modes = DEFAULT_TRANSPORT_TYPES;
 const dashboardSections = [
   { id: "overview", label: "Overview", icon: "home" },
   { id: "service-updates", label: "Service Alerts", icon: "alert" },
-  { id: "nearby-transit", label: "Nearby Public Transport", icon: "nearby" },
   { id: "map", label: "Map", icon: "map" },
+  { id: "nearby-transit", label: "Nearby Public Transport", icon: "nearby" },
   { id: "about", label: "About this information", icon: "info" },
 ] as const;
 type DashboardSection = typeof dashboardSections[number]["id"];

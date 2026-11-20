@@ -1,6 +1,6 @@
 import { expect, test, type Locator } from "@playwright/test";
 
-const sections = ["Overview", "Service Alerts", "Nearby Public Transport", "Map", "About this information"];
+const sections = ["Overview", "Service Alerts", "Map", "Nearby Public Transport", "About this information"];
 const horizontalLogo = "/brand/transitscope-horizontal.svg";
 const iconLogo = "/brand/transitscope-icon.svg";
 
