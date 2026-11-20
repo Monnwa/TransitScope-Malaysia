@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { railMapPaths } from "@/lib/rail-map-geometry";
 import { distanceM, indexShape, projectCandidates, validPoint, type GeoPoint } from "@/lib/route-projection";
 import { railNetwork, railRoutes } from "@/lib/simulation/network";
+import { trainPositions } from "@/lib/simulation/vehicles";
 
 const publishedEndpoints: Record<string, [GeoPoint, GeoPoint]> = {
   MRT1: [[3.17626398, 101.5719131], [2.98129958, 101.7902826]],
@@ -65,5 +66,25 @@ describe("rail map geometry", () => {
       return closest.distanceM;
     });
     expect(offsets).toEqual([...offsets].sort((a, b) => a - b));
+  });
+
+  it("keeps moving and stopped trains on their displayed routes in both directions", () => {
+    const tracks = new Map(railNetwork.lines.map(line => [line.id, indexShape(railMapPaths(line)[0])!]));
+    const coverage = new Set<string>();
+    const offTrack = new Set<string>();
+    const noon = Date.UTC(2026, 10, 20, 4);
+    for (let minute = 0; minute < 90; minute += 5) {
+      for (const train of trainPositions(noon + minute * 60_000)) {
+        coverage.add(`${train.lineId}:${train.direction}:${train.status}`);
+        if (!projectCandidates(tracks.get(train.lineId)!, train.position, 1).length) offTrack.add(train.lineId);
+      }
+    }
+    expect([...offTrack]).toEqual([]);
+    for (const { id } of railNetwork.lines) {
+      for (const direction of [0, 1]) {
+        expect(coverage.has(`${id}:${direction}:In service`)).toBe(true);
+        expect(coverage.has(`${id}:${direction}:At stop`)).toBe(true);
+      }
+    }
   });
 });

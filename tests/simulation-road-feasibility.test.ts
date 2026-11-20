@@ -6,10 +6,11 @@ import { GET as getJourney } from "@/app/api/bus-journey/route";
 import { GET as getDepartures } from "@/app/api/departures/route";
 import { GET as getTransit } from "@/app/api/transit/route";
 import { simulationSnapshot } from "@/lib/simulation";
-import { railNetwork, stationServices } from "@/lib/simulation/network";
-import { busJourney, stationArrivals } from "@/lib/simulation/vehicles";
+import { railNetwork, railRoutes, stationServices } from "@/lib/simulation/network";
+import { busJourney, stationArrivals, type SimulatedTrain } from "@/lib/simulation/vehicles";
 import { expandedServiceById } from "@/lib/expanded-services";
 import { mergeRailStations } from "@/lib/rail-model";
+import { bearing, pointAtDistance } from "@/lib/route-projection";
 import evidence from "@/docs/SM-2.3-evidence/snapshot-comparison.json";
 
 const oldRoutes = ["D100", "D200", "D300", "D400", "D500", "D600", "D700", "T801", "T802", "T803", "P101", "P102"];
@@ -46,6 +47,20 @@ const [historicalSalak] = mergeRailStations(salak.map(station => ({
 const historicalStations = establishedStations.flatMap(station => station.id === historicalSalak.id
   ? [historicalSalak] : station.name === "Salak Selatan" ? [] : [station]);
 
+// Restore the pre-alignment position and bearing for the historical hash.
+// The current train coordinates are checked against the displayed tracks separately.
+function historicalTrainGeometry(train: SimulatedTrain, now: number) {
+  const { shape } = railRoutes.find(route => route.id === train.lineId)!.legs[train.direction];
+  const station = (train.nearStation ?? train.previousStation)!;
+  const next = train.nextStation;
+  const distance = !train.nearStation && next && train.nextArrival !== null
+    ? station.distance + (next.distance - station.distance) *
+      (now - (train.nextArrival - next.arrival) - station.departure) / (next.arrival - station.departure)
+    : station.distance;
+  const { point, segment } = pointAtDistance(shape, distance);
+  return { ...train, position: point, bearing: Math.round(bearing(shape.path[segment], shape.path[segment + 1])) };
+}
+
 describe("T401/T402 scope reduction", () => {
   it("preserves the four deterministic bus journeys across six fixed ticks", () => {
     for (const tick of evidence.after.proof) {
@@ -61,7 +76,8 @@ describe("T401/T402 scope reduction", () => {
       expect(hash(historicalRailColours({
         railNetwork: { lines: establishedLines, stations: historicalStations, available: true,
           source: railNetwork.source, dataMode: railNetwork.dataMode },
-        trains: snapshot.trains.filter(train => !expandedServiceById.has(train.lineId)), linkBike: snapshot.linkBike,
+        trains: snapshot.trains.filter(train => !expandedServiceById.has(train.lineId)).map(train => historicalTrainGeometry(train, tick.now)),
+        linkBike: snapshot.linkBike,
         railAlerts: snapshot.alerts.filter(alert => !alert.modes.includes("Bus")),
         railArrivals: historicalStations.map(stop => stationArrivals(stop.stopRefs!, tick.now)),
       }))).toBe(tick.railAndLinkBike);

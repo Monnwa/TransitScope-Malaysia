@@ -1,10 +1,33 @@
-import { bearing, pointAtDistance } from "@/lib/route-projection";
+import { bearing, indexShape, pointAtDistance, projectCandidates } from "@/lib/route-projection";
+import { railMapPaths } from "@/lib/rail-map-geometry";
+import { publishedRailStops } from "@/lib/rail-station-coordinates";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import { EPOCH, MINUTE, SIMULATED, SIMULATION_SOURCE, seededRandom, timestamp } from "./clock";
-import { busRoutes, railRoutes, stationServices, type SimulatedRoute } from "./network";
+import { busRoutes, railNetwork, railRoutes, stationServices, type SimulatedRoute } from "./network";
 import { brtSunway } from "@/lib/expanded-services";
 
 const routeLabel = (route: SimulatedRoute) => route.mode === "Bus" && route.id !== brtSunway.id ? route.id : route.name;
+
+// Keep simulation timings on the original legs and use one displayed alignment in both directions.
+const trainTracks = new Map(railNetwork.lines.map(line => {
+  const route = railRoutes.find(route => route.id === line.id)!;
+  const paths = railMapPaths(line);
+  const shape = paths.length === 1 ? indexShape(paths[0]) : null;
+  if (!shape) throw new Error(`Invalid displayed track for ${line.id}`);
+
+  const outbound: number[] = [];
+  for (const stop of route.stops) {
+    const position = publishedRailStops[`sim:${line.id}:${stop.id}`]?.position ?? stop.position;
+    const match = projectCandidates(shape, position, 250)
+      .reduce<ReturnType<typeof projectCandidates>[number] | undefined>(
+        (nearest, candidate) => !nearest || candidate.offsetM < nearest.offsetM ? candidate : nearest, undefined);
+    if (!match || match.distanceM <= (outbound.at(-1) ?? -1)) {
+      throw new Error(`Invalid displayed track position for ${line.id} at ${stop.name}`);
+    }
+    outbound.push(match.distanceM);
+  }
+  return [line.id, { shape, stopDistances: [outbound, [...outbound].reverse()] }];
+}));
 
 function makeFleet(route: SimulatedRoute) {
   const random = seededRandom(route.seed);
@@ -50,10 +73,16 @@ function locate(vehicle: Vehicle, now: number) {
   const lastReached = run.leg.stops[index];
   const next = run.leg.stops[index + 1] ?? null;
   const atStop = elapsed < lastReached.departure || !next;
-  const distance = atStop ? lastReached.distance : lastReached.distance +
-    (next.distance - lastReached.distance) * (elapsed - lastReached.departure) / (next.arrival - lastReached.departure);
-  const { point, segment } = pointAtDistance(run.leg.shape, distance);
-  const path = run.leg.shape.path;
+  const track = trainTracks.get(vehicle.route.id);
+  const shape = track?.shape ?? run.leg.shape;
+  const stopDistances = track?.stopDistances[run.direction];
+  const from = stopDistances?.[index] ?? lastReached.distance;
+  const to = stopDistances?.[index + 1] ?? next?.distance ?? from;
+  const distance = atStop ? from : from +
+    (to - from) * (elapsed - lastReached.departure) / (next.arrival - lastReached.departure);
+  const { point, segment } = pointAtDistance(shape, distance);
+  const reverse = track && run.direction === 1;
+  const heading = reverse ? bearing(shape.path[segment + 1], shape.path[segment]) : bearing(shape.path[segment], shape.path[segment + 1]);
   const speed = atStop ? 0 : vehicle.route.mode === "Bus" && next
     ? Math.round((next.distance - lastReached.distance) * 3_600 / (next.arrival - lastReached.departure))
     : vehicle.route.speedKmh;
@@ -61,7 +90,7 @@ function locate(vehicle: Vehicle, now: number) {
     id: vehicle.id, name: vehicle.name, mode: vehicle.route.mode, operator: vehicle.route.operator,
     route: routeLabel(vehicle.route), routeId: vehicle.route.id,
     tripId: run.id, station: atStop ? lastReached.name : null, position: point, recordKind: "vehicle",
-    bearing: Math.round(bearing(path[segment], path[segment + 1])), speed,
+    bearing: Math.round(heading), speed,
     nextScheduledAt: next ? timestamp(run.start + next.arrival) : null,
     railLines: vehicle.route.mode === "Bus" ? undefined : [vehicle.route.id],
     reportedAt: timestamp(now), lastUpdatedAt: timestamp(now), status: atStop ? "At stop" : "In service",
