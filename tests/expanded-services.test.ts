@@ -105,11 +105,11 @@ describe("published service expansion", () => {
 
   it("keeps unique station and route counts, and restricts BRT to the selected bus route", () => {
     expect(byId.size).toBe(14);
-    expect(railNetwork.stations).toHaveLength(198);
-    expect(new Set(railNetwork.stations.map(station => station.id)).size).toBe(198);
+    expect(railNetwork.stations).toHaveLength(199);
+    expect(new Set(railNetwork.stations.map(station => station.id)).size).toBe(199);
     expect(new Set(busStops.map(stop => stop.stopRefs?.[0].split(":").at(-1))).size).toBe(78);
     expect(snapshot.records.filter(record => record.recordKind === "vehicle")).toHaveLength(145);
-    expect(index).toHaveLength(273);
+    expect(index).toHaveLength(274);
     const onlyBrt = transportTypeFilter(railNetwork, ["Bus"], brt);
     expect(snapshot.records.filter(onlyBrt.showsRecord)).toHaveLength(11);
     expect(onlyBrt.railLines).toHaveLength(0);

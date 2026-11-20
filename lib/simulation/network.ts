@@ -1,4 +1,5 @@
 import { rapidRailMeta, mergeRailStations, type RailLine, type RailNetwork } from "@/lib/rail-model";
+import { withRailStationCoordinates } from "@/lib/rail-station-coordinates";
 import { brtSunway, expandedRailServices, expandedServiceById } from "@/lib/expanded-services";
 import { distanceM, indexShape, pointAtDistance, projectCandidates, type GeoPoint } from "@/lib/route-projection";
 import type { Mode, Record as TransitRecord } from "@/lib/transit-data";
@@ -262,6 +263,10 @@ function stationRecords(route: SimulatedRoute): TransitRecord[] {
       operator: route.operator, route: route.name, routeId: route.id, recordKind: "stop",
       stopRefs: [`sim:${route.id}:${station.id}`], dataMode: SIMULATED, status: "Station available", reportedAt: null,
       source: service?.source ?? SIMULATION_SOURCE,
+      // The integrated rail map shows these same-name stations separately.
+      ...(route.id === "KTM:KC05_KB18" && station.id === "salak-selatan" && {
+        stationComplexId: `${station.id}:${route.id}`,
+      }),
       ...(service && published && {
         stationComplexId: published.complexId,
         stationProvenance: [{ routeId: service.id, code: published.id, name: published.name, aliases: published.aliases,
@@ -278,14 +283,22 @@ const brtLine: RailLine = {
   source: brtSunway.source, dataMode: SIMULATED, geometryStatus: "available",
 };
 export const railNetwork = {
-  lines: railLines, busLines: [brtLine], stations: mergeRailStations([...railStops, ...stationRecords(brtRoute)]),
+  lines: railLines, busLines: [brtLine],
+  stations: mergeRailStations([...railStops, ...stationRecords(brtRoute)]).map(withRailStationCoordinates),
   available: true, source: SIMULATION_SOURCE, dataMode: SIMULATED,
 } satisfies RailNetwork & { dataMode: typeof SIMULATED };
+
+// Source-filtered views reuse the complex anchor even when a connecting line is excluded.
+const positionByRailStop = new Map(railNetwork.stations.flatMap(station =>
+  station.stopRefs?.map(ref => [ref, station.position] as const) ?? []));
+
 export function railNetworkFor(source: "rapid-rail-kl" | "ktmb") {
   const lines = railLines.filter(line => source === "ktmb" ? line.mode === "KTM" : line.mode !== "KTM" && line.mode !== "ERL");
   const ids = new Set(lines.map(line => line.id));
   return { available: true, source: SIMULATION_SOURCE, dataMode: SIMULATED, lines,
-    stations: mergeRailStations(railStops.filter(station => ids.has(station.routeId!))) };
+    stations: mergeRailStations(railStops.filter(station => ids.has(station.routeId!))).map(station => ({
+      ...station, position: positionByRailStop.get(station.stopRefs?.[0] ?? "") ?? station.position,
+    })) };
 }
 
 export const busStops = feederRoutes.flatMap(route => route.stops.map((station): TransitRecord => ({

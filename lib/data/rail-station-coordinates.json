@@ -1,0 +1,1065 @@
+{
+  "stations": {
+    "sim:MRT1:kwasa-damansara": {
+      "code": "KG04",
+      "sequence": 1,
+      "position": [3.176146, 101.572052]
+    },
+    "sim:MRT1:kota-damansara": {
+      "code": "KG06",
+      "sequence": 3,
+      "position": [3.150134, 101.57869]
+    },
+    "sim:MRT1:surian": {
+      "code": "KG07",
+      "sequence": 4,
+      "position": [3.14948, 101.593925]
+    },
+    "sim:MRT1:mutiara-damansara": {
+      "code": "KG08",
+      "sequence": 5,
+      "position": [3.155301, 101.609077]
+    },
+    "sim:MRT1:bandar-utama": {
+      "code": "KG09",
+      "sequence": 6,
+      "position": [3.14671, 101.618599]
+    },
+    "sim:MRT1:ttdi": {
+      "code": "KG10",
+      "sequence": 7,
+      "position": [3.13613, 101.630539]
+    },
+    "sim:MRT1:phileo-damansara": {
+      "code": "KG12",
+      "sequence": 8,
+      "position": [3.129864, 101.642471]
+    },
+    "sim:MRT1:pusat-bandar-damansara": {
+      "code": "KG13",
+      "sequence": 9,
+      "position": [3.143444, 101.662857]
+    },
+    "sim:MRT1:semantan": {
+      "code": "KG14",
+      "sequence": 10,
+      "position": [3.150977, 101.665497]
+    },
+    "sim:MRT1:muzium-negara": {
+      "code": "KG15",
+      "sequence": 11,
+      "position": [3.137317, 101.687336]
+    },
+    "sim:MRT1:pasar-seni": {
+      "code": "KG16",
+      "sequence": 12,
+      "position": [3.142293265, 101.6955642]
+    },
+    "sim:MRT1:bukit-bintang": {
+      "code": "KG18A",
+      "sequence": 14,
+      "position": [3.146503, 101.710947]
+    },
+    "sim:MRT1:tun-razak-exchange": {
+      "code": "KG20",
+      "sequence": 15,
+      "position": [3.142403, 101.720156]
+    },
+    "sim:MRT1:cochrane": {
+      "code": "KG21",
+      "sequence": 16,
+      "position": [3.132829, 101.722962]
+    },
+    "sim:MRT1:maluri": {
+      "code": "KG22",
+      "sequence": 17,
+      "position": [3.123623, 101.727809]
+    },
+    "sim:MRT1:taman-midah": {
+      "code": "KG24",
+      "sequence": 19,
+      "position": [3.104505, 101.732186]
+    },
+    "sim:MRT1:taman-mutiara": {
+      "code": "KG25",
+      "sequence": 20,
+      "position": [3.090989, 101.740453]
+    },
+    "sim:MRT1:taman-connaught": {
+      "code": "KG26",
+      "sequence": 21,
+      "position": [3.079172, 101.74522]
+    },
+    "sim:MRT1:taman-suntex": {
+      "code": "KG27",
+      "sequence": 22,
+      "position": [3.071578, 101.763552]
+    },
+    "sim:MRT1:sri-raya": {
+      "code": "KG28",
+      "sequence": 23,
+      "position": [3.062273, 101.772899]
+    },
+    "sim:MRT1:bandar-tun-hussein-onn": {
+      "code": "KG29",
+      "sequence": 24,
+      "position": [3.048223, 101.775109]
+    },
+    "sim:MRT1:batu-11-cheras": {
+      "code": "KG30",
+      "sequence": 25,
+      "position": [3.041339, 101.773383]
+    },
+    "sim:MRT1:bukit-dukung": {
+      "code": "KG31",
+      "sequence": 26,
+      "position": [3.026413, 101.771072]
+    },
+    "sim:MRT1:sungai-jernih": {
+      "code": "KG33",
+      "sequence": 27,
+      "position": [3.000948, 101.783857]
+    },
+    "sim:MRT1:stadium-kajang": {
+      "code": "KG34",
+      "sequence": 28,
+      "position": [2.994514, 101.786338]
+    },
+    "sim:MRT1:kajang": {
+      "code": "KG35",
+      "sequence": 29,
+      "position": [2.982778, 101.790278]
+    },
+    "sim:MRT2:kwasa-damansara": {
+      "code": "PY01",
+      "sequence": 1,
+      "position": [3.1763324, 101.5721456]
+    },
+    "sim:MRT2:kampung-selamat": {
+      "code": "PY03",
+      "sequence": 2,
+      "position": [3.197266, 101.578499]
+    },
+    "sim:MRT2:sungai-buloh": {
+      "code": "PY04",
+      "sequence": 3,
+      "position": [3.206429, 101.581779]
+    },
+    "sim:MRT2:sri-damansara-barat": {
+      "code": "PY06",
+      "sequence": 5,
+      "position": [3.198197, 101.608302]
+    },
+    "sim:MRT2:sri-damansara-sentral": {
+      "code": "PY07",
+      "sequence": 6,
+      "position": [3.198815, 101.621396]
+    },
+    "sim:MRT2:sri-damansara-timur": {
+      "code": "PY08",
+      "sequence": 7,
+      "position": [3.207832, 101.628716]
+    },
+    "sim:MRT2:metro-prima": {
+      "code": "PY09",
+      "sequence": 8,
+      "position": [3.214438, 101.639402]
+    },
+    "sim:MRT2:kepong-baru": {
+      "code": "PY10",
+      "sequence": 9,
+      "position": [3.211663, 101.648193]
+    },
+    "sim:MRT2:jinjang": {
+      "code": "PY11",
+      "sequence": 10,
+      "position": [3.209544, 101.655829]
+    },
+    "sim:MRT2:sri-delima": {
+      "code": "PY12",
+      "sequence": 11,
+      "position": [3.207108, 101.665749]
+    },
+    "sim:MRT2:kampung-batu": {
+      "code": "PY13",
+      "sequence": 12,
+      "position": [3.205521, 101.675473]
+    },
+    "sim:MRT2:kentonmen": {
+      "code": "PY14",
+      "sequence": 13,
+      "position": [3.19563, 101.6797]
+    },
+    "sim:MRT2:jalan-ipoh": {
+      "code": "PY15",
+      "sequence": 14,
+      "position": [3.189319, 101.681145]
+    },
+    "sim:MRT2:sentul-barat": {
+      "code": "PY16",
+      "sequence": 15,
+      "position": [3.179369, 101.684742]
+    },
+    "sim:MRT2:titiwangsa": {
+      "code": "PY17",
+      "sequence": 16,
+      "position": [3.17408, 101.69581]
+    },
+    "sim:MRT2:hospital-kuala-lumpur": {
+      "code": "PY18",
+      "sequence": 17,
+      "position": [3.17405, 101.70239]
+    },
+    "sim:MRT2:raja-uda": {
+      "code": "PY19",
+      "sequence": 18,
+      "position": [3.16794, 101.71017]
+    },
+    "sim:MRT2:ampang-park": {
+      "code": "PY20",
+      "sequence": 19,
+      "position": [3.16225, 101.71781]
+    },
+    "sim:MRT2:persiaran-klcc": {
+      "code": "PY21",
+      "sequence": 20,
+      "position": [3.15712, 101.71834]
+    },
+    "sim:MRT2:conlay": {
+      "code": "PY22",
+      "sequence": 21,
+      "position": [3.15145, 101.71801]
+    },
+    "sim:MRT2:tun-razak-exchange": {
+      "code": "PY23",
+      "sequence": 22,
+      "position": [3.14289, 101.72034]
+    },
+    "sim:MRT2:chan-sow-lin": {
+      "code": "PY24",
+      "sequence": 23,
+      "position": [3.12839, 101.71663]
+    },
+    "sim:MRT2:kuchai": {
+      "code": "PY27",
+      "sequence": 24,
+      "position": [3.089546, 101.694124]
+    },
+    "sim:MRT2:taman-naga-emas": {
+      "code": "PY28",
+      "sequence": 25,
+      "position": [3.077688, 101.699867]
+    },
+    "sim:MRT2:sungai-besi": {
+      "code": "PY29",
+      "sequence": 26,
+      "position": [3.063737, 101.7084]
+    },
+    "sim:MRT2:serdang-raya-utara": {
+      "code": "PY31",
+      "sequence": 27,
+      "position": [3.041674, 101.704928]
+    },
+    "sim:MRT2:serdang-raya-selatan": {
+      "code": "PY32",
+      "sequence": 28,
+      "position": [3.028463, 101.707514]
+    },
+    "sim:MRT2:serdang-jaya": {
+      "code": "PY33",
+      "sequence": 29,
+      "position": [3.0216, 101.709]
+    },
+    "sim:MRT2:upm": {
+      "code": "PY34",
+      "sequence": 30,
+      "position": [3.008489, 101.705396]
+    },
+    "sim:MRT2:taman-equine": {
+      "code": "PY36",
+      "sequence": 31,
+      "position": [2.98942, 101.67244]
+    },
+    "sim:MRT2:putra-permai": {
+      "code": "PY37",
+      "sequence": 32,
+      "position": [2.98339, 101.66099]
+    },
+    "sim:MRT2:16-sierra": {
+      "code": "PY38",
+      "sequence": 33,
+      "position": [2.964974, 101.654812]
+    },
+    "sim:MRT2:cyberjaya-utara": {
+      "code": "PY39",
+      "sequence": 34,
+      "position": [2.95, 101.6573]
+    },
+    "sim:MRT2:cyberjaya-city-centre": {
+      "code": "PY40",
+      "sequence": 35,
+      "position": [2.9384, 101.6659]
+    },
+    "sim:MRT2:putrajaya-sentral": {
+      "code": "PY41",
+      "sequence": 36,
+      "position": [2.9313, 101.6715]
+    },
+    "sim:LRT-KJ:gombak": {
+      "code": "KJ1",
+      "sequence": 1,
+      "position": [3.231793, 101.724427]
+    },
+    "sim:LRT-KJ:taman-melati": {
+      "code": "KJ2",
+      "sequence": 2,
+      "position": [3.219558, 101.72197]
+    },
+    "sim:LRT-KJ:wangsa-maju": {
+      "code": "KJ3",
+      "sequence": 3,
+      "position": [3.205751, 101.731796]
+    },
+    "sim:LRT-KJ:sri-rampai": {
+      "code": "KJ4",
+      "sequence": 4,
+      "position": [3.199176, 101.73747]
+    },
+    "sim:LRT-KJ:setiawangsa": {
+      "code": "KJ5",
+      "sequence": 5,
+      "position": [3.17576, 101.73584]
+    },
+    "sim:LRT-KJ:jelatek": {
+      "code": "KJ6",
+      "sequence": 6,
+      "position": [3.167204, 101.735344]
+    },
+    "sim:LRT-KJ:dato-keramat": {
+      "code": "KJ7",
+      "sequence": 7,
+      "position": [3.16509, 101.73184]
+    },
+    "sim:LRT-KJ:damai": {
+      "code": "KJ8",
+      "sequence": 8,
+      "position": [3.164406, 101.724489]
+    },
+    "sim:LRT-KJ:ampang-park": {
+      "code": "KJ9",
+      "sequence": 9,
+      "position": [3.159894, 101.719017]
+    },
+    "sim:LRT-KJ:klcc": {
+      "code": "KJ10",
+      "sequence": 10,
+      "position": [3.158935, 101.713287]
+    },
+    "sim:LRT-KJ:kampung-baru": {
+      "code": "KJ11",
+      "sequence": 11,
+      "position": [3.161386, 101.706608]
+    },
+    "sim:LRT-KJ:dang-wangi": {
+      "code": "KJ12",
+      "sequence": 12,
+      "position": [3.156942, 101.701975]
+    },
+    "sim:LRT-KJ:masjid-jamek": {
+      "code": "KJ13",
+      "sequence": 13,
+      "position": [3.149714, 101.696815]
+    },
+    "sim:LRT-KJ:pasar-seni": {
+      "code": "KJ14",
+      "sequence": 14,
+      "position": [3.142439, 101.69531]
+    },
+    "sim:LRT-KJ:kl-sentral": {
+      "code": "KJ15",
+      "sequence": 15,
+      "position": [3.13442, 101.68625]
+    },
+    "sim:LRT-KJ:bangsar": {
+      "code": "KJ16",
+      "sequence": 16,
+      "position": [3.127588, 101.679062]
+    },
+    "sim:LRT-KJ:abdullah-hukum": {
+      "code": "KJ17",
+      "sequence": 17,
+      "position": [3.118735, 101.672897]
+    },
+    "sim:LRT-KJ:kerinchi": {
+      "code": "KJ18",
+      "sequence": 18,
+      "position": [3.115506, 101.668572]
+    },
+    "sim:LRT-KJ:universiti": {
+      "code": "KJ19",
+      "sequence": 19,
+      "position": [3.114616, 101.661639]
+    },
+    "sim:LRT-KJ:taman-jaya": {
+      "code": "KJ20",
+      "sequence": 20,
+      "position": [3.104086, 101.645248]
+    },
+    "sim:LRT-KJ:asia-jaya": {
+      "code": "KJ21",
+      "sequence": 21,
+      "position": [3.104343, 101.637695]
+    },
+    "sim:LRT-KJ:taman-paramount": {
+      "code": "KJ22",
+      "sequence": 22,
+      "position": [3.104716, 101.623192]
+    },
+    "sim:LRT-KJ:taman-bahagia": {
+      "code": "KJ23",
+      "sequence": 23,
+      "position": [3.11079, 101.612856]
+    },
+    "sim:LRT-KJ:kelana-jaya": {
+      "code": "KJ24",
+      "sequence": 24,
+      "position": [3.112497, 101.6043]
+    },
+    "sim:LRT-KJ:lembah-subang": {
+      "code": "KJ25",
+      "sequence": 25,
+      "position": [3.112094, 101.591034]
+    },
+    "sim:LRT-KJ:ara-damansara": {
+      "code": "KJ26",
+      "sequence": 26,
+      "position": [3.108643, 101.586372]
+    },
+    "sim:LRT-KJ:glenmarie": {
+      "code": "KJ27",
+      "sequence": 27,
+      "position": [3.094732, 101.590622]
+    },
+    "sim:LRT-KJ:subang-jaya": {
+      "code": "KJ28",
+      "sequence": 28,
+      "position": [3.08466, 101.588127]
+    },
+    "sim:LRT-KJ:ss15": {
+      "code": "KJ29",
+      "sequence": 29,
+      "position": [3.075972, 101.585983]
+    },
+    "sim:LRT-KJ:ss18": {
+      "code": "KJ30",
+      "sequence": 30,
+      "position": [3.067182, 101.585945]
+    },
+    "sim:LRT-KJ:usj-7": {
+      "code": "KJ31",
+      "sequence": 31,
+      "position": [3.054956, 101.592194]
+    },
+    "sim:LRT-KJ:taipan": {
+      "code": "KJ32",
+      "sequence": 32,
+      "position": [3.04815, 101.590233]
+    },
+    "sim:LRT-KJ:wawasan": {
+      "code": "KJ33",
+      "sequence": 33,
+      "position": [3.035062, 101.588348]
+    },
+    "sim:LRT-KJ:usj-21": {
+      "code": "KJ34",
+      "sequence": 34,
+      "position": [3.029881, 101.581711]
+    },
+    "sim:LRT-KJ:alam-megah": {
+      "code": "KJ35",
+      "sequence": 35,
+      "position": [3.023151, 101.572029]
+    },
+    "sim:LRT-KJ:subang-alam": {
+      "code": "KJ36",
+      "sequence": 36,
+      "position": [3.009421, 101.572281]
+    },
+    "sim:LRT-KJ:putra-heights": {
+      "code": "KJ37",
+      "sequence": 37,
+      "position": [2.996227, 101.575462]
+    },
+    "sim:LRT-AG:sentul-timur": {
+      "code": "AG1",
+      "sequence": 1,
+      "position": [3.185897, 101.695217]
+    },
+    "sim:LRT-AG:sentul": {
+      "code": "AG2",
+      "sequence": 2,
+      "position": [3.178484, 101.695542]
+    },
+    "sim:LRT-AG:titiwangsa": {
+      "code": "AG3",
+      "sequence": 3,
+      "position": [3.173497, 101.695367]
+    },
+    "sim:LRT-AG:pwtc": {
+      "code": "AG4",
+      "sequence": 4,
+      "position": [3.166333, 101.693586]
+    },
+    "sim:LRT-AG:sultan-ismail": {
+      "code": "AG5",
+      "sequence": 5,
+      "position": [3.161245, 101.694109]
+    },
+    "sim:LRT-AG:bandaraya": {
+      "code": "AG6",
+      "sequence": 6,
+      "position": [3.155567, 101.694485]
+    },
+    "sim:LRT-AG:masjid-jamek": {
+      "code": "AG7",
+      "sequence": 7,
+      "position": [3.14927, 101.696377]
+    },
+    "sim:LRT-AG:plaza-rakyat": {
+      "code": "AG8",
+      "sequence": 8,
+      "position": [3.144049, 101.702105]
+    },
+    "sim:LRT-AG:hang-tuah": {
+      "code": "AG9",
+      "sequence": 9,
+      "position": [3.140012, 101.705984]
+    },
+    "sim:LRT-AG:pudu": {
+      "code": "AG10",
+      "sequence": 10,
+      "position": [3.134879, 101.711957]
+    },
+    "sim:LRT-AG:chan-sow-lin": {
+      "code": "AG11",
+      "sequence": 11,
+      "position": [3.128105, 101.715637]
+    },
+    "sim:LRT-AG:maluri": {
+      "code": "AG13",
+      "sequence": 13,
+      "position": [3.12329, 101.727283]
+    },
+    "sim:LRT-AG:pandan-jaya": {
+      "code": "AG14",
+      "sequence": 14,
+      "position": [3.130141, 101.739122]
+    },
+    "sim:LRT-AG:pandan-indah": {
+      "code": "AG15",
+      "sequence": 15,
+      "position": [3.134581, 101.746509]
+    },
+    "sim:LRT-AG:cempaka": {
+      "code": "AG16",
+      "sequence": 16,
+      "position": [3.138324, 101.752979]
+    },
+    "sim:LRT-AG:cahaya": {
+      "code": "AG17",
+      "sequence": 17,
+      "position": [3.140575, 101.756677]
+    },
+    "sim:LRT-AG:ampang": {
+      "code": "AG18",
+      "sequence": 18,
+      "position": [3.150318, 101.760049]
+    },
+    "sim:LRT-PH:sentul-timur": {
+      "code": "SP1",
+      "sequence": 1,
+      "position": [3.185897, 101.695217]
+    },
+    "sim:LRT-PH:sentul": {
+      "code": "SP2",
+      "sequence": 2,
+      "position": [3.178484, 101.695542]
+    },
+    "sim:LRT-PH:titiwangsa": {
+      "code": "SP3",
+      "sequence": 3,
+      "position": [3.173497, 101.695367]
+    },
+    "sim:LRT-PH:pwtc": {
+      "code": "SP4",
+      "sequence": 4,
+      "position": [3.166333, 101.693586]
+    },
+    "sim:LRT-PH:sultan-ismail": {
+      "code": "SP5",
+      "sequence": 5,
+      "position": [3.161245, 101.694109]
+    },
+    "sim:LRT-PH:bandaraya": {
+      "code": "SP6",
+      "sequence": 6,
+      "position": [3.155567, 101.694485]
+    },
+    "sim:LRT-PH:masjid-jamek": {
+      "code": "SP7",
+      "sequence": 7,
+      "position": [3.14927, 101.696377]
+    },
+    "sim:LRT-PH:plaza-rakyat": {
+      "code": "SP8",
+      "sequence": 8,
+      "position": [3.144049, 101.702105]
+    },
+    "sim:LRT-PH:hang-tuah": {
+      "code": "SP9",
+      "sequence": 9,
+      "position": [3.140012, 101.705984]
+    },
+    "sim:LRT-PH:pudu": {
+      "code": "SP10",
+      "sequence": 10,
+      "position": [3.134879, 101.711957]
+    },
+    "sim:LRT-PH:chan-sow-lin": {
+      "code": "SP11",
+      "sequence": 11,
+      "position": [3.128105, 101.715637]
+    },
+    "sim:LRT-PH:cheras": {
+      "code": "SP12",
+      "sequence": 12,
+      "position": [3.112609, 101.714178]
+    },
+    "sim:LRT-PH:salak-selatan": {
+      "code": "SP13",
+      "sequence": 13,
+      "position": [3.102201, 101.706179]
+    },
+    "sim:LRT-PH:bandar-tasik-selatan": {
+      "code": "SP15",
+      "sequence": 15,
+      "position": [3.076058, 101.711107]
+    },
+    "sim:LRT-PH:sungai-besi": {
+      "code": "SP16",
+      "sequence": 16,
+      "position": [3.063842, 101.708062]
+    },
+    "sim:LRT-PH:bukit-jalil": {
+      "code": "SP17",
+      "sequence": 17,
+      "position": [3.058196, 101.692125]
+    },
+    "sim:LRT-PH:sri-petaling": {
+      "code": "SP18",
+      "sequence": 18,
+      "position": [3.061445, 101.687074]
+    },
+    "sim:LRT-PH:awan-besar": {
+      "code": "SP19",
+      "sequence": 19,
+      "position": [3.062131, 101.670555]
+    },
+    "sim:LRT-PH:muhibbah": {
+      "code": "SP20",
+      "sequence": 20,
+      "position": [3.062229, 101.662552]
+    },
+    "sim:LRT-PH:alam-sutera": {
+      "code": "SP21",
+      "sequence": 21,
+      "position": [3.0547, 101.656468]
+    },
+    "sim:LRT-PH:kinrara-bk5": {
+      "code": "SP22",
+      "sequence": 22,
+      "position": [3.050506, 101.644294]
+    },
+    "sim:LRT-PH:ioi-puchong-jaya": {
+      "code": "SP24",
+      "sequence": 23,
+      "position": [3.048101, 101.62095]
+    },
+    "sim:LRT-PH:pusat-bandar-puchong": {
+      "code": "SP25",
+      "sequence": 24,
+      "position": [3.033194, 101.616057]
+    },
+    "sim:LRT-PH:taman-perindustrian-puchong": {
+      "code": "SP26",
+      "sequence": 25,
+      "position": [3.022814, 101.613514]
+    },
+    "sim:LRT-PH:bandar-puteri": {
+      "code": "SP27",
+      "sequence": 26,
+      "position": [3.017111, 101.612855]
+    },
+    "sim:LRT-PH:puchong-perdana": {
+      "code": "SP28",
+      "sequence": 27,
+      "position": [3.007913, 101.605021]
+    },
+    "sim:LRT-PH:puchong-prima": {
+      "code": "SP29",
+      "sequence": 28,
+      "position": [2.999808, 101.596692]
+    },
+    "sim:LRT-PH:putra-heights": {
+      "code": "SP31",
+      "sequence": 29,
+      "position": [2.996016, 101.575521]
+    },
+    "sim:MONORAIL:kl-sentral": {
+      "code": "MR1",
+      "sequence": 1,
+      "position": [3.132852, 101.687817]
+    },
+    "sim:MONORAIL:tun-sambanthan": {
+      "code": "MR2",
+      "sequence": 2,
+      "position": [3.13132, 101.69085]
+    },
+    "sim:MONORAIL:maharajalela": {
+      "code": "MR3",
+      "sequence": 3,
+      "position": [3.138743, 101.699268]
+    },
+    "sim:MONORAIL:hang-tuah": {
+      "code": "MR4",
+      "sequence": 4,
+      "position": [3.140511, 101.706029]
+    },
+    "sim:MONORAIL:imbi": {
+      "code": "MR5",
+      "sequence": 5,
+      "position": [3.14283, 101.70945]
+    },
+    "sim:MONORAIL:bukit-bintang": {
+      "code": "MR6",
+      "sequence": 6,
+      "position": [3.146022, 101.7115]
+    },
+    "sim:MONORAIL:raja-chulan": {
+      "code": "MR7",
+      "sequence": 7,
+      "position": [3.150878, 101.710432]
+    },
+    "sim:MONORAIL:bukit-nanas": {
+      "code": "MR8",
+      "sequence": 8,
+      "position": [3.156214, 101.704809]
+    },
+    "sim:MONORAIL:medan-tuanku": {
+      "code": "MR9",
+      "sequence": 9,
+      "position": [3.15935, 101.69888]
+    },
+    "sim:MONORAIL:chow-kit": {
+      "code": "MR10",
+      "sequence": 10,
+      "position": [3.167358, 101.698379]
+    },
+    "sim:MONORAIL:titiwangsa": {
+      "code": "MR11",
+      "sequence": 11,
+      "position": [3.173192, 101.696022]
+    },
+    "sim:KTM:KA15_KD19:tanjung-malim": {
+      "code": "15200",
+      "sequence": 1,
+      "position": [3.685142, 101.518165]
+    },
+    "sim:KTM:KA15_KD19:rawang": {
+      "code": "17800",
+      "sequence": 6,
+      "position": [3.318955, 101.575012]
+    },
+    "sim:KTM:KA15_KD19:sungai-buloh": {
+      "code": "18500",
+      "sequence": 8,
+      "position": [3.206356, 101.580128]
+    },
+    "sim:KTM:KA15_KD19:kepong-sentral": {
+      "code": "18400",
+      "sequence": 9,
+      "position": [3.208653, 101.62849]
+    },
+    "sim:KTM:KA15_KD19:kepong": {
+      "code": "18600",
+      "sequence": 10,
+      "position": [3.202996, 101.637381]
+    },
+    "sim:KTM:KA15_KD19:segambut": {
+      "code": "18700",
+      "sequence": 11,
+      "position": [3.186514, 101.664032]
+    },
+    "sim:KTM:KA15_KD19:putra": {
+      "code": "18800",
+      "sequence": 12,
+      "position": [3.165399, 101.691101]
+    },
+    "sim:KTM:KA15_KD19:bank-negara": {
+      "code": "18900",
+      "sequence": 13,
+      "position": [3.155105, 101.693118]
+    },
+    "sim:KTM:KA15_KD19:kuala-lumpur": {
+      "code": "19000",
+      "sequence": 14,
+      "position": [3.139444, 101.693333]
+    },
+    "sim:KTM:KA15_KD19:kl-sentral": {
+      "code": "19100",
+      "sequence": 15,
+      "position": [3.134167, 101.686111]
+    },
+    "sim:KTM:KA15_KD19:abdullah-hukum": {
+      "code": "52700",
+      "sequence": 16,
+      "position": [3.11869, 101.67293]
+    },
+    "sim:KTM:KA15_KD19:angkasapuri": {
+      "code": "52800",
+      "sequence": 17,
+      "position": [3.113212, 101.673367]
+    },
+    "sim:KTM:KA15_KD19:pantai-dalam": {
+      "code": "52900",
+      "sequence": 18,
+      "position": [3.095607, 101.669927]
+    },
+    "sim:KTM:KA15_KD19:petaling": {
+      "code": "53000",
+      "sequence": 19,
+      "position": [3.086485, 101.664338]
+    },
+    "sim:KTM:KA15_KD19:jalan-templer": {
+      "code": "53100",
+      "sequence": 20,
+      "position": [3.084013, 101.656402]
+    },
+    "sim:KTM:KA15_KD19:kampung-dato-harun": {
+      "code": "53400",
+      "sequence": 21,
+      "position": [3.084828, 101.632339]
+    },
+    "sim:KTM:KA15_KD19:seri-setia": {
+      "code": "53500",
+      "sequence": 22,
+      "position": [3.0845354, 101.6219044],
+      "osmNodeId": 6762842359,
+      "originalGtfsPosition": [3.083373, 101.61143]
+    },
+    "sim:KTM:KA15_KD19:setia-jaya": {
+      "code": "53600",
+      "sequence": 23,
+      "position": [3.083373, 101.61143]
+    },
+    "sim:KTM:KA15_KD19:subang-jaya": {
+      "code": "53700",
+      "sequence": 24,
+      "position": [3.084554, 101.587373]
+    },
+    "sim:KTM:KA15_KD19:batu-tiga": {
+      "code": "53800",
+      "sequence": 25,
+      "position": [3.076091, 101.559811]
+    },
+    "sim:KTM:KA15_KD19:shah-alam": {
+      "code": "54200",
+      "sequence": 26,
+      "position": [3.056388, 101.525302]
+    },
+    "sim:KTM:KA15_KD19:padang-jawa": {
+      "code": "54400",
+      "sequence": 27,
+      "position": [3.052532, 101.492742]
+    },
+    "sim:KTM:KA15_KD19:bukit-badak": {
+      "code": "54500",
+      "sequence": 28,
+      "position": [3.036147, 101.470176]
+    },
+    "sim:KTM:KA15_KD19:klang": {
+      "code": "54700",
+      "sequence": 29,
+      "position": [3.043078, 101.449543]
+    },
+    "sim:KTM:KA15_KD19:teluk-pulai": {
+      "code": "54800",
+      "sequence": 30,
+      "position": [3.04089, 101.432153]
+    },
+    "sim:KTM:KA15_KD19:teluk-gadong": {
+      "code": "54900",
+      "sequence": 31,
+      "position": [3.033932, 101.424947]
+    },
+    "sim:KTM:KA15_KD19:kampung-raja-uda": {
+      "code": "55000",
+      "sequence": 32,
+      "position": [3.020253, 101.41023]
+    },
+    "sim:KTM:KA15_KD19:jalan-kastam": {
+      "code": "55100",
+      "sequence": 33,
+      "position": [3.013128, 101.402599]
+    },
+    "sim:KTM:KA15_KD19:port-klang": {
+      "code": "55200",
+      "sequence": 34,
+      "position": [2.999323, 101.39179]
+    },
+    "sim:KTM:KC05_KB18:batu-caves": {
+      "code": "50600",
+      "sequence": 1,
+      "position": [3.237796, 101.681215]
+    },
+    "sim:KTM:KC05_KB18:taman-wahyu": {
+      "code": "50500",
+      "sequence": 2,
+      "position": [3.21451, 101.672178]
+    },
+    "sim:KTM:KC05_KB18:kampung-batu": {
+      "code": "50400",
+      "sequence": 3,
+      "position": [3.204892, 101.675584]
+    },
+    "sim:KTM:KC05_KB18:batu-kentonmen": {
+      "code": "50300",
+      "sequence": 4,
+      "position": [3.198485, 101.681138]
+    },
+    "sim:KTM:KC05_KB18:sentul": {
+      "code": "50000",
+      "sequence": 5,
+      "position": [3.183581, 101.688802]
+    },
+    "sim:KTM:KC05_KB18:putra": {
+      "code": "18800",
+      "sequence": 6,
+      "position": [3.165399, 101.691101]
+    },
+    "sim:KTM:KC05_KB18:bank-negara": {
+      "code": "18900",
+      "sequence": 7,
+      "position": [3.155105, 101.693118]
+    },
+    "sim:KTM:KC05_KB18:kuala-lumpur": {
+      "code": "19000",
+      "sequence": 8,
+      "position": [3.139444, 101.693333]
+    },
+    "sim:KTM:KC05_KB18:kl-sentral": {
+      "code": "19100",
+      "sequence": 9,
+      "position": [3.134167, 101.686111]
+    },
+    "sim:KTM:KC05_KB18:mid-valley": {
+      "code": "19205",
+      "sequence": 10,
+      "position": [3.119211, 101.678865]
+    },
+    "sim:KTM:KC05_KB18:seputeh": {
+      "code": "19300",
+      "sequence": 11,
+      "position": [3.113612, 101.681474]
+    },
+    "sim:KTM:KC05_KB18:salak-selatan": {
+      "code": "19400",
+      "sequence": 12,
+      "position": [3.098413, 101.705055]
+    },
+    "sim:KTM:KC05_KB18:bandar-tasik-selatan": {
+      "code": "19600",
+      "sequence": 13,
+      "position": [3.076229, 101.711119]
+    },
+    "sim:KTM:KC05_KB18:serdang": {
+      "code": "19900",
+      "sequence": 14,
+      "position": [3.023404, 101.716056]
+    },
+    "sim:KTM:KC05_KB18:kajang": {
+      "code": "20400",
+      "sequence": 15,
+      "position": [2.983222, 101.790669]
+    },
+    "sim:KTM:KC05_KB18:ukm": {
+      "code": "20500",
+      "sequence": 17,
+      "position": [2.939775, 101.787623]
+    },
+    "sim:KTM:KC05_KB18:bangi": {
+      "code": "20900",
+      "sequence": 18,
+      "position": [2.904467, 101.785943]
+    },
+    "sim:KTM:KC05_KB18:batang-benar": {
+      "code": "21300",
+      "sequence": 19,
+      "position": [2.829904, 101.826655]
+    },
+    "sim:KTM:KC05_KB18:nilai": {
+      "code": "21500",
+      "sequence": 20,
+      "position": [2.802356, 101.799303]
+    },
+    "sim:KTM:KC05_KB18:labu": {
+      "code": "22000",
+      "sequence": 21,
+      "position": [2.754501, 101.826656]
+    },
+    "sim:KTM:KC05_KB18:tiroi": {
+      "code": "22400",
+      "sequence": 22,
+      "position": [2.741459, 101.871914]
+    },
+    "sim:KTM:KC05_KB18:seremban": {
+      "code": "22700",
+      "sequence": 23,
+      "position": [2.719169, 101.940792]
+    },
+    "sim:KTM:KC05_KB18:senawang": {
+      "code": "22900",
+      "sequence": 24,
+      "position": [2.690138, 101.972336]
+    },
+    "sim:KTM:KC05_KB18:sungai-gadut": {
+      "code": "23100",
+      "sequence": 25,
+      "position": [2.660898, 101.996158]
+    },
+    "sim:KTM:KC05_KB18:rembau": {
+      "code": "23900",
+      "sequence": 26,
+      "position": [2.593055, 102.094653]
+    },
+    "sim:KTM:KC05_KB18:pulau-sebang": {
+      "code": "25100",
+      "sequence": 27,
+      "position": [2.46396, 102.226308]
+    }
+  },
+  "interchangeAnchors": {
+    "rail:kwasa-damansara:MRT1": "MRT2",
+    "rail:bandar-utama:MRT1": "lrt-shah-alam",
+    "rail:sungai-buloh:MRT2": "KTM:KA15_KD19",
+    "rail:titiwangsa:MRT2": "LRT-AG",
+    "rail:ampang-park:MRT2": "LRT-KJ",
+    "rail:chan-sow-lin:MRT2": "LRT-AG",
+    "rail:sungai-besi:MRT2": "LRT-PH",
+    "rail:masjid-jamek:LRT-KJ": "LRT-AG",
+    "rail:kl-sentral:LRT-KJ": "erl-klia-ekspres",
+    "rail:abdullah-hukum:LRT-KJ": "KTM:KA15_KD19",
+    "rail:hang-tuah:LRT-AG": "MONORAIL",
+    "rail:bandar-tasik-selatan:LRT-PH": "KTM:KC05_KB18"
+  }
+}

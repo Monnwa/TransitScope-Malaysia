@@ -9,6 +9,7 @@ import { simulationSnapshot } from "@/lib/simulation";
 import { railNetwork, stationServices } from "@/lib/simulation/network";
 import { busJourney, stationArrivals } from "@/lib/simulation/vehicles";
 import { expandedServiceById } from "@/lib/expanded-services";
+import { mergeRailStations } from "@/lib/rail-model";
 import evidence from "@/docs/SM-2.3-evidence/snapshot-comparison.json";
 
 const oldRoutes = ["D100", "D200", "D300", "D400", "D500", "D600", "D700", "T801", "T802", "T803", "P101", "P102"];
@@ -21,7 +22,9 @@ const historicalRailColours = (x: unknown) => JSON.parse(JSON.stringify(x, (key,
   key === "colour" && value === "#8BCB88" ? "#2878B5" : key === "colour" && value === "#8B5A3C" ? "#7651A8" : value));
 const request = (path: string) => new NextRequest("http://localhost" + path);
 const establishedLines = railNetwork.lines.filter(line => !expandedServiceById.has(line.id));
-const establishedStations = railNetwork.stations.flatMap(station => {
+const establishedStations = railNetwork.stations.flatMap(marker => {
+  const original = stationServices.get(marker.stopRefs![0])?.station.position;
+  const station = { ...marker, position: original ?? marker.position };
   const lines = station.railLines!.map(id => establishedLines.find(line => line.id === id)).filter(line => line !== undefined);
   if (!lines.length) return [];
   if (!station.stationProvenance?.length) return [station];
@@ -33,6 +36,15 @@ const establishedStations = railNetwork.stations.flatMap(station => {
     source: railNetwork.source, modes: [...new Set(lines.map(line => line.mode))],
     interchange: lines.length > 1, mrtLines: legacy.mrtLines?.length || lines.length > 1 ? legacy.mrtLines : undefined }];
 });
+// The frozen operational snapshot precedes the published map coordinates and
+// treats the two Salak Selatan stops as one record. Restore that representation
+// for this hash. Current station identity is tested in rail-station-alignment.
+const salak = establishedStations.filter(station => station.name === "Salak Selatan");
+const [historicalSalak] = mergeRailStations(salak.map(station => ({
+  ...station, id: station.id.replace(/^rail:/, ""), stationComplexId: undefined,
+})));
+const historicalStations = establishedStations.flatMap(station => station.id === historicalSalak.id
+  ? [historicalSalak] : station.name === "Salak Selatan" ? [] : [station]);
 
 describe("T401/T402 scope reduction", () => {
   it("preserves the four deterministic bus journeys across six fixed ticks", () => {
@@ -47,11 +59,11 @@ describe("T401/T402 scope reduction", () => {
     for (const tick of evidence.before.proof) {
       const snapshot = simulationSnapshot(tick.now);
       expect(hash(historicalRailColours({
-        railNetwork: { lines: establishedLines, stations: establishedStations, available: true,
+        railNetwork: { lines: establishedLines, stations: historicalStations, available: true,
           source: railNetwork.source, dataMode: railNetwork.dataMode },
         trains: snapshot.trains.filter(train => !expandedServiceById.has(train.lineId)), linkBike: snapshot.linkBike,
         railAlerts: snapshot.alerts.filter(alert => !alert.modes.includes("Bus")),
-        railArrivals: establishedStations.map(stop => stationArrivals(stop.stopRefs!, tick.now)),
+        railArrivals: historicalStations.map(stop => stationArrivals(stop.stopRefs!, tick.now)),
       }))).toBe(tick.railAndLinkBike);
     }
   });

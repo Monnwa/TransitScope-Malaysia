@@ -39,7 +39,7 @@ async function network(map: Locator) {
 
 test("rail selection survives layout and manual exploration, while clear, Overview, route and reset remain explicit", async ({ page, isMobile }, info) => {
   const { map, external } = await prepare(page, isMobile);
-  for (const [name, latitude, longitude] of [["Tanjung Malim", 3.685, 101.524], ["Rawang", 3.321, 101.576]] as const) {
+  for (const [name, latitude, longitude] of [["Tanjung Malim", 3.685142, 101.518165], ["Rawang", 3.318955, 101.575012]] as const) {
     await focus(page, map);
     await page.getByRole("row", { name: new RegExp("^" + name + " ") }).getByRole("button", { name: "View details" }).click();
     await map.scrollIntoViewIfNeeded(); await frames(page);

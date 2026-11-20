@@ -18,7 +18,7 @@ describe("station search result identity", () => {
     const results = filterRecords(simulationSnapshot(0).records, "Tun Razak Exchange", [], [], []);
     expect(results.filter(result => result.recordKind === "stop")).toHaveLength(1);
     expect(resolveStationResult(results[0], railNetwork)).toBe(trx);
-    expect(trx.position).toEqual([3.142, 101.72]);
+    expect(trx.position).toEqual([3.142403, 101.720156]);
     expect(trx.railLines).toEqual(["MRT1", "MRT2"]);
     expect(trx.stopRefs).toHaveLength(2);
   });
