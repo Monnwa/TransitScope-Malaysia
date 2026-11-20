@@ -2,12 +2,12 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { filterRecords, type Mode, type Record as TransitRecord, type Status } from "@/lib/transit-data";
 import { simulationSnapshot } from "@/lib/simulation";
 import { EPOCH, MINUTE, SIMULATED, simulationTime } from "@/lib/simulation/clock";
 import { busRoutes, busStops, railNetwork } from "@/lib/simulation/network";
-import { linkBikeSnapshot } from "@/lib/simulation/scenarios";
+import { linkBikeSnapshot, type SimulationAlert } from "@/lib/simulation/scenarios";
 import { busJourney } from "@/lib/simulation/vehicles";
 import { passengerName, resultCountLabel } from "./passenger-copy";
 import SimulatedBusPanel, { type JourneyNavigation } from "./simulated-bus-panel";
@@ -21,6 +21,8 @@ import { busStopSearchResponseSchema, type SearchBusStop } from "@/lib/bus-stop-
 import useStationSearch from "./use-station-search";
 import StationSearchInput from "./station-search-input";
 import { DEFAULT_TRANSPORT_TYPES, transportTypeFilter } from "@/lib/transport-type-filter";
+import { serviceAlertMatchesTransport } from "@/lib/service-impact";
+import ServiceUpdates from "./service-updates";
 
 const TransitMap = dynamic(() => import("./transit-map"), {
   ssr: false,
@@ -57,7 +59,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [navigation, setNavigation] = useState<JourneyNavigation | null>(null);
   const [preview, setPreview] = useState<{ vehicleId: string; start: number } | null>(null);
-  const [alertId, setAlertId] = useState<string | null>(null);
+  const [alertsExpanded, setAlertsExpanded] = useState(false);
   const [alertFilter, setAlertFilter] = useState("All");
   const [resetSignal, setResetSignal] = useState(0);
   const [micromobility, setMicromobility] = useState<MicromobilityResponse | null>(null);
@@ -96,16 +98,17 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   const record = snapshot.records.find(item => item.id === selectedId && transport.showsRecord(item));
   const train = record && snapshot.trains.find(item => item.id === record.id);
   const journey = useMemo(() => record?.mode === "Bus" ? busJourney(record.id, now, preview?.vehicleId, preview?.start) : null, [record, now, preview]);
-  const alert = snapshot.alerts.find(item => item.id === alertId);
+  const visibleAlerts = useMemo(() => snapshot.alerts.filter(alert =>
+    serviceAlertMatchesTransport(alert, activeModes, transport.showsBusRoute)), [snapshot.alerts, activeModes, transport]);
+  const filteredAlerts = useMemo(() => alertFilter === "All" ? visibleAlerts : visibleAlerts.filter(alert =>
+    alert.category === alertFilter || alert.modes.some(mode => mode === alertFilter)), [visibleAlerts, alertFilter]);
+  const displayedAlertIds = useMemo(() => alertsExpanded ? new Set(filteredAlerts.map(alert => alert.id)) : undefined,
+    [alertsExpanded, filteredAlerts]);
   const byMode = modes.map(name => ({ name, records: activeModes.includes(name)
     ? results.filter(item => item.modes?.includes(name) ?? item.mode === name).length : 0 }));
   const routeCount = new Set(results.flatMap(item => item.railLines
     ? item.railLines.filter(id => transport.railIds.has(id))
     : item.routeId ? [item.routeId] : [])).size;
-  const severity = [
-    { name: "High", colour: "#dc2626" }, { name: "Medium", colour: "#d97706" }, { name: "Low", colour: "#16a34a" },
-  ].map(item => ({ ...item, value: snapshot.alerts.filter(notice => notice.severity === item.name).length }));
-  const filteredAlerts = snapshot.alerts.filter(item => alertFilter === "All" || item.category === alertFilter || item.modes.includes(alertFilter as Mode));
 
   const selectRecord = useCallback((item: TransitRecord | null) => {
     setSelectedId(item?.id ?? null);
@@ -118,6 +121,12 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   function select(item: TransitRecord | null) {
     stationSearch.cancel();
     selectRecord(item);
+  }
+
+  function selectAlertStation(alert: SimulationAlert) {
+    const target = snapshot.records.find(candidate => candidate.recordKind === "stop" && transport.showsRecord(candidate) &&
+      alert.stations.includes(candidate.name) && alert.routeIds.some(id => candidate.routeId === id || candidate.railLines?.includes(id)));
+    if (target) select(target);
   }
 
   function canSelectStation(entity: SearchEntity) {
@@ -142,7 +151,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     setModes(DEFAULT_TRANSPORT_TYPES);
     setStatuses([]);
     setShowSimulated(true);
-    setAlertId(null);
+    setAlertsExpanded(false);
     setAlertFilter("All");
     select(null);
     setResetSignal(signal => signal + 1);
@@ -159,7 +168,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     <div className="shell">
       <nav aria-label="Primary navigation">
         <a className="nav-active" href="#overview">Overview</a><a href="#map">Map</a><a href="#records">Routes &amp; Stops</a>
-        <a href="#alerts">Service Alerts</a><a href="#about">About this information</a>
+        <a href="#service-updates" onClick={() => setAlertsExpanded(true)}>Service Alerts</a><a href="#about">About this information</a>
         <p className="nav-note">Current data mode<br/><strong>{SIMULATED}</strong></p>
       </nav>
       <section id="content" className="content">
@@ -171,7 +180,9 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
         <section className="kpis" aria-label="Transport indicators">
           <Kpi label="Vehicles" value={results.filter(item => item.recordKind === "vehicle").length} hint="For your current filters"/>
           <Kpi label="Routes" value={routeCount} hint="For your current filters"/>
-          <Kpi label="Service updates" value={snapshot.alerts.length} hint="Simulated notices"/>
+          <ServiceUpdates state={{ status: "ready", alerts: filteredAlerts, hasAvailableAlerts: visibleAlerts.length > 0 }}
+            expanded={alertsExpanded} filter={alertFilter}
+            onToggle={() => setAlertsExpanded(value => !value)} onFilter={setAlertFilter} onSelectStation={selectAlertStation}/>
           <Kpi label="Shared-bike stations" value={results.filter(item => item.mode === "Shared bike").length} hint="For your current filters"/>
         </section>
         <section className="filters" aria-label="Dashboard filters">
@@ -204,7 +215,8 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
               : train ? <EstimatedTrainPanel train={train} now={now} onClose={() => select(null)}/>
               : record?.recordKind === "stop" ? <>
                 <UpcomingDepartures key={record.id} record={record} now={now} onRefresh={refresh}
-                  operations={<StationOperations key={record.id} record={record} simulationAlerts={snapshot.alerts}/>}/>
+                  operations={<StationOperations key={record.id} record={record} simulationAlerts={snapshot.alerts}
+                    displayedAlertIds={displayedAlertIds}/>}/>
                 <details className="station-technical"><summary>Technical information</summary><Details record={record}/></details>
               </> : record ? <><h2>{record.name}</h2><Details record={record}/></>
               : <><h2>Select a vehicle or stop</h2><p>Choose a map marker or an item in the list to see journey information.</p></>}
@@ -214,9 +226,6 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
           <div className="panel"><h2>Transport by mode</h2><p>For your current filters</p><div className="chart"><ResponsiveContainer>
             <BarChart data={byMode}><XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0}/><YAxis allowDecimals={false}/><Tooltip/>
               <Bar dataKey="records" radius={[4,4,0,0]}>{byMode.map(item => <Cell key={item.name} fill={colours[item.name]}/>)}</Bar></BarChart>
-          </ResponsiveContainer></div></div>
-          <div className="panel"><h2>Service updates by impact</h2><p>Simulated notices</p><div className="chart"><ResponsiveContainer>
-            <PieChart><Pie data={severity} dataKey="value" nameKey="name" outerRadius={88} label>{severity.map(item => <Cell key={item.name} fill={item.colour}/>)}</Pie><Tooltip/></PieChart>
           </ResponsiveContainer></div></div>
         </section>
         <section className="panel" id="records">
@@ -228,26 +237,6 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
               <td>{item.reportedAt ? formats.format(now) : "—"}</td><td><button className="link-button" onClick={() => stationSearch.select(item)}>View details</button></td>
             </tr>)}</tbody></table></div>
           {results.length === 0 && <div className="empty"><strong>No matching vehicles or stops</strong><p>Change the filters or restore defaults.</p><button className="secondary" onClick={reset}>Restore defaults</button></div>}
-        </section>
-        <section className="panel alerts" id="alerts">
-          <h2>Service alerts</h2>
-          <label>Filter alerts <select aria-label="Filter alerts" value={alertFilter} onChange={event => setAlertFilter(event.target.value)}>
-            {["All", ...modes.filter(mode => mode !== "Shared bike"), "Disruption", "Delay", "Normal service", "Restoration"].map(option => <option key={option} value={option}>{option === "All" ? "All updates" : option}</option>)}
-          </select></label>
-          {filteredAlerts.map(item => <button className="alert-card" key={item.id} onClick={() => {
-            setAlertId(item.id);
-            const target = snapshot.records.find(candidate => candidate.recordKind === "stop" && item.stations.includes(candidate.name) &&
-              item.routeIds.some(id => candidate.routeId === id || candidate.railLines?.includes(id)));
-            if (target) select(target);
-          }}><span className={`severity ${item.severity.toLowerCase()}`}>{item.severity}</span><strong>{item.title}</strong>
-            <small>{SIMULATED} · {item.category} · {item.routes.join(", ")} · {formats.format(new Date(item.startedAt))}</small></button>)}
-          {!filteredAlerts.length && <p className="empty">No matching service updates.</p>}
-          {alert && <div className="alert-detail" role="dialog" aria-label="Alert detail">
-            <button aria-label="Close alert detail" className="close" onClick={() => setAlertId(null)}>×</button><h3>{alert.title}</h3>
-            <p>{alert.description}</p><dl><dt>Information</dt><dd>{SIMULATED}</dd><dt>Affected route</dt><dd>{alert.routes.join(", ")}</dd>
-              {alert.stations.length > 0 && <><dt>Affected station</dt><dd>{alert.stations.join(", ")}</dd></>}
-              <dt>Time window</dt><dd>{formats.format(new Date(alert.startedAt))}{alert.endsAt && alert.endsAt !== alert.startedAt && ` – ${formats.format(new Date(alert.endsAt))}`}</dd></dl>
-          </div>}
         </section>
         <section className="about" id="about"><h2>About this information</h2><p>Vehicle movements, timetables, notices and bike availability follow a shared simulation clock. Route and station coordinates are approximate.</p>
           <p>Bus paths and stop order come from published GTFS. Positions, ETAs and headways are simulated ({busRoutes.map(route => route.id + " " + route.period / route.fleetSize / MINUTE + " min").join(" · ")}). Stop markers are projected onto route paths, and boarding bays remain unverified.</p>

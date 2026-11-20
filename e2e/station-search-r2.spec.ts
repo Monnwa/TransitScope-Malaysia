@@ -57,6 +57,9 @@ test("View details navigates and opens the popup with an empty search", async ({
 
 test("partial text leaves the camera alone until the user selects a result", async ({ page }) => {
   await prepare(page);
+  // Leaflet initially reports zoom 13 before the dashboard fits the bus overview.
+  await map(page).scrollIntoViewIfNeeded();
+  await expect(map(page)).toHaveAttribute("data-camera-zoom", /^(?!13$)\d+$/);
   const before = await map(page).getAttribute("data-camera-zoom");
   await search(page).fill("Tun Razak");
   await expect(page.getByRole("cell", { name: "Tun Razak Exchange", exact: true })).toHaveCount(1);

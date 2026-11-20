@@ -247,10 +247,12 @@ test("LinkBike station intent, availability popup and train markers remain funct
     expect(await camera(map)).toEqual(before);
     await expect(map).toHaveAttribute("data-camera-intent", "selection");
     await close(popup);
-    await expect(page.locator("#alerts .alert-card").first()).toContainText("SIMULATED");
-    await page.locator("#alerts .alert-card").first().click();
-    await expect(page.getByRole("dialog", {name:"Alert detail"})).toContainText("SIMULATED");
-    await page.getByRole("button", {name:"Close alert detail"}).click();
+    const serviceUpdates = page.getByRole("button", { name: "Service updates" });
+    await serviceUpdates.click();
+    await expect(serviceUpdates).toContainText("Simulated notices");
+    await expect(page.getByRole("region", { name: "Service alerts" }).getByRole("listitem").first())
+      .toContainText("TransitScope simulation");
+    await serviceUpdates.click();
     for (const path of ["/api/transit", "/api/alerts", "/api/train-positions", "/api/micromobility/linkbike"]) {
       const response = await page.request.get(path); expect(response.ok()).toBe(true); expect(await response.text()).toContain("SIMULATED");
     }

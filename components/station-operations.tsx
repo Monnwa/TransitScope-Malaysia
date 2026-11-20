@@ -12,16 +12,19 @@ const stationTime = new Intl.DateTimeFormat("en-MY", {
 });
 const dateLabel = (value: string) => stationTime.format(new Date(value)) + " MYT";
 
-export default function StationOperations(props: { record: TransitRecord; simulationAlerts: SimulationAlert[] } | {
+export default function StationOperations(props: { record: TransitRecord; simulationAlerts: SimulationAlert[]; displayedAlertIds?: ReadonlySet<string> } | {
   record: TransitRecord;
   payload: AlertPayload | null;
   refreshFailed: boolean;
 }) {
-  if ("simulationAlerts" in props) return <SimulatedStationOperations record={props.record} alerts={props.simulationAlerts}/>;
+  if ("simulationAlerts" in props) return <SimulatedStationOperations record={props.record} alerts={props.simulationAlerts}
+    displayedAlertIds={props.displayedAlertIds}/>;
   return <HistoricalStationOperations {...props}/>;
 }
 
-function SimulatedStationOperations({ record, alerts }: { record: TransitRecord; alerts: SimulationAlert[] }) {
+function SimulatedStationOperations({ record, alerts, displayedAlertIds }: {
+  record: TransitRecord; alerts: SimulationAlert[]; displayedAlertIds?: ReadonlySet<string>;
+}) {
   const [serviceId, setServiceId] = useState("");
   const [direction, setDirection] = useState("");
   const titleId = useId();
@@ -42,10 +45,11 @@ function SimulatedStationOperations({ record, alerts }: { record: TransitRecord;
       const notices = alerts.filter(alert => alert.routeIds.includes(service.id) &&
         (!alert.direction || !direction || alert.direction === direction));
       const active = notices.find(alert => alert.category === "Disruption" || alert.category === "Delay");
+      const visibleNotices = notices.filter(alert => !displayedAlertIds?.has(alert.id));
       return <li className="station-ops-service" key={service.id}>
         <h4>{service.label}</h4>
         <span className={`station-ops-state${active ? " attention" : ""}`}>{active?.category ?? "Normal service"}</span>
-        {!!notices.length && <ul className="station-ops-notices">{notices.map(alert => <li key={alert.id}>
+        {!!visibleNotices.length && <ul className="station-ops-notices">{visibleNotices.map(alert => <li key={alert.id}>
           <strong>{alert.title}</strong>
           <small>{alert.stations.includes(record.name) ? "At this station" : "Line notice"}{alert.direction && ` · Towards ${alert.direction}`}</small>
           <small><time dateTime={alert.startedAt}>{dateLabel(alert.startedAt)}</time></small>

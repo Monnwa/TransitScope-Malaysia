@@ -64,7 +64,9 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   await expect(page.getByText("SIMULATION MODE", { exact: true })).toBeVisible();
   await expect(page.locator(".leaflet-container")).toBeVisible();
   await expect(page.locator(".rail-alignment")).toHaveCount(8);
-  await expect(page.locator(".recharts-surface")).toHaveCount(2);
+  const charts = page.getByRole("region", { name: "Data visualisations" });
+  await expect(charts.getByRole("heading", { name: "Transport by mode" })).toBeVisible();
+  await expect(charts.locator(".recharts-surface")).toHaveCount(1);
   await expect(page.locator("#records tbody td:nth-child(5)").first()).toHaveText("SIMULATED");
 
   const search = page.getByRole("textbox", { name: "Search vehicles, routes or stations" });
@@ -176,9 +178,13 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   await expect(popup).toContainText("SIMULATED");
   await expect(popup.locator("dt")).toHaveText(["Available bicycles", "Total docks"]);
 
+  await page.getByRole("button", { name: "Reset dashboard" }).click();
+  const serviceUpdates = page.getByRole("button", { name: "Service updates" });
+  await serviceUpdates.click();
   await page.getByRole("combobox", { name: "Filter alerts" }).selectOption("Delay");
-  await page.getByRole("button", { name: /Longer waits on the Kajang Line/ }).click();
-  await expect(page.getByRole("dialog", { name: "Alert detail" })).toContainText("SIMULATED");
+  await expect(serviceUpdates).toContainText("Simulated notices");
+  await expect(page.getByRole("region", { name: "Service alerts" }).getByRole("heading", { level: 3 }))
+    .toHaveText("Longer waits on the Kajang Line");
   checkDashboard();
 });
 
