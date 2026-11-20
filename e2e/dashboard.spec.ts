@@ -212,7 +212,8 @@ test("map search fits the map and preserves keyboard, dragging and zoom controls
   const search = wrap.getByRole("textbox", { name: "Search vehicles, routes or stations" });
   const map = wrap.locator(".leaflet-container");
   await expect(map).toBeVisible();
-  await search.scrollIntoViewIfNeeded();
+  // Leave room for the autocomplete result so keyboard selection does not scroll the page and reframe the map.
+  await wrap.evaluate(element => element.scrollIntoView({ block: "center" }));
   await expect(page.locator("header input")).toHaveCount(0);
   await expect(page.getByRole("textbox", { name: "Search vehicles, routes or stations" })).toHaveCount(1);
 

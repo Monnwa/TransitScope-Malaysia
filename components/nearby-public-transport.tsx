@@ -78,7 +78,7 @@ export default function NearbyPublicTransport({ candidates, location, state, req
   const count = recommendations.length;
   const radius = formatNearbyDistance(radiusM);
 
-  return <section className="panel nearby-transit" aria-labelledby="nearby-transit-heading">
+  return <section id="nearby-transit" className="panel nearby-transit" aria-labelledby="nearby-transit-heading" tabIndex={-1}>
     <div className="nearby-heading">
       <div><h2 id="nearby-transit-heading">Nearby Public Transport</h2><p role="status">{status}</p></div>
       {state.status !== "loading" && (state.status !== "error" || state.retry) &&

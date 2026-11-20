@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { filterRecords, type Mode, type Record as TransitRecord, type Status } from "@/lib/transit-data";
 import { simulationSnapshot } from "@/lib/simulation";
@@ -26,6 +27,7 @@ import { serviceAlertMatchesTransport } from "@/lib/service-impact";
 import ServiceUpdates from "./service-updates";
 import NearbyPublicTransport, { useNearbyLocation } from "./nearby-public-transport";
 import { nearbyTransitCandidates } from "@/lib/nearby-transit";
+import DashboardIcon from "./dashboard-icon";
 
 const TransitMap = dynamic(() => import("./transit-map"), {
   ssr: false,
@@ -34,6 +36,16 @@ const TransitMap = dynamic(() => import("./transit-map"), {
 
 const colours: Record<Mode, string> = { Bus: "#2563eb", MRT: "#7c3aed", LRT: "#ea580c", Monorail: "#db2777", KTM: "#0891b2", ERL: "#6941a5", "Shared bike": "#16a34a" };
 const modes = DEFAULT_TRANSPORT_TYPES;
+const dashboardSections = [
+  { id: "overview", label: "Overview", icon: "home" },
+  { id: "service-updates", label: "Service Alerts", icon: "alert" },
+  { id: "nearby-transit", label: "Nearby Public Transport", icon: "nearby" },
+  { id: "map", label: "Map", icon: "map" },
+  { id: "about", label: "About this information", icon: "info" },
+] as const;
+type DashboardSection = typeof dashboardSections[number]["id"];
+const brandWordmark = "/brand/transitscope-horizontal.svg";
+const brandIcon = "/brand/transitscope-icon.svg";
 const statuses: Status[] = ["In service", "At stop", "Station available"];
 const formats = new Intl.DateTimeFormat("en-MY", { dateStyle: "medium", timeStyle: "medium", timeZone: "Asia/Kuala_Lumpur" });
 const linkBikeSearchStations = linkBikeSnapshot(EPOCH).stations.map(adaptLinkBikeStation);
@@ -74,7 +86,27 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   const [resetSignal, setResetSignal] = useState(0);
   const [micromobility, setMicromobility] = useState<MicromobilityResponse | null>(null);
   const [staticBus, setStaticBus] = useState<{ stops: SearchBusStop[]; unavailable: string[] } | null>(null);
+  const [activeSection, setActiveSection] = useState<DashboardSection>("overview");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const drawerToggle = useRef<HTMLButtonElement>(null);
+  const primaryNavigation = useRef<HTMLElement>(null);
   const nearbyLocation = useNearbyLocation();
+
+  useEffect(() => {
+    function updateSectionFromHash() {
+      const section = dashboardSections.find(item => `#${item.id}` === window.location.hash)?.id ?? "overview";
+      setActiveSection(section);
+      if (section === "service-updates") setAlertsExpanded(true);
+    }
+    updateSectionFromHash();
+    window.addEventListener("hashchange", updateSectionFromHash);
+    return () => window.removeEventListener("hashchange", updateSectionFromHash);
+  }, []);
+
+  useEffect(() => {
+    if (drawerOpen) primaryNavigation.current?.querySelector("a")?.focus();
+  }, [drawerOpen]);
 
   const refresh = () => setNow(simulationTime());
   useEffect(() => {
@@ -201,24 +233,63 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     setResetSignal(signal => signal + 1);
   }
 
+  function navigateSection(event: MouseEvent<HTMLAnchorElement>, section: DashboardSection) {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    setDrawerOpen(false);
+    setActiveSection(section);
+    if (section === "service-updates") setAlertsExpanded(true);
+  }
+
+  function goHome() {
+    setActiveSection("overview");
+    setDrawerOpen(false);
+    if (window.location.hash !== "#overview") window.history.pushState(null, "", "#overview");
+    document.getElementById("overview")?.focus({ preventScroll: true });
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reducedMotion ? "instant" : "smooth" });
+  }
+
   return <BusCameraProvider selectedVehicleId={selectedId?.startsWith("bus:") ? selectedId : null}
     selectedRecordId={nearbyRequest?.stationId ?? selectedId}><main>
     <a className="skip" href="#content">Skip to dashboard content</a>
-    <header>
-      <div className="brand"><span className="brand-mark">TS</span><div><strong>TransitScope</strong><small>Malaysia</small></div></div>
+    <header className="dashboard-header">
+      <button type="button" ref={drawerToggle} className="icon-button dashboard-menu-toggle"
+        aria-label={drawerOpen ? "Close navigation" : "Open navigation"}
+        aria-expanded={drawerOpen} aria-controls="dashboard-navigation" onClick={() => setDrawerOpen(open => !open)}>
+        <DashboardIcon name={drawerOpen ? "close" : "menu"}/>
+      </button>
+      <Image className="dashboard-brand" src={brandWordmark} width={170} height={48} alt="TransitScope Malaysia" priority/>
       <label className="region">Region<select aria-label="Region"><option>Malaysia</option></select></label>
       <div className="fresh"><b>{SIMULATED}</b><span>Updated {formats.format(now)}</span></div>
       <button className="icon-button" aria-label="Refresh transport information" onClick={refresh}>↻</button>
     </header>
-    <div className="shell">
-      <nav aria-label="Primary navigation">
-        <a className="nav-active" href="#overview">Overview</a><a href="#map">Map</a><a href="#records">Routes &amp; Stops</a>
-        <a href="#service-updates" onClick={() => setAlertsExpanded(true)}>Service Alerts</a><a href="#about">About this information</a>
+    <div className="shell dashboard-shell" data-sidebar-collapsed={sidebarCollapsed}>
+      <nav id="dashboard-navigation" ref={primaryNavigation} className="dashboard-navigation" aria-label="Primary navigation"
+        data-drawer-open={drawerOpen} onKeyDown={event => {
+          if (event.key === "Escape" && drawerOpen) {
+            setDrawerOpen(false);
+            drawerToggle.current?.focus();
+          }
+        }}>
+        <div className="sidebar-brand">
+          <Image className="sidebar-wordmark" src={brandWordmark} width={170} height={48} alt="TransitScope Malaysia"/>
+          <Image className="sidebar-icon" src={brandIcon} width={48} height={48} alt="TransitScope Malaysia"/>
+          <button type="button" className="icon-button sidebar-toggle"
+            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"} aria-expanded={!sidebarCollapsed}
+            onClick={() => setSidebarCollapsed(collapsed => !collapsed)}>
+            <DashboardIcon name={sidebarCollapsed ? "expand" : "collapse"}/>
+          </button>
+        </div>
+        {dashboardSections.map(({ id, label, icon }) =>
+          <a key={id} href={`#${id}`} aria-current={activeSection === id ? "location" : undefined}
+            title={label} onClick={event => navigateSection(event, id)}>
+            <DashboardIcon name={icon}/><span className="dashboard-nav-label">{label}</span>
+          </a>)}
         <p className="nav-note">Current data mode<br/><strong>{SIMULATED}</strong></p>
       </nav>
-      <section id="content" className="content">
+      <section id="content" className="content" tabIndex={-1}>
         <div className="page-heading">
-          <div><p className="eyebrow">PUBLIC TRANSPORT</p><h1 id="overview">Malaysia transport overview</h1></div>
+          <div><p className="eyebrow">PUBLIC TRANSPORT</p><h1 id="overview" tabIndex={-1}>Malaysia transport overview</h1></div>
           <button className="secondary" onClick={reset}>Reset dashboard</button>
         </div>
         <p className="status simulation-notice"><strong>SIMULATION MODE</strong> — All transportation information is generated for demonstration purposes and does not represent actual operational conditions.</p>
@@ -240,7 +311,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
           <div><span>Service status</span>{statuses.map(status => <Filter key={status} label={status} active={activeStatus.includes(status)} onClick={() => setStatuses(items => toggle(items, status))}/>)}</div>
           <div><span>Information</span><Filter label={SIMULATED} active={showSimulated} onClick={() => setShowSimulated(value => !value)}/></div>
         </section>
-        <section className="two-col" id="map">
+        <section className="two-col" id="map" tabIndex={-1}>
           <div className="panel">
             <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length)} · {stationCount} stations and stops</p></div><button className="secondary" onClick={() => {
               if (alertRequest || nearbyRequest) select(null);
@@ -305,12 +376,15 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
             </tr>)}</tbody></table></div>
           {results.length === 0 && <div className="empty"><strong>No matching vehicles or stops</strong><p>Change the filters or restore defaults.</p><button className="secondary" onClick={reset}>Restore defaults</button></div>}
         </section>
-        <section className="about" id="about"><h2>About this information</h2><p>Vehicle movements, timetables, notices and bike availability follow a shared simulation clock. ERL, Shah Alam and BRT Sunway use published station and route geography. Older simulation alignments and shared station marker locations are approximate.</p>
+        <section className="about" id="about" tabIndex={-1}><h2>About this information</h2><p>Vehicle movements, timetables, notices and bike availability follow a shared simulation clock. ERL, Shah Alam and BRT Sunway use published station and route geography. Older simulation alignments and shared station marker locations are approximate.</p>
           <p>Bus paths and stop order come from published GTFS. Positions, ETAs and headways are simulated ({busRoutes.filter(route => route.id !== brtSunway.id).map(route => route.id + " " + route.period / route.fleetSize / MINUTE + " min").join(" · ")}). Feeder bus stop markers are projected onto route paths, and boarding bays remain unverified.</p>
           <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">Map © OpenStreetMap contributors</a>
         </section>
       </section>
     </div>
+    <button type="button" className="back-to-home" aria-label="Back to Home" title="Back to Home" onClick={goHome}>
+      <DashboardIcon name="home"/>
+    </button>
   </main></BusCameraProvider>;
 }
 

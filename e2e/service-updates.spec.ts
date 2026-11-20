@@ -77,6 +77,8 @@ test("Overview shows, filters and resets one accessible service alert list", asy
   await expect(panel).toHaveCSS("animation-name", "none");
   await toggle.press("Space");
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  const drawer = page.getByRole("button", { name: "Open navigation" });
+  if (await drawer.isVisible()) await drawer.click();
   await page.getByRole("link", { name: "Service Alerts", exact: true }).click();
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
   const alertFilter = panel.getByRole("combobox", { name: "Filter alerts" });
