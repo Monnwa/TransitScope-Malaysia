@@ -15,7 +15,7 @@ import UpcomingDepartures from "./upcoming-departures";
 import StationOperations from "./station-operations";
 import EstimatedTrainPanel from "./estimated-train-panel";
 import { BusCameraProvider } from "./bus-camera-context";
-import { buildStationSearchIndex, findStations, normaliseSearchText, resolveExactStation, type SearchEntity } from "@/lib/station-search";
+import { buildStationSearchIndex, findStations, normaliseSearchText, resolveAlertStations, resolveExactStation, type SearchEntity } from "@/lib/station-search";
 import { adaptLinkBikeStation, type MicromobilityResponse } from "@/lib/micromobility";
 import { busStopSearchResponseSchema, type SearchBusStop } from "@/lib/bus-stop-search";
 import useStationSearch from "./use-station-search";
@@ -61,6 +61,8 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   const [preview, setPreview] = useState<{ vehicleId: string; start: number } | null>(null);
   const [alertsExpanded, setAlertsExpanded] = useState(false);
   const [alertFilter, setAlertFilter] = useState("All");
+  const [includeHiddenAlerts, setIncludeHiddenAlerts] = useState(false);
+  const [alertNavigation, setAlertNavigation] = useState<{ id: string; message: string; pending?: boolean } | null>(null);
   const [resetSignal, setResetSignal] = useState(0);
   const [micromobility, setMicromobility] = useState<MicromobilityResponse | null>(null);
   const [staticBus, setStaticBus] = useState<{ stops: SearchBusStop[]; unavailable: string[] } | null>(null);
@@ -95,13 +97,11 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   const transport = useMemo(() => transportTypeFilter(railNetwork, activeModes, busRouteId), [activeModes, busRouteId]);
   const results = useMemo(() => showSimulated ? filterRecords(snapshot.records, filterQuery, [], activeStatus, [SIMULATED])
     .filter(transport.showsRecord) : [], [snapshot, filterQuery, activeStatus, showSimulated, transport]);
-  const record = snapshot.records.find(item => item.id === selectedId && transport.showsRecord(item));
-  const train = record && snapshot.trains.find(item => item.id === record.id);
-  const journey = useMemo(() => record?.mode === "Bus" ? busJourney(record.id, now, preview?.vehicleId, preview?.start) : null, [record, now, preview]);
   const visibleAlerts = useMemo(() => snapshot.alerts.filter(alert =>
     serviceAlertMatchesTransport(alert, activeModes, transport.showsBusRoute)), [snapshot.alerts, activeModes, transport]);
-  const filteredAlerts = useMemo(() => alertFilter === "All" ? visibleAlerts : visibleAlerts.filter(alert =>
-    alert.category === alertFilter || alert.modes.some(mode => mode === alertFilter)), [visibleAlerts, alertFilter]);
+  const alertScope = includeHiddenAlerts ? snapshot.alerts : visibleAlerts;
+  const filteredAlerts = useMemo(() => alertFilter === "All" ? alertScope : alertScope.filter(alert =>
+    alert.category === alertFilter || alert.modes.some(mode => mode === alertFilter)), [alertScope, alertFilter]);
   const displayedAlertIds = useMemo(() => alertsExpanded ? new Set(filteredAlerts.map(alert => alert.id)) : undefined,
     [alertsExpanded, filteredAlerts]);
   const byMode = modes.map(name => ({ name, records: activeModes.includes(name)
@@ -117,16 +117,38 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   }, []);
   const stationSearch = useStationSearch(railNetwork, query,
     exactStation && results.some(item => item.id === exactStation.id) ? exactStation : undefined, selectRecord);
+  const alertRequest = stationSearch.request?.alert ? stationSearch.request : null;
+  const record = snapshot.records.find(item => item.id === selectedId && (item.id === alertRequest?.stationId || transport.showsRecord(item)));
+  const train = record && snapshot.trains.find(item => item.id === record.id);
+  const journey = useMemo(() => record?.mode === "Bus" ? busJourney(record.id, now, preview?.vehicleId, preview?.start) : null, [record, now, preview]);
+  const cancelStationSearch = stationSearch.cancel;
+  useEffect(() => {
+    if (!alertRequest || !alertNavigation?.pending) return;
+    // A watchdog covers a missing map or popup. The camera itself waits for actual layout readiness.
+    const timeout = window.setTimeout(() => {
+      alertRequest.alert?.onResult(false);
+      cancelStationSearch();
+      selectRecord(null);
+    }, 8000);
+    return () => window.clearTimeout(timeout);
+  }, [alertRequest, alertNavigation, cancelStationSearch, selectRecord]);
 
   function select(item: TransitRecord | null) {
     stationSearch.cancel();
     selectRecord(item);
+    setAlertNavigation(null);
   }
 
   function selectAlertStation(alert: SimulationAlert) {
-    const target = snapshot.records.find(candidate => candidate.recordKind === "stop" && transport.showsRecord(candidate) &&
-      alert.stations.includes(candidate.name) && alert.routeIds.some(id => candidate.routeId === id || candidate.railLines?.includes(id)));
-    if (target) select(target);
+    const targets = resolveAlertStations(searchIndex, alert.stations, alert.routeIds);
+    if (!targets.length) {
+      setAlertNavigation({ id: alert.id, message: "No affected station with a verified map location was found." });
+      return;
+    }
+    setAlertNavigation({ id: alert.id, pending: true, message: "Locating affected station on the map…" });
+    stationSearch.selectEntity(targets[0], { targets, onResult: success => {
+      setAlertNavigation(success ? null : { id: alert.id, message: "The station could not be shown on the map. Try again." });
+    } });
   }
 
   function canSelectStation(entity: SearchEntity) {
@@ -140,8 +162,8 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     const next = toggle(activeModes, mode);
     const nextFilter = transportTypeFilter(railNetwork, next, busRouteId);
     const request = stationSearch.request;
-    if (record && !nextFilter.showsRecord(record) || request?.type === "BUS_STOP" && !nextFilter.bus ||
-      request?.type === "MICROMOBILITY_STATION" && !nextFilter.sharedBike) select(null);
+    if (!alertRequest && (record && !nextFilter.showsRecord(record) || request?.type === "BUS_STOP" && !nextFilter.bus ||
+      request?.type === "MICROMOBILITY_STATION" && !nextFilter.sharedBike)) select(null);
     setModes(next);
   }
 
@@ -153,6 +175,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     setShowSimulated(true);
     setAlertsExpanded(false);
     setAlertFilter("All");
+    setIncludeHiddenAlerts(false);
     select(null);
     setResetSignal(signal => signal + 1);
   }
@@ -180,8 +203,10 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
         <section className="kpis" aria-label="Transport indicators">
           <Kpi label="Vehicles" value={results.filter(item => item.recordKind === "vehicle").length} hint="For your current filters"/>
           <Kpi label="Routes" value={routeCount} hint="For your current filters"/>
-          <ServiceUpdates state={{ status: "ready", alerts: filteredAlerts, hasAvailableAlerts: visibleAlerts.length > 0 }}
+          <ServiceUpdates state={{ status: "ready", alerts: filteredAlerts, hasAvailableAlerts: alertScope.length > 0 }}
             expanded={alertsExpanded} filter={alertFilter}
+            hiddenAlerts={visibleAlerts.length < snapshot.alerts.length || includeHiddenAlerts ? { included: includeHiddenAlerts, onChange: setIncludeHiddenAlerts } : undefined}
+            navigationStatus={alertNavigation}
             onToggle={() => setAlertsExpanded(value => !value)} onFilter={setAlertFilter} onSelectStation={selectAlertStation}/>
           <Kpi label="Shared-bike stations" value={results.filter(item => item.mode === "Shared bike").length} hint="For your current filters"/>
         </section>
@@ -195,14 +220,18 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
         </section>
         <section className="two-col" id="map">
           <div className="panel">
-            <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length)}. Select a vehicle or stop to learn more.</p></div><button className="secondary" onClick={() => setResetSignal(signal => signal + 1)}>Fit to region</button></div>
+            <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length)}. Select a vehicle or stop to learn more.</p></div><button className="secondary" onClick={() => {
+              if (alertRequest) select(null);
+              setResetSignal(signal => signal + 1);
+            }}>Fit to region</button></div>
             <TransitMap records={results} busRouteId={busRouteId} showBusRoutes={showSimulated && transport.bus} selected={record} onSelect={select} resetSignal={resetSignal}
               railLines={transport.railLines} showSharedBike={transport.sharedBike}
               stationSearch={stationSearch.request} searchActive={query.trim().length > 0} onSearchPopupClose={stationSearch.dismiss}
               onMicromobilityData={setMicromobility}
               search={<StationSearchInput query={query} results={stationResults} request={stationSearch.request}
                 loading={!staticBus} limited={Boolean(staticBus?.unavailable.length)}
-                onChange={value => { stationSearch.cancel(); setQuery(value); }} onSelect={stationSearch.selectEntity} canSelect={canSelectStation}/>}
+                onChange={value => { stationSearch.cancel(); setAlertNavigation(null); setQuery(value); }}
+                onSelect={entity => { setAlertNavigation(null); stationSearch.selectEntity(entity); }} canSelect={canSelectStation}/>}
               journey={journey} navigation={navigation} onLocate={() => {
                 if (!journey) return;
                 setPreview(null);
@@ -234,7 +263,10 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
             <tbody>{results.map(item => <tr key={item.id}><td><strong>{passengerName(item.name)}</strong></td>
               <td><span className="mode-dot" style={{ background: colours[item.mode] }}/> {item.mode}</td>
               <td>{item.lineNames?.join(" · ") || item.route || item.station}</td><td>{item.status}</td><td><b className="mode-badge">{SIMULATED}</b></td>
-              <td>{item.reportedAt ? formats.format(now) : "—"}</td><td><button className="link-button" onClick={() => stationSearch.select(item)}>View details</button></td>
+              <td>{item.reportedAt ? formats.format(now) : "—"}</td><td><button className="link-button" onClick={() => {
+                setAlertNavigation(null);
+                stationSearch.select(item);
+              }}>View details</button></td>
             </tr>)}</tbody></table></div>
           {results.length === 0 && <div className="empty"><strong>No matching vehicles or stops</strong><p>Change the filters or restore defaults.</p><button className="secondary" onClick={reset}>Restore defaults</button></div>}
         </section>

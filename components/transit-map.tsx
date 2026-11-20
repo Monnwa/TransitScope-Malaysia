@@ -74,7 +74,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
     [stationLines, routeHighlight, lineById]);
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const railRequest = stationSearch && (!stationSearch.type || stationSearch.type === "RAIL_STATION") ? stationSearch : null;
-  const busRequest = showBusRoutes && stationSearch?.type === "BUS_STOP" ? stationSearch : null;
+  const busRequest = stationSearch?.type === "BUS_STOP" && (showBusRoutes || stationSearch.alert) ? stationSearch : null;
   const micromobilityRequest = showSharedBike && stationSearch?.type === "MICROMOBILITY_STATION" ? stationSearch : null;
   useEffect(() => {
     setRouteHighlight([]);
@@ -89,8 +89,13 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
   }, []);
 
   const toggleHighlight = useCallback((id: string) => setRouteHighlight(current => current.length === 1 && current[0] === id ? [] : [id]), []);
-  const mapRecords = railRequest && selected?.id === railRequest.stationId && stationLines.length && !records.some(record => record.id === selected.id)
-    ? [...records, selected] : records;
+  const alertTargets = stationSearch?.alert?.targets;
+  const alertRailIds = new Set(alertTargets?.flatMap(target => target.type === "RAIL_STATION" ? [target.id] : []));
+  const alertBusTargets = alertTargets?.flatMap(target => target.type === "BUS_STOP" ? [target.stop] : []) ?? [];
+  const revealedRail = alertTargets?.flatMap(target => target.type === "RAIL_STATION" ? [target.record] : []) ??
+    (railRequest && selected?.id === railRequest.stationId && stationLines.length ? [selected] : []);
+  const mapRecords = revealedRail.length ? [...records, ...revealedRail.filter(station =>
+    !records.some(record => record.id === station.id))] : records;
   const visibleIds = new Set(mapRecords.map(record => record.id));
   const visibleTrains = trains.filter(train => visibleIds.has(train.id));
   const stationsAndBuses = mapRecords.filter(record => record.position &&
@@ -107,7 +112,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
     <EstimatedTrainControls now={now} count={visibleTrains.length} trains={trains} lines={railLines} onRefresh={onRefresh}/>
     <div className="map-camera-frame">
     <div className="map-camera-bar" ref={setCameraControlsHost}/>
-    <div className="map-wrap" aria-label="Interactive transport map">
+    <div className="map-wrap" aria-label="Interactive transport map" data-alert-navigation={stationSearch?.alert ? "active" : undefined}>
       <MapContainer center={center} zoom={13} scrollWheelZoom className="map">
         {search && <MapSearchOverlay>{search}</MapSearchOverlay>}
         <TileLayer {...lightBasemap}/>
@@ -124,8 +129,10 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
         {selectedJourney?.isPreview && <Polyline className="selected-vehicle-route" positions={selectedJourney.path}
           pathOptions={{ color: "#2563eb", weight: 5, dashArray: "8 5" }}><Tooltip>Simulated departure preview</Tooltip></Polyline>}
         </Pane>
-        {showBusRoutes && !busRequest && <Pane name="bus-stops" style={{ zIndex: 440 }}>
+        {showBusRoutes && (!busRequest || busRequest.alert) && <Pane name="bus-stops" style={{ zIndex: 440 }}>
           {mapRecords.map(record => record.mode === "Bus" && record.recordKind === "stop" && record.position &&
+            !alertBusTargets.some(stop => record.stopRefs?.some(ref => ref.endsWith(`:${stop.sourceId}`)) &&
+              stop.routes.some(route => route.id === record.routeId)) &&
             <CircleMarker key={record.id} center={record.position} radius={3} className="bus-network-stop"
               pathOptions={{ color: "#617b99", fillColor: "#fff", fillOpacity: 1, weight: 1.5 }}
               eventHandlers={{ click: () => onSelect(record) }}>
@@ -135,6 +142,11 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
         </Pane>}
         <Pane name="bus-markers" style={{ zIndex: 625 }}>
         {selectedJourney && <JourneyStopMarkers key={selectedJourney.journeyId} journey={selectedJourney} navigation={activeNavigation}/>}
+        {alertBusTargets.filter(stop => stop.id !== busRequest?.stationId).map(stop => <CircleMarker key={stop.id}
+          center={stop.position} radius={7} className="bus-alert-stop"
+          pathOptions={{ color: "#1666d8", fillColor: "#fff", fillOpacity: 1, weight: 4 }}>
+          <Tooltip>{stop.name}</Tooltip>
+        </CircleMarker>)}
         {busRequest && <CircleMarker key={busRequest.stationId} center={busRequest.stop.position} radius={7}
           className="bus-search-stop" pathOptions={{ color: "#fff", fillColor: "#2563eb", fillOpacity: 1, weight: 2 }}>
           <Tooltip>{busRequest.stop.name}</Tooltip>
@@ -164,9 +176,12 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
           const popup = rail ? <RailStationPopup record={record} selectedRecordId={selected?.id} searchRequest={railRequest}/> : <Popup pane="popupPane">{content}</Popup>;
           const stationColours = (record.railLines ?? []).flatMap(id => lineById.get(id)?.colour ?? []);
           const dimmed = record.railLines?.length && highlighted.length > 0 && !record.railLines.some(id => highlighted.includes(id));
-          return <CircleMarker key={record.id} center={position} radius={quietRail ? record.interchange ? 6 : 4 : record.interchange ? 8 : 6}
-            className="rail-station" pane="markerPane" pathOptions={{ color: stationColours[0] ?? "#2563eb",
-              fillColor: stationColours[1] ?? "#fff", weight: quietRail ? 2 : 3, fillOpacity: dimmed ? .3 : quietRail ? .35 : 1, opacity: dimmed ? .3 : quietRail ? .45 : 1 }}
+          const affected = alertRailIds.has(record.id);
+          return <CircleMarker key={record.id} center={position} radius={affected ? 9 : quietRail ? record.interchange ? 6 : 4 : record.interchange ? 8 : 6}
+            className="rail-station" pane="markerPane" pathOptions={affected
+              ? { color: "#1666d8", fillColor: "#fff", weight: 4, fillOpacity: 1, opacity: 1 }
+              : { color: stationColours[0] ?? "#2563eb", fillColor: stationColours[1] ?? "#fff", weight: quietRail ? 2 : 3,
+                fillOpacity: dimmed ? .3 : quietRail ? .35 : 1, opacity: dimmed ? .3 : quietRail ? .45 : 1 }}
             eventHandlers={{ click: () => onSelect(record), popupclose: () => { if (rail && selected?.id === record.id) onSelect(null); } }}><Tooltip>{record.name}</Tooltip>{popup}</CircleMarker>;
         })}
         </Pane>

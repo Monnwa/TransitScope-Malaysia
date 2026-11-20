@@ -5,9 +5,34 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import ServiceUpdates from "@/components/service-updates";
 import { resolveServiceImpact, serviceAlertMatchesTransport, summarizeServiceAlerts } from "@/lib/service-impact";
 import { simulationAlerts } from "@/lib/simulation/scenarios";
+import { busStops, railNetwork } from "@/lib/simulation/network";
+import { buildStationSearchIndex, resolveAlertStations } from "@/lib/station-search";
 
 const alerts = simulationAlerts(Date.parse("2026-11-20T06:00:00Z"));
 afterEach(cleanup);
+
+describe("affected stations", () => {
+  it("resolves the existing rail records by canonical ID or exact route-qualified name", () => {
+    const index = buildStationSearchIndex(railNetwork, [], []);
+    const expected = alerts[1].stations.map(name => railNetwork.stations.find(station => station.name === name)!);
+    const matches = resolveAlertStations(index, [expected[0].id, ...alerts[1].stations], alerts[1].routeIds);
+    expect(matches.map(station => [station.id, station.position])).toEqual(expected.map(station => [station.id, station.position]));
+    expect(resolveAlertStations(index, ["unknown-station", "Kajang", expected[0].name], ["LRT-PH"])).toEqual([]);
+  });
+
+  it("rejects unavailable coordinates and resolves bus stops through their exact feed ID and route", () => {
+    const station = railNetwork.stations.find(record => record.name === alerts[0].stations[0])!;
+    const bus = busStops.find(stop => stop.routeId === "T401" && stop.position && stop.stopRefs?.length)!;
+    const sourceId = bus.stopRefs![0].split(":").at(-1)!;
+    const index = buildStationSearchIndex({ ...railNetwork, stations: [{ ...station, position: null }] }, [{
+      id: `bus-stop:rapid-bus-mrtfeeder:${sourceId}`, sourceId, name: bus.name, position: bus.position!,
+      operator: bus.operator, feed: "MRT Feeder Bus", aliases: [], routes: [{ id: "T401", name: "T401" }],
+    }], []);
+    expect(resolveAlertStations(index, [station.id, station.name], alerts[0].routeIds)).toEqual([]);
+    expect(resolveAlertStations(index, [sourceId], ["T402"])).toEqual([]);
+    expect(resolveAlertStations(index, [sourceId], ["T401"])[0]).toMatchObject({ type: "BUS_STOP", position: bus.position });
+  });
+});
 
 describe("service impact", () => {
   it("prioritizes source severity and impact over normalized metadata", () => {
@@ -57,9 +82,9 @@ describe("Overview service updates", () => {
     expect(toggle).toHaveAttribute("aria-expanded", "false");
     expect(toggle).toHaveAttribute("aria-controls", "alerts");
     expect(toggle.querySelector("strong")).toHaveTextContent("3");
-    expect(within(toggle).getByText("1 High")).toHaveAttribute("data-tone", "danger");
-    expect(within(toggle).getByText("1 Medium")).toHaveAttribute("data-tone", "warning");
-    expect(within(toggle).getByText("1 Low")).toHaveAttribute("data-tone", "info");
+    expect(within(toggle).getByText("1 High").closest(".service-impact")).toHaveAttribute("data-tone", "danger");
+    expect(within(toggle).getByText("1 Medium").closest(".service-impact")).toHaveAttribute("data-tone", "warning");
+    expect(within(toggle).getByText("1 Low").closest(".service-impact")).toHaveAttribute("data-tone", "info");
     expect(screen.queryByRole("region", { name: "Service alerts" })).not.toBeInTheDocument();
 
     view.rerender(<ServiceUpdates {...props} expanded filter="Delay" state={{ status: "ready", alerts: alerts.slice(1, 2) }}/>);
@@ -99,6 +124,10 @@ describe("Overview service updates", () => {
       expect(row.getByRole("heading", { name: item.title })).toBeVisible();
       expect(row.getByText(item.description)).toBeVisible();
       expect(row.getByText(item.source)).toBeVisible();
+      const icon = rows[index].querySelector(".service-impact svg");
+      expect(icon).toHaveAttribute("aria-hidden", "true");
+      expect(icon?.innerHTML).toBe(within(screen.getByRole("button", { name: "Service updates" }))
+        .getByText(`1 ${item.severity}`).closest(".service-impact")?.querySelector("svg")?.innerHTML);
       for (const route of item.routes) expect(rows[index]).toHaveTextContent(route);
       for (const station of item.stations) expect(rows[index]).toHaveTextContent(station);
     }

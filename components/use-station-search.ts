@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { RailNetwork } from "@/lib/rail-model";
 import type { Record as TransitRecord } from "@/lib/transit-data";
-import { resolveStationResult, STATION_SEARCH_COMPLETION_MS, type SearchEntity, type StationSearchRequest } from "@/lib/station-search";
+import { resolveStationResult, STATION_SEARCH_COMPLETION_MS, type AlertStationNavigation, type SearchEntity, type StationSearchRequest } from "@/lib/station-search";
 
 /** Exact completion and explicit selection share one cancellable station intent. */
 export default function useStationSearch(network: RailNetwork, query: string, exactStation: TransitRecord | undefined,
@@ -15,24 +15,24 @@ export default function useStationSearch(network: RailNetwork, query: string, ex
     timer.current = null;
     setRequest(null);
   }, []);
-  const select = useCallback((record: TransitRecord) => {
+  const select = useCallback((record: TransitRecord, alert?: AlertStationNavigation) => {
     if (timer.current !== null) clearTimeout(timer.current);
     timer.current = null;
     const station = resolveStationResult(record, network);
     onSelect(station ?? record);
-    setRequest(station ? { type: "RAIL_STATION", stationId: station.id, revision: ++revision.current } : null);
+    setRequest(station ? { type: "RAIL_STATION", stationId: station.id, revision: ++revision.current, ...(alert && { alert }) } : null);
   }, [network, onSelect]);
 
-  const selectEntity = (entity: SearchEntity) => {
+  const selectEntity = (entity: SearchEntity, alert?: AlertStationNavigation) => {
     if (entity.type === "RAIL_STATION") {
-      select(entity.record);
+      select(entity.record, alert);
       return;
     }
     cancel();
     const next = ++revision.current;
     onSelect(null);
     setRequest(entity.type === "BUS_STOP"
-      ? { type: entity.type, stationId: entity.stop.id, stop: entity.stop, revision: next }
+      ? { type: entity.type, stationId: entity.stop.id, stop: entity.stop, revision: next, ...(alert && { alert }) }
       : { type: entity.type, stationId: entity.station.id, operator: entity.station.operator, revision: next });
   };
 

@@ -23,6 +23,8 @@ export default function useStationSearchNavigation(map: L.Map, popupRef: RefObje
     const anchorPoint = point;
     const intent = request;
     let retired = false, opened = false, fitted = false;
+    let scrollStarted = false, frame = 0, previousLayout = "";
+    let restoreAutoPan: (() => void) | undefined;
     const container = map.getContainer();
     const report = (reason: string) => {
       container.dataset.stationSearchError = reason;
@@ -35,13 +37,49 @@ export default function useStationSearchNavigation(map: L.Map, popupRef: RefObje
         .filter(element => getComputedStyle(element).visibility !== "hidden").map(element => element.getBoundingClientRect());
       const safe = cameraArea(box, { width: innerWidth, height: innerHeight }, obstructions);
       if (!safe) { report("station-viewport-unavailable"); return false; }
+      const size = map.getSize();
+      if (intent.alert && intent.alert.targets.length > 1) {
+        const bounds = L.latLngBounds(intent.alert.targets.map(target => L.latLng(target.position)));
+        run(() => {
+          map.stop();
+          map.fitBounds(bounds, { animate: false, maxZoom: 17,
+            paddingTopLeft: [safe.left + 14, safe.top + 14],
+            paddingBottomRight: [size.x - safe.right + 14, size.y - safe.bottom + 14] });
+        });
+        return true;
+      }
       // Match the existing stop camera's scale and account for the real portal content height.
-      const zoom = Math.max(map.getMinZoom(), Math.min(map.getMaxZoom(), map.getZoom() >= 16 ? map.getZoom() : 17));
-      const anchor = cameraAnchor(safe, popupHeight), size = map.getSize();
+      const zoom = Math.max(map.getMinZoom(), Math.min(map.getMaxZoom(), intent.alert || map.getZoom() < 16 ? 17 : map.getZoom()));
+      const anchor = cameraAnchor(safe, popupHeight);
       const center = map.unproject(map.project(anchorPoint, zoom).add(L.point(size.x / 2 - anchor.x, size.y / 2 - anchor.y)), zoom);
       run(() => { map.stop(); map.setView(center, zoom, { animate: false }); });
       return true;
     };
+
+    function nextFrame() {
+      if (!frame) frame = requestAnimationFrame(() => { frame = 0; attempt(); });
+    }
+
+    function alertViewportReady() {
+      const box = container.getBoundingClientRect();
+      const header = container.closest("main")?.querySelector("header");
+      const stickyBottom = header && getComputedStyle(header).position === "sticky" ? Math.max(0, header.getBoundingClientRect().bottom) : 0;
+      const visibleHeight = Math.min(innerHeight, box.bottom) - Math.max(stickyBottom, box.top);
+      const inView = box.width > 0 && box.height > 0 && visibleHeight >= Math.min(box.height, innerHeight - stickyBottom) * .9;
+      if (!scrollStarted) {
+        scrollStarted = true;
+        if (!inView) container.closest(".map-camera-frame")?.scrollIntoView({ block: innerWidth <= 720 ? "start" : "center",
+          behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+      }
+      const layout = inView ? [box.top, box.left, box.width, box.height].join(":") : "";
+      const stable = Boolean(layout) && layout === previousLayout;
+      previousLayout = layout;
+      if (!stable) { nextFrame(); return false; }
+      const size = map.getSize();
+      if (size.x !== container.clientWidth || size.y !== container.clientHeight) run(() => map.invalidateSize({ pan: false }));
+      return true;
+    }
+
     function attempt() {
       if (retired || opened || latestRequest.current !== request) return;
       const popup = popupRef.current;
@@ -56,8 +94,14 @@ export default function useStationSearchNavigation(map: L.Map, popupRef: RefObje
       if (!validPoint([position.lat, position.lng]) || !position.equals(L.latLng(anchorPoint), 1e-9)) {
         report("station-marker-coordinate-mismatch"); return;
       }
+      if (intent.alert && !alertViewportReady()) return;
+      if (intent.alert && !restoreAutoPan) {
+        const previousAutoPan = popup.options.autoPan;
+        popup.options.autoPan = false;
+        restoreAutoPan = () => { popup.options.autoPan = previousAutoPan; };
+      }
       if (intent.type === "BUS_STOP" || intent.type === "MICROMOBILITY_STATION") dispatch?.({ type: "MANUAL" });
-      container.closest(".map-camera-frame")?.scrollIntoView({ block: innerWidth <= 720 ? "start" : "center", behavior: "instant" });
+      if (!intent.alert) container.closest(".map-camera-frame")?.scrollIntoView({ block: innerWidth <= 720 ? "start" : "center", behavior: "instant" });
       run(() => {
         map.stop();
         if (!popup.isOpen()) map.closePopup();
@@ -72,7 +116,12 @@ export default function useStationSearchNavigation(map: L.Map, popupRef: RefObje
         const height = element.getBoundingClientRect().height;
         if (!Number.isFinite(height) || height <= 0) return;
         fitted = true; // Retire before moving: the layout effect can synchronously re-enter.
-        focus(height);
+        if (!intent.alert || intent.alert.targets.length === 1) focus(height);
+        if (intent.alert) {
+          const focusTarget = element.querySelector<HTMLElement>(".leaflet-popup-close-button") ?? container;
+          focusTarget.focus({ preventScroll: true });
+          intent.alert.onResult(true);
+        }
       };
       run(() => {
         source.openPopup();
@@ -86,11 +135,18 @@ export default function useStationSearchNavigation(map: L.Map, popupRef: RefObje
       container.dataset.stationSearchType = intent.type ?? "RAIL_STATION";
       if (intent.type === "MICROMOBILITY_STATION") container.dataset.stationSearchOperator = intent.operator;
       else delete container.dataset.stationSearchOperator;
+      if (intent.alert) contentReady.current();
     }
     const retry = () => queueMicrotask(() => { if (!retired) attempt(); });
     map.on("layeradd resize", retry);
     attempt();
-    return () => { retired = true; contentReady.current = () => {}; map.off("layeradd resize", retry); };
+    return () => {
+      retired = true;
+      cancelAnimationFrame(frame);
+      restoreAutoPan?.();
+      contentReady.current = () => {};
+      map.off("layeradd resize", retry);
+    };
   }, [map, popupRef, id, latitude, longitude, request, guard, dispatch, contentSelector]);
   return contentReady;
 }

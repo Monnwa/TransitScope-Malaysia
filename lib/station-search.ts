@@ -6,7 +6,12 @@ import type { SearchBusStop } from "./bus-stop-search";
 import { OPERATOR_STYLE, type MicromobilityOperator, type MicromobilityStation } from "./micromobility";
 import type { GeoPoint } from "./route-projection";
 
-export type StationSearchRequest = { stationId: string; revision: number } & (
+export type AlertStationNavigation = {
+  targets: SearchEntity[];
+  onResult: (success: boolean) => void;
+};
+
+export type StationSearchRequest = { stationId: string; revision: number; alert?: AlertStationNavigation } & (
   | { type?: "RAIL_STATION" }
   | { type: "BUS_STOP"; stop: SearchBusStop }
   | { type: "MICROMOBILITY_STATION"; operator: MicromobilityOperator }
@@ -39,6 +44,20 @@ type IndexedStation = {
   localities: string[];
   service: string[];
 };
+
+/** Resolve alert references using the same canonical, coordinate-validated index as search. */
+export function resolveAlertStations(index: IndexedStation[], references: readonly string[], routeIds: readonly string[]) {
+  const eligible = index.filter(({ entity }) => entity.routes.some(route => routeIds.includes(route.id)));
+  const targets = new Map<string, SearchEntity>();
+  for (const reference of references) {
+    const key = normalise(reference);
+    if (!key) continue;
+    const byId = eligible.filter(station => station.ids.includes(key));
+    const matches = byId.length ? byId : eligible.filter(station => station.name === key);
+    if (matches.length === 1) targets.set(matches[0].entity.id, matches[0].entity);
+  }
+  return [...targets.values()];
+}
 
 export function buildStationSearchIndex(network: RailNetwork, busStops: SearchBusStop[], micromobility: MicromobilityStation[]) {
   const rail: SearchEntity[] = network.stations.flatMap(record => {
