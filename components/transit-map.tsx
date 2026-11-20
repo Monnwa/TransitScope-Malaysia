@@ -70,7 +70,6 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
   const stationLines = useMemo(() => stationRailLines(selected, network.lines), [selected, network.lines]);
   const highlighted = stationLines.length ? stationLines : routeHighlight;
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
-  const [linkBikeControlsHost, setLinkBikeControlsHost] = useState<HTMLDivElement | null>(null);
   const railRequest = stationSearch && (!stationSearch.type || stationSearch.type === "RAIL_STATION") ? stationSearch : null;
   const busRequest = stationSearch?.type === "BUS_STOP" ? stationSearch : null;
   useEffect(() => {
@@ -102,7 +101,6 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
   const activeNavigation = navigation?.journeyId === selectedJourney?.journeyId ? navigation : null;
   return <section className="rail-map-group">
     <EstimatedTrainControls now={now} count={visibleTrains.length} trains={trains} lines={network.lines} onRefresh={onRefresh}/>
-    <div className="linkbike-controls" ref={setLinkBikeControlsHost}/>
     <div className="map-camera-frame">
     <div className="map-camera-bar" ref={setCameraControlsHost}/>
     <div className="map-wrap" aria-label="Interactive transport map">
@@ -163,12 +161,11 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, selecte
         <Pane name="simulated-trains" style={{ zIndex: 590 }}>
           <EstimatedTrainLayer trains={visibleTrains} selected={selected?.id} onSelect={onSelect} highlighted={highlighted}/>
         </Pane>
-        {linkBikeControlsHost && <MicromobilityLayer controlsHost={linkBikeControlsHost}
-          searchActive={searchActive} searchRequest={stationSearch}
-          onSearchClose={onSearchPopupClose} onData={onMicromobilityData}/>}
-        {linkBikeControlsHost && <LinkBikeLayer stations={bikes} records={mapRecords} controlsHost={linkBikeControlsHost}
+        <MicromobilityLayer searchActive={searchActive} searchRequest={stationSearch}
+          onSearchClose={onSearchPopupClose} onData={onMicromobilityData}/>
+        <LinkBikeLayer stations={bikes} records={mapRecords}
           onSelect={onSelect} searchActive={searchActive} searchRequest={stationSearch}
-          onSearchClose={onSearchPopupClose}/>}
+          onSearchClose={onSearchPopupClose}/>
         {userPosition && <Marker position={userPosition} icon={L.divIcon({ className: "transport-icon user-icon", html: "<span></span>", iconSize: [22, 22], iconAnchor: [11, 11] })}><Popup>Your current location</Popup></Marker>}
       </MapContainer>
       <div className="map-legend" aria-label="Map legend">{showBusRoutes && <span><i className="bus-route-legend"/>{emphasizedRouteId ? "Bus route " + emphasizedRouteId : "Simulated Klang Valley buses: T401 · T402"}</span>}<span>Train lines and stations</span><span>◉ Interchange</span>

@@ -18,39 +18,28 @@ async function containedPopup(page: import("@playwright/test").Page, popup: impo
   });
 }
 
-test("all micromobility layers, coverage, zoom and popup provenance", async ({ page, request, isMobile }, info) => {
+test("all micromobility layers and popup provenance work without the coverage panel", async ({ page, request, isMobile }, info) => {
   await page.setViewportSize(isMobile ? { width:375, height:844 } : { width:1440, height:1000 });
   const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
   await page.goto("/");
-  const coverage = page.getByRole("region", { name: "Micromobility coverage · SIMULATED" });
-  await expect(coverage).toContainText("75 coverage locations · 2 source-backed (approximate positions) · 73 synthetic");
-  await expect(page.getByRole("group", { name: "Micromobility coverage · SIMULATED" })).toHaveCount(0);
-  await expect(page.locator(".rail-map-group").getByRole("checkbox")).toHaveCount(0);
-  await expect(coverage.locator(".micromobility-operator strong")).toHaveText([
-    "LinkBike: 27", "HelloRide: 16", "TRYKE: 16", "Beam Mobility: 16",
-  ]);
-  await expect(coverage.locator(".micromobility-operator small")).toHaveText([
-    "0 source-backed · 27 synthetic", "0 source-backed · 16 synthetic",
-    "2 source-backed · 14 synthetic", "0 source-backed · 16 synthetic",
-  ]);
+  const panel = page.locator("#map > .panel").first();
+  await expect(panel.getByRole("heading", { name: "Transport map" })).toBeVisible();
+  await expect(panel.getByText(/\d+ results/)).toBeVisible();
+  await expect(panel.getByRole("button", { name: "Fit to region" })).toBeVisible();
+  await expect(panel.getByRole("button", { name: "Bandar Tasik Selatan status" })).toBeVisible();
+  await expect(panel.getByRole("button", { name: "Refresh train positions" })).toBeVisible();
+  await expect(panel.getByText("Availability by line", { exact: true })).toBeVisible();
+  await expect(panel.locator(".micromobility-coverage, .linkbike-controls, .linkbike-map-status")).toHaveCount(0);
+  await expect(panel.getByRole("button", { name: /Zoom to (LinkBike|HelloRide|TRYKE|Beam Mobility)/ })).toHaveCount(0);
+  await expect(panel).not.toContainText(/Micromobility coverage|coverage locations|simulated LinkBike stations on the map|Dashed markers|Live vehicle availability|used for demonstration and coverage visualization/);
   await expect(page.locator(".linkbike-marker")).toHaveCount(27);
   for (const operator of ["helloride", "tryke", "beam"]) await expect(page.locator(`.micromobility-${operator}`)).toHaveCount(16);
   await expect(page.locator(".micromobility-marker.synthetic")).toHaveCount(46);
   await expect(page.locator(".micromobility-marker.source-backed")).toHaveCount(2);
-  const map = page.locator(".leaflet-container");
-  for (const [name, selector] of [
-    ["LinkBike stations", ".linkbike-marker"], ["TRYKE", ".micromobility-tryke"],
-    ["Beam Mobility", ".micromobility-beam"], ["HelloRide", ".micromobility-helloride"],
-  ]) {
-    await page.getByRole("button", { name: `Zoom to ${name}`, exact: true }).click();
-    await expect.poll(() => map.evaluate((element, markerSelector) => {
-      const bounds = element.getBoundingClientRect();
-      return Array.from(element.querySelectorAll(markerSelector)).every(marker => {
-        const box = marker.getBoundingClientRect();
-        return box.left >= bounds.left && box.right <= bounds.right && box.top >= bounds.top && box.bottom <= bounds.bottom;
-      });
-    }, selector)).toBe(true);
-  }
+  await expect(panel.locator(".rail-alignment")).toHaveCount(8);
+  const controlGap = await panel.locator(".estimated-train-controls + .map-camera-frame").evaluate(frame =>
+    frame.getBoundingClientRect().top - frame.previousElementSibling!.getBoundingClientRect().bottom);
+  expect(controlGap).toBeLessThanOrEqual(8);
   await expect(page.locator('[title="HelloRide · Penang Times Square surroundings"]')).toHaveCount(1);
   // Keyboard selection works even when the all-coverage view has dense points.
   const synthetic = page.locator('[title="HelloRide · Penang Times Square surroundings"]');
@@ -104,28 +93,26 @@ test("all new operator popups display deterministic simulated inventory like Lin
   }
 });
 
-test("new data failure and retry leave LinkBike functional", async ({page}) => {
-  await page.route("**/api/micromobility/stations", route => route.fulfill({status:503,body:'{}'}));
+test("a transient stations API failure retries automatically while LinkBike remains available", async ({page}) => {
+  await page.route("**/api/micromobility/stations", route => route.fulfill({status:503,body:'{}'}), {times:1});
+  const failure = page.waitForResponse(response => response.url().endsWith("/api/micromobility/stations") && response.status() === 503);
   await page.goto("/");
-  await expect(page.getByText("New operator locations unavailable. LinkBike remains independent.")).toBeVisible();
+  await failure;
   await expect(page.locator(".linkbike-marker")).toHaveCount(27);
-  await page.unroute("**/api/micromobility/stations");
-  await page.getByRole("button", {name:"Retry micromobility locations"}).click();
   await expect(page.locator(".micromobility-marker")).toHaveCount(48);
+  await expect(page.getByRole("button", {name:"Retry micromobility locations"})).toHaveCount(0);
 });
 
-test("loading coverage counts does not shift the transport map", async ({page}) => {
+test("loading micromobility markers does not shift the transport map", async ({page}) => {
   let release: () => void = () => {};
   const pending = new Promise<void>(resolve => { release = resolve; });
   await page.route("**/api/micromobility/stations", async route => { await pending; await route.continue(); });
   await page.goto("/");
   await expect(page.locator(".linkbike-marker")).toHaveCount(27);
-  const controls = page.getByRole("region", {name:"Micromobility coverage · SIMULATED"});
-  await expect(controls).toContainText("Loading micromobility coverage");
-  const before = await controls.boundingBox();
+  const map = page.locator(".leaflet-container");
+  await expect(map).toBeVisible();
+  const before = await map.boundingBox();
   release();
-  await expect(controls).toContainText("75 coverage locations");
-  const after = await controls.boundingBox();
-  expect(after?.height).toBe(before?.height);
-  expect(after?.y).toBe(before?.y);
+  await expect(map.locator(".micromobility-marker")).toHaveCount(48);
+  expect(await map.boundingBox()).toEqual(before);
 });

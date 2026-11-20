@@ -6,10 +6,10 @@ export const MICROMOBILITY_OPERATORS = ["LINKBIKE", "HELLORIDE", "TRYKE", "BEAM"
 export const NEW_MICROMOBILITY_OPERATORS = ["HELLORIDE", "TRYKE", "BEAM"] as const;
 export type MicromobilityOperator = typeof MICROMOBILITY_OPERATORS[number];
 export const OPERATOR_STYLE = {
-  LINKBIKE: { name: "LinkBike", colour: "#713f12", letter: "B" },
-  HELLORIDE: { name: "HelloRide", colour: "#0369a1", letter: "H" },
-  TRYKE: { name: "TRYKE", colour: "#c2410c", letter: "T" },
-  BEAM: { name: "Beam Mobility", colour: "#7e22ce", letter: "B" },
+  LINKBIKE: { name: "LinkBike", letter: "B" },
+  HELLORIDE: { name: "HelloRide", letter: "H" },
+  TRYKE: { name: "TRYKE", letter: "T" },
+  BEAM: { name: "Beam Mobility", letter: "B" },
 } as const;
 export const MICROMOBILITY_DISCLAIMER = "These locations are used for demonstration and coverage visualization only. They do not confirm active operator stations, designated parking areas or real-time vehicle availability.";
 export const SIMULATED_INVENTORY_DISCLAIMER = "Available bicycles and total docks are simulated for demonstration purposes and do not represent actual operator inventory or real-time availability.";
@@ -75,10 +75,4 @@ export type MicromobilityResponse = z.infer<typeof micromobilityResponseSchema>;
 export function locationLabel(station: MicromobilityStation) {
   return station.dataOrigin === "SYNTHETIC" ? "SIMULATED · SYNTHETIC DEMONSTRATION LOCATION" :
     station.verificationStatus === "APPROXIMATE_LOCATION" ? "SIMULATED · SOURCE-BACKED LOCATION · APPROXIMATE POSITION" : "SIMULATED · SOURCE-VERIFIED LOCATION";
-}
-
-export function stationCounts(stations: MicromobilityStation[]) {
-  return MICROMOBILITY_OPERATORS.map(operator => ({ operator, total: stations.filter(s => s.operator === operator).length,
-    sourceBacked: stations.filter(s => s.operator === operator && s.dataOrigin === "SOURCE_VERIFIED").length,
-    synthetic: stations.filter(s => s.operator === operator && s.dataOrigin === "SYNTHETIC").length }));
 }

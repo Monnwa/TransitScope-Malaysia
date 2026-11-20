@@ -36,7 +36,7 @@ test("train and LinkBike layers render by default and respect dashboard filters"
   // Bike stations are in Penang, outside the initial Klang Valley camera view.
   // Their actual marker elements must already exist without a toggle or zoom action.
   await expect(map.locator(".linkbike-marker")).toHaveCount(27);
-  await expect(page.getByRole("region", { name: "Micromobility coverage · SIMULATED" })).toContainText("75 coverage locations");
+  await expect(map.locator(".micromobility-marker")).toHaveCount(48);
   await expect(page.getByRole("region", { name: "Simulated train positions" }).getByRole("status")).toContainText("simulated trains displayed");
   await page.locator(".rail-map-group").screenshot({ path: testInfo.outputPath("default-map-layers.png") });
 
@@ -139,7 +139,11 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   await page.getByRole("button", { name: "Shared bike", exact: true }).click();
   await expect(page.locator("#records tbody tr")).toHaveCount(27);
   await expect(page.getByRole("checkbox", { name: "Show LinkBike stations" })).toHaveCount(0);
-  await page.getByRole("button", { name: "Zoom to LinkBike stations" }).click();
+  await search.fill("Esplanade Central");
+  await page.getByRole("listbox", { name: "Station search results" }).getByRole("option", { name: /Esplanade Central/ }).click();
+  await expect(page.getByRole("region", { name: "LinkBike station details" })).toBeVisible();
+  await map.getByRole("button", { name: "Close popup", exact: true }).click();
+  await page.getByRole("button", { name: "Clear station search" }).click();
   await expect(page.locator(".linkbike-marker")).toHaveCount(27);
   await page.getByRole("region", { name: "LinkBike station details" }).waitFor({ state: "hidden" });
   await page.locator(".leaflet-container").scrollIntoViewIfNeeded();

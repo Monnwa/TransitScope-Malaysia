@@ -1,10 +1,9 @@
 "use client";
 
 import { memo, useEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";
 import { divIcon } from "leaflet";
 import { LayerGroup, Marker, Pane, useMap } from "react-leaflet";
-import { MICROMOBILITY_DISCLAIMER, SIMULATED_INVENTORY_DISCLAIMER, NEW_MICROMOBILITY_OPERATORS, OPERATOR_STYLE, locationLabel, micromobilityResponseSchema, stationCounts, type MicromobilityResponse, type MicromobilityStation } from "@/lib/micromobility";
+import { MICROMOBILITY_DISCLAIMER, SIMULATED_INVENTORY_DISCLAIMER, NEW_MICROMOBILITY_OPERATORS, OPERATOR_STYLE, locationLabel, micromobilityResponseSchema, type MicromobilityResponse, type MicromobilityStation } from "@/lib/micromobility";
 import { useOptionalBusCamera } from "./bus-camera-context";
 import SearchableStationPopup from "./searchable-station-popup";
 import { showMicromobilityMarker, type StationSearchRequest } from "@/lib/station-search";
@@ -63,69 +62,46 @@ const StationLayer = memo(function StationLayer({ operator, stations, request, o
   </Marker>)}</LayerGroup>;
 });
 
-export default function MicromobilityLayer({ controlsHost, searchActive,
+export default function MicromobilityLayer({ searchActive,
   searchRequest, onSearchClose, onData }: {
-  controlsHost: HTMLElement;
   searchActive: boolean; searchRequest?: StationSearchRequest | null;
   onSearchClose?: (request: StationSearchRequest) => void;
   onData?: (data: MicromobilityResponse) => void;
 }) {
-  const map = useMap();
-  const camera = useOptionalBusCamera();
   const [data, setData] = useState<MicromobilityResponse | null>(null);
-  const [error, setError] = useState(false);
-  const [attempt, setAttempt] = useState(0);
   const layers = useMemo(() => NEW_MICROMOBILITY_OPERATORS.map(operator => ({ operator,
     stations: data?.stations.filter(station => station.operator === operator) ?? [] })), [data]);
   useEffect(() => {
     const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 8_000);
-    let active = true;
-    setError(false);
-    fetch("/api/micromobility/stations", { signal: controller.signal, cache: "no-store" }).then(async response => {
-      if (!response.ok) throw new Error("Unavailable");
-      const result = micromobilityResponseSchema.parse(await response.json());
-      if (active) {
-        setData(result);
-        onData?.(result);
+    let retryTimer: number | undefined;
+    async function load(canRetry: boolean) {
+      const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(8_000)]);
+      try {
+        const response = await fetch("/api/micromobility/stations", { signal, cache: "no-store" });
+        if (!response.ok) throw new Error("Micromobility stations unavailable");
+        const result = micromobilityResponseSchema.parse(await response.json());
+        if (!signal.aborted) {
+          setData(result);
+          onData?.(result);
+        }
+      } catch {
+        if (canRetry && !controller.signal.aborted) {
+          retryTimer = window.setTimeout(() => void load(false), 1_000);
+        }
       }
-    }).catch(() => { if (active) setError(true); }).finally(() => window.clearTimeout(timeout));
-    return () => { active = false; controller.abort(); window.clearTimeout(timeout); };
-  }, [attempt, onData]);
+    }
+    void load(true);
+    return () => { controller.abort(); window.clearTimeout(retryTimer); };
+  }, [onData]);
 
-  function zoom(stations: MicromobilityStation[]) {
-    if (!stations.length) return;
-    camera?.dispatch({ type: "MANUAL" });
-    const fit = () => map.fitBounds(stations.map(s => [s.latitude, s.longitude] as [number, number]), { padding: [28, 28], maxZoom: 15, animate: false });
-    if (camera) camera.guard.run(fit); else fit();
-  }
-  const counts = stationCounts(data?.stations ?? []);
-  return <>
-    {createPortal(<section className="micromobility-coverage" aria-labelledby="micromobility-coverage-heading">
-      <h3 id="micromobility-coverage-heading">Micromobility coverage · SIMULATED</h3>
-      <div className="micromobility-operators">{counts.map(({ operator, total, sourceBacked, synthetic }) => {
-        const style = OPERATOR_STYLE[operator];
-        return <div key={operator} className="micromobility-operator">
-          <strong><i aria-hidden="true" style={{ background: style.colour }}/>{style.name}: {data ? total : "…"}</strong>
-          <small>{data ? `${sourceBacked} source-backed · ${synthetic} synthetic` : "Loading locations…"}</small>
-          {operator !== "LINKBIKE" && <button type="button" className="secondary" disabled={!total || searchActive} onClick={() => zoom(data?.stations.filter(s => s.operator === operator) ?? [])}>Zoom to {style.name}</button>}
-        </div>;
-      })}</div>
-      <p role="status">{error ? "New operator locations unavailable. LinkBike remains independent." : data ?
-        `${data.stations.length} coverage locations · ${data.stations.filter(s => s.dataOrigin === "SOURCE_VERIFIED").length} source-backed (approximate positions) · ${data.stations.filter(s => s.dataOrigin === "SYNTHETIC").length} synthetic` : "Loading micromobility coverage…"}</p>
-      {error && <button type="button" className="secondary" onClick={() => setAttempt(value => value + 1)}>Retry micromobility locations</button>}
-      <p>Dashed markers: synthetic · Solid markers: source-backed. Live vehicle availability: Not available.</p>
-      <p>{MICROMOBILITY_DISCLAIMER}</p>
-    </section>, controlsHost)}
-    <Pane name="micromobility-coverage" style={{ zIndex: 580 }}>
-      {layers.map(({ operator, stations }) => {
-        const request = searchRequest?.type === "MICROMOBILITY_STATION" && searchRequest.operator === operator ? searchRequest : null;
-        const visible = searchActive
-          ? stations.filter(station => showMicromobilityMarker(searchActive, station.id === request?.stationId))
-          : stations;
-        return visible.length > 0 && <StationLayer key={operator} operator={operator} stations={visible}
-          request={request} onSearchClose={onSearchClose}/>;
-      })}
-    </Pane>
-  </>;
+  return <Pane name="micromobility-coverage" style={{ zIndex: 580 }}>
+    {layers.map(({ operator, stations }) => {
+      const request = searchRequest?.type === "MICROMOBILITY_STATION" && searchRequest.operator === operator ? searchRequest : null;
+      const visible = searchActive
+        ? stations.filter(station => showMicromobilityMarker(searchActive, station.id === request?.stationId))
+        : stations;
+      return visible.length > 0 && <StationLayer key={operator} operator={operator} stations={visible}
+        request={request} onSearchClose={onSearchClose}/>;
+    })}
+  </Pane>;
 }

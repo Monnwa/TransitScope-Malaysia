@@ -2,7 +2,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/api/micromobility/stations/route";
 import { adaptLinkBikeStation, micromobilitySnapshot, newMicromobilityStations } from "@/lib/micromobility-data";
-import { MICROMOBILITY_OPERATORS, inMicromobilityCoverage, locationLabel, micromobilityStationSchema, stationCounts, generateInventory, simulatedInventorySchema } from "@/lib/micromobility";
+import { MICROMOBILITY_OPERATORS, inMicromobilityCoverage, locationLabel, micromobilityStationSchema, generateInventory, simulatedInventorySchema } from "@/lib/micromobility";
 import { linkBikeSnapshot } from "@/lib/simulation/scenarios";
 import { auditStationDistances, MICROMOBILITY_SPACING_EXCEPTIONS, stationDistance } from "@/lib/micromobility-geography";
 import beforeAudit from "@/docs/micromobility-audit-before.json";
@@ -14,7 +14,7 @@ describe("micromobility data integrity", () => {
     expect(a.operators).toEqual(["LINKBIKE", "HELLORIDE", "TRYKE", "BEAM"]);
     expect(new Set(a.stations.map(s => s.id)).size).toBe(a.stations.length);
     expect(new Set(newMicromobilityStations.map(s => `${s.latitude},${s.longitude}`)).size).toBe(48);
-    expect(stationCounts(a.stations).map(c => c.total)).toEqual([27,16,16,16]);
+    expect(a.operators.map(operator => a.stations.filter(station => station.operator === operator).length)).toEqual([27,16,16,16]);
   });
   it("validates every station, coverage, simulation provenance, and absent live inventory", () => {
     for (const station of micromobilitySnapshot().stations) {

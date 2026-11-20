@@ -103,18 +103,18 @@ describe("actual React-Leaflet popup pane integration", () => {
     expect(view.queryByRole("checkbox")).toBeNull();
     expect(document.querySelectorAll(".rail-alignment")).toHaveLength(8);
     expect(view.getByRole("button", { name: "Refresh train positions" })).toBeVisible();
-    expect(view.getByRole("button", { name: "Zoom to LinkBike stations" })).toBeVisible();
-    expect(view.getByRole("region", { name: "Micromobility coverage · SIMULATED" })).toBeVisible();
+    expect(view.queryByRole("button", { name: "Zoom to LinkBike stations" })).toBeNull();
+    expect(view.queryByRole("region", { name: "Micromobility coverage · SIMULATED" })).toBeNull();
   });
 
-  it("keeps the enabled layers honest when no train or bike data is available", async () => {
+  it("renders no train or LinkBike markers when their data is empty", async () => {
     const view = render(<Harness initialId={null} empty/>);
-    await waitFor(() => expect(document.querySelector(".linkbike-map-status")).toHaveTextContent("0 simulated LinkBike stations"));
+    await waitFor(() => expect(document.querySelector(".leaflet-container")).toBeInTheDocument());
     drain();
     expect(view.getByRole("region", { name: "Simulated train positions" })).toHaveTextContent("0 simulated trains displayed");
     expect(document.querySelectorAll(".estimated-train-icon,.linkbike-marker")).toHaveLength(0);
     expect(view.queryByRole("button", { name: "Zoom to LinkBike stations" })).toBeNull();
-    expect(view.getByRole("region", { name: "Micromobility coverage · SIMULATED" })).toBeVisible();
+    expect(view.queryByRole("region", { name: "Micromobility coverage · SIMULATED" })).toBeNull();
   });
 
   it("binds the vehicle popup to its original marker while escaping inherited bus pane", async () => {

@@ -205,7 +205,7 @@ for (const name of ["Taman Midah", "Maluri", "KL Sentral"]) {
     }
   });
 }
-test("LinkBike fit, station intent, availability popup and train markers remain functional", async ({ page, isMobile }, info) => {
+test("LinkBike station intent, availability popup and train markers remain functional", async ({ page, isMobile }, info) => {
   test.setTimeout(120_000);
   for (const width of isMobile ? [375, 390] : [1101]) {
     const { map, external } = await prepare(page, width);
@@ -224,11 +224,14 @@ test("LinkBike fit, station intent, availability popup and train markers remain 
     await evidence(page, info, "train-" + width, trainPopup);
     await close(trainPopup);
     await expect(page.getByRole("checkbox", { name: "Show LinkBike stations" })).toHaveCount(0);
-    await page.getByRole("button", { name: "Zoom to LinkBike stations", exact: true }).click(); await map.scrollIntoViewIfNeeded(); await frames(page);
-    await expect(map).toHaveAttribute("data-camera-state", "FREE_EXPLORE");
     await expect(map.locator(".linkbike-marker")).not.toHaveCount(0);
     const bike = map.locator(".linkbike-marker").first();
     const bikeName = (await bike.getAttribute("title"))!.replace(/^LinkBike: /, "");
+    await page.getByRole("textbox", { name: "Search vehicles, routes or stations" }).fill(bikeName);
+    await page.getByRole("listbox", { name: "Station search results" }).getByRole("option", { name: new RegExp(bikeName) }).click();
+    await expect(map.locator(".linkbike-popup")).toBeVisible();
+    await close(map.locator(".leaflet-popup").filter({ has: page.locator(".linkbike-popup") }));
+    await page.getByRole("button", { name: "Clear station search" }).click();
     await page.getByRole("row").filter({has:page.getByRole("cell",{name:bikeName,exact:true})}).getByRole("button",{name:"View details"}).click();
     await expect(map).toHaveAttribute("data-camera-intent", "selection");
     await map.scrollIntoViewIfNeeded(); await frames(page);
