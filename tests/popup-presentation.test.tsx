@@ -26,7 +26,7 @@ function Harness({ now = time, initialId = first }: { now?: number; initialId?: 
   return <BusCameraProvider selectedVehicleId={id?.startsWith("bus:") ? id : null} selectedRecordId={id}>
     <Capture/>
     <TransitMap records={snapshot.records} busRouteId="" showBusRoutes selected={selected}
-      onSelect={record => setId(record?.id ?? null)} resetSignal={0} network={railNetwork}
+      onSelect={record => setId(record?.id ?? null)} resetSignal={0} railLines={railNetwork.lines} showSharedBike
       journey={journey ?? null} navigation={null} onLocate={() => {}} trains={snapshot.trains}
       bikes={snapshot.linkBike.stations} now={now} onRefresh={() => {}}/>
   </BusCameraProvider>;

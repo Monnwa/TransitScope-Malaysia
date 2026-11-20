@@ -16,11 +16,12 @@ import UpcomingDepartures from "./upcoming-departures";
 import StationOperations from "./station-operations";
 import EstimatedTrainPanel from "./estimated-train-panel";
 import { BusCameraProvider } from "./bus-camera-context";
-import { buildStationSearchIndex, findStations, normaliseSearchText, resolveExactStation } from "@/lib/station-search";
+import { buildStationSearchIndex, findStations, normaliseSearchText, resolveExactStation, type SearchEntity } from "@/lib/station-search";
 import { adaptLinkBikeStation, type MicromobilityResponse } from "@/lib/micromobility";
 import { busStopSearchResponseSchema, type SearchBusStop } from "@/lib/bus-stop-search";
 import useStationSearch from "./use-station-search";
 import StationSearchInput from "./station-search-input";
+import { DEFAULT_TRANSPORT_TYPES, transportTypeFilter } from "@/lib/transport-type-filter";
 
 const TransitMap = dynamic(() => import("./transit-map"), {
   ssr: false,
@@ -28,7 +29,7 @@ const TransitMap = dynamic(() => import("./transit-map"), {
 });
 
 const colours: Record<Mode, string> = { Bus: "#2563eb", MRT: "#7c3aed", LRT: "#ea580c", Monorail: "#db2777", KTM: "#0891b2", "Shared bike": "#16a34a" };
-const modes = Object.keys(colours) as Mode[];
+const modes = DEFAULT_TRANSPORT_TYPES;
 const statuses: Status[] = ["In service", "At stop", "Station available"];
 const formats = new Intl.DateTimeFormat("en-MY", { dateStyle: "medium", timeStyle: "medium", timeZone: "Asia/Kuala_Lumpur" });
 const linkBikeSearchStations = linkBikeSnapshot(EPOCH).stations.map(adaptLinkBikeStation);
@@ -51,7 +52,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   const [now, setNow] = useState(initialTime);
   const [query, setQuery] = useState("");
   const [busRouteId, setBusRouteId] = useState("");
-  const [activeModes, setModes] = useState<Mode[]>([]);
+  const [activeModes, setModes] = useState<Mode[]>(DEFAULT_TRANSPORT_TYPES);
   const [activeStatus, setStatuses] = useState<Status[]>([]);
   const [showSimulated, setShowSimulated] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -90,14 +91,18 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   const snapshot = useMemo(() => simulationSnapshot(now), [now]);
   const exactStation = useMemo(() => resolveExactStation(query, railNetwork), [query]);
   const filterQuery = exactStation?.name ?? normaliseSearchText(query);
-  const results = useMemo(() => showSimulated ? filterRecords(snapshot.records, filterQuery, activeModes, activeStatus, [SIMULATED])
-    .filter(item => !busRouteId || item.mode === "Bus" && item.routeId === busRouteId) : [],
-    [snapshot, filterQuery, activeModes, activeStatus, showSimulated, busRouteId]);
-  const record = snapshot.records.find(item => item.id === selectedId);
-  const train = snapshot.trains.find(item => item.id === selectedId);
-  const journey = useMemo(() => selectedId ? busJourney(selectedId, now, preview?.vehicleId, preview?.start) : null, [selectedId, now, preview]);
+  const transport = useMemo(() => transportTypeFilter(railNetwork, activeModes, busRouteId), [activeModes, busRouteId]);
+  const results = useMemo(() => showSimulated ? filterRecords(snapshot.records, filterQuery, [], activeStatus, [SIMULATED])
+    .filter(transport.showsRecord) : [], [snapshot, filterQuery, activeStatus, showSimulated, transport]);
+  const record = snapshot.records.find(item => item.id === selectedId && transport.showsRecord(item));
+  const train = record && snapshot.trains.find(item => item.id === record.id);
+  const journey = useMemo(() => record?.mode === "Bus" ? busJourney(record.id, now, preview?.vehicleId, preview?.start) : null, [record, now, preview]);
   const alert = snapshot.alerts.find(item => item.id === alertId);
-  const byMode = modes.map(name => ({ name, records: results.filter(item => item.modes?.includes(name) ?? item.mode === name).length }));
+  const byMode = modes.map(name => ({ name, records: activeModes.includes(name)
+    ? results.filter(item => item.modes?.includes(name) ?? item.mode === name).length : 0 }));
+  const routeCount = new Set(results.flatMap(item => item.railLines
+    ? item.railLines.filter(id => transport.railIds.has(id))
+    : item.routeId ? [item.routeId] : [])).size;
   const severity = [
     { name: "High", colour: "#dc2626" }, { name: "Medium", colour: "#d97706" }, { name: "Low", colour: "#16a34a" },
   ].map(item => ({ ...item, value: snapshot.alerts.filter(notice => notice.severity === item.name).length }));
@@ -116,10 +121,26 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     selectRecord(item);
   }
 
+  function canSelectStation(entity: SearchEntity) {
+    if (entity.type === "RAIL_STATION") return transport.showsRecord(entity.record);
+    if (entity.type === "BUS_STOP") return showSimulated && (busRouteId
+      ? entity.stop.routes.some(route => transport.showsBusRoute(route.id)) : transport.bus);
+    return transport.sharedBike;
+  }
+
+  function toggleMode(mode: Mode) {
+    const next = toggle(activeModes, mode);
+    const nextFilter = transportTypeFilter(railNetwork, next, busRouteId);
+    const request = stationSearch.request;
+    if (record && !nextFilter.showsRecord(record) || request?.type === "BUS_STOP" && !nextFilter.bus ||
+      request?.type === "MICROMOBILITY_STATION" && !nextFilter.sharedBike) select(null);
+    setModes(next);
+  }
+
   function reset() {
     setQuery("");
     setBusRouteId("");
-    setModes([]);
+    setModes(DEFAULT_TRANSPORT_TYPES);
     setStatuses([]);
     setShowSimulated(true);
     setAlertId(null);
@@ -159,12 +180,12 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
         <p className="status simulation-notice"><strong>SIMULATION MODE</strong> — All transportation information is generated for demonstration purposes and does not represent actual operational conditions.</p>
         <section className="kpis" aria-label="Transport indicators">
           <Kpi label="Vehicles" value={results.filter(item => item.recordKind === "vehicle").length} hint="For your current filters"/>
-          <Kpi label="Routes" value={new Set(results.flatMap(item => item.railLines ?? (item.routeId ? [item.routeId] : []))).size} hint="For your current filters"/>
+          <Kpi label="Routes" value={routeCount} hint="For your current filters"/>
           <Kpi label="Service updates" value={snapshot.alerts.length} hint="Simulated notices"/>
           <Kpi label="Shared-bike stations" value={results.filter(item => item.mode === "Shared bike").length} hint="For your current filters"/>
         </section>
         <section className="filters" aria-label="Dashboard filters">
-          <div><span>Transport type</span>{modes.map(mode => <Filter key={mode} label={mode} active={activeModes.includes(mode)} onClick={() => setModes(items => toggle(items, mode))}/>)}</div>
+          <div><span>Transport type</span>{modes.map(mode => <Filter key={mode} label={mode} active={activeModes.includes(mode)} onClick={() => toggleMode(mode)}/>)}</div>
           <div><label>Bus route <select value={busRouteId} onChange={event => { setBusRouteId(event.target.value); select(null); }}>
             <option value="">All routes</option>{busRoutes.map(route => <option key={route.id} value={route.id}>{route.id}</option>)}
           </select></label></div>
@@ -175,12 +196,13 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
           <div className="panel">
             <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length)}. Select a vehicle or stop to learn more.</p></div><button className="secondary" onClick={() => setResetSignal(signal => signal + 1)}>Fit to region</button></div>
             <div className="station-ops-quick"><button type="button" className="secondary" onClick={showHub}>Bandar Tasik Selatan status</button></div>
-            <TransitMap records={results} busRouteId={busRouteId} showBusRoutes={showSimulated && (!activeModes.length || activeModes.includes("Bus"))} selected={record} onSelect={select} resetSignal={resetSignal} network={railNetwork}
+            <TransitMap records={results} busRouteId={busRouteId} showBusRoutes={showSimulated && transport.bus} selected={record} onSelect={select} resetSignal={resetSignal}
+              railLines={transport.railLines} showSharedBike={transport.sharedBike}
               stationSearch={stationSearch.request} searchActive={query.trim().length > 0} onSearchPopupClose={stationSearch.dismiss}
               onMicromobilityData={setMicromobility}
               search={<StationSearchInput query={query} results={stationResults} request={stationSearch.request}
                 loading={!staticBus} limited={Boolean(staticBus?.unavailable.length)}
-                onChange={value => { stationSearch.cancel(); setQuery(value); }} onSelect={stationSearch.selectEntity}/>}
+                onChange={value => { stationSearch.cancel(); setQuery(value); }} onSelect={stationSearch.selectEntity} canSelect={canSelectStation}/>}
               journey={journey} navigation={navigation} onLocate={() => {
                 if (!journey) return;
                 setPreview(null);

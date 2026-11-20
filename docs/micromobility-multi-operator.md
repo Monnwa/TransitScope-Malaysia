@@ -26,7 +26,9 @@ Every unified record has `isSimulation: true`, `operationalStatus: UNVERIFIED`, 
 
 ## Map behavior
 
-All four operators render by default. Select a marker or a station search result to open its popup, which shows availability, simulated inventory and provenance where applicable. An active search hides ordinary markers and reveals the selected micromobility result. Clearing search restores normal marker visibility. Penang points are retained outside the initial viewport.
+All four operators render by default. The Shared bike filter controls their map markers together, while the station search continues to index all 75 locations. Search results show when a location is hidden by the filter. With Shared bike selected, an active search hides ordinary markers and reveals only the selected micromobility result. Clearing search restores normal marker visibility. Penang points are retained outside the initial viewport.
+
+The dashboard result count and table use simulation records. The shared-bike KPI counts the 27 LinkBike records within that list and follows the active filters. The other 48 locations are map overlays and search results. Service-update counts and the impact chart remain system-wide.
 
 HelloRide is blue, TRYKE orange, Beam purple. Synthetic markers have dashed borders; source-backed markers have solid borders and an outer ring. A dedicated pane below rail hit targets prevents new markers intercepting existing station selection. Popups stay in Leaflet's popup pane, disclose provenance and precision, link evidence, and show deterministic demonstration inventory with an explicit disclaimer. Their inventory fields use LinkBike's wording, two-column definition list and integer formatting. Popup content scrolls within a compact mobile size. A one-time immediate fit through the camera guard prevents scroll recovery from cancelling popup placement. Static marker layers remain stable across simulation-clock updates. The stations request retries once on failure, independent of the map layout and the LinkBike layer.
 

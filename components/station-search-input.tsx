@@ -9,7 +9,7 @@ const labels = {
   MICROMOBILITY_STATION: "Micromobility",
 } as const;
 
-export default function StationSearchInput({ query, results, request, loading, limited, onChange, onSelect }: {
+export default function StationSearchInput({ query, results, request, loading, limited, onChange, onSelect, canSelect }: {
   query: string;
   results: SearchEntity[];
   request: StationSearchRequest | null;
@@ -17,6 +17,7 @@ export default function StationSearchInput({ query, results, request, loading, l
   limited: boolean;
   onChange: (query: string) => void;
   onSelect: (entity: SearchEntity) => void;
+  canSelect: (entity: SearchEntity) => boolean;
 }) {
   const id = useId();
   const input = useRef<HTMLInputElement>(null);
@@ -38,6 +39,7 @@ export default function StationSearchInput({ query, results, request, loading, l
   }, [active]);
 
   function choose(entity: SearchEntity) {
+    if (!canSelect(entity)) return;
     close();
     input.current?.blur();
     onSelect(entity);
@@ -79,6 +81,7 @@ export default function StationSearchInput({ query, results, request, loading, l
       {results.length ? <div ref={list} id={id} role="listbox" aria-label="Station search results">
         {results.map((entity, index) => <button key={`${entity.type}:${entity.id}`} type="button"
           id={optionId(index)} role="option" tabIndex={-1} aria-selected={index === active} data-type={entity.type}
+          aria-disabled={!canSelect(entity)}
           onMouseDown={event => event.preventDefault()} onClick={event => {
             event.stopPropagation();
             choose(entity);
@@ -88,6 +91,7 @@ export default function StationSearchInput({ query, results, request, loading, l
             [entity.stop.feed, `Stop ID ${entity.stop.sourceId}`, entity.area].filter(Boolean).join(" · ") :
             [entity.operator, entity.area, entity.state].filter(Boolean).join(" · ")}</small>
           {entity.routes.length > 0 && <small>{entity.routes.map(route => route.name).join(" · ")}</small>}
+          {!canSelect(entity) && <small>Hidden by dashboard filters</small>}
         </button>)}
       </div> : <p role="status">{loading ? "Loading bus stops…" : "No matching stations or stops."}</p>}
       {limited && <p role="status">Some static bus stops are unavailable.</p>}

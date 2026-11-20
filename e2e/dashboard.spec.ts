@@ -47,8 +47,8 @@ test("train and LinkBike layers render by default and respect dashboard filters"
   await expect(map.locator(".rail-alignment")).toHaveCount(8);
   await search.fill("");
   await page.getByRole("button", { name: "Shared bike", exact: true }).click();
-  await expect(map.locator(".estimated-train-icon")).toHaveCount(0);
-  await expect(map.locator(".linkbike-marker")).toHaveCount(27);
+  await expect(map.locator(".estimated-train-icon")).not.toHaveCount(0);
+  await expect(map.locator(".linkbike-marker, .micromobility-marker")).toHaveCount(0);
   await page.getByRole("button", { name: "Reset dashboard" }).click();
   await expect(map.locator(".estimated-train-icon")).not.toHaveCount(0);
   await expect(map.locator(".linkbike-marker")).toHaveCount(27);
@@ -71,6 +71,9 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   const routeSelect = page.getByRole("combobox", { name: "Bus route" });
   await expect(routeSelect.locator("option")).toHaveText(["All routes", "T401", "T402"]);
   await expect(page.locator("#about")).toContainText("T401 30 min · T402 30 min");
+  for (const name of ["MRT", "LRT", "Monorail", "KTM", "Shared bike"]) {
+    await page.getByRole("button", { name, exact: true }).click();
+  }
   await routeSelect.selectOption("T402");
   const indicators = page.getByRole("region", { name: "Transport indicators" });
   await expect(indicators.locator(".kpi").filter({ hasText: "Vehicles" }).locator("strong")).toHaveText("2");
@@ -85,7 +88,7 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   await expect(t402Board.getByRole("listitem").first()).toContainText("T402");
   await expect(t402Board.getByRole("listitem").first()).toContainText("SIMULATED");
   await expect(t402Board.getByRole("listitem").first().locator("time")).toHaveAttribute("datetime", "2026-11-14T04:00:00.000Z");
-  await routeSelect.selectOption("");
+  await page.getByRole("button", { name: "Reset dashboard" }).click();
   await search.fill("Bus T401-01");
   const row = page.getByRole("row", { name: /Bus T401-01/ });
   const marker = page.getByTitle("Bus T401-01", { exact: true });
@@ -122,6 +125,7 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   await board.getByRole("combobox", { name: "Service" }).selectOption("KTM:KC05_KB18");
   await expect(board.getByRole("listitem").first()).toContainText("KTM Batu Caves–Pulau Sebang");
   await board.getByRole("button", { name: "Refresh departures" }).click();
+  await search.fill("");
 
   await expect(page.locator(".rail-alignment.MRT1")).toHaveAttribute("stroke", "#006B3F");
   await expect(page.locator(".rail-alignment.MRT2")).toHaveAttribute("stroke", "#F2C500");
@@ -136,7 +140,9 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   await expect(trainPanel).toBeHidden();
 
   await search.fill("");
-  await page.getByRole("button", { name: "Shared bike", exact: true }).click();
+  for (const name of ["Bus", "MRT", "LRT", "Monorail", "KTM"]) {
+    await page.getByRole("button", { name, exact: true }).click();
+  }
   await expect(page.locator("#records tbody tr")).toHaveCount(27);
   await expect(page.getByRole("checkbox", { name: "Show LinkBike stations" })).toHaveCount(0);
   await search.fill("Esplanade Central");

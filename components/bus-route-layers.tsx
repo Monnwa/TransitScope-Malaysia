@@ -31,7 +31,7 @@ function BusRouteLayers({ selectedRouteId, emphasizedRouteId, enabled }: {
 
   return <>
     <Pane name="bus-route-network" style={{ zIndex: 420, pointerEvents: "none" }}>
-      {enabled && busMapRoutes.map(route => <Polyline key={route.id}
+      {enabled && busMapRoutes.filter(route => !selectedRouteId || route.id === selectedRouteId).map(route => <Polyline key={route.id}
         className={"bus-network-route bus-route-" + route.id} positions={route.path}
         interactive={false} pathOptions={styles.context}/>)}
     </Pane>

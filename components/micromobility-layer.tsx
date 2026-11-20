@@ -62,9 +62,9 @@ const StationLayer = memo(function StationLayer({ operator, stations, request, o
   </Marker>)}</LayerGroup>;
 });
 
-export default function MicromobilityLayer({ searchActive,
+export default function MicromobilityLayer({ visible, searchActive,
   searchRequest, onSearchClose, onData }: {
-  searchActive: boolean; searchRequest?: StationSearchRequest | null;
+  visible: boolean; searchActive: boolean; searchRequest?: StationSearchRequest | null;
   onSearchClose?: (request: StationSearchRequest) => void;
   onData?: (data: MicromobilityResponse) => void;
 }) {
@@ -93,6 +93,8 @@ export default function MicromobilityLayer({ searchActive,
     void load(true);
     return () => { controller.abort(); window.clearTimeout(retryTimer); };
   }, [onData]);
+
+  if (!visible) return null;
 
   return <Pane name="micromobility-coverage" style={{ zIndex: 580 }}>
     {layers.map(({ operator, stations }) => {

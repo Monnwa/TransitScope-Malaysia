@@ -48,7 +48,8 @@ test("frames the network, switches complete routes, and restores overview withou
     await expect(map).toHaveAttribute("data-bus-route", id);
     await expect(map).toHaveAttribute("data-bus-view", "ROUTE");
     await expect(map.locator(".bus-route-emphasis")).toHaveClass(new RegExp("bus-route-" + id));
-    await expect(map.locator(".bus-network-route")).toHaveCount(2);
+    await expect(map.locator(".bus-network-route")).toHaveCount(1);
+    await expect(map.locator(".bus-network-route")).toHaveClass(new RegExp("bus-route-" + id));
     await expect(map.locator(".bus-network-route").first()).toHaveAttribute("stroke-opacity", "0.24");
     await fitsMap(map, map.locator(".bus-route-emphasis"));
     await map.scrollIntoViewIfNeeded();
