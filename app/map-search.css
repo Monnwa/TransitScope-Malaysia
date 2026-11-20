@@ -115,6 +115,10 @@
   left: 6px;
 }
 
+.map-wrap[data-alert-navigation] .leaflet-top.leaflet-right {
+  top: 76px;
+}
+
 /* Give ordinary map popups room while keeping the active search input clear. */
 .map-wrap:has(.leaflet-popup):not([data-alert-navigation]):not(:has(.station-search-clear)) .leaflet-top.leaflet-left {
   top: 0;
@@ -141,6 +145,9 @@
   .map-wrap .leaflet-top.leaflet-left {
     top: 72px;
     left: 2px;
+  }
+  .map-wrap[data-alert-navigation] .leaflet-top.leaflet-right {
+    top: 72px;
   }
 
   .map-wrap:has(.leaflet-popup):not([data-alert-navigation]):not(:has(.station-search-clear)) .leaflet-top.leaflet-left {

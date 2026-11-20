@@ -115,6 +115,7 @@ test("Overview shows, filters and resets one accessible service alert list", asy
 const alertStations = (page: Page) => page.locator('.rail-station[stroke="#1666d8"][stroke-width="4"]');
 
 test("alert navigation scrolls to the existing map, opens the station and restores filtered markers on close", async ({ page, isMobile }, info) => {
+  if (isMobile) await page.setViewportSize({ width: 390, height: 844 });
   const runtimeErrors: string[] = [];
   page.on("pageerror", error => runtimeErrors.push(error.message));
   await page.route(/^https:\/\/(?:[abc]\.)?tile\.openstreetmap\.org\//, route => route.fulfill({
