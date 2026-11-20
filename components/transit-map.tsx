@@ -32,8 +32,10 @@ import SearchableStationPopup from "./searchable-station-popup";
 import { railRouteStyle, stationRailLines } from "@/lib/rail-route-style";
 import RailRouteLayers from "./rail-route-layers";
 import { brtSunway, expandedServiceById } from "@/lib/expanded-services";
+import type { UserLocation } from "@/lib/nearby-transit";
 
 const center: [number, number] = [3.142, 101.699];
+const userIcon = L.divIcon({ className: "transport-icon user-icon", html: "<span></span>", iconSize: [22, 22], iconAnchor: [11, 11] });
 
 function DismissSelectionOnBackground({ dismiss }: { dismiss?: () => void }) {
   useMapEvent("click", ({ originalEvent }: L.LeafletMouseEvent) => {
@@ -45,7 +47,7 @@ function DismissSelectionOnBackground({ dismiss }: { dismiss?: () => void }) {
 }
 
 export default function TransitMap({ records, busRouteId, showBusRoutes, showSharedBike, selected, onSelect, resetSignal, railLines, search, stationSearch,
-  searchActive = false, onSearchPopupClose, onMicromobilityData, journey, navigation, onLocate, trains, bikes, now, onRefresh }: {
+  searchActive = false, onSearchPopupClose, onMicromobilityData, journey, navigation, onLocate, trains, bikes, now, onRefresh, userLocation }: {
   records: TransitRecord[];
   busRouteId: string;
   showBusRoutes: boolean;
@@ -66,6 +68,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
   bikes: SimulatedBikeStation[];
   now: number;
   onRefresh: () => void;
+  userLocation?: UserLocation | null;
 }) {
   const [cameraControlsHost, setCameraControlsHost] = useState<HTMLDivElement | null>(null);
   const [routeHighlight, setRouteHighlight] = useState<string[]>([]);
@@ -74,9 +77,12 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
   const stationLines = useMemo(() => stationRailLines(selected, railLines), [selected, railLines]);
   const highlighted = useMemo(() => stationLines.length ? stationLines : routeHighlight.filter(id => lineById.has(id)),
     [stationLines, routeHighlight, lineById]);
-  const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const railRequest = stationSearch && (!stationSearch.type || stationSearch.type === "RAIL_STATION") ? stationSearch : null;
-  const busRequest = stationSearch?.type === "BUS_STOP" && (showBusRoutes || stationSearch.alert) ? stationSearch : null;
+  const busRequest = stationSearch?.type === "BUS_STOP" && (showBusRoutes || stationSearch.alert || stationSearch.nearby) ? stationSearch : null;
+  const nearbyBusRoutes = useMemo(() => [
+    ...(busRequest?.nearby ? busRequest.stop.routes.flatMap(route => [route.id, route.name]) : []),
+    ...(railRequest?.nearby && selected?.railLines?.includes(brtSunway.id) ? [brtSunway.id] : []),
+  ], [busRequest, railRequest, selected]);
   const micromobilityRequest = showSharedBike && stationSearch?.type === "MICROMOBILITY_STATION" ? stationSearch : null;
   useEffect(() => {
     setRouteHighlight([]);
@@ -85,17 +91,14 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
     if (!resetSignal) return;
     setRouteHighlight([]);
   }, [resetSignal]);
-  useEffect(() => {
-    navigator.geolocation?.getCurrentPosition(result => setUserPosition([result.coords.latitude, result.coords.longitude]), () => undefined,
-      { maximumAge: 60_000, timeout: 10_000 });
-  }, []);
-
   const toggleHighlight = useCallback((id: string) => setRouteHighlight(current => current.length === 1 && current[0] === id ? [] : [id]), []);
   const alertTargets = stationSearch?.alert?.targets;
   const alertRailIds = new Set(alertTargets?.flatMap(target => target.type === "RAIL_STATION" ? [target.id] : []));
   const alertBusTargets = alertTargets?.flatMap(target => target.type === "BUS_STOP" ? [target.stop] : []) ?? [];
+  const replacedBusStops = busRequest?.nearby && busRequest.stop.id.startsWith("bus-stop:rapid-bus-mrtfeeder:")
+    ? [busRequest.stop] : alertBusTargets;
   const revealedRail = alertTargets?.flatMap(target => target.type === "RAIL_STATION" ? [target.record] : []) ??
-    (railRequest && selected?.id === railRequest.stationId && (stationLines.length || selected.stationProvenance?.length) ? [selected] : []);
+    (railRequest && selected?.id === railRequest.stationId && (railRequest.nearby || stationLines.length || selected.stationProvenance?.length) ? [selected] : []);
   const mapRecords = revealedRail.length ? [...records, ...revealedRail.filter(station =>
     !records.some(record => record.id === station.id))] : records;
   const visibleIds = new Set(mapRecords.map(record => record.id));
@@ -110,7 +113,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
     return <BusVehicleMarker key={record.id} record={{ ...record, position: record.position }}
       active={selected?.id === record.id} subdued={!!emphasizedRouteId && record.routeId !== emphasizedRouteId} onSelect={() => onSelect(record)}/>;
   }
-  const brtVisible = showBusRoutes && (!busRouteId || busRouteId === brtSunway.id);
+  const brtVisible = showBusRoutes && (!busRouteId || busRouteId === brtSunway.id) || nearbyBusRoutes.includes(brtSunway.id);
   const expandedRailLines = useMemo(() => railLines.filter(line => expandedServiceById.has(line.id)), [railLines]);
   const quietRail = showBusRoutes && highlighted.length === 0;
   const railModes = [...new Set(railLines.map(line => line.mode))];
@@ -131,7 +134,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
           enabled={showBusRoutes} resetSignal={resetSignal} journey={journey} navigation={navigation}
           controlsHost={cameraControlsHost} onLocate={onLocate} focusedRailRoute={focusedRoute}/>
         <DismissSelectionOnBackground dismiss={selected || stationSearch ? () => onSelect(null) : undefined}/>
-        <BusRouteLayers selectedRouteId={busRouteId} emphasizedRouteId={emphasizedRouteId} enabled={showBusRoutes}/>
+        <BusRouteLayers selectedRouteId={busRouteId} emphasizedRouteId={emphasizedRouteId} enabled={showBusRoutes} revealedRouteIds={nearbyBusRoutes}/>
         <RailRouteLayers lines={railLines} highlighted={highlighted} stationLines={stationLines} onHighlight={toggleHighlight}/>
         <Pane name="bus-journey-route" style={{ zIndex: 450 }}>
         {segments && selectedJourney && <MovingRoute path={selectedJourney.path} fallback={segments}
@@ -140,9 +143,9 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
           pathOptions={{ color: selectedJourney.routeId === brtSunway.id ? brtSunway.colour : "#2563eb", weight: 5, dashArray: "8 5" }}>
           <Tooltip>Simulated departure preview</Tooltip></Polyline>}
         </Pane>
-        {showBusRoutes && (!busRequest || busRequest.alert) && <Pane name="bus-stops" style={{ zIndex: 440 }}>
+        {showBusRoutes && (!busRequest || busRequest.alert || busRequest.nearby) && <Pane name="bus-stops" style={{ zIndex: 440 }}>
           {mapRecords.map(record => record.mode === "Bus" && record.recordKind === "stop" && !record.railLines?.length && record.position &&
-            !alertBusTargets.some(stop => record.stopRefs?.some(ref => ref.endsWith(`:${stop.sourceId}`)) &&
+            !replacedBusStops.some(stop => record.stopRefs?.some(ref => ref.endsWith(`:${stop.sourceId}`)) &&
               stop.routes.some(route => route.id === record.routeId)) &&
             <CircleMarker key={record.id} center={record.position} radius={3} className="bus-network-stop"
               pathOptions={{ color: "#617b99", fillColor: "#fff", fillOpacity: 1, weight: 1.5 }}
@@ -162,8 +165,9 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
           pathOptions={{ color: "#1666d8", fillColor: "#fff", fillOpacity: 1, weight: 4 }}>
           <Tooltip>{stop.name}</Tooltip>
         </CircleMarker>)}
-        {busRequest && <CircleMarker key={busRequest.stationId} center={busRequest.stop.position} radius={7}
-          className="bus-search-stop" pathOptions={{ color: "#fff", fillColor: "#2563eb", fillOpacity: 1, weight: 2 }}>
+        {busRequest && <CircleMarker key={busRequest.stationId} center={busRequest.stop.position} radius={busRequest.nearby ? 9 : 7}
+          className="bus-search-stop"
+          pathOptions={{ color: busRequest.nearby ? "#1666d8" : "#fff", fillColor: busRequest.nearby ? "#fff" : "#2563eb", fillOpacity: 1, weight: busRequest.nearby ? 4 : 2 }}>
           <Tooltip>{busRequest.stop.name}</Tooltip>
           <SearchableStationPopup id={busRequest.stationId} position={busRequest.stop.position} request={busRequest}
             contentSelector=".journey-stop-popup" onSearchClose={onSearchPopupClose} pane="popupPane"
@@ -189,15 +193,23 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
           const stationColours = (record.railLines ?? []).flatMap(id => (brtVisible && id === brtSunway.id ? brtSunway.colour : lineById.get(id)?.colour) ?? []);
           const dimmed = record.railLines?.length && highlighted.length > 0 && !record.railLines.some(id => highlighted.includes(id));
           const affected = alertRailIds.has(record.id);
+          const nearbySelected = railRequest?.nearby && railRequest.stationId === record.id;
           const searchSelected = record.stationProvenance?.length && railRequest?.stationId === record.id;
-          return <CircleMarker key={record.id} center={position} radius={affected || searchSelected ? 9 : quietRail ? record.interchange ? 6 : 4 : record.interchange ? 8 : 6}
-            className={brtOnly ? "brt-station" : "rail-station"} pane="markerPane" pathOptions={affected
+          return <CircleMarker key={record.id} center={position} radius={affected || nearbySelected || searchSelected ? 9 : quietRail ? record.interchange ? 6 : 4 : record.interchange ? 8 : 6}
+            className={brtOnly ? "brt-station" : "rail-station"}
+            pane="markerPane" pathOptions={affected || nearbySelected
               ? { color: "#1666d8", fillColor: "#fff", weight: 4, fillOpacity: 1, opacity: 1 }
               : { color: stationColours[0] ?? expandedServiceById.get(record.stationProvenance?.[0]?.routeId ?? "")?.colour ?? "#2563eb",
                 fillColor: stationColours[1] ?? "#fff", weight: searchSelected ? 4 : quietRail ? 2 : 3,
                 fillOpacity: searchSelected || brtOnly ? 1 : dimmed ? .3 : quietRail ? .35 : 1,
                 opacity: searchSelected || brtOnly ? 1 : dimmed ? .3 : quietRail ? .45 : 1 }}
-            eventHandlers={{ click: () => onSelect(record), popupclose: () => { if (networkStation && selected?.id === record.id) onSelect(null); } }}><Tooltip>{record.name}</Tooltip>{popup}</CircleMarker>;
+            eventHandlers={{
+              click: () => { if (!nearbySelected) onSelect(record); },
+              popupclose: () => {
+                if (nearbySelected) onSearchPopupClose?.(railRequest);
+                else if (networkStation && selected?.id === record.id) onSelect(null);
+              },
+            }}><Tooltip>{record.name}</Tooltip>{popup}</CircleMarker>;
         })}
         </Pane>
         {/* Keep station hit targets accessible when auto-enabled trains share their coordinates. */}
@@ -209,13 +221,13 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
         {showSharedBike && <LinkBikeLayer stations={bikes} records={mapRecords}
           onSelect={onSelect} searchActive={searchActive} searchRequest={micromobilityRequest}
           onSearchClose={onSearchPopupClose}/>}
-        {userPosition && <Marker position={userPosition} icon={L.divIcon({ className: "transport-icon user-icon", html: "<span></span>", iconSize: [22, 22], iconAnchor: [11, 11] })}><Popup>Your current location</Popup></Marker>}
+        {userLocation && <Marker position={userLocation.position} icon={userIcon} interactive={false} keyboard={false}/>}
       </MapContainer>
       <div className="map-legend" aria-label="Map legend">
         {showBusRoutes && emphasizedRouteId !== brtSunway.id && <span><i className="bus-route-legend"/>{emphasizedRouteId ? "Bus route " + emphasizedRouteId : "Simulated Klang Valley buses: T401 · T402"}</span>}
         {railModes.length > 0 && <><span>{railModes.length === 5 ? "Train" : railModes.join(" · ")} lines and stations</span><span>◉ Interchange</span></>}
         {(showBusRoutes || railModes.length > 0) && <span>{showBusRoutes && "🚌 Bus"}{showBusRoutes && railModes.length > 0 && " / "}{railModes.length > 0 && "🚆 Train"}</span>}
-        <span>● Your location</span>{(showBusRoutes || railLines.length > 0) && <span>○ Station / stop</span>}
+        {userLocation && <span><i className="user-location-legend"/> Your location</span>}{(showBusRoutes || railLines.length > 0) && <span>○ Station / stop</span>}
         {selectedJourney && <span><i className="bus-journey-stop-dot"/> Selected journey stops</span>}
         {segments && <span>Grey: route behind · {selectedJourney?.routeId === brtSunway.id ? "Green" : "Blue"}: route ahead</span>}
       </div>

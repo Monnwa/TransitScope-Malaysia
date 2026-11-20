@@ -6,10 +6,11 @@ import { busMapRoutes } from "@/lib/bus-map-routes";
 import { brtSunway } from "@/lib/expanded-services";
 
 /** Memoized K.2B visual layers. All camera commands belong to BusMapCamera. */
-function BusRouteLayers({ selectedRouteId, emphasizedRouteId, enabled }: {
+function BusRouteLayers({ selectedRouteId, emphasizedRouteId, enabled, revealedRouteIds }: {
   selectedRouteId: string;
   emphasizedRouteId: string;
   enabled: boolean;
+  revealedRouteIds?: readonly string[];
 }) {
   const map = useMap();
   const [zoom, setZoom] = useState(map.getZoom());
@@ -32,10 +33,11 @@ function BusRouteLayers({ selectedRouteId, emphasizedRouteId, enabled }: {
 
   return <>
     <Pane name="bus-route-network" style={{ zIndex: 420, pointerEvents: "none" }}>
-      {enabled && busMapRoutes.filter(route => !selectedRouteId || route.id === selectedRouteId).map(route => <Polyline key={route.id}
+      {busMapRoutes.filter(route => (enabled && (!selectedRouteId || route.id === selectedRouteId)) ||
+        revealedRouteIds?.includes(route.id)).map(route => <Polyline key={route.id}
         className={"bus-network-route bus-route-" + route.id} positions={route.path}
         interactive={false} pathOptions={styles.context}/>)}
-      {enabled && (!selectedRouteId || selectedRouteId === brtSunway.id) && <>
+      {(enabled && (!selectedRouteId || selectedRouteId === brtSunway.id) || revealedRouteIds?.includes(brtSunway.id)) && <>
         <Polyline positions={brtSunway.paths[0]} interactive={false} pathOptions={{ color: "#fff", weight: 7 }}/>
         <Polyline className="brt-alignment" positions={brtSunway.paths[0]} interactive={false}
           pathOptions={{ color: brtSunway.colour, weight: 4, dashArray: "8 3" }}/>

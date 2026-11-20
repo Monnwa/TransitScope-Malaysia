@@ -12,7 +12,7 @@ export type AlertStationNavigation = {
   onResult: (success: boolean) => void;
 };
 
-export type StationSearchRequest = { stationId: string; revision: number; alert?: AlertStationNavigation } & (
+export type StationSearchRequest = { stationId: string; revision: number; alert?: AlertStationNavigation; nearby?: boolean } & (
   | { type?: "RAIL_STATION" }
   | { type: "BUS_STOP"; stop: SearchBusStop }
   | { type: "MICROMOBILITY_STATION"; operator: MicromobilityOperator }
@@ -60,11 +60,13 @@ export function resolveAlertStations(index: IndexedStation[], references: readon
   return [...targets.values()];
 }
 
-export function buildStationSearchIndex(network: RailNetwork, busStops: SearchBusStop[], micromobility: MicromobilityStation[]) {
+export type TransitSearchEntity = Exclude<SearchEntity, { type: "MICROMOBILITY_STATION" }>;
+
+export function transitSearchEntities(network: RailNetwork, busStops: SearchBusStop[]) {
   const lines = [...network.lines, ...(network.busLines ?? [])];
   const brtSourceIds = new Set(network.stations.flatMap(record => record.stationProvenance?.flatMap(stop =>
     stop.routeId === brtSunway.id ? [rapidBusBrtStopIds.get(stop.code)] : []) ?? []));
-  const rail: SearchEntity[] = network.stations.flatMap(record => {
+  const rail: TransitSearchEntity[] = network.stations.flatMap(record => {
     if (!validPoint(record.position)) return [];
     return [{
       type: "RAIL_STATION", id: record.id, sourceIds: [...(record.stopRefs ?? []), ...(record.stationProvenance?.flatMap(stop => {
@@ -75,10 +77,16 @@ export function buildStationSearchIndex(network: RailNetwork, busStops: SearchBu
       routes: lines.filter(line => record.railLines?.includes(line.id)).map(line => ({ id: line.id, name: line.name })),
     }];
   });
-  const buses: SearchEntity[] = busStops.filter(stop => validPoint(stop.position) &&
-    !(brtSourceIds.has(stop.sourceId) && stop.routes.some(route => route.id === "B1000"))).map(stop => ({
+  const buses: TransitSearchEntity[] = busStops.filter(stop => validPoint(stop.position) &&
+    !(brtSourceIds.has(stop.sourceId) && stop.id === `bus-stop:rapid-bus-kl:${stop.sourceId}` &&
+      stop.routes.some(route => route.id === "B1000"))).map(stop => ({
     ...stop, type: "BUS_STOP", sourceIds: [stop.sourceId], stop,
   }));
+  return [...rail, ...buses];
+}
+
+export function buildStationSearchIndex(network: RailNetwork, busStops: SearchBusStop[], micromobility: MicromobilityStation[]) {
+  const transit = transitSearchEntities(network, busStops);
   const bikes: SearchEntity[] = micromobility.flatMap(station => {
     const position: GeoPoint = [station.latitude, station.longitude];
     if (!validPoint(position)) return [];
@@ -89,7 +97,7 @@ export function buildStationSearchIndex(network: RailNetwork, busStops: SearchBu
     }];
   });
   const index = new Map<string, IndexedStation>();
-  for (const entity of [...rail, ...buses, ...bikes]) {
+  for (const entity of [...transit, ...bikes]) {
     index.set(`${entity.type}:${entity.id}`, {
       entity,
       ids: [entity.id, ...entity.sourceIds, ...(entity.type === "RAIL_STATION" ?

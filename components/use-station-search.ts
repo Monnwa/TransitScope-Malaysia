@@ -15,24 +15,25 @@ export default function useStationSearch(network: RailNetwork, query: string, ex
     timer.current = null;
     setRequest(null);
   }, []);
-  const select = useCallback((record: TransitRecord, alert?: AlertStationNavigation) => {
+  const select = useCallback((record: TransitRecord, alert?: AlertStationNavigation, nearby?: boolean) => {
     if (timer.current !== null) clearTimeout(timer.current);
     timer.current = null;
     const station = resolveStationResult(record, network);
-    onSelect(station ?? record);
-    setRequest(station ? { type: "RAIL_STATION", stationId: station.id, revision: ++revision.current, ...(alert && { alert }) } : null);
+    onSelect(nearby && station ? null : station ?? record);
+    setRequest(station ? { type: "RAIL_STATION", stationId: station.id, revision: ++revision.current,
+      ...(alert && { alert }), ...(nearby && { nearby }) } : null);
   }, [network, onSelect]);
 
-  const selectEntity = (entity: SearchEntity, alert?: AlertStationNavigation) => {
+  const selectEntity = (entity: SearchEntity, alert?: AlertStationNavigation, nearby?: boolean) => {
     if (entity.type === "RAIL_STATION") {
-      select(entity.record, alert);
+      select(entity.record, alert, nearby);
       return;
     }
     cancel();
     const next = ++revision.current;
     onSelect(null);
     setRequest(entity.type === "BUS_STOP"
-      ? { type: entity.type, stationId: entity.stop.id, stop: entity.stop, revision: next, ...(alert && { alert }) }
+      ? { type: entity.type, stationId: entity.stop.id, stop: entity.stop, revision: next, ...(alert && { alert }), ...(nearby && { nearby }) }
       : { type: entity.type, stationId: entity.station.id, operator: entity.station.operator, revision: next });
   };
 

@@ -117,10 +117,10 @@ export default function useStationSearchNavigation(map: L.Map, popupRef: RefObje
         if (!Number.isFinite(height) || height <= 0) return;
         fitted = true; // Retire before moving: the layout effect can synchronously re-enter.
         if (!intent.alert || intent.alert.targets.length === 1) focus(height);
-        if (intent.alert) {
+        if (intent.alert || intent.nearby) {
           const focusTarget = element.querySelector<HTMLElement>(".leaflet-popup-close-button") ?? container;
           focusTarget.focus({ preventScroll: true });
-          intent.alert.onResult(true);
+          intent.alert?.onResult(true);
         }
       };
       run(() => {
@@ -135,7 +135,7 @@ export default function useStationSearchNavigation(map: L.Map, popupRef: RefObje
       container.dataset.stationSearchType = intent.type ?? "RAIL_STATION";
       if (intent.type === "MICROMOBILITY_STATION") container.dataset.stationSearchOperator = intent.operator;
       else delete container.dataset.stationSearchOperator;
-      if (intent.alert) contentReady.current();
+      if (intent.alert || intent.nearby) contentReady.current();
     }
     const retry = () => queueMicrotask(() => { if (!retired) attempt(); });
     map.on("layeradd resize", retry);
@@ -146,6 +146,10 @@ export default function useStationSearchNavigation(map: L.Map, popupRef: RefObje
       restoreAutoPan?.();
       contentReady.current = () => {};
       map.off("layeradd resize", retry);
+      if (intent.nearby && opened) {
+        const popup = popupRef.current;
+        if (latestRequest.current?.stationId !== id && popup?.isOpen()) popup.close();
+      }
     };
   }, [map, popupRef, id, latitude, longitude, request, guard, dispatch, contentSelector]);
   return contentReady;

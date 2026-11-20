@@ -6,7 +6,7 @@ import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 
 import { filterRecords, type Mode, type Record as TransitRecord, type Status } from "@/lib/transit-data";
 import { simulationSnapshot } from "@/lib/simulation";
 import { EPOCH, MINUTE, SIMULATED, simulationTime } from "@/lib/simulation/clock";
-import { busRoutes, busStops, railNetwork } from "@/lib/simulation/network";
+import { busRoutes, busStopReviews, busStops, railNetwork } from "@/lib/simulation/network";
 import { linkBikeSnapshot, type SimulationAlert } from "@/lib/simulation/scenarios";
 import { busJourney } from "@/lib/simulation/vehicles";
 import { passengerName, resultCountLabel } from "./passenger-copy";
@@ -24,6 +24,8 @@ import { DEFAULT_TRANSPORT_TYPES, transportTypeFilter } from "@/lib/transport-ty
 import { brtSunway } from "@/lib/expanded-services";
 import { serviceAlertMatchesTransport } from "@/lib/service-impact";
 import ServiceUpdates from "./service-updates";
+import NearbyPublicTransport, { useNearbyLocation } from "./nearby-public-transport";
+import { nearbyTransitCandidates } from "@/lib/nearby-transit";
 
 const TransitMap = dynamic(() => import("./transit-map"), {
   ssr: false,
@@ -36,12 +38,17 @@ const statuses: Status[] = ["In service", "At stop", "Station available"];
 const formats = new Intl.DateTimeFormat("en-MY", { dateStyle: "medium", timeStyle: "medium", timeZone: "Asia/Kuala_Lumpur" });
 const linkBikeSearchStations = linkBikeSnapshot(EPOCH).stations.map(adaptLinkBikeStation);
 const localBusStops = new Map<string, SearchBusStop>();
+const publishedFeederStops: SearchBusStop[] = [];
+const routeColours = new Map([...busRoutes, ...railNetwork.lines].map(route => [route.id, route.colour]));
 for (const record of busStops) {
   const sourceId = record.stopRefs?.[0]?.split(":").at(-1);
   if (!sourceId || !record.position || !record.routeId) continue;
   const id = `bus-stop:rapid-bus-mrtfeeder:${sourceId}`;
   const prior = localBusStops.get(id);
   const route = { id: record.routeId, name: record.routeId };
+  const review = busStopReviews.get(record.id);
+  if (review) publishedFeederStops.push({ id, sourceId, name: record.name, position: review.publishedPosition,
+    operator: record.operator, feed: "MRT Feeder Bus", aliases: [], routes: [route] });
   if (prior) {
     if (!prior.routes.some(item => item.id === route.id)) prior.routes.push(route);
   } else {
@@ -67,6 +74,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   const [resetSignal, setResetSignal] = useState(0);
   const [micromobility, setMicromobility] = useState<MicromobilityResponse | null>(null);
   const [staticBus, setStaticBus] = useState<{ stops: SearchBusStop[]; unavailable: string[] } | null>(null);
+  const nearbyLocation = useNearbyLocation();
 
   const refresh = () => setNow(simulationTime());
   useEffect(() => {
@@ -92,6 +100,10 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     return buildStationSearchIndex(railNetwork, [...stops.values()], micromobility?.stations ?? linkBikeSearchStations);
   }, [staticBus, micromobility]);
   const stationResults = useMemo(() => findStations(searchIndex, query), [searchIndex, query]);
+  const nearbyCandidates = useMemo(() => nearbyTransitCandidates(railNetwork, [
+    ...(!staticBus || staticBus.unavailable.some(id => id === "bus" || id === "rapid-bus-mrtfeeder") ? publishedFeederStops : []),
+    ...(staticBus?.stops ?? []),
+  ]), [staticBus]);
   const snapshot = useMemo(() => simulationSnapshot(now), [now]);
   const exactStation = useMemo(() => resolveExactStation(query, railNetwork), [query]);
   const filterQuery = exactStation?.name ?? normaliseSearchText(query);
@@ -121,7 +133,12 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   const stationSearch = useStationSearch(railNetwork, query,
     exactStation && (exactStation.stationProvenance?.length || results.some(item => item.id === exactStation.id)) ? exactStation : undefined, selectRecord);
   const alertRequest = stationSearch.request?.alert ? stationSearch.request : null;
-  const record = snapshot.records.find(item => item.id === selectedId && (item.id === alertRequest?.stationId ||
+  const nearbyRequest = stationSearch.request?.nearby ? stationSearch.request : null;
+  const nearbyStation = nearbyRequest?.type === "RAIL_STATION"
+    ? railNetwork.stations.find(station => station.id === nearbyRequest.stationId) : undefined;
+  const mapRailLines = useMemo(() => nearbyStation ? railNetwork.lines.filter(line =>
+    transport.visibleLineIds.has(line.id) || nearbyStation.railLines?.includes(line.id)) : transport.railLines, [transport, nearbyStation]);
+  const record = nearbyStation ?? snapshot.records.find(item => item.id === selectedId && (item.id === alertRequest?.stationId ||
     Boolean(item.stationProvenance?.length && item.id === stationSearch.request?.stationId) || transport.showsRecord(item)));
   const train = record && snapshot.trains.find(item => item.id === record.id);
   const journey = useMemo(() => record?.mode === "Bus" ? busJourney(record.id, now, preview?.vehicleId, preview?.start) : null, [record, now, preview]);
@@ -184,7 +201,8 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     setResetSignal(signal => signal + 1);
   }
 
-  return <BusCameraProvider selectedVehicleId={selectedId?.startsWith("bus:") ? selectedId : null} selectedRecordId={selectedId}><main>
+  return <BusCameraProvider selectedVehicleId={selectedId?.startsWith("bus:") ? selectedId : null}
+    selectedRecordId={nearbyRequest?.stationId ?? selectedId}><main>
     <a className="skip" href="#content">Skip to dashboard content</a>
     <header>
       <div className="brand"><span className="brand-mark">TS</span><div><strong>TransitScope</strong><small>Malaysia</small></div></div>
@@ -225,11 +243,11 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
         <section className="two-col" id="map">
           <div className="panel">
             <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length)} · {stationCount} stations and stops</p></div><button className="secondary" onClick={() => {
-              if (alertRequest) select(null);
+              if (alertRequest || nearbyRequest) select(null);
               setResetSignal(signal => signal + 1);
             }}>Fit to region</button></div>
             <TransitMap records={results} busRouteId={busRouteId} showBusRoutes={showSimulated && transport.bus} selected={record} onSelect={select} resetSignal={resetSignal}
-              railLines={transport.railLines} showSharedBike={transport.sharedBike}
+              railLines={mapRailLines} showSharedBike={transport.sharedBike} userLocation={nearbyLocation.location}
               stationSearch={stationSearch.request} searchActive={query.trim().length > 0} onSearchPopupClose={stationSearch.dismiss}
               onMicromobilityData={setMicromobility}
               search={<StationSearchInput query={query} results={stationResults} request={stationSearch.request}
@@ -246,6 +264,15 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
                 setNavigation({ journeyId: journey.currentJourneyId, action: (navigation?.action ?? 0) + 1 });
               }} trains={snapshot.trains} bikes={snapshot.linkBike.stations} now={now} onRefresh={refresh}/>
           </div>
+          <NearbyPublicTransport {...nearbyLocation} candidates={nearbyCandidates} routeColours={routeColours}
+            busCoverage={!staticBus ? "loading" : staticBus.unavailable.length ? "partial" : "ready"}
+            selectedId={nearbyRequest?.stationId} onSelect={candidate => {
+              setAlertNavigation(null);
+              stationSearch.selectEntity(candidate, undefined, true);
+            }} onClear={() => {
+              select(null);
+              setResetSignal(signal => signal + 1);
+            }}/>
           <aside className="detail panel" aria-label="Selected transport detail">
             {journey && record ? <SimulatedBusPanel key={record.id} journey={journey} navigation={navigation} onNavigate={setNavigation}
               onPreview={setPreview} onClose={() => select(null)} onRefresh={refresh}><Details record={record}/></SimulatedBusPanel>
