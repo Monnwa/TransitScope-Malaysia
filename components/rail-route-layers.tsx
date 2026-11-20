@@ -24,7 +24,7 @@ export default memo(function RailRouteLayers({ lines, highlighted, stationLines,
         pathOptions={{ color: "#fff", weight: sharedErl || active ? 10 : quiet ? 4 : 7, opacity }}/>}
       <Polyline className={`rail-alignment ${line.id.replace(/[^a-zA-Z0-9]/g, "-")}`} positions={path}
         pathOptions={{ color: line.colour, weight: sharedErl ? erlTransit ? 4 : 7 : active ? 6 : quiet ? 2.5 : 4,
-          opacity, dashArray: erlTransit ? "9 9" : quiet ? "2 5" : undefined }}
+          opacity }}
         eventHandlers={{ click: () => onHighlight(line.id) }}><Popup>{line.name}<br/>{SIMULATED}</Popup></Polyline>
     </Fragment>;
   }));

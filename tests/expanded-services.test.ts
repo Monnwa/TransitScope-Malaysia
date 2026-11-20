@@ -25,7 +25,7 @@ describe("published service expansion", () => {
   it.each([
     [ekspres, "ERL KLIA Ekspres Line", "ERL", "#7946A3", "KE01 KE02 KE03"],
     [transit, "ERL KLIA Transit Line", "ERL", "#008B8B", "KT01 KT02 KT03 KT04 KT05 KT06"],
-    [shahAlam, "LRT Shah Alam Line", "LRT", "#FF00FF",
+    [shahAlam, "LRT Shah Alam Line", "LRT", "#59B8E6",
       "SA1 SA2 SA3 SA5 SA6 SA7 SA9 SA10 SA12 SA14 SA15 SA17 SA18 SA19 SA20 SA21 SA22 SA23 SA24 SA26"],
     [brt, "BRT Sunway Line", "Bus", "#115740", "BRT1 BRT2 BRT3 BRT4 BRT5 BRT6 BRT7"],
   ])("preserves both directions, service stops and geography for %s", (id, name, mode, colour, codes) => {

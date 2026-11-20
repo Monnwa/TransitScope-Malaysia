@@ -94,7 +94,7 @@ export const brtSunway: Service = {
 
 export const expandedRailServices: Service[] = [
   { ...rapid, ...fromGtfs("SA", shahAlamNames), id: "lrt-shah-alam", name: "LRT Shah Alam Line",
-    mode: "LRT", classification: "LRT", operator: "Rapid Rail / Prasarana", colour: "#FF00FF",
+    mode: "LRT", classification: "LRT", operator: "Rapid Rail / Prasarana", colour: "#59B8E6",
     serviceUrl: "https://www.prasarana.com.my/rapid-rail/", fleetSize: 14, speedKmh: 60, seed: 109 },
   { ...erl, id: "erl-klia-ekspres", name: "ERL KLIA Ekspres Line", colour: "#7946A3",
     sourceRouteId: "KE", serviceUrl: "https://www.kliaekspres.com/products-fares/klia-ekspres/",

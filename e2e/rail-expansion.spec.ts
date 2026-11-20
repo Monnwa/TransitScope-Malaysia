@@ -42,12 +42,13 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
       const selector = service.mode === "Bus" ? ".brt-alignment" : `.${service.id}`;
       await expect(map(page).locator(selector)).toHaveAttribute("stroke", service.colour);
     }
+    await expect(map(page).locator(".rail-alignment[stroke-dasharray]")).toHaveCount(0);
     await chip(page, "ERL").click();
     await expect(map(page).locator(".erl-klia-ekspres, .erl-klia-transit")).toHaveCount(0);
     await chip(page, "ERL").click();
     await legend.getByRole("button", { name: "Focus ERL KLIA Ekspres Line", exact: true }).click();
     await expect(map(page).locator(".leaflet-container")).toHaveAttribute("data-bus-zoom", /^(8|9|10)$/);
-    await expect(map(page).locator(".erl-klia-transit")).toHaveAttribute("stroke-dasharray", "9 9");
+    await expect(map(page).locator(".erl-klia-transit")).not.toHaveAttribute("stroke-dasharray", /.+/);
     await mapAndLegend.screenshot({ path: info.outputPath("02-erl.png") });
 
     await chip(page, "LRT").click();

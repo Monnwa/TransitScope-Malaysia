@@ -69,7 +69,14 @@ describe("actual React-Leaflet rail paths", () => {
     const routes = () => [...view.container.querySelectorAll('path.rail-alignment')];
     const casings = () => [...view.container.querySelectorAll('path.rail-route-casing')];
     const initial = routes(); expect(initial.length).toBeGreaterThan(0);
-    for (const path of [...initial, ...casings()]) expect(path).toHaveAttribute('stroke-opacity', '1');
+    for (const path of [...initial, ...casings()]) {
+      expect(path).toHaveAttribute('stroke-opacity', '1');
+      expect(path).not.toHaveAttribute('stroke-dasharray');
+    }
+    const express = view.container.querySelector('.erl-klia-ekspres')!;
+    const transit = view.container.querySelector('.erl-klia-transit')!;
+    expect(express.getAttribute('d')).toBe(transit.getAttribute('d'));
+    expect(Number(express.getAttribute('stroke-width'))).toBeGreaterThan(Number(transit.getAttribute('stroke-width')));
     view.rerender(tree(station('Raja Chulan'), false));
     expect(routes()[0]).toBe(initial[0]);
     for (const path of routes()) {
