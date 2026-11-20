@@ -9,8 +9,10 @@ const origin = Date.UTC(2026, 10, 14, 4);
 const headway = 30 * 60_000;
 const ref = (route: string, stop: string) => "sim:" + route + ":" + stop;
 
+const feederRoutes = busRoutes.filter(route => route.id === "T401" || route.id === "T402");
+
 describe("feeder QA boundary states", () => {
-  it.each(busRoutes)("preserves the timed path, stop state and ETA across both seams for $id", route => {
+  it.each(feederRoutes)("preserves the timed path, stop state and ETA across both seams for $id", route => {
     const [out, back] = route.legs;
     const id = "bus:" + route.id + ":01";
     const splitArrival = origin + out.stops.at(-1)!.arrival;
@@ -54,7 +56,7 @@ describe("feeder QA boundary states", () => {
     }
   });
 
-  it.each(busRoutes)("keeps departures due at rollover, but removes them after the departure for $id", route => {
+  it.each(feederRoutes)("keeps departures due at rollover, but removes them after the departure for $id", route => {
     const stopRef = ref(route.id, route.legs[0].stops[0].id);
     for (let cycle = 0; cycle < 4; cycle++) {
       const due = origin + cycle * headway;

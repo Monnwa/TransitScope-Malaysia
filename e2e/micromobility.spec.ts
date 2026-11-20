@@ -69,7 +69,7 @@ test("all micromobility layers and popup provenance work without the coverage pa
     expect(classified).toHaveLength(count);
     expect(new Set(classified.map(style => style.borderStyle))).toEqual(new Set([borderStyle]));
   }
-  await expect(panel.locator(".rail-alignment")).toHaveCount(8);
+  await expect(panel.locator(".rail-alignment")).toHaveCount(11);
   const controlGap = await panel.locator(".estimated-train-controls + .map-camera-frame").evaluate(frame =>
     frame.getBoundingClientRect().top - frame.previousElementSibling!.getBoundingClientRect().bottom);
   expect(controlGap).toBeLessThanOrEqual(8);

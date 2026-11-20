@@ -44,7 +44,7 @@ test("train and LinkBike layers render by default and respect dashboard filters"
   await search.fill("Train MRT1-01");
   await expect(map.locator(".estimated-train-icon")).toHaveCount(1);
   await expect(map.locator(".linkbike-marker")).toHaveCount(0);
-  await expect(map.locator(".rail-alignment")).toHaveCount(8);
+  await expect(map.locator(".rail-alignment")).toHaveCount(11);
   await search.fill("");
   await page.getByRole("button", { name: "Shared bike", exact: true }).click();
   await expect(map.locator(".estimated-train-icon")).not.toHaveCount(0);
@@ -63,7 +63,7 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   await page.goto("/?mode=live");
   await expect(page.getByText("SIMULATION MODE", { exact: true })).toBeVisible();
   await expect(page.locator(".leaflet-container")).toBeVisible();
-  await expect(page.locator(".rail-alignment")).toHaveCount(8);
+  await expect(page.locator(".rail-alignment")).toHaveCount(11);
   const charts = page.getByRole("region", { name: "Data visualisations" });
   await expect(charts.getByRole("heading", { name: "Transport by mode" })).toBeVisible();
   await expect(charts.locator(".recharts-surface")).toHaveCount(1);
@@ -71,9 +71,9 @@ test("dashboard shares simulated data across overlays, details and filters", asy
 
   const search = page.getByRole("textbox", { name: "Search vehicles, routes or stations" });
   const routeSelect = page.getByRole("combobox", { name: "Bus route" });
-  await expect(routeSelect.locator("option")).toHaveText(["All routes", "T401", "T402"]);
+  await expect(routeSelect.locator("option")).toHaveText(["All routes", "T401", "T402", "BRT Sunway Line"]);
   await expect(page.locator("#about")).toContainText("T401 30 min · T402 30 min");
-  for (const name of ["MRT", "LRT", "Monorail", "KTM", "Shared bike"]) {
+  for (const name of ["MRT", "LRT", "Monorail", "KTM", "ERL", "Shared bike"]) {
     await page.getByRole("button", { name, exact: true }).click();
   }
   await routeSelect.selectOption("T402");
@@ -117,7 +117,7 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   await bus.getByRole("button", { name: "Close bus journey" }).click();
 
   await expect(page.getByRole("button", { name: "Bandar Tasik Selatan status", exact: true })).toHaveCount(0);
-  await search.fill("Bandar Tasik Selatan");
+  await search.fill("Bandar Tasik Sel");
   await page.getByRole("listbox", { name: "Station search results" }).getByRole("option")
     .filter({ has: page.getByText("Bandar Tasik Selatan", { exact: true }) }).click();
   const detail = page.getByRole("complementary", { name: "Selected transport detail" });
@@ -144,7 +144,7 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   await expect(trainPanel).toBeHidden();
 
   await search.fill("");
-  for (const name of ["Bus", "MRT", "LRT", "Monorail", "KTM"]) {
+  for (const name of ["Bus", "MRT", "LRT", "Monorail", "KTM", "ERL"]) {
     await page.getByRole("button", { name, exact: true }).click();
   }
   await expect(page.locator("#records tbody tr")).toHaveCount(27);

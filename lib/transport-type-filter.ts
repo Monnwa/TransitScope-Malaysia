@@ -10,12 +10,13 @@ export function transportTypeFilter(network: RailNetwork, types: readonly Mode[]
   const bus = selected.has("Bus");
   const sharedBike = selected.has("Shared bike");
   const showsBusRoute = (routeId?: string | null) => bus && (!busRouteId || routeId === busRouteId);
+  const visibleLineIds = new Set([...railIds, ...(network.busLines ?? []).filter(line => showsBusRoute(line.id)).map(line => line.id)]);
 
   return {
-    bus, sharedBike, railLines, railIds, showsBusRoute,
+    bus, sharedBike, railLines, railIds, visibleLineIds, showsBusRoute,
     showsRecord(record: TransitRecord) {
+      if (record.railLines?.length) return record.railLines.some(id => visibleLineIds.has(id));
       if (record.mode === "Bus") return showsBusRoute(record.routeId);
-      if (record.railLines?.length) return record.railLines.some(id => railIds.has(id));
       return selected.has(record.mode);
     },
   };

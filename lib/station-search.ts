@@ -5,6 +5,7 @@ import { stationAliases, stationKey } from "./station-operations";
 import type { SearchBusStop } from "./bus-stop-search";
 import { OPERATOR_STYLE, type MicromobilityOperator, type MicromobilityStation } from "./micromobility";
 import type { GeoPoint } from "./route-projection";
+import { brtSunway, rapidBusBrtStopIds } from "./expanded-services";
 
 export type AlertStationNavigation = {
   targets: SearchEntity[];
@@ -53,22 +54,29 @@ export function resolveAlertStations(index: IndexedStation[], references: readon
     const key = normalise(reference);
     if (!key) continue;
     const byId = eligible.filter(station => station.ids.includes(key));
-    const matches = byId.length ? byId : eligible.filter(station => station.name === key);
+    const matches = byId.length ? byId : eligible.filter(station => station.name === key || station.aliases.includes(key));
     if (matches.length === 1) targets.set(matches[0].entity.id, matches[0].entity);
   }
   return [...targets.values()];
 }
 
 export function buildStationSearchIndex(network: RailNetwork, busStops: SearchBusStop[], micromobility: MicromobilityStation[]) {
+  const lines = [...network.lines, ...(network.busLines ?? [])];
+  const brtSourceIds = new Set(network.stations.flatMap(record => record.stationProvenance?.flatMap(stop =>
+    stop.routeId === brtSunway.id ? [rapidBusBrtStopIds.get(stop.code)] : []) ?? []));
   const rail: SearchEntity[] = network.stations.flatMap(record => {
     if (!validPoint(record.position)) return [];
     return [{
-      type: "RAIL_STATION", id: record.id, sourceIds: record.stopRefs ?? [], name: record.name,
+      type: "RAIL_STATION", id: record.id, sourceIds: [...(record.stopRefs ?? []), ...(record.stationProvenance?.flatMap(stop => {
+        const busId = stop.routeId === brtSunway.id && rapidBusBrtStopIds.get(stop.code);
+        return busId ? [stop.code, busId] : [stop.code];
+      }) ?? [])], name: record.name,
       position: record.position, operator: record.operator, aliases: stationAliases(record), record,
-      routes: network.lines.filter(line => record.railLines?.includes(line.id)).map(line => ({ id: line.id, name: line.name })),
+      routes: lines.filter(line => record.railLines?.includes(line.id)).map(line => ({ id: line.id, name: line.name })),
     }];
   });
-  const buses: SearchEntity[] = busStops.filter(stop => validPoint(stop.position)).map(stop => ({
+  const buses: SearchEntity[] = busStops.filter(stop => validPoint(stop.position) &&
+    !(brtSourceIds.has(stop.sourceId) && stop.routes.some(route => route.id === "B1000"))).map(stop => ({
     ...stop, type: "BUS_STOP", sourceIds: [stop.sourceId], stop,
   }));
   const bikes: SearchEntity[] = micromobility.flatMap(station => {
@@ -138,7 +146,7 @@ export function resolveExactStation(query: string, network: RailNetwork): Transi
 
 /** Results already use the network's merged identities. Never resolve by name or proximity. */
 export function resolveStationResult(result: TransitRecord, network: RailNetwork): TransitRecord | undefined {
-  if (result.recordKind !== "stop" || !["MRT", "LRT", "Monorail", "KTM"].includes(result.mode)) return;
+  if (result.recordKind !== "stop") return;
   const matches = network.stations.filter(station => station.id === result.id);
   if (matches.length !== 1) return;
   const station = matches[0];

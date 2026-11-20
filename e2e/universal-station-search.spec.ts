@@ -54,13 +54,13 @@ test("rail autocomplete suppresses all micromobility markers and highlights the 
   await expect(map(page).locator('.rail-alignment[stroke-opacity="1"]')).toHaveCount(2);
   await expect(map(page).locator(".rail-alignment.MRT1")).toHaveAttribute("stroke-opacity", "1");
   await expect(map(page).locator(".rail-alignment.MRT2")).toHaveAttribute("stroke-opacity", "1");
-  await expect(map(page).locator('.rail-alignment[stroke-opacity="0.18"]')).toHaveCount(6);
+  await expect(map(page).locator('.rail-alignment[stroke-opacity="0.18"]')).toHaveCount(9);
   await expect(markers(page)).toHaveCount(0);
   await expectReadablePopup(page, page.locator(".rail-station-popup-shell"));
   await page.screenshot({ path: info.outputPath("rail-search.png") });
   await map(page).getByRole("button", { name: "Close popup" }).click();
   await expect(markers(page)).toHaveCount(0);
-  await expect(map(page).locator('.rail-alignment[stroke-opacity="1"]')).toHaveCount(8);
+  await expect(map(page).locator('.rail-alignment[stroke-opacity="1"]')).toHaveCount(11);
 });
 
 test("static bus search navigates by real stop ID and retains route details", async ({ page, isMobile }, info) => {
@@ -73,7 +73,7 @@ test("static bus search navigates by real stop ID and retains route details", as
   expect(data.unavailable).not.toContain("rapid-bus-mrtfeeder");
   const stop = data.stops.find(item => item.sourceId === "12003043" && item.routes.some(route => route.name === "T402"));
   expect(stop).toBeDefined();
-  await input(page).fill("Taman Midah");
+  await input(page).fill("Taman Mida");
   await expect(options(page).filter({ hasText: "Bus stop" }).first()).toBeVisible();
   await expect(options(page).filter({ hasText: "Rail station" }).first()).toBeVisible();
   await input(page).fill("T401");
@@ -93,7 +93,7 @@ test("static bus search navigates by real stop ID and retains route details", as
   await expect(map(page)).toHaveAttribute("data-station-search-type", "BUS_STOP");
   await expect(map(page)).toHaveAttribute("data-station-search-id", stop!.id);
   await expectPosition(map(page).locator(".bus-search-stop"), stop!.position);
-  await expect(map(page).locator('.rail-alignment[stroke-opacity="1"]')).toHaveCount(8);
+  await expect(map(page).locator('.rail-alignment[stroke-opacity="1"]')).toHaveCount(11);
   await expect(markers(page)).toHaveCount(0);
   await expectReadablePopup(page, popup);
   await page.screenshot({ path: info.outputPath("bus-stop-search.png") });

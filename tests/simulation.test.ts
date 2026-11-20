@@ -13,7 +13,7 @@ describe("simulation", () => {
     const first = simulationSnapshot(now);
     const later = simulationSnapshot(now + 10_000);
     const buses = first.records.filter(record => record.mode === "Bus" && record.recordKind === "vehicle");
-    expect(buses).toHaveLength(4);
+    expect(buses).toHaveLength(8);
     expect(first).toEqual(simulationSnapshot(now));
     expect(new Set(first.records.map(record => record.id)).size).toBe(first.records.length);
     expect(later.records.map(record => record.id)).toEqual(first.records.map(record => record.id));
@@ -73,7 +73,7 @@ describe("simulation", () => {
         expect(approaching).toContainEqual(expect.objectContaining({ tripId: train.tripId, vehicleId: train.id, arrivalTimestamp: train.nextArrival }));
       }
     }
-    expect(railNetwork.stations.find(station => station.name === "Bandar Tasik Selatan")?.modes).toEqual(["LRT", "KTM"]);
+    expect(railNetwork.stations.find(station => station.name === "Bandar Tasik Selatan")?.modes).toEqual(["LRT", "KTM", "ERL"]);
     expect(first.linkBike.stations).toHaveLength(27);
     for (const station of first.linkBike.stations) {
       expect(station.available_bikes).toBeGreaterThanOrEqual(0);
@@ -91,10 +91,10 @@ describe("simulation", () => {
   it("partitions the combined simulated rail network without leaking line or station memberships", () => {
     const rapid = railNetworkFor("rapid-rail-kl");
     const ktm = railNetworkFor("ktmb");
-    expect(rapid.lines).toHaveLength(6);
+    expect(rapid.lines).toHaveLength(7);
     expect(ktm.lines).toHaveLength(2);
-    expect([...rapid.lines, ...ktm.lines]).toHaveLength(railNetwork.lines.length);
-    expect(new Set([...rapid.lines, ...ktm.lines].map(line => line.id))).toEqual(new Set(railNetwork.lines.map(line => line.id)));
+    expect(new Set([...rapid.lines, ...ktm.lines].map(line => line.id))).toEqual(new Set(
+      railNetwork.lines.filter(line => line.mode !== "ERL").map(line => line.id)));
     expect(rapid.lines.every(line => line.mode !== "KTM")).toBe(true);
     expect(ktm.lines.every(line => line.mode === "KTM")).toBe(true);
     for (const network of [rapid, ktm]) {
@@ -164,7 +164,7 @@ describe("simulation", () => {
         expect(response.headers.get("cache-control")).toBe("no-store");
         expect(await response.json()).toEqual({ error: expect.any(String) });
       }
-      for (const [query, count] of [["", 8], ["?source=rapid-rail-kl", 6], ["?source=ktmb", 2]] as const) {
+      for (const [query, count] of [["", 11], ["?source=rapid-rail-kl", 7], ["?source=ktmb", 2]] as const) {
         const response = await rail.GET(request("/api/rail-network" + query));
         expect(response.status).toBe(200);
         expect(response.headers.get("cache-control")).toBe("no-store");

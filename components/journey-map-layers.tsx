@@ -16,11 +16,11 @@ export function MovingVehicle({position,motion,icon,title,selected,stale,onClick
   useLayoutEffect(()=>{if(!motion)return;return motion.subscribe(frame=>{const layer=marker.current;if(!layer||!frame)return;layer.setLatLng(frame.point);const element=layer.getElement();if(element){element.dataset.distance=String(frame.distanceM);element.dataset.playing=String(frame.playing);element.dataset.stale=String(frame.stale);element.dataset.latitude=String(frame.point[0]);element.dataset.longitude=String(frame.point[1]);element.dataset.observedAt=String(frame.observedAt);const glyph=element.querySelector<HTMLElement>(".vehicle-glyph");if(glyph)glyph.style.transform=`rotate(${frame.heading-90}deg)`;}});},[motion,icon]);
   return <Marker ref={marker} title={title} position={frame?.point??position} icon={icon} opacity={stale||frame?.stale? .5:1} zIndexOffset={selected?1100:0} eventHandlers={{click:onClick}}>{children}</Marker>;
 }
-export function MovingRoute({path,motion,fallback}:{path:GeoPoint[];motion?:RouteAnimator;fallback:{completed:GeoPoint[];remaining:GeoPoint[]}}){
+export function MovingRoute({path,motion,fallback,activeColour="#1666d8"}:{path:GeoPoint[];motion?:RouteAnimator;fallback:{completed:GeoPoint[];remaining:GeoPoint[]};activeColour?:string}){
   const completed=useRef<L.Polyline>(null),remaining=useRef<L.Polyline>(null);
   useLayoutEffect(()=>{if(!motion)return;let last=-Infinity;return motion.subscribe(frame=>{if(!frame||performance.now()-last<66&&frame.playing)return;last=performance.now();const parts=splitRoutePath(path,frame.segment,frame.point);if(!parts)return;completed.current?.setLatLngs(parts.completed);remaining.current?.setLatLngs(parts.remaining);});},[path,motion]);
   const frame=motion?.getFrame(),parts=(frame?splitRoutePath(path,frame.segment,frame.point):null)??fallback;
-  return <><Polyline ref={completed} className="gps-route-completed" positions={parts.completed} pathOptions={{color:"#65758b",weight:6,opacity:.95}}><Tooltip>Route behind the bus</Tooltip></Polyline><Polyline ref={remaining} className="gps-route-remaining" positions={parts.remaining} pathOptions={{color:"#1666d8",weight:6,opacity:1}}><Tooltip>Route ahead</Tooltip></Polyline></>;
+  return <><Polyline ref={completed} className="gps-route-completed" positions={parts.completed} pathOptions={{color:"#65758b",weight:6,opacity:.95}}><Tooltip>Route behind the bus</Tooltip></Polyline><Polyline ref={remaining} className="gps-route-remaining" positions={parts.remaining} pathOptions={{color:activeColour,weight:6,opacity:1}}><Tooltip>Route ahead</Tooltip></Polyline></>;
 }
 export function JourneyMapNavigation({journey}:{journey?:BusMapJourney|null}){
   const map=useMap(),last=useRef(""),target=useRef<GeoPoint|null>(null);

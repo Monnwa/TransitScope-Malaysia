@@ -38,7 +38,7 @@ function drain() {
   expect(frames.size).toBe(0);
 }
 async function mounted() {
-  await waitFor(() => expect(document.querySelectorAll(".bus-vehicle-icon")).toHaveLength(4));
+  await waitFor(() => expect(document.querySelectorAll(".bus-vehicle-icon")).toHaveLength(8));
   drain();
   return [...maps].at(-1)!;
 }
@@ -101,7 +101,7 @@ describe("actual React-Leaflet popup pane integration", () => {
     expect(view.queryByRole("checkbox", { name: "Show LinkBike stations" })).toBeNull();
     expect(view.queryByRole("group", { name: "Train lines" })).toBeNull();
     expect(view.queryByRole("checkbox")).toBeNull();
-    expect(document.querySelectorAll(".rail-alignment")).toHaveLength(8);
+    expect(document.querySelectorAll(".rail-alignment")).toHaveLength(11);
     expect(view.getByRole("button", { name: "Refresh train positions" })).toBeVisible();
     expect(view.queryByRole("button", { name: "Zoom to LinkBike stations" })).toBeNull();
     expect(view.queryByRole("region", { name: "Micromobility coverage · SIMULATED" })).toBeNull();

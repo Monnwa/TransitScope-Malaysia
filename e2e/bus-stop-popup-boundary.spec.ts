@@ -19,7 +19,7 @@ async function openMap(page: Page, mobile: boolean) {
   await page.clock.setFixedTime(new Date(time));
   await page.goto("/");
   const map = page.locator(".leaflet-container");
-  await expect(map.locator(".bus-vehicle-icon")).toHaveCount(4);
+  await expect(map.locator(".bus-vehicle-icon")).toHaveCount(8);
   await expect(map.locator(".bus-journey-stop")).toHaveCount(0);
   await map.scrollIntoViewIfNeeded();
   await setMapZoom(map, 12);

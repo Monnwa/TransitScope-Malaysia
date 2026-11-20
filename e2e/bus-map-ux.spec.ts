@@ -16,7 +16,7 @@ async function prepareMap(page: Page, time: number, mobile: boolean) {
   await page.clock.setFixedTime(new Date(time));
   await page.goto("/");
   const map = page.locator(".leaflet-container");
-  await expect(map.locator(".bus-vehicle-icon")).toHaveCount(4);
+  await expect(map.locator(".bus-vehicle-icon")).toHaveCount(8);
   await map.scrollIntoViewIfNeeded();
   await expect(map).toHaveAttribute("data-bus-view", "OVERVIEW");
   return map;
@@ -28,7 +28,7 @@ async function activate(locator: Locator, isMobile: boolean) {
 }
 
 async function markerFrames(map: Locator) {
-  return map.locator(".bus-vehicle-icon").evaluateAll(elements => elements.map(element => {
+  return map.locator(".bus-vehicle-icon:not(.brt-vehicle-icon)").evaluateAll(elements => elements.map(element => {
     const cue = element.querySelector<SVGPathElement>(".bus-forward-cue")!;
     const matrix = cue.getScreenCTM()!;
     const tip = cue.getPointAtLength(0).matrixTransform(matrix);
@@ -48,7 +48,7 @@ test("shows only the selected bus journey stops and dismisses them with its sele
   // interchange. Leaflet can only hit the top marker at a shared screen point.
   const times = Array.from({ length: 360 }, (_, tick) => start + tick * 5000);
   const separation = (time: number) => {
-    const records = busRecords(time);
+    const records = busRecords(time).filter(bus => bus.routeId !== "brt-sunway");
     const positions = records.map(bus => bus.position!);
     if (positions.some(([lat, lon]) => Math.abs(lat - 3.142) > .041 || Math.abs(lon - 101.699) > .044)) return -1;
     return Math.min(...positions.flatMap(([lat, lon], i) => positions.slice(i + 1)
@@ -66,7 +66,7 @@ test("shows only the selected bus journey stops and dismisses them with its sele
   expect(stationCount).toBeGreaterThan(0);
   await expect(stops).toHaveCount(0);
   await expect(routes).toHaveCount(0);
-  await expect(map.locator(".bus-vehicle-icon")).toHaveCount(4);
+  await expect(map.locator(".bus-vehicle-icon")).toHaveCount(8);
   const outbound = busJourney(t401, time)!;
   const otherDirection = busJourney(t401Other, time)!;
   expect(otherDirection.direction).not.toBe(outbound.direction);
@@ -148,7 +148,7 @@ test("shows only the selected bus journey stops and dismisses them with its sele
   await expect(routes).toHaveCount(0);
   await expect(map.locator(".bus-vehicle-popup")).toHaveCount(0);
   await expect(rail).toHaveCount(stationCount);
-  await expect(map.locator(".rail-alignment")).toHaveCount(8);
+  await expect(map.locator(".rail-alignment")).toHaveCount(11);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 

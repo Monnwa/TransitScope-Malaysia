@@ -21,6 +21,7 @@ import { busStopSearchResponseSchema, type SearchBusStop } from "@/lib/bus-stop-
 import useStationSearch from "./use-station-search";
 import StationSearchInput from "./station-search-input";
 import { DEFAULT_TRANSPORT_TYPES, transportTypeFilter } from "@/lib/transport-type-filter";
+import { brtSunway } from "@/lib/expanded-services";
 import { serviceAlertMatchesTransport } from "@/lib/service-impact";
 import ServiceUpdates from "./service-updates";
 
@@ -29,7 +30,7 @@ const TransitMap = dynamic(() => import("./transit-map"), {
   loading: () => <div className="map-loading">Loading map controls…</div>,
 });
 
-const colours: Record<Mode, string> = { Bus: "#2563eb", MRT: "#7c3aed", LRT: "#ea580c", Monorail: "#db2777", KTM: "#0891b2", "Shared bike": "#16a34a" };
+const colours: Record<Mode, string> = { Bus: "#2563eb", MRT: "#7c3aed", LRT: "#ea580c", Monorail: "#db2777", KTM: "#0891b2", ERL: "#6941a5", "Shared bike": "#16a34a" };
 const modes = DEFAULT_TRANSPORT_TYPES;
 const statuses: Status[] = ["In service", "At stop", "Station available"];
 const formats = new Intl.DateTimeFormat("en-MY", { dateStyle: "medium", timeStyle: "medium", timeZone: "Asia/Kuala_Lumpur" });
@@ -107,8 +108,10 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   const byMode = modes.map(name => ({ name, records: activeModes.includes(name)
     ? results.filter(item => item.modes?.includes(name) ?? item.mode === name).length : 0 }));
   const routeCount = new Set(results.flatMap(item => item.railLines
-    ? item.railLines.filter(id => transport.railIds.has(id))
+    ? item.railLines.filter(id => transport.visibleLineIds.has(id))
     : item.routeId ? [item.routeId] : [])).size;
+  const stationCount = new Set(results.flatMap(item => item.recordKind === "stop" && item.mode !== "Shared bike"
+    ? [item.railLines?.length ? item.id : item.stopRefs?.[0]?.split(":").at(-1) ?? item.id] : [])).size;
 
   const selectRecord = useCallback((item: TransitRecord | null) => {
     setSelectedId(item?.id ?? null);
@@ -116,9 +119,10 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     setPreview(null);
   }, []);
   const stationSearch = useStationSearch(railNetwork, query,
-    exactStation && results.some(item => item.id === exactStation.id) ? exactStation : undefined, selectRecord);
+    exactStation && (exactStation.stationProvenance?.length || results.some(item => item.id === exactStation.id)) ? exactStation : undefined, selectRecord);
   const alertRequest = stationSearch.request?.alert ? stationSearch.request : null;
-  const record = snapshot.records.find(item => item.id === selectedId && (item.id === alertRequest?.stationId || transport.showsRecord(item)));
+  const record = snapshot.records.find(item => item.id === selectedId && (item.id === alertRequest?.stationId ||
+    Boolean(item.stationProvenance?.length && item.id === stationSearch.request?.stationId) || transport.showsRecord(item)));
   const train = record && snapshot.trains.find(item => item.id === record.id);
   const journey = useMemo(() => record?.mode === "Bus" ? busJourney(record.id, now, preview?.vehicleId, preview?.start) : null, [record, now, preview]);
   const cancelStationSearch = stationSearch.cancel;
@@ -152,7 +156,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   }
 
   function canSelectStation(entity: SearchEntity) {
-    if (entity.type === "RAIL_STATION") return transport.showsRecord(entity.record);
+    if (entity.type === "RAIL_STATION") return Boolean(entity.record.stationProvenance?.length) || transport.showsRecord(entity.record);
     if (entity.type === "BUS_STOP") return showSimulated && (busRouteId
       ? entity.stop.routes.some(route => transport.showsBusRoute(route.id)) : transport.bus);
     return transport.sharedBike;
@@ -213,14 +217,14 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
         <section className="filters" aria-label="Dashboard filters">
           <div><span>Transport type</span>{modes.map(mode => <Filter key={mode} label={mode} active={activeModes.includes(mode)} onClick={() => toggleMode(mode)}/>)}</div>
           <div><label>Bus route <select value={busRouteId} onChange={event => { setBusRouteId(event.target.value); select(null); }}>
-            <option value="">All routes</option>{busRoutes.map(route => <option key={route.id} value={route.id}>{route.id}</option>)}
+            <option value="">All routes</option>{busRoutes.map(route => <option key={route.id} value={route.id}>{route.id === brtSunway.id ? route.name : route.id}</option>)}
           </select></label></div>
           <div><span>Service status</span>{statuses.map(status => <Filter key={status} label={status} active={activeStatus.includes(status)} onClick={() => setStatuses(items => toggle(items, status))}/>)}</div>
           <div><span>Information</span><Filter label={SIMULATED} active={showSimulated} onClick={() => setShowSimulated(value => !value)}/></div>
         </section>
         <section className="two-col" id="map">
           <div className="panel">
-            <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length)}. Select a vehicle or stop to learn more.</p></div><button className="secondary" onClick={() => {
+            <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length)} · {stationCount} stations and stops</p></div><button className="secondary" onClick={() => {
               if (alertRequest) select(null);
               setResetSignal(signal => signal + 1);
             }}>Fit to region</button></div>
@@ -230,7 +234,11 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
               onMicromobilityData={setMicromobility}
               search={<StationSearchInput query={query} results={stationResults} request={stationSearch.request}
                 loading={!staticBus} limited={Boolean(staticBus?.unavailable.length)}
-                onChange={value => { stationSearch.cancel(); setAlertNavigation(null); setQuery(value); }}
+                onChange={value => {
+                  if (record?.stationProvenance?.length) select(null);
+                  else { stationSearch.cancel(); setAlertNavigation(null); }
+                  setQuery(value);
+                }}
                 onSelect={entity => { setAlertNavigation(null); stationSearch.selectEntity(entity); }} canSelect={canSelectStation}/>}
               journey={journey} navigation={navigation} onLocate={() => {
                 if (!journey) return;
@@ -270,8 +278,8 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
             </tr>)}</tbody></table></div>
           {results.length === 0 && <div className="empty"><strong>No matching vehicles or stops</strong><p>Change the filters or restore defaults.</p><button className="secondary" onClick={reset}>Restore defaults</button></div>}
         </section>
-        <section className="about" id="about"><h2>About this information</h2><p>Vehicle movements, timetables, notices and bike availability follow a shared simulation clock. Route and station coordinates are approximate.</p>
-          <p>Bus paths and stop order come from published GTFS. Positions, ETAs and headways are simulated ({busRoutes.map(route => route.id + " " + route.period / route.fleetSize / MINUTE + " min").join(" · ")}). Stop markers are projected onto route paths, and boarding bays remain unverified.</p>
+        <section className="about" id="about"><h2>About this information</h2><p>Vehicle movements, timetables, notices and bike availability follow a shared simulation clock. ERL, Shah Alam and BRT Sunway use published station and route geography. Older simulation alignments and shared station marker locations are approximate.</p>
+          <p>Bus paths and stop order come from published GTFS. Positions, ETAs and headways are simulated ({busRoutes.filter(route => route.id !== brtSunway.id).map(route => route.id + " " + route.period / route.fleetSize / MINUTE + " min").join(" · ")}). Feeder bus stop markers are projected onto route paths, and boarding bays remain unverified.</p>
           <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">Map © OpenStreetMap contributors</a>
         </section>
       </section>
@@ -296,6 +304,8 @@ function Details({ record }: { record: TransitRecord }) {
     <dt>Data status</dt><dd>{SIMULATED}</dd><dt>Identifier</dt><dd>{record.id}</dd><dt>Operator</dt><dd>{record.operator}</dd>
     <dt>Mode</dt><dd>{record.mode}</dd><dt>Route or station</dt><dd>{record.lineNames?.join(" · ") || record.route || record.station}</dd>
     <dt>Coordinates</dt><dd>{record.position?.map(value => value.toFixed(5)).join(", ")}</dd>
+    {!!record.stationProvenance?.length && <><dt>Published station data</dt><dd>{record.stationProvenance.map(stop =>
+      <div key={stop.routeId}><a href={stop.coordinateUrl} target="_blank" rel="noreferrer">{stop.name} ({stop.code})</a></div>)}</dd></>}
     {record.recordKind === "vehicle" && <><dt>Trip ID</dt><dd>{record.tripId}</dd><dt>Bearing</dt><dd>{record.bearing}°</dd><dt>Speed</dt><dd>{record.speed} km/h</dd></>}
     {record.mode === "Shared bike" && <><dt>Available bicycles</dt><dd>{record.bikesAvailable}</dd><dt>Available docks</dt><dd>{record.docksAvailable}</dd></>}
     <dt>Service status</dt><dd>{record.status}</dd>

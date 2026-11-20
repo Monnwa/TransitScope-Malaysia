@@ -3,12 +3,14 @@ import { visibleMapArea, type Rect } from "@/lib/journey-stop-selection";
 
 export type CameraMode = "OVERVIEW" | "VEHICLE_FOCUS" | "FREE_EXPLORE";
 export type CameraCommand = { kind: "overview" } | { kind: "focus" } |
+  { kind: "rail-route"; points: GeoPoint[] } |
   { kind: "stop"; point: GeoPoint; id: string; sequence: number };
 export type CameraState = { mode: CameraMode; vehicleId: string | null; selectionId: string | null; viewIntent: "bus" | "selection"; request: number; command: CameraCommand };
 export type CameraAction =
   | { type: "SELECT"; id: string | null; recordId?: string | null }
   | { type: "FOCUS" | "RETURN"; available: boolean }
   | { type: "MANUAL" | "UNAVAILABLE" | "OVERVIEW" | "ROUTE" }
+  | { type: "RAIL_ROUTE"; points: GeoPoint[] }
   | { type: "STOP"; point: GeoPoint; id: string; sequence: number };
 
 export const initialCameraState: CameraState = { mode: "OVERVIEW", vehicleId: null, selectionId: null, viewIntent: "bus", request: 0, command: { kind: "overview" } };
@@ -32,6 +34,8 @@ export function cameraReducer(state: CameraState, action: CameraAction): CameraS
     case "OVERVIEW":
     case "ROUTE":
       return { ...state, viewIntent: "bus", mode: "OVERVIEW", request: state.request + 1, command: { kind: "overview" } };
+    case "RAIL_ROUTE":
+      return { ...state, mode: "FREE_EXPLORE", request: state.request + 1, command: { kind: "rail-route", points: action.points } };
     case "STOP":
       if (!validPoint(action.point)) return state;
       return { ...state, mode: "FREE_EXPLORE", request: state.request + 1,

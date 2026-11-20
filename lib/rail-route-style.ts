@@ -7,7 +7,7 @@ export const DIMMED_ROUTE_OPACITY = 0.18;
 
 /** Use merged station identities and canonical route IDs, never station names. */
 export function stationRailLines(selected: TransitRecord | undefined, lines: RailLine[]): string[] {
-  if (!selected || selected.recordKind === "vehicle" || !["MRT", "LRT", "Monorail", "KTM"].includes(selected.mode)) return [];
+  if (!selected || selected.recordKind === "vehicle" || selected.mode === "Bus" || selected.mode === "Shared bike") return [];
   const valid = new Set(lines.map(line => line.id));
   return [...new Set(selected.railLines?.filter(id => valid.has(id)) ?? [])];
 }

@@ -1,5 +1,6 @@
 import { safeOfficialUrl, type AlertPayload, type AlertSource, type OfficialAlert } from "@/lib/official-alert-model";
 import { rapidRailMeta } from "@/lib/rail-model";
+import { expandedServiceById } from "@/lib/expanded-services";
 import type { Mode, Record as TransitRecord } from "@/lib/transit-data";
 
 type Operator = "rapid" | "ktm" | "erl" | "tbs";
@@ -53,6 +54,7 @@ export function isBandarTasikSelatan(record: TransitRecord) {
 
 export function stationAliases(record: TransitRecord) {
   const names = [record.name, record.station ?? ""].map(stationKey);
+  names.push(...(record.stationProvenance ?? []).flatMap(stop => [stop.name, stop.code, ...(stop.aliases ?? [])].map(stationKey)));
   if (isBandarTasikSelatan(record)) names.push("bandar tasik selatan", "terminal bersepadu selatan", "tbs");
   if (names.includes("putrajaya sentral")) names.push("putrajaya cyberjaya", "putrajaya and cyberjaya");
   return [...new Set(names.filter(name => name.length >= 3 && !name.includes("unavailable")))];
@@ -61,6 +63,9 @@ export function stationAliases(record: TransitRecord) {
 export function servicesAt(record: TransitRecord): Service[] {
   const lines = Object.values(rapidRailMeta);
   const mapped = (record.railLines ?? []).map((id, index): Service => {
+    const expansion = expandedServiceById.get(id);
+    if (expansion) return { id, label: expansion.name, mode: expansion.mode, operator: expansion.mode === "ERL" ? "erl" : "rapid",
+      directions: [expansion.stops[0].name, expansion.stops.at(-1)!.name] };
     const line = lines.find(item => item.id === id);
     return { id, label: line?.name ?? record.lineNames?.[index] ?? record.route ?? "KTM Komuter",
       operator: id.startsWith("KTM:") ? "ktm" : "rapid", mode: line?.mode ?? "KTM" };
@@ -68,9 +73,11 @@ export function servicesAt(record: TransitRecord): Service[] {
   if (isBandarTasikSelatan(record)) {
     const localBus = record.mode === "Bus" && record.route
       ? [{ id: record.routeId ?? record.route, label: record.route, operator: "rapid" as const, mode: "Bus" as const }] : [];
-    return [...new Map([...mapped, ...btsServices, ...localBus].map(service => [service.id, service])).values()];
+    const supplements = btsServices.filter(service => service !== airportService || !mapped.some(line => line.id === "erl-klia-transit"));
+    return [...new Map([...mapped, ...supplements, ...localBus].map(service => [service.id, service])).values()];
   }
-  if (stationAliases(record).includes("putrajaya sentral") && mapped.some(service => service.id === "MRT2")) return [...mapped, airportService];
+  if (stationAliases(record).includes("putrajaya sentral") && mapped.some(service => service.id === "MRT2") &&
+    !mapped.some(service => service.id === "erl-klia-transit")) return [...mapped, airportService];
   if (mapped.length) return mapped;
   if (record.mode === "Shared bike") return [];
   return [{ id: record.routeId ?? record.mode, label: record.route ?? (record.mode === "Bus" ? "Local buses" : record.mode),

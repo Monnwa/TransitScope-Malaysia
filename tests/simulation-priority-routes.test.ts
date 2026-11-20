@@ -6,10 +6,12 @@ import { busJourney, stationArrivals } from "@/lib/simulation/vehicles";
 const now = Date.UTC(2026, 10, 14, 4);
 const minute = 60_000;
 
+const feederRoutes = busRoutes.filter(route => route.id === "T401" || route.id === "T402");
+
 describe("feeder timetable and loop progression", () => {
   it("preserves representative leg budgets and accounts for dwell once at each split", () => {
-    expect(busRoutes.map(route => route.legs.map(leg => leg.duration))).toEqual([[1_748_000, 1_852_000], [1_390_000, 2_210_000]]);
-    for (const route of busRoutes) {
+    expect(feederRoutes.map(route => route.legs.map(leg => leg.duration))).toEqual([[1_748_000, 1_852_000], [1_390_000, 2_210_000]]);
+    for (const route of feederRoutes) {
       expect(route.fleetSize).toBe(2);
       expect(route.period).toBe(60 * minute);
       const [outbound, returning] = route.legs;
@@ -34,7 +36,7 @@ describe("feeder timetable and loop progression", () => {
   });
 
   it.each(["T401", "T402"])("does not jump during the split, layover or loop rollover for %s", id => {
-    const route = busRoutes.find(x => x.id === id)!;
+    const route = feederRoutes.find(x => x.id === id)!;
     const vehicleId = "bus:" + id + ":01";
     const turnAt = now + route.legs[0].duration;
     const dwell = busJourney(vehicleId, turnAt - 1)!;
@@ -53,7 +55,7 @@ describe("feeder timetable and loop progression", () => {
   });
 
   it("offers regular 30-minute origin departures and retains an imminent departure during layover", () => {
-    for (const route of busRoutes) {
+    for (const route of feederRoutes) {
       const station = route.legs[0].stops[0];
       const ref = "sim:" + route.id + ":" + station.id;
       const board = stationArrivals([ref], now - 1);

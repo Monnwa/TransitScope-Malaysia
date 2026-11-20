@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import type { SearchEntity, StationSearchRequest } from "@/lib/station-search";
+import { expandedServiceById } from "@/lib/expanded-services";
 
 const labels = {
   RAIL_STATION: "Rail station",
@@ -87,10 +88,13 @@ export default function StationSearchInput({ query, results, request, loading, l
             choose(entity);
           }}>
           <strong>{entity.name}</strong>
-          <small><b>{labels[entity.type]}</b> · {entity.type === "BUS_STOP" ?
+          <small><b>{entity.type === "RAIL_STATION" && entity.record.mode === "Bus" ? "BRT station" : labels[entity.type]}</b> · {entity.type === "BUS_STOP" ?
             [entity.stop.feed, `Stop ID ${entity.stop.sourceId}`, entity.area].filter(Boolean).join(" · ") :
             [entity.operator, entity.area, entity.state].filter(Boolean).join(" · ")}</small>
-          {entity.routes.length > 0 && <small>{entity.routes.map(route => route.name).join(" · ")}</small>}
+          {entity.routes.length > 0 && <small>{entity.routes.map((route, routeIndex) => {
+            const colour = expandedServiceById.get(route.id)?.colour;
+            return <span key={route.id}>{routeIndex > 0 && " · "}{colour && <><i className="mode-dot" style={{ background: colour }}/> </>}{route.name}</span>;
+          })}</small>}
           {!canSelect(entity) && <small>Hidden by dashboard filters</small>}
         </button>)}
       </div> : <p role="status">{loading ? "Loading bus stops…" : "No matching stations or stops."}</p>}

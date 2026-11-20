@@ -9,13 +9,14 @@ import { cameraAnchor, cameraArea, followDecision, leafletNavigationKey, withinC
 import { validPoint, type GeoPoint } from "@/lib/route-projection";
 import { visibleMapArea } from "@/lib/journey-stop-selection";
 import type { Record as TransitRecord } from "@/lib/transit-data";
+import type { RailLine } from "@/lib/rail-model";
 import type { SimulatedBusJourney } from "@/lib/simulation/vehicles";
 import type { JourneyNavigation } from "./simulated-bus-panel";
 import { useBusCamera } from "./bus-camera-context";
 
 type Props = { selected?: TransitRecord; vehicleVisible: boolean; selectedRouteId: string; enabled: boolean;
   resetSignal: number; journey: SimulatedBusJourney | null; navigation: JourneyNavigation | null;
-  controlsHost: HTMLElement | null; onLocate: () => void };
+  controlsHost: HTMLElement | null; onLocate: () => void; focusedRailRoute?: { line: RailLine } | null };
 
 /** Sole bus camera executor. Route, focus, stop, popup and layout commands share
  * one guard. Immediate moves avoid overlapping animations and respect reduced motion. */
@@ -141,6 +142,9 @@ export default function BusMapCamera(props: Props) {
     dispatch({ type: "ROUTE" });
   }, [dispatch, props.selectedRouteId, props.enabled, props.resetSignal, scrollToMap]);
   useEffect(() => {
+    if (props.focusedRailRoute) dispatch({ type: "RAIL_ROUTE", points: props.focusedRailRoute.line.paths.flat() });
+  }, [dispatch, props.focusedRailRoute]);
+  useEffect(() => {
     if (!props.navigation) { lastNavigation.current = null; return; }
     if (props.navigation === lastNavigation.current) return;
     lastNavigation.current = props.navigation;
@@ -159,7 +163,15 @@ export default function BusMapCamera(props: Props) {
       return;
     }
     scrollToMap();
-    if (state.command.kind === "stop") {
+    if (state.command.kind === "rail-route") {
+      const { points } = state.command;
+      guard.run(() => {
+        map.stop();
+        retireStationPopups();
+        map.fitBounds(points, { padding: [25, 52], animate: false, maxZoom: 14 });
+      });
+      recordView();
+    } else if (state.command.kind === "stop") {
       const command = state.command, zoom = map.getZoom() >= 16 && map.getZoom() <= 18 ? Math.round(map.getZoom()) : 17;
       centerPoint(command.point, zoom);
       Object.assign(map.getContainer().dataset, { focusedStopId: command.id, focusedSequence: String(command.sequence),
@@ -173,7 +185,8 @@ export default function BusMapCamera(props: Props) {
       Object.assign(map.getContainer().dataset, { focusedStopId: "", focusedSequence: "",
         focusedLatitude: String(point[0]), focusedLongitude: String(point[1]), focusedZoom: String(zoom) });
     }
-  }, [state.request, state.command, state.mode, state.viewIntent, map, cancelFollow, overview, scrollToMap, position, centerPoint, dispatch]);
+  }, [state.request, state.command, state.mode, state.viewIntent, map, cancelFollow, overview, scrollToMap, position, centerPoint, dispatch,
+    guard, retireStationPopups, recordView]);
   useEffect(() => {
     follow();
     return cancelFollow;

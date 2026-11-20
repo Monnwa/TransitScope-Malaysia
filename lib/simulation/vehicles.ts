@@ -2,6 +2,9 @@ import { bearing, pointAtDistance } from "@/lib/route-projection";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import { EPOCH, MINUTE, SIMULATED, SIMULATION_SOURCE, seededRandom, timestamp } from "./clock";
 import { busRoutes, railRoutes, stationServices, type SimulatedRoute } from "./network";
+import { brtSunway } from "@/lib/expanded-services";
+
+const routeLabel = (route: SimulatedRoute) => route.mode === "Bus" && route.id !== brtSunway.id ? route.id : route.name;
 
 function makeFleet(route: SimulatedRoute) {
   const random = seededRandom(route.seed);
@@ -56,7 +59,7 @@ function locate(vehicle: Vehicle, now: number) {
     : vehicle.route.speedKmh;
   const record: TransitRecord = {
     id: vehicle.id, name: vehicle.name, mode: vehicle.route.mode, operator: vehicle.route.operator,
-    route: vehicle.route.mode === "Bus" ? vehicle.route.id : vehicle.route.name, routeId: vehicle.route.id,
+    route: routeLabel(vehicle.route), routeId: vehicle.route.id,
     tripId: run.id, station: atStop ? lastReached.name : null, position: point, recordKind: "vehicle",
     bearing: Math.round(bearing(path[segment], path[segment + 1])), speed,
     nextScheduledAt: next ? timestamp(run.start + next.arrival) : null,
@@ -129,7 +132,7 @@ function upcomingVisits(refs: string[], now: number, atOrigin = false): Simulate
           const upcomingTime = route.mode === "Bus" && !atOrigin ? departure : visit.arrival;
           if (run.start + upcomingTime < now) continue;
           arrivals.set(`${run.id}:${station.id}`, {
-            tripId: run.id, vehicleId: vehicle.id, routeId: route.id, routeName: route.mode === "Bus" ? route.id : route.name,
+            tripId: run.id, vehicleId: vehicle.id, routeId: route.id, routeName: routeLabel(route),
             mode: route.mode, destination, platform: String((terminal ? 1 - direction : direction) + 1),
             arrivalTimestamp: run.start + visit.arrival, departureTimestamp: run.start + departure, dataMode: SIMULATED,
           });

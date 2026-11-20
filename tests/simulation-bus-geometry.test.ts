@@ -4,12 +4,14 @@ import { busRoadPaths } from "@/lib/simulation/bus-road-paths";
 import { busRoutes, busStopReviews, busStops } from "@/lib/simulation/network";
 import feed from "@/docs/SM-2.3-evidence/gtfs-route-extract.json";
 
+const feederRoutes = busRoutes.filter(route => route.id === "T401" || route.id === "T402");
+
 describe("published feeder geometry", () => {
   it.each([
     ["T401", [10_877, 9_672], [27, 26], "12001294"],
     ["T402", [7_312, 8_538], [17, 23], "12001733"],
   ] as const)("retains the distinct directions and open-road path for %s", (id, metres, counts, midpoint) => {
-    const route = busRoutes.find(item => item.id === id)!;
+    const route = feederRoutes.find(item => item.id === id)!;
     expect(route.legs.map(leg => Math.round(leg.shape.lengthM))).toEqual(metres);
     expect(route.legs.map(leg => leg.stops.length)).toEqual(counts);
     expect(route.legs[0].shape.path).not.toEqual([...route.legs[1].shape.path].reverse());
@@ -40,8 +42,8 @@ describe("published feeder geometry", () => {
   });
 
   it("matches the full published stop sequence, including repeated visits across segments", () => {
-    expect(busRoutes.map(route => route.id)).toEqual(["T401", "T402"]);
-    for (const route of busRoutes) {
+    expect(feederRoutes.map(route => route.id)).toEqual(["T401", "T402"]);
+    for (const route of feederRoutes) {
       const source = feed.routes.find(item => item.code === route.id)!;
       expect(source.direction).toBe("0");
       const [outbound, inbound] = route.legs;

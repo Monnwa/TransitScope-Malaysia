@@ -1,12 +1,16 @@
 import { z } from "zod";
 
-export const modeSchema = z.enum(["Bus", "MRT", "LRT", "Monorail", "KTM", "Shared bike"]);
+export const modeSchema = z.enum(["Bus", "MRT", "LRT", "Monorail", "KTM", "ERL", "Shared bike"]);
 export const dataModeSchema = z.enum(["SIMULATED", "LIVE", "STATIC", "SCHEDULED", "STALE", "UNAVAILABLE", "UNKNOWN"]);
 export type Mode = z.infer<typeof modeSchema>;
 /** Runtime values are validated by dataModeSchema; the string type keeps UI filter controls extensible. */
 export type DataMode = string;
 export type Status = "In service" | "At stop" | "Station available" | "Disrupted" | "Unavailable";
 export type MrtLineId = "MRT1" | "MRT2";
+export type StationProvenance = {
+  routeId: string; code: string; name: string; aliases?: string[]; position: [number, number];
+  source: string; coordinateUrl: string; operatingConfidence: "operator-confirmed";
+};
 export type VehicleObservation = {
   gpsAccuracyM?: number;
   tripStartTime?: string; tripStartDate?: string; directionId?: string;
@@ -14,7 +18,7 @@ export type VehicleObservation = {
   currentStatus?: "INCOMING_AT" | "STOPPED_AT" | "IN_TRANSIT_TO";
   stopId?: string; scheduleRelationship?: number;
 };
-export type Record = { feedId?: string; observation?: VehicleObservation; id: string; name: string; mode: Mode; operator: string; route: string | null; routeId?: string | null; tripId?: string | null; station: string | null; position: [number, number] | null; bearing?: number | null; speed?: number | null; nextScheduledAt?: string | null; routePath?: [number, number][] | null; recordKind?: "vehicle" | "stop" | "other"; stopRefs?: string[]; mrtLines?: MrtLineId[]; railLines?: string[]; lineNames?: string[]; modes?: Mode[]; interchange?: boolean; reportedAt: string | null; lastUpdatedAt?: string | null; status: Status; dataMode: DataMode; source: string; bikesAvailable?: number; docksAvailable?: number };
+export type Record = { feedId?: string; observation?: VehicleObservation; id: string; name: string; mode: Mode; operator: string; route: string | null; routeId?: string | null; tripId?: string | null; station: string | null; position: [number, number] | null; bearing?: number | null; speed?: number | null; nextScheduledAt?: string | null; routePath?: [number, number][] | null; recordKind?: "vehicle" | "stop" | "other"; stopRefs?: string[]; stationComplexId?: string; stationProvenance?: StationProvenance[]; mrtLines?: MrtLineId[]; railLines?: string[]; lineNames?: string[]; modes?: Mode[]; interchange?: boolean; reportedAt: string | null; lastUpdatedAt?: string | null; status: Status; dataMode: DataMode; source: string; bikesAvailable?: number; docksAvailable?: number };
 export type FeedHealth = { id: string; label: string; status: "healthy" | "stale" | "unavailable"; lastSuccessAt: string | null; sourceTimestamp: string | null; message: string | null; records: number };
 export type TransitApiResponse = { records: Record[]; alerts: Alert[]; feeds: FeedHealth[]; fetchedAt: string; demo: boolean; busJourneys?: import("@/lib/processed-bus-journeys").ProcessedBusJourney[] };
 export type Alert = { id: string; title: string; description: string; severity: "High" | "Medium" | "Low"; routes: string[]; stations: string[]; startedAt: string; endsAt: string | null; source: string; dataMode: DataMode };

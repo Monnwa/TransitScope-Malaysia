@@ -28,8 +28,8 @@ test("frames the network, switches complete routes, and restores overview withou
   const map = await prepare(page, isMobile);
   await expect(map).toHaveAttribute("data-bus-view", "OVERVIEW");
   await expect(map.locator(".bus-route-emphasis")).toHaveCount(0);
-  await expect(map.locator(".bus-vehicle-icon")).toHaveCount(4);
-  await expect(map.locator(".rail-alignment")).toHaveCount(8);
+  await expect(map.locator(".bus-vehicle-icon")).toHaveCount(8);
+  await expect(map.locator(".rail-alignment")).toHaveCount(11);
   await expect(map.locator(".leaflet-control-attribution")).toContainText("OpenStreetMap");
   await fitsMap(map, map.locator(".bus-network-route.bus-route-T401"));
   await fitsMap(map, map.locator(".bus-network-route.bus-route-T402"));

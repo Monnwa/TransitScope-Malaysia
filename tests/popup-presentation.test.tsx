@@ -39,7 +39,7 @@ function drain() {
   expect(frames.size).toBe(0);
 }
 async function mounted() {
-  await waitFor(() => expect(document.querySelectorAll(".bus-vehicle-icon")).toHaveLength(4));
+  await waitFor(() => expect(document.querySelectorAll(".bus-vehicle-icon")).toHaveLength(8));
   drain();
   return [...maps].at(-1)!;
 }

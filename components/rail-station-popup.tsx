@@ -4,6 +4,7 @@ import L from "leaflet";
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { Popup, useMap } from "react-leaflet";
 import type { Record as TransitRecord } from "@/lib/transit-data";
+import { expandedServiceById } from "@/lib/expanded-services";
 import { SIMULATED } from "@/lib/simulation/clock";
 import type { StationSearchRequest } from "@/lib/station-search";
 import useStationSearchNavigation from "./use-station-search-navigation";
@@ -195,7 +196,13 @@ export default function RailStationPopup({ record, selectedRecordId, searchReque
 
   return <Popup ref={popupRef} pane="popupPane" className={"rail-station-popup-shell " + owner} autoPan={true}
     closeOnClick={searchRequest?.stationId === record.id ? false : undefined}>
-    <RailContent layout={layout}><strong>{record.name}</strong><br/>{record.lineNames?.join(" · ") || record.route}<br/>{SIMULATED}
+    <RailContent layout={layout}><strong>{record.name}</strong><br/>{record.stationProvenance?.length ? record.lineNames?.map((name, index) => {
+      const service = expandedServiceById.get(record.railLines?.[index] ?? "");
+      return <span key={record.railLines?.[index] ?? name}>{index > 0 && " · "}
+        {service && <><i className="mode-dot" style={{ background: service.colour }}/> </>}{name}</span>;
+    }) : record.lineNames?.join(" · ") || record.route}<br/>{SIMULATED}
+      {!!record.stationProvenance?.length && <><br/>{!record.interchange && `${record.mode === "Bus" ? "BRT" : record.mode} station · `}
+        {record.stationProvenance.map(stop => stop.code).join(" · ")} · Published station data</>}
       {record.interchange && <><br/>Interchange</>}
     </RailContent>
   </Popup>;

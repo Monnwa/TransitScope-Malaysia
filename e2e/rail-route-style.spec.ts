@@ -29,11 +29,11 @@ test('rail opacity, colours, station/search selection and non-rail regressions',
   await page.goto('/');
   await expect(page.getByRole('group', { name: 'Train lines', exact: true })).toHaveCount(0);
   await expect(page.locator('.rail-map-group').getByRole('checkbox')).toHaveCount(0);
-  await expect(page.locator('.rail-alignment')).toHaveCount(8);
+  await expect(page.locator('.rail-alignment')).toHaveCount(11);
   await expectRoutes(page);
   await expect(page.locator('.linkbike-marker')).toHaveCount(27);
   await expect(page.locator('.micromobility-marker')).toHaveCount(48);
-  await expect(page.locator('.bus-vehicle-icon')).toHaveCount(4);
+  await expect(page.locator('.bus-vehicle-icon')).toHaveCount(8);
   const busStyles = await page.locator('.bus-network-route').evaluateAll(paths => paths.map(path => [path.getAttribute('stroke'), path.getAttribute('stroke-opacity')]));
   expect(busStyles).toHaveLength(2);
   for (const [id, colour] of Object.entries(colours)) {

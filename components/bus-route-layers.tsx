@@ -3,6 +3,7 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { Pane, Polyline, useMap, useMapEvents } from "react-leaflet";
 import { busMapRoutes } from "@/lib/bus-map-routes";
+import { brtSunway } from "@/lib/expanded-services";
 
 /** Memoized K.2B visual layers. All camera commands belong to BusMapCamera. */
 function BusRouteLayers({ selectedRouteId, emphasizedRouteId, enabled }: {
@@ -34,6 +35,11 @@ function BusRouteLayers({ selectedRouteId, emphasizedRouteId, enabled }: {
       {enabled && busMapRoutes.filter(route => !selectedRouteId || route.id === selectedRouteId).map(route => <Polyline key={route.id}
         className={"bus-network-route bus-route-" + route.id} positions={route.path}
         interactive={false} pathOptions={styles.context}/>)}
+      {enabled && (!selectedRouteId || selectedRouteId === brtSunway.id) && <>
+        <Polyline positions={brtSunway.paths[0]} interactive={false} pathOptions={{ color: "#fff", weight: 7 }}/>
+        <Polyline className="brt-alignment" positions={brtSunway.paths[0]} interactive={false}
+          pathOptions={{ color: brtSunway.colour, weight: 4, dashArray: "8 3" }}/>
+      </>}
     </Pane>
     <Pane name="bus-route-selected" style={{ zIndex: 430, pointerEvents: "none" }}>
       {enabled && emphasized && <>

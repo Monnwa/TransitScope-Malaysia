@@ -10,9 +10,10 @@ import type { Mode } from "@/lib/transit-data";
 
 const routes = {
   MRT: ["MRT1", "MRT2"],
-  LRT: ["LRT-KJ", "LRT-AG", "LRT-PH"],
+  LRT: ["LRT-KJ", "LRT-AG", "LRT-PH", "lrt-shah-alam"],
   Monorail: ["MONORAIL"],
   KTM: ["KTM:KA15_KD19", "KTM:KC05_KB18"],
+  ERL: ["erl-klia-ekspres", "erl-klia-transit"],
 };
 const snapshot = simulationSnapshot(EPOCH);
 const cases: [Mode[], string[]][] = [
@@ -20,6 +21,7 @@ const cases: [Mode[], string[]][] = [
   [["LRT"], routes.LRT],
   [["Monorail"], routes.Monorail],
   [["KTM"], routes.KTM],
+  [["ERL"], routes.ERL],
   [["Bus"], []],
   [["Shared bike"], []],
   [["MRT", "Shared bike"], routes.MRT],
@@ -30,13 +32,13 @@ const cases: [Mode[], string[]][] = [
 ];
 
 describe("dashboard transport types", () => {
-  it("defaults to all six types", () => {
-    expect(DEFAULT_TRANSPORT_TYPES).toEqual(["Bus", "MRT", "LRT", "Monorail", "KTM", "Shared bike"]);
+  it("defaults to all seven types", () => {
+    expect(DEFAULT_TRANSPORT_TYPES).toEqual(["Bus", "MRT", "LRT", "Monorail", "KTM", "ERL", "Shared bike"]);
   });
 
   it.each(cases)("matches exactly the selected types %j", (types, expectedRoutes) => {
     const filter = transportTypeFilter(railNetwork, types, "");
-    expect(filter.railLines.map(line => line.id)).toEqual(expectedRoutes);
+    expect(new Set(filter.railLines.map(line => line.id))).toEqual(new Set(expectedRoutes));
     const visible = snapshot.records.filter(filter.showsRecord);
     expect(visible.some(record => record.mode === "Bus")).toBe(types.includes("Bus"));
     expect(visible.filter(record => record.mode === "Shared bike")).toHaveLength(types.includes("Shared bike") ? 27 : 0);
@@ -44,7 +46,8 @@ describe("dashboard transport types", () => {
       expect(visible.includes(train)).toBe(expectedRoutes.includes(train.lineId));
     }
     for (const station of railNetwork.stations) {
-      expect(visible.includes(station)).toBe(station.railLines!.some(id => expectedRoutes.includes(id)));
+      expect(visible.includes(station)).toBe(station.railLines!.some(id =>
+        expectedRoutes.includes(id) || id === "brt-sunway" && types.includes("Bus")));
     }
     if (!types.length) expect(visible).toEqual([]);
   });

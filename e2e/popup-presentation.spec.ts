@@ -21,7 +21,7 @@ async function prepare(page: Page, width: number) {
   });
   await page.goto("/");
   const map = page.locator(".leaflet-container");
-  await expect(map.locator(".bus-vehicle-icon")).toHaveCount(4);
+  await expect(map.locator(".bus-vehicle-icon")).toHaveCount(8);
   await page.getByRole("group", { name: "Map camera" }).getByRole("button", { name: "Overview", exact: true }).click();
   await frames(page);
   return { map, external };

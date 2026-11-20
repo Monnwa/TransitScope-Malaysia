@@ -52,7 +52,7 @@ test("search selects merged TRX, opens native popup, repeats and replaces select
     .getByRole("button", { name: "View details" }).click();
   await expect(popup(page)).toContainText("Tun Razak Exchange");
   await expect(map.locator(".rail-station")).toHaveCount(1);
-  await expect(map.locator(".rail-alignment")).toHaveCount(8);
+  await expect(map.locator(".rail-alignment")).toHaveCount(11);
   await choose(page, "Taman Midah");
   await expect(popup(page)).not.toContainText("Tun Razak Exchange");
   await search(page).fill("");

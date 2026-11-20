@@ -1,5 +1,6 @@
 import { busRoutes } from "@/lib/simulation/network";
 import type { GeoPoint } from "@/lib/route-projection";
+import { brtSunway } from "@/lib/expanded-services";
 
 // Explicit regional scope for the existing fixtures. Do not pull future Penang routes
 // into the Klang Valley view merely because they are also simulated buses.
@@ -14,5 +15,6 @@ export const busMapRoutes = busRoutes.filter(route => klangValleyRouteIds.has(ro
 export const busNetworkPath: GeoPoint[] = busMapRoutes.flatMap(route => route.path);
 
 export function busRouteViewport(routeId: string): GeoPoint[] {
+  if (routeId === brtSunway.id) return brtSunway.paths[0];
   return busMapRoutes.find(route => route.id === routeId)?.path ?? busNetworkPath;
 }

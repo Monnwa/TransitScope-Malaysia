@@ -3,10 +3,11 @@ import { simulationSnapshot } from "../lib/simulation";
 import { railNetwork } from "../lib/simulation/network";
 import type { Mode } from "../lib/transit-data";
 
-const types: Mode[] = ["Bus", "MRT", "LRT", "Monorail", "KTM", "Shared bike"];
+const types: Mode[] = ["Bus", "MRT", "LRT", "Monorail", "KTM", "ERL", "Shared bike"];
 const routeIds: Partial<Record<Mode, string[]>> = {
-  MRT: ["MRT1", "MRT2"], LRT: ["LRT-KJ", "LRT-AG", "LRT-PH"], Monorail: ["MONORAIL"],
+  MRT: ["MRT1", "MRT2"], LRT: ["LRT-KJ", "LRT-AG", "LRT-PH", "lrt-shah-alam"], Monorail: ["MONORAIL"],
   KTM: ["KTM:KA15_KD19", "KTM:KC05_KB18"],
+  ERL: ["erl-klia-ekspres", "erl-klia-transit"],
 };
 const time = new Date("2026-11-14T04:00:00Z");
 const snapshot = simulationSnapshot(time.getTime());
@@ -55,23 +56,24 @@ async function expectLayers(page: Page, enabled: Mode[]) {
   for (const id of ids) {
     await expect(map(page).locator(".rail-alignment." + id.replace(/[^a-zA-Z0-9]/g, "-"))).not.toHaveCount(0);
   }
-  await expect(map(page).locator(".rail-station")).toHaveCount(railNetwork.stations.filter(record =>
-    record.railLines?.some(id => ids.includes(id))).length);
+  const visibleLines = busEnabled ? [...ids, "brt-sunway"] : ids;
+  await expect(map(page).locator(".rail-station, .brt-station")).toHaveCount(railNetwork.stations.filter(record =>
+    record.railLines?.some(id => visibleLines.includes(id))).length);
   const trainCount = snapshot.trains.filter(train => ids.includes(train.lineId)).length;
   await expect(page.getByRole("region", { name: "Simulated train positions" }).getByRole("status"))
     .toContainText(new RegExp(`^${trainCount} simulated train`));
   if (trainCount) await expect(map(page).locator(".estimated-train-icon")).not.toHaveCount(0);
   else await expect(map(page).locator(".estimated-train-icon")).toHaveCount(0);
   await expect(map(page).locator(".bus-network-route")).toHaveCount(busEnabled ? 2 : 0);
-  await expect(map(page).locator(".bus-vehicle-icon")).toHaveCount(busEnabled ? 4 : 0);
-  const busStops = snapshot.records.filter(record => record.mode === "Bus" && record.recordKind === "stop" && record.position);
+  await expect(map(page).locator(".bus-vehicle-icon")).toHaveCount(busEnabled ? 8 : 0);
+  const busStops = snapshot.records.filter(record => record.mode === "Bus" && !record.railLines && record.recordKind === "stop" && record.position);
   await expect(map(page).locator(".bus-network-stop")).toHaveCount(busEnabled ? busStops.length : 0);
   await expect(bikes(page)).toHaveCount(bikeEnabled ? 75 : 0);
-  await expect(kpi(page, "Vehicles")).toHaveText(String(trainCount + (busEnabled ? 4 : 0)));
-  await expect(kpi(page, "Routes")).toHaveText(String(ids.length + (busEnabled ? 2 : 0)));
+  await expect(kpi(page, "Vehicles")).toHaveText(String(trainCount + (busEnabled ? 8 : 0)));
+  await expect(kpi(page, "Routes")).toHaveText(String(ids.length + (busEnabled ? 3 : 0)));
   await expect(kpi(page, "Shared-bike stations")).toHaveText(bikeEnabled ? "27" : "0");
-  const results = snapshot.records.filter(record => record.mode === "Bus" ? busEnabled
-    : record.mode === "Shared bike" ? bikeEnabled : record.railLines?.some(id => ids.includes(id))).length;
+  const results = snapshot.records.filter(record => record.railLines ? record.railLines.some(id => visibleLines.includes(id))
+    : record.mode === "Bus" ? busEnabled : record.mode === "Shared bike" && bikeEnabled).length;
   await expect(page.locator("#records tbody tr")).toHaveCount(results);
   await expect(page.locator("#map .panel-title p")).toContainText(`${results} result`);
 }
@@ -87,7 +89,7 @@ test("transport chips filter map layers, summaries and lists, and reset restores
 
   const combinations: { enabled: Mode[]; screenshot?: string }[] = [
     { enabled: ["MRT"], screenshot: "02-mrt-only.png" },
-    { enabled: ["LRT"] }, { enabled: ["Monorail"] }, { enabled: ["KTM"] }, { enabled: ["Bus"] },
+    { enabled: ["LRT"] }, { enabled: ["Monorail"] }, { enabled: ["KTM"] }, { enabled: ["ERL"] }, { enabled: ["Bus"] },
     { enabled: ["Shared bike"], screenshot: "03-shared-bike-only.png" },
     { enabled: ["MRT", "Shared bike"] }, { enabled: ["Bus", "Shared bike"] }, { enabled: ["MRT", "LRT"] },
     { enabled: [], screenshot: "04-none-selected.png" },
@@ -159,7 +161,7 @@ test("station search retains hidden results and cannot reopen their map layers",
   }
 
   await setTypes(page, ["MRT", "LRT"], isMobile);
-  await search(page).fill("Pasar Seni");
+  await search(page).fill("Pasar Sen");
   await option(page, "Pasar Seni").click();
   await expect(map(page).locator(".rail-station-popup")).toContainText("Pasar Seni");
   await expect(map(page).locator(".rail-alignment.MRT1")).toHaveAttribute("stroke-opacity", "1");

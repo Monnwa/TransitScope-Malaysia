@@ -1,7 +1,8 @@
-import { rapidRailMeta, mergeRailStations, type RailLine } from "@/lib/rail-model";
-import { distanceM, indexShape, type GeoPoint } from "@/lib/route-projection";
+import { rapidRailMeta, mergeRailStations, type RailLine, type RailNetwork } from "@/lib/rail-model";
+import { brtSunway, expandedRailServices, expandedServiceById } from "@/lib/expanded-services";
+import { distanceM, indexShape, pointAtDistance, projectCandidates, type GeoPoint } from "@/lib/route-projection";
 import type { Mode, Record as TransitRecord } from "@/lib/transit-data";
-import { SIMULATED, SIMULATION_SOURCE } from "./clock";
+import { MINUTE, SIMULATED, SIMULATION_SOURCE } from "./clock";
 import { busRoadPaths } from "./bus-road-paths";
 import { busOperationalTiming, busRunningTimes, busSpeedLimitKmh, busStopDwellMs, scheduleBusLeg } from "./bus-operations";
 import { reviewBusStop, type BusStopReview } from "./bus-stop-review";
@@ -149,9 +150,37 @@ function leg(stops: SimulatedStop[], speedKmh: number, dwellMs: number) {
 }
 
 function prepareRoute(definition: RouteDefinition) {
-  const dwell = 40_000;
-  const legs = [leg(definition.stops, definition.speedKmh, dwell), leg([...definition.stops].reverse(), definition.speedKmh, dwell)] as const;
+  const legs = [leg(definition.stops, definition.speedKmh, 40_000), leg([...definition.stops].reverse(), definition.speedKmh, 40_000)] as const;
   return { ...definition, legs, period: legs[0].duration + legs[1].duration };
+}
+
+function preparePublishedRoute(service: typeof brtSunway): SimulatedRoute {
+  const legs = ([0, 1] as const).map(direction => {
+    const shape = indexShape(service.paths[direction]);
+    if (!shape) throw new Error(`Invalid published shape for ${service.id}`);
+    const stops = (direction ? [...service.stops].reverse() : service.stops).map(station => {
+      const closest = projectCandidates(shape, station.position, 250).reduce<
+        ReturnType<typeof projectCandidates>[number] | undefined
+      >((best, candidate) => !best || candidate.offsetM < best.offsetM ? candidate : best, undefined);
+      if (!closest) throw new Error(`Stop ${station.id} is outside the published shape for ${service.id}`);
+      return { id: station.id, name: station.name, position: service.mode === "Bus" ? pointAtDistance(shape, closest.distanceM).point : station.position,
+        distance: closest.distanceM };
+    });
+    const runningTimes = stops.slice(1).map((station, index) => {
+      const span = station.distance - stops[index].distance;
+      if (span <= 0) throw new Error(`Stop ${station.id} is out of order on ${service.id}`);
+      return Math.ceil(span / (service.speedKmh / 3.6) * 1_000);
+    });
+    const timings = service.mode === "Bus"
+      ? scheduleBusLeg(stops, runningTimes, 2 * MINUTE)
+      : stops.map((station, index) => {
+        const arrival = Math.round((station.distance - stops[0].distance) / (service.speedKmh / 3.6) * 1_000) + 40_000 * index;
+        return { ...station, arrival, departure: arrival + 40_000 };
+      });
+    return { shape, stops: timings, duration: timings.at(-1)!.departure };
+  });
+  const [outbound, inbound] = legs;
+  return { ...service, legs: [outbound, inbound], period: outbound.duration + inbound.duration };
 }
 
 function roadLeg(
@@ -181,7 +210,7 @@ function roadLeg(
   return { shape, stops: schedule, duration: schedule.at(-1)!.departure };
 }
 
-export const busRoutes: SimulatedRoute[] = busRoadPaths.map(fixture => {
+const feederRoutes: SimulatedRoute[] = busRoadPaths.map(fixture => {
   const { id, name, path, visits, midpoint } = fixture;
   const first = path[0], last = path.at(-1)!;
   if (first[0] !== last[0] || first[1] !== last[1] || visits[0].id !== visits.at(-1)!.id ||
@@ -203,6 +232,8 @@ export const busRoutes: SimulatedRoute[] = busRoadPaths.map(fixture => {
     fleetSize, speedKmh: busSpeedLimitKmh, seed: 0, stops, legs, period,
   };
 });
+const brtRoute = preparePublishedRoute(brtSunway);
+export const busRoutes = [...feederRoutes, brtRoute];
 
 export const busStopReviews: ReadonlyMap<string, BusStopReview> = new Map(busRoadPaths.flatMap(route =>
   route.visits.map(({ id, name, vertex, published }) =>
@@ -211,29 +242,53 @@ export const busStopReviews: ReadonlyMap<string, BusStopReview> = new Map(busRoa
 ));
 
 
-export const railRoutes = railDefinitions.map(prepareRoute);
+export const railRoutes = [...railDefinitions.map(prepareRoute), ...expandedRailServices.map(preparePublishedRoute)];
 export type SimulatedRoute = ReturnType<typeof prepareRoute>;
 
 const railLines: RailLine[] = railRoutes.map(route => ({
   id: route.id, name: route.name, mode: route.mode, colour: route.colour,
-  paths: [route.legs[0].shape.path], source: SIMULATION_SOURCE, dataMode: SIMULATED, geometryStatus: "available",
+  paths: [route.legs[0].shape.path],
+  source: expandedServiceById.get(route.id)?.source ?? SIMULATION_SOURCE, dataMode: SIMULATED, geometryStatus: "available",
 }));
 
-const railStops = railRoutes.flatMap(route => route.stops.map((station): TransitRecord => ({
-  id: `${station.id}:${route.id}`, name: station.name, station: station.name, position: station.position, mode: route.mode,
-  railLines: [route.id], lineNames: [route.name], mrtLines: route.id === "MRT1" || route.id === "MRT2" ? [route.id] : undefined,
-  operator: route.operator, route: route.name, routeId: route.id, recordKind: "stop",
-  stopRefs: [`sim:${route.id}:${station.id}`], dataMode: SIMULATED, status: "Station available", reportedAt: null, source: SIMULATION_SOURCE,
-})));
-
-export const railNetwork = { lines: railLines, stations: mergeRailStations(railStops), available: true, source: SIMULATION_SOURCE, dataMode: SIMULATED };
-export function railNetworkFor(source: "rapid-rail-kl" | "ktmb") {
-  const lines = railLines.filter(line => (line.mode === "KTM") === (source === "ktmb"));
-  const ids = new Set(lines.map(line => line.id));
-  return { ...railNetwork, lines, stations: mergeRailStations(railStops.filter(station => ids.has(station.routeId!))) };
+function stationRecords(route: SimulatedRoute): TransitRecord[] {
+  const service = expandedServiceById.get(route.id);
+  const publishedStops = new Map(service?.stops.map(station => [station.id, station]));
+  return route.stops.map(station => {
+    const published = publishedStops.get(station.id);
+    return {
+      id: `${station.id}:${route.id}`, name: station.name, station: station.name, position: station.position, mode: route.mode,
+      railLines: [route.id], lineNames: [route.name], mrtLines: route.id === "MRT1" || route.id === "MRT2" ? [route.id] : undefined,
+      operator: route.operator, route: route.name, routeId: route.id, recordKind: "stop",
+      stopRefs: [`sim:${route.id}:${station.id}`], dataMode: SIMULATED, status: "Station available", reportedAt: null,
+      source: service?.source ?? SIMULATION_SOURCE,
+      ...(service && published && {
+        stationComplexId: published.complexId,
+        stationProvenance: [{ routeId: service.id, code: published.id, name: published.name, aliases: published.aliases,
+          position: published.position, source: service.source, coordinateUrl: service.coordinateUrl,
+          operatingConfidence: service.operatingConfidence }],
+      }),
+    };
+  });
 }
 
-export const busStops = busRoutes.flatMap(route => route.stops.map((station): TransitRecord => ({
+const railStops = railRoutes.flatMap(stationRecords);
+const brtLine: RailLine = {
+  id: brtSunway.id, name: brtSunway.name, mode: brtSunway.mode, colour: brtSunway.colour, paths: [brtSunway.paths[0]],
+  source: brtSunway.source, dataMode: SIMULATED, geometryStatus: "available",
+};
+export const railNetwork = {
+  lines: railLines, busLines: [brtLine], stations: mergeRailStations([...railStops, ...stationRecords(brtRoute)]),
+  available: true, source: SIMULATION_SOURCE, dataMode: SIMULATED,
+} satisfies RailNetwork & { dataMode: typeof SIMULATED };
+export function railNetworkFor(source: "rapid-rail-kl" | "ktmb") {
+  const lines = railLines.filter(line => source === "ktmb" ? line.mode === "KTM" : line.mode !== "KTM" && line.mode !== "ERL");
+  const ids = new Set(lines.map(line => line.id));
+  return { available: true, source: SIMULATION_SOURCE, dataMode: SIMULATED, lines,
+    stations: mergeRailStations(railStops.filter(station => ids.has(station.routeId!))) };
+}
+
+export const busStops = feederRoutes.flatMap(route => route.stops.map((station): TransitRecord => ({
   id: `bus-stop:${route.id}:${station.id}`, name: station.name, station: station.name, position: station.position, mode: "Bus",
   operator: route.operator, route: route.id, routeId: route.id, recordKind: "stop",
   stopRefs: [`sim:${route.id}:${station.id}`], dataMode: SIMULATED, status: "Station available", reportedAt: null, source: SIMULATION_SOURCE,
