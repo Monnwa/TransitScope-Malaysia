@@ -165,10 +165,39 @@ export default function BusMapCamera(props: Props) {
       if (stop) dispatch({ type: "STOP", point: stop.position, id: stop.id, sequence: stop.sequence });
     } else dispatch({ type: latest.current.state.mode === "FREE_EXPLORE" ? "RETURN" : "FOCUS", available: !!position() });
   }, [dispatch, position, props.navigation, props.journey]);
+  useLayoutEffect(() => {
+    if (state.command.kind !== "user-location") return;
+    // Keep open popups and their selections while giving the location command the viewport.
+    const paused = new Set<L.Popup>();
+    map.eachLayer(layer => {
+      if (layer instanceof L.Popup && layer.options.autoPan) {
+        layer.options.autoPan = false;
+        paused.add(layer);
+      }
+    });
+    const restore = ({ popup }: L.PopupEvent) => {
+      if (paused.delete(popup)) popup.options.autoPan = true;
+    };
+    map.on("popupclose", restore);
+    return () => {
+      map.off("popupclose", restore);
+      paused.forEach(popup => { popup.options.autoPan = true; });
+    };
+  }, [map, state.command]);
   useEffect(() => {
     if (state.request === lastRequest.current) return;
     lastRequest.current = state.request;
     cancelFollow();
+    if (state.command.kind === "user-location") {
+      cancelPopup();
+      const { point } = state.command;
+      guard.run(() => {
+        map.stop();
+        map.setView(point, Math.max(16, map.getZoom()), { animate: false });
+      });
+      recordView();
+      return;
+    }
     if (state.command.kind === "overview") {
       if (state.mode === "OVERVIEW" && state.viewIntent === "bus") overview();
       return;
@@ -197,7 +226,7 @@ export default function BusMapCamera(props: Props) {
         focusedLatitude: String(point[0]), focusedLongitude: String(point[1]), focusedZoom: String(zoom) });
     }
   }, [state.request, state.command, state.mode, state.viewIntent, map, cancelFollow, overview, scrollToMap, position, centerPoint, dispatch,
-    guard, retireStationPopups, recordView]);
+    guard, retireStationPopups, recordView, cancelPopup]);
   useEffect(() => {
     follow();
     return cancelFollow;

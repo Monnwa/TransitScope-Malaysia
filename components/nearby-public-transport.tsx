@@ -21,7 +21,7 @@ export function useNearbyLocation() {
   const revision = useRef(0);
   useEffect(() => () => { revision.current++; }, []);
 
-  function requestLocation() {
+  function requestLocation(onSuccess?: (fix: UserLocation) => void) {
     const request = ++revision.current;
     const fail = (message: string, retry = true) => {
       if (request === revision.current) setState({ status: "error", message, retry });
@@ -43,8 +43,10 @@ export function useNearbyLocation() {
           fail(unavailable);
           return;
         }
-        setLocation({ position, accuracyM: coords.accuracy });
+        const fix = { position, accuracyM: coords.accuracy };
+        setLocation(fix);
         setState({ status: "ready" });
+        onSuccess?.(fix);
       }, error => {
         if (error.code === 1) fail("Location access was denied. Allow location in your browser’s site settings, then retry.");
         else if (error.code === 3) fail("Finding your location took too long. Retry Location to try again.");

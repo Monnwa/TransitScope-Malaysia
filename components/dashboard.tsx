@@ -414,7 +414,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
               onSelectStaticStop={stop => selectStation({ ...stop, type: "BUS_STOP", sourceIds: [stop.sourceId], stop })}
               records={results} busRouteId={busRouteId}
               showBusRoutes={inKlangValley && showSimulated && transport.bus} selected={record} onSelect={select} resetSignal={resetSignal}
-              railLines={mapRailLines} showSharedBike={transport.sharedBike} userLocation={nearbyLocation.location}
+              railLines={mapRailLines} showSharedBike={transport.sharedBike} nearbyLocation={nearbyLocation}
               stationSearch={stationSearch.request} searchActive={query.trim().length > 0} onSearchPopupClose={stationSearch.dismiss}
               onMicromobilityData={setMicromobility}
               search={<StationSearchInput query={query} results={stationResults} request={stationSearch.request}

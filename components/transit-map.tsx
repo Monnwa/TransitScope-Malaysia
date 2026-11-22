@@ -6,7 +6,7 @@ import "@/app/estimated-trains.css";
 import "@/app/map-camera.css";
 import L from "leaflet";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import { CircleMarker, MapContainer, Marker, Pane, Polyline, Popup, TileLayer, Tooltip, useMap, useMapEvent } from "react-leaflet";
+import { Circle, CircleMarker, MapContainer, Marker, Pane, Polyline, Popup, TileLayer, Tooltip, useMap, useMapEvent } from "react-leaflet";
 import type { RailLine } from "@/lib/rail-model";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import { splitRoutePath } from "@/lib/route-projection";
@@ -33,7 +33,8 @@ import { railRouteStyle, stationRailLines } from "@/lib/rail-route-style";
 import RailRouteLayers from "./rail-route-layers";
 import RouteIndicators from "./route-indicators";
 import { brtSunway, expandedServiceById } from "@/lib/expanded-services";
-import type { UserLocation } from "@/lib/nearby-transit";
+import type { useNearbyLocation } from "./nearby-public-transport";
+import LocateMeControl from "./locate-me-control";
 import { busStopRegion, type Region } from "@/lib/dashboard-region";
 import type { SearchBusStop } from "@/lib/bus-stop-search";
 
@@ -74,7 +75,7 @@ function StaticBusStopLayer({ stops, selectedId, onSelect }: {
 
 export default function TransitMap({ region = "Klang Valley", staticBusStops = noStaticBusStops, onSelectStaticStop,
   records, busRouteId, showBusRoutes, showSharedBike, selected, onSelect, resetSignal, railLines, search, stationSearch,
-  searchActive = false, onSearchPopupClose, onMicromobilityData, journey, navigation, onLocate, trains, bikes, now, onRefresh, userLocation }: {
+  searchActive = false, onSearchPopupClose, onMicromobilityData, journey, navigation, onLocate, trains, bikes, now, onRefresh, nearbyLocation }: {
   records: TransitRecord[];
   region?: Region;
   staticBusStops?: SearchBusStop[];
@@ -98,8 +99,9 @@ export default function TransitMap({ region = "Klang Valley", staticBusStops = n
   bikes: SimulatedBikeStation[];
   now: number;
   onRefresh: () => void;
-  userLocation?: UserLocation | null;
+  nearbyLocation?: ReturnType<typeof useNearbyLocation>;
 }) {
+  const userLocation = nearbyLocation?.location;
   const [cameraControlsHost, setCameraControlsHost] = useState<HTMLDivElement | null>(null);
   const [routeHighlight, setRouteHighlight] = useState<string[]>([]);
   const [focusedRoute, setFocusedRoute] = useState<{ line: RailLine } | null>(null);
@@ -161,6 +163,7 @@ export default function TransitMap({ region = "Klang Valley", staticBusStops = n
       <MapContainer center={center} zoom={13} scrollWheelZoom className="map">
         {search && <MapSearchOverlay>{search}</MapSearchOverlay>}
         <TileLayer {...lightBasemap}/>
+        {nearbyLocation && <LocateMeControl {...nearbyLocation}/>}
         <PopupControlAvoidance selectedRecordId={selected?.id} journeyVehicleId={selectedJourney?.vehicle.id}/>
         <BusMapCamera region={region} staticBusBounds={staticBusBounds} searchActive={searchActive}
           selected={selected} vehicleVisible={visibleIds.has(selected?.id ?? "")} selectedRouteId={busRouteId}
@@ -255,7 +258,11 @@ export default function TransitMap({ region = "Klang Valley", staticBusStops = n
         {showSharedBike && <LinkBikeLayer stations={bikes} records={mapRecords}
           onSelect={onSelect} searchActive={searchActive} searchRequest={micromobilityRequest}
           onSearchClose={onSearchPopupClose}/>}
-        {userLocation && <Marker position={userLocation.position} icon={userIcon} interactive={false} keyboard={false}/>}
+        {userLocation && <>
+          <Circle center={userLocation.position} radius={userLocation.accuracyM} interactive={false}
+            className="user-location-accuracy" pathOptions={{ color: "#1666d8", weight: 1, fillOpacity: .12 }}/>
+          <Marker position={userLocation.position} icon={userIcon} interactive={false} keyboard={false}/>
+        </>}
       </MapContainer>
     </div>
     </div>
