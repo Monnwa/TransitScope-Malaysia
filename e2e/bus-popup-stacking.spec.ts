@@ -1,3 +1,4 @@
+import { selectVehicle, chooseSearchStation } from "./map-station";
 import { expect, test, type Locator, type Page, type TestInfo } from "@playwright/test";
 import { railNetwork } from "../lib/simulation/network";
 import { setMapZoom } from "./map-zoom";
@@ -66,8 +67,7 @@ async function prepare(page: Page, width: number) {
   return { map, forbidden };
 }
 async function selectBus(page: Page, route: "T401" | "T402", mobile: boolean) {
-  await page.getByRole("row").filter({ has: page.getByRole("cell", { name: "Bus " + route + "-01", exact: true }) })
-    .getByRole("button", { name: "View details" }).click();
+  await selectVehicle(page, "Bus " + route + "-01");
   const detail = page.getByRole("region", { name: "Bus journey detail" });
   await expect(detail).toBeVisible();
   if (mobile) await detail.getByRole("button", { name: "Collapse journey" }).click();
@@ -140,12 +140,12 @@ for (const kind of ["T401", "T402", "journey-stop", "rail-station"] as const) {
           // Rail selection removes journey stops by design. Require actual bus
           // overlap here, and cover journey-stop overlap in the bus/stop cases.
           for (const name of ["Taman Midah", "Maluri", "Cochrane", "Salak Selatan"]) {
-            const index = railNetwork.stations.findIndex(station => station.name === name);
+            const index = railNetwork.stations.filter(station => station.mode !== "Bus").findIndex(station => station.name === name);
             if (index < 0) continue;
-            await page.getByRole("row").filter({ has: page.getByRole("cell", { name, exact: true }) })
-              .getByRole("button", { name: "View details" }).click();
+            await chooseSearchStation(page, name);
             // Preserve the overlap fixture's native-marker entry point after automatic result popup opening.
             await expect(popup).toHaveCount(1); await close(page, popup, isMobile);
+            await page.getByRole("button", { name: "Clear station search" }).click();
             await map.scrollIntoViewIfNeeded(); await setMapZoom(map, 12);
             await map.locator(".rail-station").nth(index).click({ timeout: 5000 });
             await expect(popup).toHaveCount(1); await expect(popup).toContainText(name);

@@ -1,3 +1,4 @@
+import { selectVehicle } from "./map-station";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
 const time = Date.parse("2026-11-14T04:00:00Z");
@@ -68,7 +69,7 @@ test("tile failure preserves route, vehicle, popup and dismissal interactions", 
   page.on("pageerror", error => errors.push(error.message));
   const map = await prepare(page, isMobile, true);
   await expect(map.locator('.leaflet-tile-loaded[src^="data:image/svg+xml"]')).not.toHaveCount(0);
-  await page.getByRole("row", { name: /^Bus T401-01 / }).getByRole("button", { name: "View details" }).click();
+  await selectVehicle(page, "Bus T401-01");
   await expect(map.getByTitle("Bus T401-01", { exact: true })).toHaveClass(/vehicle-selected/);
   await expect(map.locator(".gps-route-remaining")).toHaveCount(1);
   await expect(map.locator(".bus-journey-stop")).not.toHaveCount(0);

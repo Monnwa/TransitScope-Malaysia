@@ -1,4 +1,8 @@
+import { newMicromobilityStations } from "../lib/micromobility-data";
 import { expect, test } from "@playwright/test";
+
+const penangStations = newMicromobilityStations.filter(station => station.state === "Penang");
+const regionalMarkers = (state: string) => newMicromobilityStations.filter(station => (station.state === "Penang") === (state === "Penang")).length;
 
 async function containedPopup(page: import("@playwright/test").Page, popup: import("@playwright/test").Locator) {
   await page.locator(".leaflet-container").scrollIntoViewIfNeeded();
@@ -38,10 +42,16 @@ test("all micromobility layers and popup provenance work without the coverage pa
   await expect(panel.locator(".micromobility-coverage, .linkbike-controls, .linkbike-map-status")).toHaveCount(0);
   await expect(panel.getByRole("button", { name: /Zoom to (LinkBike|HelloRide|TRYKE|Beam Mobility)/ })).toHaveCount(0);
   await expect(panel).not.toContainText(/Micromobility coverage|coverage locations|simulated LinkBike stations on the map|Dashed markers|Live vehicle availability|used for demonstration and coverage visualization/);
+  await expect(page.locator(".linkbike-marker")).toHaveCount(0);
+  await expect(panel.locator(".rail-alignment")).toHaveCount(11);
+  const region = page.getByRole("combobox", { name: "Region" });
+  await region.selectOption("Penang");
   await expect(page.locator(".linkbike-marker")).toHaveCount(27);
-  for (const operator of ["helloride", "tryke", "beam"]) await expect(page.locator(`.micromobility-${operator}`)).toHaveCount(16);
+  for (const operator of ["helloride", "tryke", "beam"]) {
+    await expect(page.locator(`.micromobility-${operator}`)).toHaveCount(penangStations.filter(station => station.operator.toLowerCase() === operator).length);
+  }
   const markers = map.locator(".bike-station-marker");
-  await expect(markers).toHaveCount(75);
+  await expect(markers).toHaveCount(27 + penangStations.length);
   const styles = await markers.evaluateAll(elements => elements.map(marker => {
     const icon = marker.querySelector("svg[aria-hidden='true']")!;
     const { width, height, borderRadius, borderStyle, backgroundColor } = getComputedStyle(marker);
@@ -64,11 +74,12 @@ test("all micromobility layers and popup provenance work without the coverage pa
       color, width: "26px", height: "26px", borderRadius: "50%", iconWidth: 16, iconHeight: 16, centered: true,
     });
   }
-  for (const [classification, borderStyle, count] of [["synthetic", "dashed", 46], ["source-backed", "solid", 2]] as const) {
+  for (const [classification, borderStyle, count] of [["synthetic", "dashed", penangStations.length]] as const) {
     const classified = styles.filter(style => style.classes.includes(classification));
     expect(classified).toHaveLength(count);
     expect(new Set(classified.map(style => style.borderStyle))).toEqual(new Set([borderStyle]));
   }
+  await region.selectOption("Klang Valley");
   await expect(panel.locator(".rail-alignment")).toHaveCount(11);
   const controlGap = await panel.locator(".estimated-train-controls + .map-camera-frame").evaluate(frame =>
     frame.getBoundingClientRect().top - frame.previousElementSibling!.getBoundingClientRect().bottom);
@@ -88,7 +99,8 @@ test("all micromobility layers and popup provenance work without the coverage pa
       .filter({ has: page.getByText(name, { exact: true }) }).click();
     await page.getByRole("button", { name: "Close popup", exact: true }).click();
     await page.getByRole("button", { name: "Clear station search" }).click();
-    await expect(markers).toHaveCount(75);
+    const selectedRegion = await region.inputValue();
+    await expect(markers).toHaveCount(regionalMarkers(selectedRegion) + (selectedRegion === "Penang" ? 27 : 0));
     const marker = map.getByTitle(name, { exact: true });
     if (isMobile) {
       // Bring the marker further into view after the search popup pans the map.
@@ -136,10 +148,11 @@ test("all micromobility layers and popup provenance work without the coverage pa
 
 test("all new operator popups display deterministic simulated inventory like LinkBike", async ({page,request},info) => {
   await page.goto("/");
-  await expect(page.locator(".micromobility-marker")).toHaveCount(48);
+  await expect(page.locator(".micromobility-marker")).toHaveCount(regionalMarkers("Klang Valley"));
   const data=await (await request.get("/api/micromobility/stations")).json();
   for (const operator of ["HELLORIDE","TRYKE","BEAM"]) {
     const station=data.stations.find((s:{operator:string;id:string})=>s.operator===operator && s.id.endsWith(operator==="TRYKE"?":millennium":":george-town"));
+    await page.getByRole("combobox", { name: "Region" }).selectOption(station.state === "Penang" ? "Penang" : "Klang Valley");
     await page.getByTitle(station.name,{exact:true}).press("Enter");
     const popup=page.locator(".micromobility-popup");
     const inventory=popup.getByRole("definition");
@@ -162,8 +175,9 @@ test("a transient stations API failure retries automatically while LinkBike rema
   const failure = page.waitForResponse(response => response.url().endsWith("/api/micromobility/stations") && response.status() === 503);
   await page.goto("/");
   await failure;
+  await page.getByRole("combobox", { name: "Region" }).selectOption("Penang");
   await expect(page.locator(".linkbike-marker")).toHaveCount(27);
-  await expect(page.locator(".micromobility-marker")).toHaveCount(48);
+  await expect(page.locator(".micromobility-marker")).toHaveCount(penangStations.length);
   await expect(page.getByRole("button", {name:"Retry micromobility locations"})).toHaveCount(0);
 });
 
@@ -172,11 +186,12 @@ test("loading micromobility markers does not shift the transport map", async ({p
   const pending = new Promise<void>(resolve => { release = resolve; });
   await page.route("**/api/micromobility/stations", async route => { await pending; await route.continue(); });
   await page.goto("/");
+  await page.getByRole("combobox", { name: "Region" }).selectOption("Penang");
   await expect(page.locator(".linkbike-marker")).toHaveCount(27);
   const map = page.locator(".leaflet-container");
   await expect(map).toBeVisible();
   const before = await map.boundingBox();
   release();
-  await expect(map.locator(".micromobility-marker")).toHaveCount(48);
+  await expect(map.locator(".micromobility-marker")).toHaveCount(penangStations.length);
   expect(await map.boundingBox()).toEqual(before);
 });

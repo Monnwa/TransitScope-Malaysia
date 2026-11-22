@@ -1,0 +1,38 @@
+.dashboard-header .region { display: flex; flex: none; }
+.dashboard-header .region select { min-height: 32px; }
+.kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+.kpi h2 { margin: 0; color: var(--muted); font-size: 12px; font-weight: 400; }
+.overview-routes { grid-column: 1 / -1; order: 1; min-width: 0; }
+.service-alerts { order: 2; }
+.overview-category-icon { display: inline-flex; flex: none; color: var(--blue); }
+.overview-category-icon svg { width: 14px; height: 14px; }
+.overview-category-heading, .overview-route-group h3 { display: flex; align-items: center; gap: 5px; }
+.overview-vehicle-categories, .overview-route-group ul { list-style: none; padding: 0; margin: 0; }
+.overview-vehicle-categories { display: flex; flex-wrap: wrap; gap: 6px 12px; }
+.overview-vehicle-categories li { display: flex; align-items: center; gap: 4px; font-size: 12px; }
+.overview-vehicle-picker { display: block; max-width: 100%; min-height: 36px; margin-top: 8px; }
+.kpi .overview-vehicle-categories li span { color: inherit; }
+.kpi .overview-category-icon { display: inline-flex; color: var(--blue); }
+.overview-route-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(145px, 100%), 1fr)); gap: 12px; }
+.overview-route-group { min-width: 0; padding-block: 8px; border-top: 1px solid var(--line); }
+.overview-route-group h3 { font-size: 12px; margin: 0 0 6px; }
+.overview-route-group li { display: flex; align-items: baseline; gap: 6px; margin-block: 4px; }
+.overview-route-group li .mode-dot { flex: none; width: 7px; height: 7px; }
+.overview-route-group li span { overflow-wrap: anywhere; }
+.overview-route-group:only-child ul { columns: 9rem; }
+.overview-route-group li { break-inside: avoid; }
+.filters label, .filters select { max-width: 100%; }
+.two-col + .about { margin-top: 18px; }
+.nearby-heading:last-child { margin-bottom: 0; }
+
+@media (max-width: 720px) {
+  .dashboard-header .region { font-size: 11px; }
+  .dashboard-header .region select { font-size: 12px; min-height: 30px; }
+  .dashboard-header .fresh { display: none; }
+  .dashboard-header .region + .fresh + .icon-button { margin-inline-start: auto; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .kpi { padding: 12px; }
+  .kpi:first-child { grid-column: 1 / -1; }
+  .overview-route-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
+  .overview-route-group:only-child { grid-column: 1 / -1; }
+}

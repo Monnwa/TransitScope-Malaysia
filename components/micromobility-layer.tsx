@@ -7,6 +7,7 @@ import { useOptionalBusCamera } from "./bus-camera-context";
 import SearchableStationPopup from "./searchable-station-popup";
 import { showMicromobilityMarker, type StationSearchRequest } from "@/lib/station-search";
 import { bikeStationIcon } from "./bike-station-icon";
+import { micromobilityRegion, type Region } from "@/lib/dashboard-region";
 
 // Stable icons avoid replacing marker DOM on the dashboard's one-second clock.
 const icons = new Map(NEW_MICROMOBILITY_OPERATORS.flatMap(operator => (["SYNTHETIC", "SOURCE_VERIFIED"] as const).map(origin => [
@@ -60,15 +61,15 @@ const StationLayer = memo(function StationLayer({ operator, stations, request, o
   </Marker>)}</LayerGroup>;
 });
 
-export default function MicromobilityLayer({ visible, searchActive,
+export default function MicromobilityLayer({ region, visible, searchActive,
   searchRequest, onSearchClose, onData }: {
-  visible: boolean; searchActive: boolean; searchRequest?: StationSearchRequest | null;
+  region: Region; visible: boolean; searchActive: boolean; searchRequest?: StationSearchRequest | null;
   onSearchClose?: (request: StationSearchRequest) => void;
   onData?: (data: MicromobilityResponse) => void;
 }) {
   const [data, setData] = useState<MicromobilityResponse | null>(null);
   const layers = useMemo(() => NEW_MICROMOBILITY_OPERATORS.map(operator => ({ operator,
-    stations: data?.stations.filter(station => station.operator === operator) ?? [] })), [data]);
+    stations: data?.stations.filter(station => station.operator === operator && micromobilityRegion(station) === region) ?? [] })), [data, region]);
   useEffect(() => {
     const controller = new AbortController();
     let retryTimer: number | undefined;

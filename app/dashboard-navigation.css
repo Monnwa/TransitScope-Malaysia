@@ -84,7 +84,6 @@
   .dashboard-shell > .content { padding-inline-end: 28px; }
   .dashboard-shell .page-heading,
   .dashboard-shell .detail { margin-inline-end: calc(var(--home-clearance) - 28px); }
-  .dashboard-shell #records { padding-inline-end: calc(var(--home-clearance) - 28px); }
 }
 
 #content, #overview, #map, #nearby-transit, #about { scroll-margin-top: var(--section-offset); }

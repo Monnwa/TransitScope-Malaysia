@@ -3,14 +3,13 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
-import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { filterRecords, type Mode, type Record as TransitRecord, type Status } from "@/lib/transit-data";
 import { simulationSnapshot } from "@/lib/simulation";
 import { EPOCH, MINUTE, SIMULATED, simulationTime } from "@/lib/simulation/clock";
 import { busRoutes, busStopReviews, busStops, railNetwork } from "@/lib/simulation/network";
 import { linkBikeSnapshot, type SimulationAlert } from "@/lib/simulation/scenarios";
 import { busJourney } from "@/lib/simulation/vehicles";
-import { passengerName, resultCountLabel } from "./passenger-copy";
+import { resultCountLabel } from "./passenger-copy";
 import SimulatedBusPanel, { type JourneyNavigation } from "./simulated-bus-panel";
 import UpcomingDepartures from "./upcoming-departures";
 import StationOperations from "./station-operations";
@@ -28,13 +27,15 @@ import ServiceUpdates from "./service-updates";
 import NearbyPublicTransport, { useNearbyLocation } from "./nearby-public-transport";
 import { nearbyTransitCandidates } from "@/lib/nearby-transit";
 import DashboardIcon from "./dashboard-icon";
+import { CategoryIcon, RouteCategories, VehicleCategories } from "./overview-categories";
+import { busStopRegion, defaultRegion, klangValleyRoutes, micromobilityRegion, penangBusFeed, penangBusStops,
+  regions, simulationRecordRegion, staticBusRoutes, vehicleCategory, type OverviewRoute, type Region } from "@/lib/dashboard-region";
 
 const TransitMap = dynamic(() => import("./transit-map"), {
   ssr: false,
   loading: () => <div className="map-loading">Loading map controls…</div>,
 });
 
-const colours: Record<Mode, string> = { Bus: "#2563eb", MRT: "#7c3aed", LRT: "#ea580c", Monorail: "#db2777", KTM: "#0891b2", ERL: "#6941a5", "Shared bike": "#16a34a" };
 const modes = DEFAULT_TRANSPORT_TYPES;
 const dashboardSections = [
   { id: "overview", label: "Overview", icon: "home" },
@@ -49,6 +50,8 @@ const brandIcon = "/brand/transitscope-icon.svg";
 const statuses: Status[] = ["In service", "At stop", "Station available"];
 const formats = new Intl.DateTimeFormat("en-MY", { dateStyle: "medium", timeStyle: "medium", timeZone: "Asia/Kuala_Lumpur" });
 const linkBikeSearchStations = linkBikeSnapshot(EPOCH).stations.map(adaptLinkBikeStation);
+const penangBikeIds = new Set(linkBikeSearchStations.map(station => station.id));
+const emptyRailNetwork = { ...railNetwork, lines: [], busLines: [], stations: [] };
 const localBusStops = new Map<string, SearchBusStop>();
 const publishedFeederStops: SearchBusStop[] = [];
 const routeColours = new Map([...busRoutes, ...railNetwork.lines].map(route => [route.id, route.colour]));
@@ -71,6 +74,7 @@ for (const record of busStops) {
 
 export default function Dashboard({ initialTime }: { initialTime: number }) {
   const [now, setNow] = useState(initialTime);
+  const [region, setRegion] = useState<Region>(defaultRegion);
   const [query, setQuery] = useState("");
   const [busRouteId, setBusRouteId] = useState("");
   const [activeModes, setModes] = useState<Mode[]>(DEFAULT_TRANSPORT_TYPES);
@@ -137,40 +141,80 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     ...(staticBus?.stops ?? []),
   ]), [staticBus]);
   const snapshot = useMemo(() => simulationSnapshot(now), [now]);
+  const inKlangValley = region === "Klang Valley";
+  const regionNetwork = inKlangValley ? railNetwork : emptyRailNetwork;
+  const regionalPenangStops = useMemo(() => penangBusStops(staticBus?.stops ?? []), [staticBus]);
+  const penangRoutes = useMemo(() => staticBusRoutes(regionalPenangStops), [regionalPenangStops]);
   const exactStation = useMemo(() => resolveExactStation(query, railNetwork), [query]);
   const filterQuery = exactStation?.name ?? normaliseSearchText(query);
-  const transport = useMemo(() => transportTypeFilter(railNetwork, activeModes, busRouteId), [activeModes, busRouteId]);
+  const transport = useMemo(() => transportTypeFilter(regionNetwork, activeModes, busRouteId), [regionNetwork, activeModes, busRouteId]);
   const results = useMemo(() => showSimulated ? filterRecords(snapshot.records, filterQuery, [], activeStatus, [SIMULATED])
-    .filter(transport.showsRecord) : [], [snapshot, filterQuery, activeStatus, showSimulated, transport]);
-  const visibleAlerts = useMemo(() => snapshot.alerts.filter(alert =>
-    serviceAlertMatchesTransport(alert, activeModes, transport.showsBusRoute)), [snapshot.alerts, activeModes, transport]);
-  const alertScope = includeHiddenAlerts ? snapshot.alerts : visibleAlerts;
+    .filter(item => simulationRecordRegion(item, penangBikeIds) === region && transport.showsRecord(item)) : [],
+    [snapshot, filterQuery, activeStatus, showSimulated, region, transport]);
+  const visibleStaticStops = useMemo(() => !inKlangValley && transport.bus && (!activeStatus.length || activeStatus.includes("Station available"))
+    ? regionalPenangStops.filter(stop => (!busRouteId || stop.routes.some(route => route.id === busRouteId)) &&
+      (!filterQuery || [stop.name, stop.sourceId, ...stop.aliases, ...stop.routes.flatMap(route => [route.id, route.name])]
+        .some(value => normaliseSearchText(value).includes(filterQuery)))) : [],
+    [inKlangValley, transport.bus, activeStatus, regionalPenangStops, busRouteId, filterQuery]);
+  const regionalAlerts = inKlangValley ? snapshot.alerts : [];
+  const visibleAlerts = regionalAlerts.filter(alert => serviceAlertMatchesTransport(alert, activeModes, transport.showsBusRoute));
+  const alertScope = includeHiddenAlerts ? regionalAlerts : visibleAlerts;
   const filteredAlerts = useMemo(() => alertFilter === "All" ? alertScope : alertScope.filter(alert =>
     alert.category === alertFilter || alert.modes.some(mode => mode === alertFilter)), [alertScope, alertFilter]);
   const displayedAlertIds = useMemo(() => alertsExpanded ? new Set(filteredAlerts.map(alert => alert.id)) : undefined,
     [alertsExpanded, filteredAlerts]);
-  const byMode = modes.map(name => ({ name, records: activeModes.includes(name)
-    ? results.filter(item => item.modes?.includes(name) ?? item.mode === name).length : 0 }));
-  const routeCount = new Set(results.flatMap(item => item.railLines
+  const routeIds = new Set(results.flatMap(item => item.railLines
     ? item.railLines.filter(id => transport.visibleLineIds.has(id))
-    : item.routeId ? [item.routeId] : [])).size;
+    : item.routeId ? [item.routeId] : []));
+  for (const stop of visibleStaticStops) {
+    for (const route of stop.routes) if (transport.showsBusRoute(route.id)) routeIds.add(route.id);
+  }
+  const routes = (inKlangValley ? klangValleyRoutes : penangRoutes).filter(route => routeIds.has(route.id));
+  const vehicleCategories = new Map<OverviewRoute["category"], number>();
+  const vehicles = results.filter(item => item.recordKind === "vehicle");
+  for (const vehicle of vehicles) {
+    const category = vehicleCategory(vehicle);
+    vehicleCategories.set(category, (vehicleCategories.get(category) ?? 0) + 1);
+  }
+  const busRouteOptions = inKlangValley ? busRoutes : penangRoutes;
+  const bicycleStations = new Set(results.filter(item => item.mode === "Shared bike").map(item => item.id));
+  if (showSimulated && transport.sharedBike && (!activeStatus.length || activeStatus.includes("Station available"))) {
+    for (const station of micromobility?.stations ?? []) {
+      if (station.operator === "HELLORIDE" && micromobilityRegion(station) === region &&
+          (!filterQuery || normaliseSearchText(station.name).includes(filterQuery))) bicycleStations.add(station.id);
+    }
+  }
+  const penangBusStatus = !staticBus ? "Rapid Penang bus coverage is loading."
+    : staticBus.unavailable.some(feed => feed === penangBusFeed || feed === "bus") ? "Rapid Penang bus coverage is unavailable."
+    : "Rapid Penang routes and stops are from static GTFS.";
   const stationCount = new Set(results.flatMap(item => item.recordKind === "stop" && item.mode !== "Shared bike"
-    ? [item.railLines?.length ? item.id : item.stopRefs?.[0]?.split(":").at(-1) ?? item.id] : [])).size;
+    ? [item.railLines?.length ? item.id : item.stopRefs?.[0]?.split(":").at(-1) ?? item.id] : [])).size + visibleStaticStops.length;
 
   const selectRecord = useCallback((item: TransitRecord | null) => {
     setSelectedId(item?.id ?? null);
     setNavigation(null);
     setPreview(null);
   }, []);
+  const selectSearchRecord = useCallback((record: TransitRecord | null) => {
+    const nextRegion = record && simulationRecordRegion(record, penangBikeIds);
+    if (nextRegion && nextRegion !== region) {
+      setRegion(nextRegion);
+      setBusRouteId("");
+    }
+    selectRecord(record);
+  }, [region, selectRecord]);
+  const exactStationVisible = exactStation && (exactStation.stationProvenance?.length ||
+    results.some(item => item.id === exactStation.id) ||
+    (!inKlangValley && showSimulated && (!activeStatus.length || activeStatus.includes("Station available")) && canSelectRail(exactStation)));
   const stationSearch = useStationSearch(railNetwork, query,
-    exactStation && (exactStation.stationProvenance?.length || results.some(item => item.id === exactStation.id)) ? exactStation : undefined, selectRecord);
+    exactStationVisible ? exactStation : undefined, selectSearchRecord);
   const alertRequest = stationSearch.request?.alert ? stationSearch.request : null;
   const nearbyRequest = stationSearch.request?.nearby ? stationSearch.request : null;
   const nearbyStation = nearbyRequest?.type === "RAIL_STATION"
     ? railNetwork.stations.find(station => station.id === nearbyRequest.stationId) : undefined;
   const mapRailLines = useMemo(() => nearbyStation ? railNetwork.lines.filter(line =>
     transport.visibleLineIds.has(line.id) || nearbyStation.railLines?.includes(line.id)) : transport.railLines, [transport, nearbyStation]);
-  const record = nearbyStation ?? snapshot.records.find(item => item.id === selectedId && (item.id === alertRequest?.stationId ||
+  const record = nearbyStation ?? snapshot.records.find(item => item.id === selectedId && simulationRecordRegion(item, penangBikeIds) === region && (item.id === alertRequest?.stationId ||
     Boolean(item.stationProvenance?.length && item.id === stationSearch.request?.stationId) || transport.showsRecord(item)));
   const train = record && snapshot.trains.find(item => item.id === record.id);
   const journey = useMemo(() => record?.mode === "Bus" ? busJourney(record.id, now, preview?.vehicleId, preview?.start) : null, [record, now, preview]);
@@ -204,16 +248,35 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
     } });
   }
 
+  function canSelectRail(record: TransitRecord) {
+    if (record.stationProvenance?.length) return true;
+    const scope = simulationRecordRegion(record, penangBikeIds);
+    return scope === region ? transport.showsRecord(record)
+      : scope === "Klang Valley" && transportTypeFilter(railNetwork, activeModes, "").showsRecord(record);
+  }
+
   function canSelectStation(entity: SearchEntity) {
-    if (entity.type === "RAIL_STATION") return Boolean(entity.record.stationProvenance?.length) || transport.showsRecord(entity.record);
-    if (entity.type === "BUS_STOP") return showSimulated && (busRouteId
-      ? entity.stop.routes.some(route => transport.showsBusRoute(route.id)) : transport.bus);
+    if (entity.type === "RAIL_STATION") return canSelectRail(entity.record);
+    if (entity.type === "BUS_STOP") return transport.bus && (showSimulated || busStopRegion(entity.stop) === "Penang") &&
+      (!busRouteId || busStopRegion(entity.stop) !== region || entity.stop.routes.some(route => transport.showsBusRoute(route.id)));
     return transport.sharedBike;
+  }
+
+  function selectStation(entity: SearchEntity, nearby = false) {
+    const nextRegion = entity.type === "RAIL_STATION" ? simulationRecordRegion(entity.record, penangBikeIds)
+      : entity.type === "BUS_STOP" ? busStopRegion(entity.stop) : micromobilityRegion(entity.station);
+    if (nextRegion && nextRegion !== region) {
+      setRegion(nextRegion);
+      setBusRouteId("");
+      if (nearby) setQuery("");
+    }
+    setAlertNavigation(null);
+    stationSearch.selectEntity(entity, undefined, nearby);
   }
 
   function toggleMode(mode: Mode) {
     const next = toggle(activeModes, mode);
-    const nextFilter = transportTypeFilter(railNetwork, next, busRouteId);
+    const nextFilter = transportTypeFilter(regionNetwork, next, busRouteId);
     const request = stationSearch.request;
     if (!alertRequest && (record && !nextFilter.showsRecord(record) || request?.type === "BUS_STOP" && !nextFilter.bus ||
       request?.type === "MICROMOBILITY_STATION" && !nextFilter.sharedBike)) select(null);
@@ -221,6 +284,7 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
   }
 
   function reset() {
+    setRegion(defaultRegion);
     setQuery("");
     setBusRouteId("");
     setModes(DEFAULT_TRANSPORT_TYPES);
@@ -259,7 +323,14 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
         <DashboardIcon name={drawerOpen ? "close" : "menu"}/>
       </button>
       <Image className="dashboard-brand" src={brandWordmark} width={170} height={48} alt="TransitScope Malaysia" priority/>
-      <label className="region">Region<select aria-label="Region"><option>Malaysia</option></select></label>
+      <label className="region">Region<select value={region} onChange={event => {
+        const next = regions.find(option => option === event.target.value);
+        if (!next) return;
+        select(null);
+        setQuery("");
+        setBusRouteId("");
+        setRegion(next);
+      }}>{regions.map(option => <option key={option}>{option}</option>)}</select></label>
       <div className="fresh"><b>{SIMULATED}</b><span>Updated {formats.format(now)}</span></div>
       <button className="icon-button" aria-label="Refresh transport information" onClick={refresh}>↻</button>
     </header>
@@ -289,35 +360,60 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
       </nav>
       <section id="content" className="content" tabIndex={-1}>
         <div className="page-heading">
-          <div><p className="eyebrow">PUBLIC TRANSPORT</p><h1 id="overview" tabIndex={-1}>Malaysia transport overview</h1></div>
+          <div><p className="eyebrow">PUBLIC TRANSPORT</p><h1 id="overview" tabIndex={-1}>Transport overview</h1></div>
           <button className="secondary" onClick={reset}>Reset dashboard</button>
         </div>
-        <p className="status simulation-notice"><strong>SIMULATION MODE</strong> — All transportation information is generated for demonstration purposes and does not represent actual operational conditions.</p>
+        <p className="status simulation-notice"><strong>SIMULATION MODE</strong> — Vehicle movements, notices and micromobility availability are simulated for demonstration purposes.</p>
         <section className="kpis" aria-label="Transport indicators">
-          <Kpi label="Vehicles" value={results.filter(item => item.recordKind === "vehicle").length} hint="For your current filters"/>
-          <Kpi label="Routes" value={routeCount} hint="For your current filters"/>
+          <article className="kpi" aria-labelledby="vehicles-label">
+            <h2 id="vehicles-label">Vehicles</h2><strong>{vehicles.length}</strong>
+            <VehicleCategories categories={vehicleCategories}/>
+            {vehicles.length > 0 && <select className="overview-vehicle-picker" aria-label="Vehicle details"
+              value={record?.recordKind === "vehicle" ? record.id : ""} onChange={event => {
+                const vehicle = vehicles.find(item => item.id === event.target.value);
+                if (vehicle) {
+                  setAlertNavigation(null);
+                  stationSearch.select(vehicle);
+                } else select(null);
+              }}>
+              <option value="">Select a vehicle</option>
+              {vehicles.map(vehicle => <option key={vehicle.id} value={vehicle.id}>{vehicle.name}</option>)}
+            </select>}
+          </article>
+          <article className="kpi overview-routes" aria-labelledby="routes-label">
+            <h2 id="routes-label">Routes</h2><strong>{routes.length}</strong>
+            {!inKlangValley && <small role="status">{penangBusStatus}</small>}
+            <RouteCategories routes={routes}/>
+          </article>
           <ServiceUpdates state={{ status: "ready", alerts: filteredAlerts, hasAvailableAlerts: alertScope.length > 0 }}
             expanded={alertsExpanded} filter={alertFilter}
-            hiddenAlerts={visibleAlerts.length < snapshot.alerts.length || includeHiddenAlerts ? { included: includeHiddenAlerts, onChange: setIncludeHiddenAlerts } : undefined}
+            hiddenAlerts={visibleAlerts.length < regionalAlerts.length || includeHiddenAlerts ? { included: includeHiddenAlerts, onChange: setIncludeHiddenAlerts } : undefined}
             navigationStatus={alertNavigation}
             onToggle={() => setAlertsExpanded(value => !value)} onFilter={setAlertFilter} onSelectStation={selectAlertStation}/>
-          <Kpi label="Shared-bike stations" value={results.filter(item => item.mode === "Shared bike").length} hint="For your current filters"/>
+          <article className="kpi" aria-labelledby="bicycle-stations-label">
+            <h2 className="overview-category-heading" id="bicycle-stations-label"><CategoryIcon category="Shared bike"/>Shared-bike stations</h2>
+            <strong>{bicycleStations.size}</strong><small>Simulated station locations</small>
+          </article>
         </section>
         <section className="filters" aria-label="Dashboard filters">
           <div><span>Transport type</span>{modes.map(mode => <Filter key={mode} label={mode} active={activeModes.includes(mode)} onClick={() => toggleMode(mode)}/>)}</div>
           <div><label>Bus route <select value={busRouteId} onChange={event => { setBusRouteId(event.target.value); select(null); }}>
-            <option value="">All routes</option>{busRoutes.map(route => <option key={route.id} value={route.id}>{route.id === brtSunway.id ? route.name : route.id}</option>)}
+            <option value="">All routes</option>{busRouteOptions.map(route => <option key={route.id} value={route.id}>
+              {!inKlangValley || route.id === brtSunway.id ? route.name : route.id}</option>)}
           </select></label></div>
           <div><span>Service status</span>{statuses.map(status => <Filter key={status} label={status} active={activeStatus.includes(status)} onClick={() => setStatuses(items => toggle(items, status))}/>)}</div>
           <div><span>Information</span><Filter label={SIMULATED} active={showSimulated} onClick={() => setShowSimulated(value => !value)}/></div>
         </section>
         <section className="two-col" id="map" tabIndex={-1}>
           <div className="panel">
-            <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length)} · {stationCount} stations and stops</p></div><button className="secondary" onClick={() => {
+            <div className="panel-title"><div><h2>Transport map</h2><p>{resultCountLabel(results.length + visibleStaticStops.length)} · {stationCount} stations and stops</p></div><button className="secondary" onClick={() => {
               if (alertRequest || nearbyRequest) select(null);
               setResetSignal(signal => signal + 1);
             }}>Fit to region</button></div>
-            <TransitMap records={results} busRouteId={busRouteId} showBusRoutes={showSimulated && transport.bus} selected={record} onSelect={select} resetSignal={resetSignal}
+            <TransitMap region={region} staticBusStops={visibleStaticStops}
+              onSelectStaticStop={stop => selectStation({ ...stop, type: "BUS_STOP", sourceIds: [stop.sourceId], stop })}
+              records={results} busRouteId={busRouteId}
+              showBusRoutes={inKlangValley && showSimulated && transport.bus} selected={record} onSelect={select} resetSignal={resetSignal}
               railLines={mapRailLines} showSharedBike={transport.sharedBike} userLocation={nearbyLocation.location}
               stationSearch={stationSearch.request} searchActive={query.trim().length > 0} onSearchPopupClose={stationSearch.dismiss}
               onMicromobilityData={setMicromobility}
@@ -328,19 +424,16 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
                   else { stationSearch.cancel(); setAlertNavigation(null); }
                   setQuery(value);
                 }}
-                onSelect={entity => { setAlertNavigation(null); stationSearch.selectEntity(entity); }} canSelect={canSelectStation}/>}
+                onSelect={entity => selectStation(entity)} canSelect={canSelectStation}/>}
               journey={journey} navigation={navigation} onLocate={() => {
                 if (!journey) return;
                 setPreview(null);
                 setNavigation({ journeyId: journey.currentJourneyId, action: (navigation?.action ?? 0) + 1 });
-              }} trains={snapshot.trains} bikes={snapshot.linkBike.stations} now={now} onRefresh={refresh}/>
+              }} trains={snapshot.trains} bikes={inKlangValley ? [] : snapshot.linkBike.stations} now={now} onRefresh={refresh}/>
           </div>
           <NearbyPublicTransport {...nearbyLocation} candidates={nearbyCandidates} routeColours={routeColours}
             busCoverage={!staticBus ? "loading" : staticBus.unavailable.length ? "partial" : "ready"}
-            selectedId={nearbyRequest?.stationId} onSelect={candidate => {
-              setAlertNavigation(null);
-              stationSearch.selectEntity(candidate, undefined, true);
-            }} onClear={() => {
+            selectedId={nearbyRequest?.stationId} onSelect={candidate => selectStation(candidate, true)} onClear={() => {
               select(null);
               setResetSignal(signal => signal + 1);
             }}/>
@@ -354,27 +447,8 @@ export default function Dashboard({ initialTime }: { initialTime: number }) {
                     displayedAlertIds={displayedAlertIds}/>}/>
                 <details className="station-technical"><summary>Technical information</summary><Details record={record}/></details>
               </> : record ? <><h2>{record.name}</h2><Details record={record}/></>
-              : <><h2>Select a vehicle or stop</h2><p>Choose a map marker or an item in the list to see journey information.</p></>}
+              : <><h2>Select a vehicle or stop</h2><p>Choose a map marker or search for a station to see transport details.</p></>}
           </aside>
-        </section>
-        <section className="chart-grid" aria-label="Data visualisations">
-          <div className="panel"><h2>Transport by mode</h2><p>For your current filters</p><div className="chart"><ResponsiveContainer>
-            <BarChart data={byMode}><XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0}/><YAxis allowDecimals={false}/><Tooltip/>
-              <Bar dataKey="records" radius={[4,4,0,0]}>{byMode.map(item => <Cell key={item.name} fill={colours[item.name]}/>)}</Bar></BarChart>
-          </ResponsiveContainer></div></div>
-        </section>
-        <section className="panel" id="records">
-          <div className="panel-title"><div><h2>Vehicles, routes and stops</h2><p>Browse vehicles and stations, including optional map overlays.</p></div><span className="results-count">{resultCountLabel(results.length)}</span></div>
-          <div className="table-scroll"><table><thead><tr><th>Name / identifier</th><th>Mode</th><th>Route or station</th><th>Service status</th><th>Information</th><th>Last updated</th><th>Action</th></tr></thead>
-            <tbody>{results.map(item => <tr key={item.id}><td><strong>{passengerName(item.name)}</strong></td>
-              <td><span className="mode-dot" style={{ background: colours[item.mode] }}/> {item.mode}</td>
-              <td>{item.lineNames?.join(" · ") || item.route || item.station}</td><td>{item.status}</td><td><b className="mode-badge">{SIMULATED}</b></td>
-              <td>{item.reportedAt ? formats.format(now) : "—"}</td><td><button className="link-button" onClick={() => {
-                setAlertNavigation(null);
-                stationSearch.select(item);
-              }}>View details</button></td>
-            </tr>)}</tbody></table></div>
-          {results.length === 0 && <div className="empty"><strong>No matching vehicles or stops</strong><p>Change the filters or restore defaults.</p><button className="secondary" onClick={reset}>Restore defaults</button></div>}
         </section>
         <section className="about" id="about" tabIndex={-1}><h2>About this information</h2><p>Vehicle movements, timetables, notices and bike availability follow a shared simulation clock. ERL, Shah Alam and BRT Sunway use published station and route geography. Older simulation alignments and shared station marker locations are approximate.</p>
           <p>Bus paths and stop order come from published GTFS. Positions, ETAs and headways are simulated ({busRoutes.filter(route => route.id !== brtSunway.id).map(route => route.id + " " + route.period / route.fleetSize / MINUTE + " min").join(" · ")}). Feeder bus stop markers are projected onto route paths, and boarding bays remain unverified.</p>
@@ -394,10 +468,6 @@ function toggle<T>(items: T[], item: T) {
 
 function Filter({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return <button aria-pressed={active} className={active ? "filter active" : "filter"} onClick={onClick}>{label}</button>;
-}
-
-function Kpi({ label, value, hint }: { label: string; value: number; hint: string }) {
-  return <article className="kpi"><span>{label}</span><strong>{value}</strong><small>{hint}</small></article>;
 }
 
 function Details({ record }: { record: TransitRecord }) {

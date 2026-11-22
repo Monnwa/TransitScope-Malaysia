@@ -3,6 +3,7 @@ import "./globals.css";
 import "./map-search.css";
 import "./service-updates.css";
 import "./dashboard-navigation.css";
+import "./overview.css";
 export const metadata: Metadata = {
   title: "TransitScope Malaysia",
   description: "Public transport locations, stops and service times in Malaysia",

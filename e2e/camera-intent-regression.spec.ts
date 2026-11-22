@@ -1,6 +1,6 @@
+import { chooseSearchStation, selectVehicle } from "./map-station";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { busRecords } from "../lib/simulation/vehicles";
-import { railNetwork } from "../lib/simulation/network";
 import { renderedStationPosition } from "./map-station";
 
 const start = Date.parse("2026-11-14T04:00:00Z");
@@ -23,7 +23,9 @@ async function prepare(page: Page, mobile: boolean) {
 }
 const camera = (map: Locator) => map.evaluate(element => ({ latitude: element.getAttribute("data-camera-latitude"), longitude: element.getAttribute("data-camera-longitude"), zoom: element.getAttribute("data-camera-zoom") }));
 async function focus(page: Page, map: Locator) {
-  await page.getByRole("row", { name: /^Bus T401-01 / }).getByRole("button", { name: "View details" }).click();
+  const clearSearch = page.getByRole("button", { name: "Clear station search" });
+  if (await clearSearch.isVisible()) await clearSearch.click();
+  await selectVehicle(page, "Bus T401-01");
   const controls = page.getByRole("group", { name: "Map camera" });
   await controls.getByRole("button", { name: /Locate bus|Return to Vehicle/ }).click();
   await expect(map).toHaveAttribute("data-camera-state", "VEHICLE_FOCUS"); await frames(page);
@@ -41,16 +43,16 @@ test("rail selection survives layout and manual exploration, while clear, Overvi
   const { map, external } = await prepare(page, isMobile);
   for (const [name, latitude, longitude] of [["Tanjung Malim", 3.685142, 101.518165], ["Rawang", 3.318955, 101.575012]] as const) {
     await focus(page, map);
-    await page.getByRole("row", { name: new RegExp("^" + name + " ") }).getByRole("button", { name: "View details" }).click();
+    await chooseSearchStation(page, name);
     await map.scrollIntoViewIfNeeded(); await frames(page);
     await expect(map).toHaveAttribute("data-camera-state", "OVERVIEW"); await expect(map).toHaveAttribute("data-camera-intent", "selection");
     await expect(map.locator(".rail-station-popup")).toHaveCount(1);
     await expect(map.locator(".rail-station-popup strong")).toHaveText(name);
     // The camera now reserves space for the automatic popup; verify the actual station point instead of the offset camera center.
-    const index = railNetwork.stations.findIndex(station => station.name === name);
-    const point = await renderedStationPosition(map.locator(".rail-station").nth(index));
-    expect(point.latitude).toBeCloseTo(latitude, 4);
-    expect(point.longitude).toBeCloseTo(longitude, 4);
+    const markers = await map.locator('.rail-station:not([d="M0 0"])').all();
+    const points = await Promise.all(markers.map(marker => renderedStationPosition(marker).catch(() => null)));
+    expect(points.some(point => point && Math.abs(point.latitude - latitude) < .00005 &&
+      Math.abs(point.longitude - longitude) < .00005)).toBe(true);
     const selectedView = await camera(map);
     await page.evaluate(() => { window.dispatchEvent(new Event("scroll")); window.dispatchEvent(new Event("resize")); }); await frames(page);
     expect(await camera(map)).toEqual(selectedView);

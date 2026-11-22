@@ -93,8 +93,6 @@
 .service-alert-meta dt { font-weight: 700; }
 .service-alert-meta dd { margin: 0; }
 .service-alert-action, .service-alert > a { justify-self: start; min-height: 24px; text-align: left; color: var(--blue); }
-.chart-grid > :only-child { grid-column: 1 / -1; }
-
 @keyframes service-alerts-enter {
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }

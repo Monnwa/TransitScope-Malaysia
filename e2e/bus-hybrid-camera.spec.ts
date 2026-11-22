@@ -1,3 +1,4 @@
+import { selectVehicle } from "./map-station";
 import { expect, test, type Locator, type Page, type TestInfo } from "@playwright/test";
 import { busRecords } from "../lib/simulation/vehicles";
 
@@ -25,7 +26,7 @@ async function prepare(page: Page, mobile: boolean, dimensions?: { width: number
 const camera = async (map: Locator) => ({ latitude: await map.getAttribute("data-camera-latitude"),
   longitude: await map.getAttribute("data-camera-longitude"), zoom: await map.getAttribute("data-camera-zoom") });
 async function selectBus(page: Page) {
-  await page.getByRole("row", { name: /^Bus T401-01 / }).getByRole("button", { name: "View details" }).click();
+  await selectVehicle(page, "Bus T401-01");
   await expect(page.getByRole("region", { name: "Bus journey detail" })).toBeVisible();
 }
 async function advance(page: Page, time: number) {
@@ -236,7 +237,7 @@ test("selecting a different bus does not transfer following without Return", asy
   await controls.getByRole("button", { name: "Locate bus", exact: true }).click();
   await expect(map).toHaveAttribute("data-camera-state", "VEHICLE_FOCUS");
   const previous = await camera(map);
-  await page.getByRole("row", { name: /^Bus T402-01 / }).getByRole("button", { name: "View details" }).click();
+  await selectVehicle(page, "Bus T402-01");
   await expect(map).toHaveAttribute("data-camera-state", "FREE_EXPLORE");
   await expect(map).toHaveAttribute("data-camera-vehicle", "bus:T402:01");
   await expect.poll(() => camera(map)).toEqual(previous);

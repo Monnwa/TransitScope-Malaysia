@@ -1,3 +1,5 @@
+import { railNetwork } from "../lib/simulation/network";
+import { chooseSearchStation, selectVehicle } from "./map-station";
 import { expect, test, type Locator, type Page, type TestInfo } from "@playwright/test";
 import { writeFileSync } from "node:fs";
 import { setMapZoom } from "./map-zoom";
@@ -27,8 +29,7 @@ async function prepare(page: Page, width: number) {
   return { map, external };
 }
 async function bus(page: Page, route: string, mobile: boolean) {
-  await page.getByRole("row").filter({ has: page.getByRole("cell", { name: "Bus " + route + "-01", exact: true }) })
-    .getByRole("button", { name: "View details" }).click();
+  await selectVehicle(page, "Bus " + route + "-01");
   if (mobile) await page.getByRole("button", { name: "Collapse journey", exact: true }).click();
   await frames(page);
 }
@@ -188,14 +189,12 @@ for (const name of ["Taman Midah", "Maluri", "KL Sentral"]) {
     test.setTimeout(120_000);
     for (const width of isMobile ? [375, 390] : [1101]) {
       const { map, external } = await prepare(page, width);
-      const names = await page.locator("#records tbody tr").evaluateAll(rows => rows.filter(r => {
-        const cells = r.querySelectorAll("td"); return ["MRT", "LRT", "Monorail", "KTM"].includes(cells[1]?.textContent?.trim() ?? "") && cells[3]?.textContent?.trim() === "Station available";
-      }).map(r => r.querySelector("td")!.textContent!.trim()));
-      const index = names.indexOf(name); expect(index).toBeGreaterThanOrEqual(0);
-      await page.getByRole("row").filter({ has: page.getByRole("cell", { name, exact: true }) }).getByRole("button", { name: "View details" }).click();
-      // View details now opens the native popup. Retire it before testing a separate marker click at zoom 12.
+      const index = railNetwork.stations.filter(station => station.mode !== "Bus").findIndex(station => station.name === name);
+      expect(index).toBeGreaterThanOrEqual(0);
+      await chooseSearchStation(page, name);
       const automatic = map.locator(".leaflet-popup").filter({ has: page.locator(".rail-station-popup") });
       await expect(automatic).toHaveCount(1); await close(automatic);
+      await page.getByRole("button", { name: "Clear station search" }).click();
       await map.scrollIntoViewIfNeeded(); await setMapZoom(map, 12);
       await map.locator(".rail-station").nth(index).click();
       const popup = map.locator(".leaflet-popup").filter({ has: page.locator(".rail-station-popup") });
@@ -213,8 +212,7 @@ test("LinkBike station intent, availability popup and train markers remain funct
     await expect(map.locator(".estimated-train-icon")).not.toHaveCount(0);
     const train = map.locator(".estimated-train-icon").first();
     await map.scrollIntoViewIfNeeded();
-    const trainName = (await train.getAttribute("title"))!.split(" towards ")[0];
-    await page.getByRole("row").filter({has:page.getByRole("cell",{name:trainName,exact:true})}).getByRole("button",{name:"View details"}).click();
+
     await frames(page);
     const trainMap = (await map.boundingBox())!;
     await putAt(page, map, train, trainMap.width / 2, trainMap.height - 60);
@@ -224,6 +222,7 @@ test("LinkBike station intent, availability popup and train markers remain funct
     await evidence(page, info, "train-" + width, trainPopup);
     await close(trainPopup);
     await expect(page.getByRole("checkbox", { name: "Show LinkBike stations" })).toHaveCount(0);
+    await page.getByRole("combobox", { name: "Region" }).selectOption("Penang");
     await expect(map.locator(".linkbike-marker")).not.toHaveCount(0);
     const bike = map.locator(".linkbike-marker").first();
     const bikeName = (await bike.getAttribute("title"))!.replace(/^LinkBike: /, "");
@@ -232,8 +231,7 @@ test("LinkBike station intent, availability popup and train markers remain funct
     await expect(map.locator(".linkbike-popup")).toBeVisible();
     await close(map.locator(".leaflet-popup").filter({ has: page.locator(".linkbike-popup") }));
     await page.getByRole("button", { name: "Clear station search" }).click();
-    await page.getByRole("row").filter({has:page.getByRole("cell",{name:bikeName,exact:true})}).getByRole("button",{name:"View details"}).click();
-    await expect(map).toHaveAttribute("data-camera-intent", "selection");
+
     await map.scrollIntoViewIfNeeded(); await frames(page);
     await bike.press("Enter");
     const popup = map.locator(".leaflet-popup").filter({ has: page.locator(".linkbike-popup") });

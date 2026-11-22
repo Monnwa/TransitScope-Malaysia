@@ -20,8 +20,8 @@
   .bus-journey .bus-locate{min-height:44px}
 }
 
-/* Allow grid/flex content to shrink at tablet sizes instead of inheriting table width. */
-.content,.two-col>.panel,.chart-grid>.panel{min-width:0}
+/* Allow grid and flex content to shrink at tablet sizes. */
+.content,.two-col>.panel{min-width:0}
 @media(min-width:721px) and (max-width:1000px){header .search{min-width:0}header .fresh{max-width:200px;flex-wrap:wrap}}
 @media(max-width:720px){
   .bus-journey-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 8px}

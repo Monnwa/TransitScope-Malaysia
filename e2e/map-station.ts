@@ -1,4 +1,25 @@
-import type { Locator } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
+
+export const transportSearch = (page: Page) => page.getByRole("textbox", { name: "Search vehicles, routes or stations" });
+
+export async function chooseSearchStation(page: Page, name: string, query = name.slice(0, -1)) {
+  const search = transportSearch(page);
+  if (await search.inputValue() === query) await search.click();
+  else await search.fill(query);
+  await page.getByRole("listbox", { name: "Station search results" }).getByRole("option")
+    .filter({ has: page.getByText(name, { exact: true }) }).click();
+}
+
+export async function selectVehicle(page: Page, name: string) {
+  await page.getByRole("combobox", { name: "Vehicle details" }).selectOption({ label: name });
+}
+
+export async function selectSimulatedBusStop(page: Page, name: string) {
+  await transportSearch(page).fill(name);
+  const stop = page.locator(".bus-network-stop").first();
+  await expect(stop).toBeAttached();
+  await stop.dispatchEvent("click");
+}
 
 /** Recover WGS84 from the actual rendered marker and camera, independently of navigation intent data. */
 export async function renderedStationPosition(marker: Locator) {

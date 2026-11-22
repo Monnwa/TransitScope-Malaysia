@@ -10,6 +10,9 @@ const paths = {
   close: <path d="m6 6 12 12M18 6 6 18"/>,
   collapse: <path d="m14 6-6 6 6 6"/>,
   expand: <path d="m10 6 6 6-6 6"/>,
+  bus: <><rect x="4" y="3" width="16" height="16" rx="3"/><path d="M4 12h16M8 19v2m8-2v2m-8-5h.01m8 0h.01"/></>,
+  train: <><rect x="5" y="3" width="14" height="15" rx="4"/><path d="M5 11h14m-7-8v8M9 15h.01m6 0h.01M9 18l-3 3m9-3 3 3"/></>,
+  bike: <><circle cx="5.5" cy="17" r="3.5"/><circle cx="18.5" cy="17" r="3.5"/><path d="M5.5 17 10 9l4 8H5.5m13 0-3-10H19M8 9h4"/></>,
 } satisfies Record<string, ReactNode>;
 
 export default function DashboardIcon({ name }: { name: keyof typeof paths }) {

@@ -5,8 +5,8 @@ import "@/app/markers.css";
 import "@/app/estimated-trains.css";
 import "@/app/map-camera.css";
 import L from "leaflet";
-import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
-import { CircleMarker, MapContainer, Marker, Pane, Polyline, Popup, TileLayer, Tooltip, useMapEvent } from "react-leaflet";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { CircleMarker, MapContainer, Marker, Pane, Polyline, Popup, TileLayer, Tooltip, useMap, useMapEvent } from "react-leaflet";
 import type { RailLine } from "@/lib/rail-model";
 import type { Record as TransitRecord } from "@/lib/transit-data";
 import { splitRoutePath } from "@/lib/route-projection";
@@ -34,8 +34,11 @@ import RailRouteLayers from "./rail-route-layers";
 import RouteIndicators from "./route-indicators";
 import { brtSunway, expandedServiceById } from "@/lib/expanded-services";
 import type { UserLocation } from "@/lib/nearby-transit";
+import { busStopRegion, type Region } from "@/lib/dashboard-region";
+import type { SearchBusStop } from "@/lib/bus-stop-search";
 
 const center: [number, number] = [3.142, 101.699];
+const noStaticBusStops: SearchBusStop[] = [];
 const userIcon = L.divIcon({ className: "transport-icon user-icon", html: "<span></span>", iconSize: [22, 22], iconAnchor: [11, 11] });
 
 function DismissSelectionOnBackground({ dismiss }: { dismiss?: () => void }) {
@@ -47,9 +50,35 @@ function DismissSelectionOnBackground({ dismiss }: { dismiss?: () => void }) {
   return null;
 }
 
-export default function TransitMap({ records, busRouteId, showBusRoutes, showSharedBike, selected, onSelect, resetSignal, railLines, search, stationSearch,
+function StaticBusStopLayer({ stops, selectedId, onSelect }: {
+  stops: SearchBusStop[]; selectedId?: string; onSelect?: (stop: SearchBusStop) => void;
+}) {
+  const map = useMap();
+  const onClick = useRef(onSelect);
+  onClick.current = onSelect;
+  useEffect(() => {
+    if (!stops.length) return;
+    const renderer = L.canvas({ padding: .3 });
+    const layer = L.layerGroup(stops.filter(stop => stop.id !== selectedId).map(stop =>
+      L.circleMarker(stop.position, { renderer, radius: 4, color: "#2563eb", weight: 1.5, fillColor: "#fff", fillOpacity: 1,
+        bubblingMouseEvents: false }).on("click", () => onClick.current?.(stop)))).addTo(map);
+    map.getContainer().dataset.staticBusStops = String(stops.length);
+    return () => {
+      layer.remove();
+      renderer.remove();
+      delete map.getContainer().dataset.staticBusStops;
+    };
+  }, [map, stops, selectedId]);
+  return null;
+}
+
+export default function TransitMap({ region = "Klang Valley", staticBusStops = noStaticBusStops, onSelectStaticStop,
+  records, busRouteId, showBusRoutes, showSharedBike, selected, onSelect, resetSignal, railLines, search, stationSearch,
   searchActive = false, onSearchPopupClose, onMicromobilityData, journey, navigation, onLocate, trains, bikes, now, onRefresh, userLocation }: {
   records: TransitRecord[];
+  region?: Region;
+  staticBusStops?: SearchBusStop[];
+  onSelectStaticStop?: (stop: SearchBusStop) => void;
   busRouteId: string;
   showBusRoutes: boolean;
   showSharedBike: boolean;
@@ -79,7 +108,11 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
   const highlighted = useMemo(() => stationLines.length ? stationLines : routeHighlight.filter(id => lineById.has(id)),
     [stationLines, routeHighlight, lineById]);
   const railRequest = stationSearch && (!stationSearch.type || stationSearch.type === "RAIL_STATION") ? stationSearch : null;
-  const busRequest = stationSearch?.type === "BUS_STOP" && (showBusRoutes || stationSearch.alert || stationSearch.nearby) ? stationSearch : null;
+  const busRequest = stationSearch?.type === "BUS_STOP" && (showBusRoutes ||
+    (region === "Penang" && busStopRegion(stationSearch.stop) === "Penang") || stationSearch.alert || stationSearch.nearby)
+    ? stationSearch : null;
+  const staticBusBounds = useMemo(() => staticBusStops.length ? L.latLngBounds(staticBusStops.map(stop => stop.position)) : null,
+    [staticBusStops]);
   const nearbyBusRoutes = useMemo(() => [
     ...(busRequest?.nearby ? busRequest.stop.routes.flatMap(route => [route.id, route.name]) : []),
     ...(railRequest?.nearby && selected?.railLines?.includes(brtSunway.id) ? [brtSunway.id] : []),
@@ -120,7 +153,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
     splitRoutePath(selectedJourney.path, selectedJourney.segment, selectedJourney.position) : null;
   const activeNavigation = navigation?.journeyId === selectedJourney?.journeyId ? navigation : null;
   return <section className="rail-map-group">
-    <EstimatedTrainControls now={now} count={visibleTrains.length} trains={trains} lines={railLines} onRefresh={onRefresh}/>
+    {region === "Klang Valley" && <EstimatedTrainControls now={now} count={visibleTrains.length} trains={trains} lines={railLines} onRefresh={onRefresh}/>}
     <div className="map-camera-frame">
     <div className="map-camera-bar" ref={setCameraControlsHost}/>
     <div className="map-wrap" aria-label="Interactive transport map" data-alert-navigation={stationSearch?.alert ? "active" : undefined}
@@ -129,10 +162,12 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
         {search && <MapSearchOverlay>{search}</MapSearchOverlay>}
         <TileLayer {...lightBasemap}/>
         <PopupControlAvoidance selectedRecordId={selected?.id} journeyVehicleId={selectedJourney?.vehicle.id}/>
-        <BusMapCamera selected={selected} vehicleVisible={visibleIds.has(selected?.id ?? "")} selectedRouteId={busRouteId}
+        <BusMapCamera region={region} staticBusBounds={staticBusBounds} searchActive={searchActive}
+          selected={selected} vehicleVisible={visibleIds.has(selected?.id ?? "")} selectedRouteId={busRouteId}
           enabled={showBusRoutes} resetSignal={resetSignal} journey={journey} navigation={navigation}
           controlsHost={cameraControlsHost} onLocate={onLocate} focusedRailRoute={focusedRoute}/>
         <DismissSelectionOnBackground dismiss={selected || stationSearch ? () => onSelect(null) : undefined}/>
+        <StaticBusStopLayer stops={staticBusStops} selectedId={busRequest?.stationId} onSelect={onSelectStaticStop}/>
         <BusRouteLayers selectedRouteId={busRouteId} emphasizedRouteId={emphasizedRouteId} enabled={showBusRoutes} revealedRouteIds={nearbyBusRoutes}/>
         <RailRouteLayers lines={railLines} highlighted={highlighted} stationLines={stationLines} onHighlight={toggleHighlight}/>
         <Pane name="bus-journey-route" style={{ zIndex: 450 }}>
@@ -215,7 +250,7 @@ export default function TransitMap({ records, busRouteId, showBusRoutes, showSha
         <Pane name="simulated-trains" style={{ zIndex: 590 }}>
           <EstimatedTrainLayer trains={visibleTrains} selected={selected?.id} onSelect={onSelect} highlighted={highlighted}/>
         </Pane>
-        <MicromobilityLayer visible={showSharedBike} searchActive={searchActive} searchRequest={micromobilityRequest}
+        <MicromobilityLayer region={region} visible={showSharedBike} searchActive={searchActive} searchRequest={micromobilityRequest}
           onSearchClose={onSearchPopupClose} onData={onMicromobilityData}/>
         {showSharedBike && <LinkBikeLayer stations={bikes} records={mapRecords}
           onSelect={onSelect} searchActive={searchActive} searchRequest={micromobilityRequest}

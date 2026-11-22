@@ -15,7 +15,7 @@ async function prepare(page: Page) {
   const response = await micromobility;
   expect(response.ok()).toBe(true);
   const { stations } = await response.json() as { stations: MicromobilityStation[] };
-  await expect(markers(page)).toHaveCount(stations.length);
+  await expect(markers(page)).toHaveCount(stations.filter(station => station.state !== "Penang").length);
   return stations;
 }
 
@@ -99,7 +99,7 @@ test("static bus search navigates by real stop ID and retains route details", as
   await page.screenshot({ path: info.outputPath("bus-stop-search.png") });
 });
 
-test("all micromobility popups open with a single marker and clearing restores all operators", async ({ page, isMobile }, info) => {
+test("micromobility popups open with a single marker and clearing restores the region's layers", async ({ page, isMobile }, info) => {
   test.setTimeout(60_000);
   const stations = await prepare(page);
   await input(page).fill("no matching station zz");
@@ -141,10 +141,13 @@ test("all micromobility popups open with a single marker and clearing restores a
     element.getAttribute("data-camera-latitude"), element.getAttribute("data-camera-longitude"), element.getAttribute("data-camera-zoom"),
   ]);
   await page.getByRole("button", { name: "Clear station search" }).click();
-  await expect(markers(page)).toHaveCount(stations.length);
-  await expect(map(page).locator(".linkbike-marker")).toHaveCount(27);
+  const penang = await page.getByRole("combobox", { name: "Region" }).inputValue() === "Penang";
+  const regionalStations = stations.filter(station => (station.state === "Penang") === penang);
+  await expect(markers(page)).toHaveCount(regionalStations.length);
+  await expect(map(page).locator(".linkbike-marker")).toHaveCount(penang ? 27 : 0);
   for (const operator of ["helloride", "tryke", "beam"]) {
-    await expect(map(page).locator(`.micromobility-${operator}`)).toHaveCount(16);
+    await expect(map(page).locator(`.micromobility-${operator}`)).toHaveCount(regionalStations.filter(station =>
+      station.operator.toLowerCase() === operator).length);
   }
   expect(await map(page).evaluate(element => [
     element.getAttribute("data-camera-latitude"), element.getAttribute("data-camera-longitude"), element.getAttribute("data-camera-zoom"),

@@ -27,10 +27,14 @@ export function generateInventory(stationId: string): z.infer<typeof simulatedIn
   return { availableBicycles, totalDocks, inventoryOrigin: "SIMULATED" };
 }
 
+export const micromobilityBounds = {
+  "Klang Valley": [[2.85, 101.45], [3.30, 101.85]],
+  Penang: [[5.25, 100.18], [5.50, 100.53]],
+} as const;
+
 export function inMicromobilityCoverage(latitude: number, longitude: number) {
-  return Number.isFinite(latitude) && Number.isFinite(longitude) && (
-    latitude >= 2.85 && latitude <= 3.30 && longitude >= 101.45 && longitude <= 101.85 ||
-    latitude >= 5.25 && latitude <= 5.50 && longitude >= 100.18 && longitude <= 100.53);
+  return Object.values(micromobilityBounds).some(([[south, west], [north, east]]) =>
+    latitude >= south && latitude <= north && longitude >= west && longitude <= east);
 }
 
 export const micromobilityStationSchema = z.object({

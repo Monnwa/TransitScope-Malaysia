@@ -13,8 +13,11 @@ import type { RailLine } from "@/lib/rail-model";
 import type { SimulatedBusJourney } from "@/lib/simulation/vehicles";
 import type { JourneyNavigation } from "./simulated-bus-panel";
 import { useBusCamera } from "./bus-camera-context";
+import type { Region } from "@/lib/dashboard-region";
+import { micromobilityBounds } from "@/lib/micromobility";
 
 type Props = { selected?: TransitRecord; vehicleVisible: boolean; selectedRouteId: string; enabled: boolean;
+  region?: Region; staticBusBounds?: L.LatLngBounds | null; searchActive?: boolean;
   resetSignal: number; journey: SimulatedBusJourney | null; navigation: JourneyNavigation | null;
   controlsHost: HTMLElement | null; onLocate: () => void; focusedRailRoute?: { line: RailLine } | null };
 
@@ -104,16 +107,24 @@ export default function BusMapCamera(props: Props) {
   }, [map, area, guard, publish]);
   const overview = useCallback(() => {
     const current = latest.current.props, safe = area();
-    if (!safe) return;
+    const switchingFromPenang = current.region === "Klang Valley" && map.getCenter().lat > 4;
+    if (!safe && current.region !== "Penang" && !switchingFromPenang) return;
     const size = map.getSize();
     guard.run(() => {
       map.stop();
       // A station popup must not autopan back to its old anchor during an explicit overview zoom.
       retireStationPopups();
-      if (current.enabled) map.fitBounds(busRouteViewport(current.selectedRouteId), {
-        paddingTopLeft: [safe.left, safe.top], paddingBottomRight: [size.x - safe.right, size.y - safe.bottom], maxZoom: 14, animate: false,
-      });
-      else if (current.resetSignal) map.setView([3.142, 101.699], 13, { animate: false });
+      const fitOptions = {
+        paddingTopLeft: safe ? L.point(safe.left, safe.top) : L.point(18, 55),
+        paddingBottomRight: safe ? L.point(size.x - safe.right, size.y - safe.bottom) : L.point(18, 18),
+        maxZoom: 14, animate: false,
+      };
+      if (current.region === "Penang") {
+        const [southwest, northeast] = micromobilityBounds.Penang;
+        map.fitBounds(current.selectedRouteId && current.staticBusBounds?.isValid()
+          ? current.staticBusBounds : L.latLngBounds([L.latLng(...southwest), L.latLng(...northeast)]), fitOptions);
+      } else if (current.enabled) map.fitBounds(busRouteViewport(current.selectedRouteId), fitOptions);
+      else if (current.resetSignal || switchingFromPenang) map.setView([3.142, 101.699], 13, { animate: false });
     });
     publish();
   }, [map, area, guard, publish, retireStationPopups]);
@@ -140,7 +151,7 @@ export default function BusMapCamera(props: Props) {
   useLayoutEffect(() => {
     if (lastReset.current !== props.resetSignal) { lastReset.current = props.resetSignal; scrollToMap(); }
     dispatch({ type: "ROUTE" });
-  }, [dispatch, props.selectedRouteId, props.enabled, props.resetSignal, scrollToMap]);
+  }, [dispatch, props.selectedRouteId, props.enabled, props.resetSignal, props.region, scrollToMap]);
   useEffect(() => {
     if (props.focusedRailRoute) dispatch({ type: "RAIL_ROUTE", points: props.focusedRailRoute.line.paths.flat() });
   }, [dispatch, props.focusedRailRoute]);
@@ -268,7 +279,7 @@ export default function BusMapCamera(props: Props) {
         if (mode === "OVERVIEW" && latest.current.state.viewIntent === "bus") {
           const point = position();
           if (point && currentPopup()) centerPoint(point, map.getZoom(), true);
-          else overview();
+          else if (!latest.current.props.searchActive) overview();
         }
         else if (mode === "VEHICLE_FOCUS") {
           const point = position(), safe = area();

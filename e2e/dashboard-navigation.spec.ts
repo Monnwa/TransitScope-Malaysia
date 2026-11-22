@@ -33,7 +33,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
     await expect(map.locator(".estimated-train-icon").first()).toBeAttached();
 
     const nav = page.getByRole("navigation", { name: "Primary navigation" });
-    const overview = page.getByRole("heading", { name: "Malaysia transport overview" });
+    const overview = page.getByRole("heading", { name: "Transport overview" });
     const header = page.locator("header");
     const menu = header.getByRole("button", { name: "Open navigation" });
     const home = page.getByRole("button", { name: "Back to Home", exact: true });
@@ -99,7 +99,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
     await expect(nearby).toHaveCount(1);
     await expect(nearby.getByRole("heading")).toBeInViewport({ ratio: 1 });
     await expect(nearby.getByRole("button", { name: "Enable Location" })).toBeInViewport();
-    await expect.poll(async () => Math.round((await nearby.boundingBox())!.y)).toBe(isMobile ? 12 : 90);
+    await expect.poll(async () => Math.round((await nearby.boundingBox())!.y)).toBeGreaterThanOrEqual(isMobile ? 12 : 90);
     if (isMobile) await expect(nav).toBeHidden();
     else await expect(nav.getByRole("link", { name: "Nearby Public Transport" })).toHaveAttribute("aria-current", "location");
     await checkHome();

@@ -1,3 +1,4 @@
+import { selectVehicle } from "./map-station";
 import { expect, test, type Locator, type Page, type TestInfo } from "@playwright/test";
 import { join } from "node:path";
 import { setMapZoom } from "./map-zoom";
@@ -30,7 +31,7 @@ async function openMap(page: Page, mobile: boolean) {
 
 async function selectT402(page: Page, mobile: boolean) {
   const detail = page.getByRole("region", { name: "Bus journey detail" });
-  await page.getByRole("row", { name: /^Bus T402-01 / }).getByRole("button", { name: "View details" }).click();
+  await selectVehicle(page, "Bus T402-01");
   await expect(detail.getByRole("heading", { name: /Bus T402-01/ })).toBeVisible();
   if (mobile) await detail.getByRole("button", { name: "Collapse journey" }).tap();
   return detail;

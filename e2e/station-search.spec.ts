@@ -1,3 +1,4 @@
+import { chooseSearchStation, selectVehicle, selectSimulatedBusStop } from "./map-station";
 import { expect, test, type Page } from "@playwright/test";
 
 async function prepare(page: Page) {
@@ -11,9 +12,7 @@ async function prepare(page: Page) {
 const search = (page: Page) => page.getByRole("textbox", { name: "Search vehicles, routes or stations" });
 const popup = (page: Page) => page.locator(".rail-station-popup-shell");
 async function choose(page: Page, name: string) {
-  await search(page).fill(name);
-  await page.getByRole("row").filter({ has: page.getByRole("cell", { name, exact: true }) })
-    .getByRole("button", { name: "View details" }).click();
+  await chooseSearchStation(page, name);
   await expect(popup(page)).toHaveCount(1);
   await expect(popup(page)).toHaveCSS("opacity", "1");
   await expect(popup(page).locator("strong")).toHaveText(name);
@@ -28,7 +27,7 @@ test("search selects merged TRX, opens native popup, repeats and replaces select
   const map = page.locator(".leaflet-container");
   await expect(map).toHaveAttribute("data-station-search-id", "rail:tun-razak-exchange:MRT1");
   await expect(map).toHaveAttribute("data-camera-zoom", "17");
-  await expect(map.locator(".rail-station")).toHaveCount(1);
+  await expect(map.locator(".rail-station-popup-shell")).toHaveCount(1);
   await expect(popup(page)).toContainText("MRT Kajang Line (MRT1)");
   await expect(popup(page)).toContainText("MRT Putrajaya Line (MRT2)");
   await expect(popup(page)).toContainText("Interchange");
@@ -48,8 +47,7 @@ test("search selects merged TRX, opens native popup, repeats and replaces select
   await page.screenshot({ path: info.outputPath("trx-search-popup.png") });
   await popup(page).getByRole("button", { name: "Close popup" }).click();
   await expect(popup(page)).toHaveCount(0);
-  await page.getByRole("row").filter({ has: page.getByRole("cell", { name: "Tun Razak Exchange", exact: true }) })
-    .getByRole("button", { name: "View details" }).click();
+  await chooseSearchStation(page, "Tun Razak Exchange");
   await expect(popup(page)).toContainText("Tun Razak Exchange");
   await expect(map.locator(".rail-station")).toHaveCount(1);
   await expect(map.locator(".rail-alignment")).toHaveCount(11);
@@ -64,18 +62,15 @@ test("search selects merged TRX, opens native popup, repeats and replaces select
 
 test("bus, vehicle and route queries retain their existing selection behavior", async ({ page }) => {
   await prepare(page);
-  await search(page).fill("MRT TAMAN MIDAH PINTU A");
-  await page.getByRole("row").filter({ has: page.getByRole("cell", { name: "MRT TAMAN MIDAH PINTU A", exact: true }) })
-    .getByRole("button", { name: "View details" }).first().click();
+  await selectSimulatedBusStop(page, "MRT TAMAN MIDAH PINTU A");
   await expect(page.getByRole("region", { name: "Upcoming Departures" })).toBeVisible();
   await expect(popup(page)).toHaveCount(0);
   await search(page).fill("Bus T401-01");
-  await page.getByRole("row").filter({ has: page.getByRole("cell", { name: "Bus T401-01", exact: true }) })
-    .getByRole("button", { name: "View details" }).click();
+  await selectVehicle(page, "Bus T401-01");
   await expect(page.getByRole("region", { name: "Bus journey detail" })).toBeVisible();
   await expect(popup(page)).toHaveCount(0);
   await search(page).fill("T402");
-  await expect(page.locator("#records tbody tr")).not.toHaveCount(0);
+  await expect(page.locator(".bus-vehicle-icon")).not.toHaveCount(0);
   await expect(popup(page)).toHaveCount(0);
   await search(page).fill("");
   await expect(popup(page)).toHaveCount(0);

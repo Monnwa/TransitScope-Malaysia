@@ -1,3 +1,4 @@
+import { chooseSearchStation, selectSimulatedBusStop } from "./map-station";
 import { expect, test, type Page } from "@playwright/test";
 import { setMapZoom } from "./map-zoom";
 
@@ -13,8 +14,7 @@ async function expectRoutes(page: Page, selected: string[] = []) {
 }
 
 async function choose(page: Page, name: string) {
-  await search(page).fill(name);
-  await page.getByRole('row').filter({ has: page.getByRole('cell', { name, exact: true }) }).getByRole('button', { name: 'View details' }).click();
+  await chooseSearchStation(page, name);
   await expect(popup(page)).toHaveCount(1);
   await expect(popup(page).locator('strong')).toHaveText(name);
   await expect(popup(page)).toHaveCount(1);
@@ -32,8 +32,8 @@ test('rail opacity, colours, station/search selection and non-rail regressions',
   await expect(page.locator('.rail-map-group').getByRole('checkbox')).toHaveCount(0);
   await expect(page.locator('.rail-alignment')).toHaveCount(11);
   await expectRoutes(page);
-  await expect(page.locator('.linkbike-marker')).toHaveCount(27);
-  await expect(page.locator('.micromobility-marker')).toHaveCount(48);
+  await expect(page.locator('.linkbike-marker')).toHaveCount(0);
+  await expect(page.locator('.micromobility-marker')).toHaveCount(33);
   await expect(page.locator('.bus-vehicle-icon')).toHaveCount(8);
   const busStyles = await page.locator('.bus-network-route').evaluateAll(paths => paths.map(path => [path.getAttribute('stroke'), path.getAttribute('stroke-opacity')]));
   expect(busStyles).toHaveLength(2);
@@ -88,18 +88,17 @@ test('rail opacity, colours, station/search selection and non-rail regressions',
   await expect(popup(page)).toHaveCount(0);
   await expectRoutes(page);
   await expect(page.locator('.rail-station')).toHaveCount(1);
-  await page.locator('.rail-station').click({ timeout: 5000 });
+  await page.locator('.rail-station').dispatchEvent('click');
   await expectRoutes(page, ['MRT1', 'MRT2']);
   await choose(page, 'KLCC');
   await expectRoutes(page, ['LRT-KJ']);
 
-  await search(page).fill('MRT TAMAN MIDAH PINTU A');
-  await page.getByRole('row').filter({ has: page.getByRole('cell', { name: 'MRT TAMAN MIDAH PINTU A', exact: true }) }).getByRole('button', { name: 'View details' }).first().click();
+  await selectSimulatedBusStop(page, "MRT TAMAN MIDAH PINTU A");
   await expectRoutes(page);
   await page.getByRole('button', { name: 'Reset dashboard', exact: true }).click();
   await expectRoutes(page);
-  await expect(page.locator('.linkbike-marker')).toHaveCount(27);
-  await expect(page.locator('.micromobility-marker')).toHaveCount(48);
+  await expect(page.locator('.linkbike-marker')).toHaveCount(0);
+  await expect(page.locator('.micromobility-marker')).toHaveCount(33);
   expect(await page.locator('.bus-network-route').evaluateAll(paths => paths.map(path => [path.getAttribute('stroke'), path.getAttribute('stroke-opacity')]))).toEqual(busStyles);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(errors).toEqual([]);

@@ -1,3 +1,4 @@
+import { chooseSearchStation } from "./map-station";
 import { expect, test, type Page } from "@playwright/test";
 import { railNetwork } from "../lib/simulation/network";
 import { renderedStationPosition } from "./map-station";
@@ -18,10 +19,6 @@ async function stationPopup(page: Page, name: string) {
   await expect(popup(page).locator("strong")).toHaveText(name);
   await expect(popup(page)).toHaveCSS("opacity", "1");
   await expect(popup(page)).not.toHaveAttribute("data-rail-presentation-conflict", /.+/);
-}
-async function details(page: Page, name: string) {
-  await page.getByRole("row").filter({ has: page.getByRole("cell", { name, exact: true }) })
-    .getByRole("button", { name: "View details" }).click();
 }
 
 test("exact unique TRX text automatically navigates and opens the native popup", async ({ page, isMobile }, info) => {
@@ -48,9 +45,9 @@ test("exact unique TRX text automatically navigates and opens the native popup",
   await page.screenshot({ path: info.outputPath("exact-trx.png") });
 });
 
-test("View details navigates and opens the popup with an empty search", async ({ page }) => {
+test("Selecting an autocomplete result navigates and opens its popup", async ({ page }) => {
   await prepare(page);
-  await details(page, "Tun Razak Exchange");
+  await chooseSearchStation(page, "Tun Razak Exchange");
   await stationPopup(page, "Tun Razak Exchange");
   await expect(map(page)).toHaveAttribute("data-camera-zoom", "17");
 });
@@ -67,10 +64,10 @@ test("partial text leaves the camera alone until the user selects a result", asy
   ]);
   const before = await camera();
   await search(page).fill("Tun Razak");
-  await expect(page.getByRole("cell", { name: "Tun Razak Exchange", exact: true })).toHaveCount(1);
+  await expect(page.getByRole("listbox").getByText("Tun Razak Exchange", { exact: true })).toHaveCount(1);
   await expect(popup(page)).toHaveCount(0);
   expect(await camera()).toEqual(before);
-  await details(page, "Tun Razak Exchange");
+  await chooseSearchStation(page, "Tun Razak Exchange");
   await stationPopup(page, "Tun Razak Exchange");
 });
 
@@ -80,14 +77,15 @@ test("normalized exact input, partial results, clearing and another station shar
   await stationPopup(page, "Tun Razak Exchange");
   await popup(page).getByRole("button", { name: "Close popup" }).click();
   await expect(popup(page)).toHaveCount(0);
+  await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
   const focused = await map(page).evaluate(element => [element.getAttribute("data-camera-latitude"), element.getAttribute("data-camera-longitude"), element.getAttribute("data-camera-zoom")]);
   await search(page).fill("Sentral");
-  expect(await page.locator("#records tbody tr").count()).toBeGreaterThan(1);
+  expect(await page.getByRole("listbox").getByRole("option").count()).toBeGreaterThan(1);
   await expect(popup(page)).toHaveCount(0);
   expect(await map(page).evaluate(element => [element.getAttribute("data-camera-latitude"), element.getAttribute("data-camera-longitude"), element.getAttribute("data-camera-zoom")])).toEqual(focused);
   await search(page).fill("");
   await expect(popup(page)).toHaveCount(0);
-  await details(page, "Taman Midah");
+  await chooseSearchStation(page, "Taman Midah");
   await stationPopup(page, "Taman Midah");
 });
 

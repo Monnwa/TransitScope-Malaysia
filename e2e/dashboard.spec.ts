@@ -1,3 +1,4 @@
+import { selectVehicle, selectSimulatedBusStop } from "./map-station";
 import { expect, test, type Page } from "@playwright/test";
 
 async function watchDashboard(page: Page, baseURL: string) {
@@ -23,7 +24,7 @@ async function watchDashboard(page: Page, baseURL: string) {
   };
 }
 
-test("train and LinkBike layers render by default and respect dashboard filters", async ({ page, baseURL }, testInfo) => {
+test("train and micromobility layers respect region and dashboard filters", async ({ page, baseURL }, testInfo) => {
   const checkDashboard = await watchDashboard(page, baseURL!);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.clock.setFixedTime(new Date("2026-11-14T04:00:00.000Z"));
@@ -33,10 +34,8 @@ test("train and LinkBike layers render by default and respect dashboard filters"
   await expect(page.getByRole("checkbox", { name: "Show simulated train positions" })).toHaveCount(0);
   await expect(page.getByRole("checkbox", { name: "Show LinkBike stations" })).toHaveCount(0);
   await expect(map.locator(".estimated-train-icon")).not.toHaveCount(0);
-  // Bike stations are in Penang, outside the initial Klang Valley camera view.
-  // Their actual marker elements must already exist without a toggle or zoom action.
-  await expect(map.locator(".linkbike-marker")).toHaveCount(27);
-  await expect(map.locator(".micromobility-marker")).toHaveCount(48);
+  await expect(map.locator(".linkbike-marker")).toHaveCount(0);
+  await expect(map.locator(".micromobility-marker")).toHaveCount(33);
   await expect(page.getByRole("region", { name: "Simulated train positions" }).getByRole("status")).toContainText("simulated trains displayed");
   await page.locator(".rail-map-group").screenshot({ path: testInfo.outputPath("default-map-layers.png") });
 
@@ -51,7 +50,7 @@ test("train and LinkBike layers render by default and respect dashboard filters"
   await expect(map.locator(".linkbike-marker, .micromobility-marker")).toHaveCount(0);
   await page.getByRole("button", { name: "Reset dashboard" }).click();
   await expect(map.locator(".estimated-train-icon")).not.toHaveCount(0);
-  await expect(map.locator(".linkbike-marker")).toHaveCount(27);
+  await expect(map.locator(".linkbike-marker")).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   checkDashboard();
 });
@@ -64,10 +63,8 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   await expect(page.getByText("SIMULATION MODE", { exact: true })).toBeVisible();
   await expect(page.locator(".leaflet-container")).toBeVisible();
   await expect(page.locator(".rail-alignment")).toHaveCount(11);
-  const charts = page.getByRole("region", { name: "Data visualisations" });
-  await expect(charts.getByRole("heading", { name: "Transport by mode" })).toBeVisible();
-  await expect(charts.locator(".recharts-surface")).toHaveCount(1);
-  await expect(page.locator("#records tbody td:nth-child(5)").first()).toHaveText("SIMULATED");
+  await expect(page.getByRole("heading", { name: "Transport by mode" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Vehicles, routes and stops" })).toHaveCount(0);
 
   const search = page.getByRole("textbox", { name: "Search vehicles, routes or stations" });
   const routeSelect = page.getByRole("combobox", { name: "Bus route" });
@@ -80,21 +77,16 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   const indicators = page.getByRole("region", { name: "Transport indicators" });
   await expect(indicators.locator(".kpi").filter({ hasText: "Vehicles" }).locator("strong")).toHaveText("2");
   await expect(indicators.locator(".kpi").filter({ hasText: "Routes" }).locator("strong")).toHaveText("1");
-  await expect(page.locator("#records tbody tr")).toHaveCount(38);
-  await expect(page.getByRole("row", { name: /Bus T402-01/ })).toBeVisible();
-  await expect(page.getByRole("row", { name: /Bus T401-01/ })).toHaveCount(0);
+  await expect(page.locator("#map .panel-title p")).toContainText("38 results");
   await expect(page.getByTitle("Bus T401-01", { exact: true })).toHaveCount(0);
-  const origin = page.getByRole("row", { name: /MRT TAMAN MIDAH PINTU A/ });
-  await origin.getByRole("button", { name: "View details" }).click();
+  await selectSimulatedBusStop(page, "MRT TAMAN MIDAH PINTU A");
   const t402Board = page.getByRole("region", { name: "Upcoming Departures" });
   await expect(t402Board.getByRole("listitem").first()).toContainText("T402");
   await expect(t402Board.getByRole("listitem").first()).toContainText("SIMULATED");
   await expect(t402Board.getByRole("listitem").first().locator("time")).toHaveAttribute("datetime", "2026-11-14T04:00:00.000Z");
   await page.getByRole("button", { name: "Reset dashboard" }).click();
   await search.fill("Bus T401-01");
-  const row = page.getByRole("row", { name: /Bus T401-01/ });
   const marker = page.getByTitle("Bus T401-01", { exact: true });
-  await expect(row).toBeVisible();
   await marker.evaluate(element => (element as HTMLElement).click());
   const bus = page.getByRole("region", { name: "Bus journey detail" });
   await expect(bus.getByRole("heading", { name: /Bus T401-01/ })).toBeVisible();
@@ -137,7 +129,7 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   await expect(page.getByRole("checkbox", { name: "Show simulated train positions" })).toHaveCount(0);
   await expect(page.locator(".estimated-train-icon").first()).toBeAttached();
   await search.fill("Train MRT1-01");
-  await page.getByRole("button", { name: "View details" }).click();
+  await selectVehicle(page, "Train MRT1-01");
   const trainPanel = detail.getByRole("region", { name: "Simulated train information" });
   await expect(trainPanel).toContainText("Train MRT1-01");
   await trainPanel.getByRole("button", { name: "Close simulated train" }).click();
@@ -147,7 +139,7 @@ test("dashboard shares simulated data across overlays, details and filters", asy
   for (const name of ["Bus", "MRT", "LRT", "Monorail", "KTM", "ERL"]) {
     await page.getByRole("button", { name, exact: true }).click();
   }
-  await expect(page.locator("#records tbody tr")).toHaveCount(27);
+  await expect(page.locator(".linkbike-marker")).toHaveCount(0);
   await expect(page.getByRole("checkbox", { name: "Show LinkBike stations" })).toHaveCount(0);
   await search.fill("Esplanade Central");
   await page.getByRole("listbox", { name: "Station search results" }).getByRole("option", { name: /Esplanade Central/ }).click();
@@ -195,7 +187,7 @@ test("mobile dashboard keeps the bus sheet and horizontal layout usable", async 
   await page.goto("/");
   await expect(page.locator(".leaflet-container")).toBeVisible();
   await page.getByRole("textbox", { name: "Search vehicles, routes or stations" }).fill("Bus T401-01");
-  await page.getByRole("button", { name: "View details" }).click();
+  await selectVehicle(page, "Bus T401-01");
   await page.getByRole("button", { name: "Collapse journey" }).click();
   await expect(page.getByRole("button", { name: "Expand journey" })).toBeVisible();
   await page.getByRole("button", { name: "Expand journey" }).click();
@@ -238,12 +230,11 @@ test("map search fits the map and preserves keyboard, dragging and zoom controls
   await search.press("ArrowRight");
   await search.press("ArrowDown");
   await expect(pane).toHaveAttribute("style", transform!);
-  await expect(page.locator("#records tbody tr")).not.toHaveCount(0);
-  await expect(page.locator("#records tbody")).not.toContainText("Bus T401-01");
+  await expect(page.locator(".bus-vehicle-icon")).not.toHaveCount(0);
+  await expect(page.getByTitle("Bus T401-01", { exact: true })).toHaveCount(0);
   await search.press("ControlOrMeta+a");
   await search.press("Backspace");
   await expect(search).toHaveValue("");
-  await expect(page.getByRole("row", { name: /Bus T401-01/ })).toBeAttached();
 
   // Drag an unobstructed part of the map, outside the input.
   await map.scrollIntoViewIfNeeded();

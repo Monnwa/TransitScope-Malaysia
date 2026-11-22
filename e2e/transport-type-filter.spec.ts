@@ -1,3 +1,4 @@
+import { newMicromobilityStations } from "../lib/micromobility-data";
 import { expect, test, type Page } from "@playwright/test";
 import { simulationSnapshot } from "../lib/simulation";
 import { railNetwork } from "../lib/simulation/network";
@@ -9,6 +10,7 @@ const routeIds: Partial<Record<Mode, string[]>> = {
   KTM: ["KTM:KA15_KD19", "KTM:KC05_KB18"],
   ERL: ["erl-klia-ekspres", "erl-klia-transit"],
 };
+const klangBikes = newMicromobilityStations.filter(station => station.state !== "Penang");
 const time = new Date("2026-11-14T04:00:00Z");
 const snapshot = simulationSnapshot(time.getTime());
 const map = (page: Page) => page.locator(".leaflet-container");
@@ -68,13 +70,12 @@ async function expectLayers(page: Page, enabled: Mode[]) {
   await expect(map(page).locator(".bus-vehicle-icon")).toHaveCount(busEnabled ? 8 : 0);
   const busStops = snapshot.records.filter(record => record.mode === "Bus" && !record.railLines && record.recordKind === "stop" && record.position);
   await expect(map(page).locator(".bus-network-stop")).toHaveCount(busEnabled ? busStops.length : 0);
-  await expect(bikes(page)).toHaveCount(bikeEnabled ? 75 : 0);
+  await expect(bikes(page)).toHaveCount(bikeEnabled ? klangBikes.length : 0);
   await expect(kpi(page, "Vehicles")).toHaveText(String(trainCount + (busEnabled ? 8 : 0)));
   await expect(kpi(page, "Routes")).toHaveText(String(ids.length + (busEnabled ? 3 : 0)));
-  await expect(kpi(page, "Shared-bike stations")).toHaveText(bikeEnabled ? "27" : "0");
+  await expect(kpi(page, "Shared-bike stations")).toHaveText(bikeEnabled ? String(klangBikes.filter(station => station.operator === "HELLORIDE").length) : "0");
   const results = snapshot.records.filter(record => record.railLines ? record.railLines.some(id => visibleLines.includes(id))
-    : record.mode === "Bus" ? busEnabled : record.mode === "Shared bike" && bikeEnabled).length;
-  await expect(page.locator("#records tbody tr")).toHaveCount(results);
+    : record.mode === "Bus" && busEnabled).length;
   await expect(page.locator("#map .panel-title p")).toContainText(`${results} result`);
 }
 
@@ -132,7 +133,7 @@ test("transport chips filter map layers, summaries and lists, and reset restores
 test("station search retains hidden results and cannot reopen their map layers", async ({ page, isMobile }) => {
   test.setTimeout(60_000);
   await page.goto("/");
-  await expect(bikes(page)).toHaveCount(75);
+  await expect(bikes(page)).toHaveCount(klangBikes.length);
   const location = "TRYKE · Millennium Monument surroundings";
   await search(page).fill(location);
   await expect(bikes(page)).toHaveCount(0);
@@ -155,10 +156,8 @@ test("station search retains hidden results and cannot reopen their map layers",
   await page.getByRole("button", { name: "Clear station search" }).click();
   await expect(bikes(page)).toHaveCount(0);
   await setTypes(page, types, isMobile);
-  await expect(map(page).locator(".linkbike-marker")).toHaveCount(27);
-  for (const operator of ["HelloRide", "TRYKE", "Beam Mobility"]) {
-    await expect(map(page).getByTitle(new RegExp(`^${operator} · `))).toHaveCount(16);
-  }
+  await expect(map(page).locator(".linkbike-marker")).toHaveCount(0);
+  await expect(bikes(page)).toHaveCount(klangBikes.length);
 
   await setTypes(page, ["MRT", "LRT"], isMobile);
   await search(page).fill("Pasar Sen");
