@@ -2,6 +2,22 @@ import { expect, type Locator, type Page } from "@playwright/test";
 
 export const transportSearch = (page: Page) => page.getByRole("textbox", { name: "Search vehicles, routes or stations" });
 
+export function mapBackgroundPoint(map: Locator) {
+  return map.evaluate(element => {
+    const rect = element.getBoundingClientRect();
+    // Touch browsers can redirect taps in the gap between adjacent controls.
+    const clearance = 12;
+    const samples = [[0, 0], [-clearance, 0], [clearance, 0], [0, -clearance], [0, clearance]];
+    for (let y = 45; y < rect.height - 80; y += 18) {
+      for (let x = rect.width - 22; x > 60; x -= 18) {
+        const point = { x: rect.left + x, y: rect.top + y };
+        if (samples.every(([dx, dy]) => document.elementFromPoint(point.x + dx, point.y + dy) === element)) return point;
+      }
+    }
+    return null;
+  });
+}
+
 export async function chooseSearchStation(page: Page, name: string, query = name.slice(0, -1)) {
   const search = transportSearch(page);
   if (await search.inputValue() === query) await search.click();

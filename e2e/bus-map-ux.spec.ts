@@ -1,6 +1,7 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { passengerName } from "../components/passenger-copy";
 import { busJourney, busRecords } from "../lib/simulation/vehicles";
+import { mapBackgroundPoint } from "./map-station";
 
 const start = Date.parse("2026-11-14T04:00:00Z");
 const t401 = "bus:T401:01";
@@ -129,16 +130,7 @@ test("shows only the selected bus journey stops and dismisses them with its sele
   await expect(map.locator(".journey-stop-popup")).toHaveCount(0);
 
   await activate(map.getByTitle("Bus T401-01", { exact: true }), isMobile);
-  const background = await map.evaluate(element => {
-    const rect = element.getBoundingClientRect();
-    for (let y = 45; y < rect.height - 80; y += 18) {
-      for (let x = rect.width - 22; x > 60; x -= 18) {
-        const target = document.elementFromPoint(rect.left + x, rect.top + y);
-        if (target?.classList.contains("leaflet-container")) return {x: rect.left + x, y: rect.top + y};
-      }
-    }
-    return null;
-  });
+  const background = await mapBackgroundPoint(map);
   expect(background).not.toBeNull();
   if (isMobile) await page.touchscreen.tap(background!.x, background!.y);
   else await page.mouse.click(background!.x, background!.y);

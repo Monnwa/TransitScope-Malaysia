@@ -1,4 +1,4 @@
-import { chooseSearchStation, selectSimulatedBusStop } from "./map-station";
+import { chooseSearchStation, mapBackgroundPoint, selectSimulatedBusStop } from "./map-station";
 import { expect, test, type Page } from "@playwright/test";
 import { setMapZoom } from "./map-zoom";
 
@@ -72,16 +72,7 @@ test('rail opacity, colours, station/search selection and non-rail regressions',
   await expectRoutes(page, ['MRT1', 'MRT2']);
   const map = page.locator('.leaflet-container');
   await map.scrollIntoViewIfNeeded();
-  const background = await map.evaluate(element => {
-    const rect = element.getBoundingClientRect();
-    for (let y = 20; y < rect.height - 20; y += 15) {
-      for (let x = rect.width - 15; x > 10; x -= 15) {
-        const left = rect.left + x, top = rect.top + y;
-        if (document.elementFromPoint(left, top) === element) return { x: left, y: top };
-      }
-    }
-    return null;
-  });
+  const background = await mapBackgroundPoint(map);
   expect(background).not.toBeNull();
   if (isMobile) await page.touchscreen.tap(background!.x, background!.y);
   else await page.mouse.click(background!.x, background!.y);
