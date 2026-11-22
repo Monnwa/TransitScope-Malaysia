@@ -1,5 +1,5 @@
 import { railNetwork } from "../lib/simulation/network";
-import { chooseSearchStation, selectVehicle } from "./map-station";
+import { chooseSearchStation, railMarkerAt, selectVehicle } from "./map-station";
 import { expect, test, type Locator, type Page, type TestInfo } from "@playwright/test";
 import { writeFileSync } from "node:fs";
 import { setMapZoom } from "./map-zoom";
@@ -189,14 +189,13 @@ for (const name of ["Taman Midah", "Maluri", "KL Sentral"]) {
     test.setTimeout(120_000);
     for (const width of isMobile ? [375, 390] : [1101]) {
       const { map, external } = await prepare(page, width);
-      const index = railNetwork.stations.filter(station => station.mode !== "Bus").findIndex(station => station.name === name);
-      expect(index).toBeGreaterThanOrEqual(0);
+      const station = railNetwork.stations.find(item => item.name === name)!;
       await chooseSearchStation(page, name);
       const automatic = map.locator(".leaflet-popup").filter({ has: page.locator(".rail-station-popup") });
       await expect(automatic).toHaveCount(1); await close(automatic);
       await page.getByRole("button", { name: "Clear station search" }).click();
       await map.scrollIntoViewIfNeeded(); await setMapZoom(map, 12);
-      await map.locator(".rail-station").nth(index).click();
+      await (await railMarkerAt(map, station.position!)).click();
       const popup = map.locator(".leaflet-popup").filter({ has: page.locator(".rail-station-popup") });
       await expect(popup).toContainText(name); await page.clock.setFixedTime(new Date(start + 1000)); await page.waitForTimeout(350); await frames(page);
       const data = await evidence(page, info, name.replaceAll(" ", "-") + "-" + width, popup);
@@ -210,7 +209,9 @@ test("LinkBike station intent, availability popup and train markers remain funct
     const { map, external } = await prepare(page, width);
     await expect(page.getByRole("checkbox", { name: "Show simulated train positions" })).toHaveCount(0);
     await expect(map.locator(".estimated-train-icon")).not.toHaveCount(0);
-    const train = map.locator(".estimated-train-icon").first();
+    const train = map.locator('.estimated-train-icon[title*=" towards "]').first();
+    const trainName = (await train.getAttribute("title"))!.split(" towards ")[0];
+    await selectVehicle(page, trainName);
     await map.scrollIntoViewIfNeeded();
 
     await frames(page);

@@ -51,11 +51,20 @@ async function putStopAt(page: Page, map: Locator, pin: Locator, x: number, y: n
     const dx = Math.trunc(Math.max(-100, Math.min(100, x - start.x)));
     const dy = Math.trunc(Math.max(-100, Math.min(100, y - start.y)));
     if (Math.abs(x - start.x) <= 2 && Math.abs(y - start.y) <= 2) return;
-    const box = (await map.boundingBox())!;
-    const from = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+    const from = await map.evaluate((element, delta) => {
+      const box = element.getBoundingClientRect();
+      for (const y of [.5, .65, .35]) for (const x of [.5, .65, .35]) {
+        const origin = { x: box.left + box.width * x, y: box.top + box.height * y };
+        const target = document.elementFromPoint(origin.x, origin.y);
+        if (target === element && origin.x + delta.x > box.left && origin.x + delta.x < box.right &&
+            origin.y + delta.y > box.top && origin.y + delta.y < box.bottom) return origin;
+      }
+      return null;
+    }, { x: dx, y: dy });
+    if (!from) throw new Error("No unobstructed drag point on the map");
     await page.mouse.move(from.x, from.y);
     await page.mouse.down();
-    await page.mouse.move(from.x + dx, from.y + dy);
+    await page.mouse.move(from.x + dx, from.y + dy, { steps: 6 });
     await page.mouse.up();
     await expect.poll(async () => {
       const next = await relativeCentre(map, pin);

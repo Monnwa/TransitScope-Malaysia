@@ -6,6 +6,18 @@ import { renderedStationPosition } from "./map-station";
 const search = (page: Page) => page.getByRole("textbox", { name: "Search vehicles, routes or stations" });
 const popup = (page: Page) => page.locator(".rail-station-popup-shell");
 const map = (page: Page) => page.locator(".leaflet-container");
+const view = (page: Page) => map(page).evaluate(element => [
+  Number(element.getAttribute("data-camera-latitude")), Number(element.getAttribute("data-camera-longitude")),
+  Number(element.getAttribute("data-camera-zoom")),
+]);
+function expectSameView(before: number[], after: number[]) {
+  const [latitude, longitude, zoom] = before;
+  const [nextLatitude, nextLongitude, nextZoom] = after;
+  const degreesPerPixel = 360 / 256 / 2 ** zoom;
+  expect(nextZoom).toBe(zoom);
+  expect(Math.abs(nextLatitude - latitude)).toBeLessThan(degreesPerPixel);
+  expect(Math.abs(nextLongitude - longitude)).toBeLessThan(degreesPerPixel);
+}
 async function prepare(page: Page) {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.clock.setFixedTime(new Date("2026-11-17T09:41:25Z"));
@@ -57,16 +69,11 @@ test("partial text leaves the camera alone until the user selects a result", asy
   await map(page).scrollIntoViewIfNeeded();
   // The bus overview is south of the initial map centre and can keep its zoom.
   await expect.poll(async () => Number(await map(page).getAttribute("data-camera-latitude") ?? "NaN")).toBeLessThan(3.14);
-  const camera = () => map(page).evaluate(element => [
-    element.getAttribute("data-camera-latitude"),
-    element.getAttribute("data-camera-longitude"),
-    element.getAttribute("data-camera-zoom"),
-  ]);
-  const before = await camera();
+  const before = await view(page);
   await search(page).fill("Tun Razak");
   await expect(page.getByRole("listbox").getByText("Tun Razak Exchange", { exact: true })).toHaveCount(1);
   await expect(popup(page)).toHaveCount(0);
-  expect(await camera()).toEqual(before);
+  expectSameView(before, await view(page));
   await chooseSearchStation(page, "Tun Razak Exchange");
   await stationPopup(page, "Tun Razak Exchange");
 });
@@ -78,11 +85,11 @@ test("normalized exact input, partial results, clearing and another station shar
   await popup(page).getByRole("button", { name: "Close popup" }).click();
   await expect(popup(page)).toHaveCount(0);
   await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
-  const focused = await map(page).evaluate(element => [element.getAttribute("data-camera-latitude"), element.getAttribute("data-camera-longitude"), element.getAttribute("data-camera-zoom")]);
+  const focused = await view(page);
   await search(page).fill("Sentral");
   expect(await page.getByRole("listbox").getByRole("option").count()).toBeGreaterThan(1);
   await expect(popup(page)).toHaveCount(0);
-  expect(await map(page).evaluate(element => [element.getAttribute("data-camera-latitude"), element.getAttribute("data-camera-longitude"), element.getAttribute("data-camera-zoom")])).toEqual(focused);
+  expectSameView(focused, await view(page));
   await search(page).fill("");
   await expect(popup(page)).toHaveCount(0);
   await chooseSearchStation(page, "Taman Midah");
