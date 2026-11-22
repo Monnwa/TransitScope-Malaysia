@@ -1,13 +1,16 @@
-.map-locate {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
+.map-search-host > .map-locate {
+  position: absolute;
+  top: 16px;
+  right: 16px;
   pointer-events: none;
 }
 
-.leaflet-top .map-locate { margin-top: 82px; }
-.map-wrap[data-alert-navigation] .leaflet-top .map-locate { margin-top: 10px; }
-.leaflet-container:has(.station-search-results) .map-locate { visibility: hidden; }
+.map-search-host:has(.map-locate) .map-search { width: min(400px, calc(100% - 84px)); }
+
+@media (max-width: 720px) {
+  .map-search-host > .map-locate { top: 12px; right: 12px; }
+  .map-search-host:has(.map-locate) .map-search { width: calc(100% - 76px); }
+}
 
 .map-locate-button {
   display: grid;
@@ -28,7 +31,11 @@
 .map-locate-button[aria-disabled="true"] { cursor: progress; }
 
 .map-locate-status:not(:empty) {
-  max-width: min(235px, 42vw);
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: max-content;
+  max-width: min(235px, 48vw);
   padding: 6px 8px;
   color: var(--ink);
   background: #fff;
@@ -36,6 +43,8 @@
   border-radius: 6px;
   box-shadow: 0 2px 6px #102a5030;
 }
+
+.map-search-host:has(.station-search-results) .map-locate-status { opacity: 0; }
 
 .map-locate-spinner {
   width: 18px;

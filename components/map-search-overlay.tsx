@@ -5,7 +5,7 @@ import { useLayoutEffect, useState, type ReactNode } from "react";
 import { Pane, useMap } from "react-leaflet";
 
 /** Keep search fixed to the viewport, above markers and below native popups. */
-export default function MapSearchOverlay({ children }: { children: ReactNode }) {
+export default function MapSearchOverlay({ children, control }: { children?: ReactNode; control?: ReactNode }) {
   const map = useMap();
   const [host, setHost] = useState<HTMLDivElement | null>(null);
 
@@ -27,7 +27,8 @@ export default function MapSearchOverlay({ children }: { children: ReactNode }) 
 
   return <Pane name="map-search" style={{ zIndex: 650, pointerEvents: "none" }}>
     <div className="map-search-host" ref={setHost} onKeyDown={event => event.stopPropagation()}>
-      <div className="map-search">{children}</div>
+      {children && <div className="map-search">{children}</div>}
+      {control}
     </div>
   </Pane>;
 }

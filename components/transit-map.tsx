@@ -161,9 +161,8 @@ export default function TransitMap({ region = "Klang Valley", staticBusStops = n
     <div className="map-wrap" aria-label="Interactive transport map" data-alert-navigation={stationSearch?.alert ? "active" : undefined}
       style={{ "--rail-opacity-duration": `${railRouteStyle.transitionMs}ms` } as CSSProperties}>
       <MapContainer center={center} zoom={13} scrollWheelZoom className="map">
-        {search && <MapSearchOverlay>{search}</MapSearchOverlay>}
+        {(search || nearbyLocation) && <MapSearchOverlay control={nearbyLocation && <LocateMeControl {...nearbyLocation}/>}>{search}</MapSearchOverlay>}
         <TileLayer {...lightBasemap}/>
-        {nearbyLocation && <LocateMeControl {...nearbyLocation}/>}
         <PopupControlAvoidance selectedRecordId={selected?.id} journeyVehicleId={selectedJourney?.vehicle.id}/>
         <BusMapCamera region={region} staticBusBounds={staticBusBounds} searchActive={searchActive}
           selected={selected} vehicleVisible={visibleIds.has(selected?.id ?? "")} selectedRouteId={busRouteId}

@@ -217,9 +217,11 @@ test("map search fits the map and preserves keyboard, dragging and zoom controls
   expect(zoomBounds).not.toBeNull();
   const mobile = page.viewportSize()!.width <= 720;
   const inset = mobile ? 12 : 16;
+  const locateWidth = (await map.getByRole("button", { name: "Locate me", exact: true }).boundingBox())!.width;
+  const availableSearchWidth = bounds!.width - 2 * inset - locateWidth - 8;
   expect(inputBounds!.x - bounds!.x).toBeCloseTo(inset, 0);
   expect(inputBounds!.y - bounds!.y).toBeCloseTo(inset, 0);
-  expect(inputBounds!.width).toBeCloseTo(mobile ? bounds!.width - 24 : Math.min(400, bounds!.width - 32), 0);
+  expect(inputBounds!.width).toBeCloseTo(mobile ? availableSearchWidth : Math.min(400, availableSearchWidth), 0);
   expect(zoomBounds!.y).toBeGreaterThan(inputBounds!.y + inputBounds!.height);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 
